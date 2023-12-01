@@ -50,6 +50,17 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
       activePage: action.payload!,
     };
   },
+
+  [CustomerActions.DEL_CUSTOMERS_SETTING_FINISHED](
+    state: ICustomerState,
+    action: IAction<CustomerSettingModel>
+  ): ICustomerState {
+    return {
+      ...state,
+      error: action.error!,
+      refreshPage: action.error ? false : true,
+    };
+  },
   //   [FunnelActions.REQUEST_FUNNELS_OPPORTUNITY_SALES_FINISHED](
   //     state: IFunnelState,
   //     action: IAction<FunnelOpportunityModel>

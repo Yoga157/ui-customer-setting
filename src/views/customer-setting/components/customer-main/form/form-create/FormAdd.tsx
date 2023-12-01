@@ -105,12 +105,11 @@ const AddSalesAssign: React.FC<IProps> = (
         NewAssignSales.modifyUserID = 0;
 
         dispatch(SalesAssign.postAssignedSales(NewAssignSales));
-        console.log(
-          `rowData id ${rowData[j].customerSettingID} dan sales ID ${salesAssignArray[i].salesID}`
-        );
+        // console.log(
+        //   `rowData id ${rowData[j].customerSettingID} dan sales ID ${salesAssignArray[i].salesID}`
+        // );
       }
     }
-
     dispatch(ModalAction.CLOSE());
     dispatch(
       CustomerSettingAct.requestCustomerSett(1, 10, "CustomerSettingID")
