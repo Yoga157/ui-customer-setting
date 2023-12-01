@@ -1,10 +1,13 @@
 import React, { Fragment, useEffect, useState, useCallback } from "react";
-import { Grid, Header } from "semantic-ui-react";
+import { Divider, Grid, GridColumn, GridRow, Header } from "semantic-ui-react";
 import CustomerTable from "./components/customer-main/table/CustomerTable";
 import InputSearch from "./components/customer-main/search/InputSearch";
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
 import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLevelActions";
+import * as ModalSecondLevelActions from "stores/modal/second-level/ModalSecondLevelActions";
+import * as ModalThirdLevelReducer from "stores/modal/third-level/ModalThirdLevelReducer";
+
 import IStore from "models/IStore";
 import * as CustomerActions from "stores/customer-setting/CustomerActivityActions";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
@@ -27,7 +30,10 @@ import * as ToastsAction from "stores/toasts/ToastsAction";
 import ToastStatusEnum from "constants/ToastStatusEnum";
 import { Column } from "jspdf-autotable";
 import RouteEnum from "constants/RouteEnum";
+import { relative } from "path";
 // import * as FunnelActionss from 'stores/funnel/FunnelActions';
+
+import FilterCustomer from "./components/customer-main/filter/FilterCustomer";
 
 interface IProps {
   history: any;
@@ -50,6 +56,15 @@ const CustomerSettingPage: React.FC<IProps> = (
     setRowData(data);
     // console.log(data);
   };
+
+  const onFilter = useCallback((): void => {
+    dispatch(
+      ModalSecondLevelActions.OPEN(
+        <CreateForm rowData={rowData} />,
+        ModalSizeEnum.Small
+      )
+    );
+  }, [dispatch, rowData]);
 
   const onAddSales = useCallback((): void => {
     // console.log(rowData);
@@ -82,7 +97,6 @@ const CustomerSettingPage: React.FC<IProps> = (
   const moveToAddCustomer = () => {
     props.history.push({
       pathname: RouteEnum.AddNewCustomerSetting,
-      state: { rowData },
     });
   };
   const exportTableToExcel = (tableID: string, filename: string): void => {
@@ -91,7 +105,7 @@ const CustomerSettingPage: React.FC<IProps> = (
     )! as HTMLInputElement;
     if (search.value.length > 0) {
       dispatch(
-        CustomerActions.requesSearchCustomerSett(
+        CustomerActions.requestSearchCustomerSett(
           1,
           tableData.totalRow,
           "CustomerSettingID",
@@ -150,8 +164,6 @@ const CustomerSettingPage: React.FC<IProps> = (
   };
 
   useEffect(() => {
-    // if (window.location.pathname === "/data-quality/customer-setting")
-
     dispatch(
       CustomerActions.requestCustomerSett(1, pageSize, "CustomerSettingID")
     );
@@ -168,7 +180,7 @@ const CustomerSettingPage: React.FC<IProps> = (
       if (search.value.length > 0) {
         console.log("search");
         dispatch(
-          CustomerActions.requesSearchCustomerSett(
+          CustomerActions.requestSearchCustomerSett(
             data.activePage,
             pageSize,
             "CustomerSettingID",
@@ -217,11 +229,24 @@ const CustomerSettingPage: React.FC<IProps> = (
     selectCustomerSetting(state)
   );
 
+  /** Advanced filter */
+  const [openFilter, setOpenFilter] = useState(false);
+
   return (
     <Fragment>
       <LoadingIndicator isActive={isRequesting}>
-        <Grid columns="equal">
-          <Grid.Column textAlign="center">
+        <Grid columns="equal" textAlign="center">
+          <Grid.Column width={1}>
+            <Button
+              className="m-05r"
+              icon="sliders horizontal"
+              color="yellow"
+              disabled={false}
+              size="tiny"
+              onClick={() => setOpenFilter(!openFilter)}
+            />
+          </Grid.Column>
+          <Grid.Column>
             <InputSearch />
           </Grid.Column>
         </Grid>
@@ -333,6 +358,10 @@ const CustomerSettingPage: React.FC<IProps> = (
           </Grid.Column>
         </Grid>
       </LoadingIndicator>
+
+      {openFilter && (
+        <FilterCustomer setOpenFilter={setOpenFilter} openFilter={openFilter} />
+      )}
     </Fragment>
   );
 };

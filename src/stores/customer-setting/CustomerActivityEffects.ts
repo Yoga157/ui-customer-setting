@@ -26,7 +26,7 @@ export const requestCustomerSett = async (
   );
 };
 
-export const requesSearchCustomerSett = async (
+export const requestSearchCustomerSett = async (
   page: number,
   pageSize: number,
   column: string,
@@ -50,6 +50,20 @@ export const requesSearchCustomerSett = async (
     controllerName
   );
   return EffectUtility.getToModel<CustomerSettingModel>(
+    CustomerSettingModel,
+    endpoint
+  );
+};
+
+export const deleteCustomerSett = async (
+  customerSettingID: number
+): Promise<CustomerSettingModel | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting/" + customerSettingID;
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+  return EffectUtility.delToModel<CustomerSettingModel>(
     CustomerSettingModel,
     endpoint
   );
