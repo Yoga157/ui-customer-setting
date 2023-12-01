@@ -20,6 +20,7 @@ import brandReducer from "./brand/BrandReducer";
 import funnelReducer from "./funnel/FunnelReducer";
 import customerSettingReducer from "./customer-setting/CustomerActivityReducer";
 import SalesAssignReducer from "./customer-sales/SalesAssignActivityReducer";
+import CustomerNameReducer from "./customer-name/CustomerNameActivityReducer";
 
 const rootReducer = (history: History): Reducer<IStore> => {
   const reducerMap: ReducersMapObject<IStore> = {
@@ -42,6 +43,7 @@ const rootReducer = (history: History): Reducer<IStore> => {
     brand: brandReducer,
     customerSetting: customerSettingReducer,
     customerSalesAssign: SalesAssignReducer,
+    customerName: CustomerNameReducer
   };
 
   return combineReducers(reducerMap);
