@@ -79,48 +79,6 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
     const [openCollectionHistory, setOpenCollectionHistory] = useState(false);
     const [openConfigItem, setOpenConfigItem] = useState(false);
 
-    
-
-    const handleServiceSummary = () => {
-        if(!openServiceSummary) {
-            setOpenServiceSummary(true);
-        } else {
-            setOpenServiceSummary(false);
-        }
-    }
-
-    const handleSalesHistory = () => {
-        if(!openSalesHistory) {
-            setOpenSalesHistory(true);
-        } else {
-            setOpenSalesHistory(false);
-        }
-    }
-
-    const handleProjectHistory = () => {
-        if(!openProjectHistory) {
-            setOpenProjectHistory(true);
-        } else {
-            setOpenProjectHistory(false);
-        }
-    }
-
-    const handleCollectionHistory = () => {
-        if(!openCollectionHistory) {
-            setOpenCollectionHistory(true);
-        } else {
-            setOpenCollectionHistory(false);
-        }
-    }
-    
-    const handleConfigItem = () => {
-        if(!openConfigItem) {
-            setOpenConfigItem(true);
-        } else {
-            setOpenConfigItem(false);
-        }
-    }
-
     /** Search Sales */
     const [salesName, setSalesName] = useState('');
     const salesData = [
@@ -355,7 +313,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                     {openPicList &&
                                         <>
                                         <div style={{ padding: "1rem", backgroundColor: "#FFEF9A"}}>
-                                            <TableNewCustomerSetting data={data.picData} header={data.picHeader}/>
+                                            <TableNewCustomerSetting data={data.picData} header={data.picHeader} sequenceNum={true}/>
                                         </div>
                                         <Divider style={{ margin: "0px"}}></Divider>
                                         </>
@@ -370,13 +328,13 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                     {openBrandSummary &&
                                         <>
                                         <div style={{ padding: "1rem", backgroundColor: "#FFEF9A"}}>
-                                            <TableNewCustomerSetting data={data.brandData} header={data.brandHeader}/>
+                                            <TableNewCustomerSetting data={data.brandData} header={data.brandHeader} sequenceNum={true}/>
                                         </div>
                                         <Divider style={{ margin: "0px"}}></Divider>
                                         </>
                                     }
 
-                                    <div style={{ padding: "1rem", display: "flex", flexDirection: "row", justifyContent: "space-between", cursor: "pointer"}} onClick={() => handleServiceSummary()}>
+                                    <div style={{ padding: "1rem", display: "flex", flexDirection: "row", justifyContent: "space-between", cursor: "pointer"}} onClick={() => setOpenServiceSummary(!openServiceSummary)}>
                                         <span style={{ fontWeight: "bold"}}>SERVICE SUMMARY</span>
                                         {openServiceSummary ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
                                     </div>
@@ -385,32 +343,13 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                     {openServiceSummary &&
                                         <>
                                         <div style={{ padding: "1rem", backgroundColor: "#FFEF9A"}}>
-                                        <Table
-                                            striped
-                                            >
-                                            <Table.Header>
-                                                <Table.Row>
-                                                    <Table.HeaderCell>No</Table.HeaderCell>
-                                                    <Table.HeaderCell>Service Name</Table.HeaderCell>
-                                                    <Table.HeaderCell>Years</Table.HeaderCell>
-                                                    <Table.HeaderCell>% Purchase</Table.HeaderCell>
-                                                </Table.Row>
-                                            </Table.Header>
-
-                                                <Table.Body>
-                                                <Table.Row>
-                                                    <Table.Cell colSpan={16} textAlign="center">
-                                                    No data
-                                                    </Table.Cell>
-                                                </Table.Row>
-                                                </Table.Body>
-                                            </Table>
+                                            <TableNewCustomerSetting data={data.serviceData} header={data.serviceHeader} sequenceNum={true}/>
                                         </div>
                                         <Divider style={{ margin: "0px"}}></Divider>
                                         </>
                                     }
 
-                                    <div style={{ padding: "1rem", display: "flex", flexDirection: "row", justifyContent: "space-between", cursor: "pointer"}} onClick={() => handleSalesHistory()}>
+                                    <div style={{ padding: "1rem", display: "flex", flexDirection: "row", justifyContent: "space-between", cursor: "pointer"}} onClick={() => setOpenSalesHistory(!openSalesHistory)}>
                                         <span style={{ fontWeight: "bold"}}>SALES ASSIGN HISTORY</span>
                                         {openSalesHistory ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
                                     </div>
@@ -419,32 +358,13 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                     {openSalesHistory &&
                                         <>
                                         <div style={{ padding: "1rem", backgroundColor: "#FFEF9A"}}>
-                                        <Table
-                                            striped
-                                            >
-                                            <Table.Header>
-                                                <Table.Row>
-                                                    <Table.HeaderCell>No</Table.HeaderCell>
-                                                    <Table.HeaderCell>Sales Name</Table.HeaderCell>
-                                                    <Table.HeaderCell>Customer Name</Table.HeaderCell>
-                                                    <Table.HeaderCell>Year Assign</Table.HeaderCell>
-                                                </Table.Row>
-                                            </Table.Header>
-
-                                                <Table.Body>
-                                                <Table.Row>
-                                                    <Table.Cell colSpan={16} textAlign="center">
-                                                    No data
-                                                    </Table.Cell>
-                                                </Table.Row>
-                                                </Table.Body>
-                                            </Table>
+                                            <TableNewCustomerSetting data={data.salesHistoryData} header={data.salesHistoryHeader} sequenceNum={true}/>
                                         </div>
                                         <Divider style={{ margin: "0px"}}></Divider>
                                         </>
                                     }
 
-                                    <div style={{ padding: "1rem", display: "flex", flexDirection: "row", justifyContent: "space-between", cursor: "pointer"}} onClick={() => handleProjectHistory()}>
+                                    <div style={{ padding: "1rem", display: "flex", flexDirection: "row", justifyContent: "space-between", cursor: "pointer"}} onClick={() => setOpenProjectHistory(!openProjectHistory)}>
                                         <span style={{ fontWeight: "bold"}}>PROJECT CUSTOMER HISTORY</span>
                                         {openProjectHistory ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
                                     </div>
@@ -453,40 +373,13 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                     {openProjectHistory &&
                                         <>
                                         <div style={{ padding: "1rem", backgroundColor: "#FFEF9A"}}>
-                                        <Table
-                                            striped
-                                            >
-                                            <Table.Header>
-                                                <Table.Row>
-                                                    <Table.HeaderCell>View Payment</Table.HeaderCell>
-                                                    <Table.HeaderCell>Funnel ID</Table.HeaderCell>
-                                                    <Table.HeaderCell>SO ID</Table.HeaderCell>
-                                                    <Table.HeaderCell>TOP Number</Table.HeaderCell>
-                                                    <Table.HeaderCell>Project Name</Table.HeaderCell>
-                                                    <Table.HeaderCell>Customer Name</Table.HeaderCell>
-                                                    <Table.HeaderCell>Sales Name</Table.HeaderCell>
-                                                    <Table.HeaderCell>Sales Dept.</Table.HeaderCell>
-                                                    <Table.HeaderCell>SA Date</Table.HeaderCell>
-                                                    <Table.HeaderCell>SO Close Date</Table.HeaderCell>
-                                                    <Table.HeaderCell>SO Amount (IDR)</Table.HeaderCell>
-                                                    <Table.HeaderCell>Last Collection Date</Table.HeaderCell>
-                                                </Table.Row>
-                                            </Table.Header>
-
-                                                <Table.Body>
-                                                <Table.Row>
-                                                    <Table.Cell colSpan={16} textAlign="center">
-                                                    No data
-                                                    </Table.Cell>
-                                                </Table.Row>
-                                                </Table.Body>
-                                            </Table>
+                                            <TableNewCustomerSetting data={data.projectHistoryData} header={data.projectHistoryHeader} sequenceNum={false} />
                                         </div>
                                         <Divider style={{ margin: "0px"}}></Divider>
                                         </>
                                     }
 
-                                    <div style={{ padding: "1rem", display: "flex", flexDirection: "row", justifyContent: "space-between", cursor: "pointer"}} onClick={() => handleCollectionHistory()}>
+                                    <div style={{ padding: "1rem", display: "flex", flexDirection: "row", justifyContent: "space-between", cursor: "pointer"}} onClick={() => setOpenCollectionHistory(!openCollectionHistory)}>
                                         <span style={{ fontWeight: "bold"}}>COLLECTION HISTORY</span>
                                         {openCollectionHistory ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
                                     </div>
@@ -495,34 +388,13 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                     {openCollectionHistory &&
                                         <>
                                         <div style={{ padding: "1rem", backgroundColor: "#FFEF9A"}}>
-                                        <Table
-                                            striped
-                                            >
-                                            <Table.Header>
-                                                <Table.Row>
-                                                    <Table.HeaderCell>Invoice Number</Table.HeaderCell>
-                                                    <Table.HeaderCell>Invoice Date</Table.HeaderCell>
-                                                    <Table.HeaderCell>SO ID</Table.HeaderCell>
-                                                    <Table.HeaderCell>TOP Number</Table.HeaderCell>
-                                                    <Table.HeaderCell>Collection Amount (IDR)</Table.HeaderCell>
-                                                    <Table.HeaderCell>Collection Date</Table.HeaderCell>
-                                                </Table.Row>
-                                            </Table.Header>
-
-                                                <Table.Body>
-                                                <Table.Row>
-                                                    <Table.Cell colSpan={16} textAlign="center">
-                                                    No data
-                                                    </Table.Cell>
-                                                </Table.Row>
-                                                </Table.Body>
-                                            </Table>
+                                        <TableNewCustomerSetting data={data.collectionHistoryData} header={data.collectionHistoryHeader} sequenceNum={false} />
                                         </div>
                                         <Divider style={{ margin: "0px"}}></Divider>
                                         </>
                                     }
 
-                                    <div style={{ padding: "1rem", display: "flex", flexDirection: "row", justifyContent: "space-between", cursor: "pointer"}} onClick={() => handleConfigItem()}>
+                                    <div style={{ padding: "1rem", display: "flex", flexDirection: "row", justifyContent: "space-between", cursor: "pointer"}} onClick={() => setOpenConfigItem(!openConfigItem)}>
                                         <span style={{ fontWeight: "bold"}}>CONFIG ITEM</span>
                                         {openConfigItem ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
                                     </div>
@@ -531,33 +403,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                         <>
                                         <Divider style={{ margin: "0px"}}></Divider>
                                         <div style={{ padding: "1rem", backgroundColor: "#FFEF9A"}}>
-                                        <Table
-                                            striped
-                                            >
-                                            <Table.Header>
-                                                <Table.Row>
-                                                    <Table.HeaderCell>Product Number</Table.HeaderCell>
-                                                    <Table.HeaderCell>SO Number</Table.HeaderCell>
-                                                    <Table.HeaderCell>PO Number</Table.HeaderCell>
-                                                    <Table.HeaderCell>PO Date</Table.HeaderCell>
-                                                    <Table.HeaderCell>ETA By. Purchasing</Table.HeaderCell>
-                                                    <Table.HeaderCell>ETA By. PMO</Table.HeaderCell>
-                                                    <Table.HeaderCell>DO Date</Table.HeaderCell>
-                                                    <Table.HeaderCell>Description Item</Table.HeaderCell>
-                                                    <Table.HeaderCell>Brand</Table.HeaderCell>
-                                                    <Table.HeaderCell>Quantity</Table.HeaderCell>
-                                                    <Table.HeaderCell>Cust. Warranty Start Date</Table.HeaderCell>
-                                                </Table.Row>
-                                            </Table.Header>
-
-                                                <Table.Body>
-                                                <Table.Row>
-                                                    <Table.Cell colSpan={16} textAlign="center">
-                                                    No data
-                                                    </Table.Cell>
-                                                </Table.Row>
-                                                </Table.Body>
-                                            </Table>
+                                        <TableNewCustomerSetting data={data.configItemData} header={data.configItemHeader} sequenceNum={false}/>
                                         </div>
                                         </>
                                     }
