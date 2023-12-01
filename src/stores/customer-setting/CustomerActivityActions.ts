@@ -43,7 +43,7 @@ export const REQUEST_CUSTOMERS_SETTING_SEARCH: string =
 export const REQUEST_CUSTOMERS_SETTING_SEARCH_FINISHED: string =
   "CustomerActions.REQUEST_CUSTOMERS_SETTING_SEARCH_FINISHED";
 
-export const requesSearchCustomerSett = (
+export const requestSearchCustomerSett = (
   page: number,
   pageSize: number,
   column: string,
@@ -59,7 +59,7 @@ export const requesSearchCustomerSett = (
     await ActionUtility.createThunkEffect<CustomerSettingModel>(
       dispatch,
       REQUEST_CUSTOMERS_SETTING_SEARCH,
-      CustomerEffect.requesSearchCustomerSett,
+      CustomerEffect.requestSearchCustomerSett,
       page,
       pageSize,
       column,
@@ -77,6 +77,21 @@ export const requesSearchCustomerSett = (
 export const SET_PAGE: string = "CustomerActions.SET_PAGE";
 export const setActivePage = (activePage: number): IAction<number> => {
   return ActionUtility.createAction(SET_PAGE, activePage);
+};
+
+export const DEL_CUSTOMERS_SETTING: string =
+  "CustomerActions.DEL_CUSTOMERS_SETTING";
+export const DEL_CUSTOMERS_SETTING_FINISHED =
+  "CustomerActions.DEL_CUSTOMERS_SETTING_FINISHED";
+export const deleteCustomerSett = (customerSettingID: number): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<CustomerSettingModel>(
+      dispatch,
+      DEL_CUSTOMERS_SETTING,
+      CustomerEffect.deleteCustomerSett,
+      customerSettingID
+    );
+  };
 };
 
 // export const REQUEST_FUNNELS_OPPORTUNITY_SALES: string =

@@ -57,27 +57,14 @@ const AddSalesAssign: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
-  const [customerName, setCustomerName] = useState(props.rowData.customerName);
-  const [salesName, setSalesName] = useState("");
-  const [salesId, setSalesId] = useState(0);
-  const [shareable, setshareable] = useState(false);
-  const [pmoCustomer, setpmoCustomer] = useState(false);
+  const [customerSettingID, setcustomerSettingID] = useState(
+    props.rowData.customerSettingID
+  );
   const [salesAssignArray, setSalesAssignArray] = useState([]);
   const { rowData } = props;
 
   const salesStoreSearch = useSelector((state: IStore) =>
     selectSalesSearchOptions(state)
-  );
-
-  const handleSearchChangeSales = useCallback(
-    (data) => {
-      setSalesName(data);
-
-      if (data.length >= 2) {
-        dispatch(SalesAssign.requestSalesByName(data));
-      }
-    },
-    [dispatch]
   );
 
   const cancelClick = () => {
@@ -88,79 +75,24 @@ const AddSalesAssign: React.FC<IProps> = (
     selectRequesting(state, [])
   );
 
-  const onSubmitHandler = async (e) => {
-    const userId: any = localStorage.getItem("userLogin");
-
+  const deleteClick = () => {
     console.log(rowData);
-    console.log(salesAssignArray);
-
-    for (let j = 0; j < rowData.lenght; j++) {
-      console.log(`rowData id ${rowData[j].customerSettingID}`);
-      for (let i = 0; i < salesAssignArray.length; i++) {
-        const NewAssignSales = new SalesAssignPostModel(e);
-        NewAssignSales.assignID = 0;
-        NewAssignSales.SalesID = salesAssignArray[i].salesID;
-        NewAssignSales.CustomerSettingID = rowData[j].customerSettingID;
-        NewAssignSales.AssignedBy = 0;
-        NewAssignSales.createUserID = 0;
-        NewAssignSales.modifyUserID = 0;
-
-        dispatch(SalesAssign.postAssignedSales(NewAssignSales));
-        console.log(
-          `rowData id ${rowData[j].customerSettingID} dan sales ID ${salesAssignArray[i].salesID}`
-        );
-      }
+    for (let i = 0; i < rowData.length; i++) {
+      dispatch(
+        CustomerSettingAct.deleteCustomerSett(rowData[i].customerSettingID)
+      );
     }
-
     dispatch(ModalAction.CLOSE());
     dispatch(
       CustomerSettingAct.requestCustomerSett(1, 10, "CustomerSettingID")
     );
   };
 
-  const deleteClick = (salesID) => {
-    let filteredArray = salesAssignArray.filter(
-      (obj) => obj.salesID !== salesID
-    );
-    setSalesAssignArray(filteredArray);
-  };
-
-  const onResultSelectSales = (data: any) => {
-    setSalesName(" ");
-
-    let checkSales = salesAssignArray.find(
-      (obj) => obj.salesID === data.result.salesID
-    );
-    if (checkSales === undefined) {
-      setSalesAssignArray([
-        ...salesAssignArray,
-        {
-          salesName: data.result.title,
-          salesID: data.result.salesID,
-        },
-      ]);
-    }
-  };
-
-  const isValidsalesName = createValidator(
-    (message) => (value) => {
-      if (value === 0) {
-        return message;
-      }
-    },
-    "Invalid Sales Name"
-  );
-
-  const validate = combineValidators({
-    salesName: composeValidators(isValidsalesName, isRequired("Sales Name"))(),
-  });
-
   return (
     <Fragment>
       <LoadingIndicator isActive={isRequesting}>
         <FinalForm
-          validate={validate}
-          onSubmit={(values: any) => onSubmitHandler(values)}
+          onSubmit={deleteClick}
           render={({ handleSubmit }) => (
             <Form onSubmit={handleSubmit}>
               <Grid.Row>

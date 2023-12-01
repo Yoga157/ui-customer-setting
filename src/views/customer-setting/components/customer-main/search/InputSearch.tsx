@@ -42,7 +42,7 @@ export const InputSearch: React.FC = () => {
       } else {
         if (searchText.length > 1) {
           dispatch(
-            CustomerSetting.requesSearchCustomerSett(1, 10, null, searchText)
+            CustomerSetting.requestSearchCustomerSett(1, 10, null, searchText)
           );
           dispatch(CustomerSetting.setActivePage(1));
           setBtnCancel(!btnCancel);
