@@ -1,0 +1,47 @@
+import React, { Fragment, useState, useCallback,} from "react";
+import { Table } from "semantic-ui-react";
+
+interface IProps {
+    header: any[];
+    data: any[];
+}
+
+const TableNewCustomerSetting: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
+    const { header, data } = props; 
+
+    return (
+        <Table
+        striped
+        >
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell>No</Table.HeaderCell>
+                    {header.map((header) => (
+                        <Table.HeaderCell>{header.header}</Table.HeaderCell>
+                    ))}
+                </Table.Row>
+            </Table.Header>
+
+            <Table.Body>
+                {data.length == 0 ?
+                    <Table.Row>
+                        <Table.Cell colSpan={16} textAlign="center">
+                        No data
+                        </Table.Cell>
+                    </Table.Row>
+                :
+                    (data.map((data, index) => (
+                    <Table.Row key={index}>
+                        <Table.Cell>{index + 1}</Table.Cell>
+                        {header.map((header) => (
+                            <Table.Cell key={header.key}>{data[header.key]}</Table.Cell>
+                        ))}
+                    </Table.Row>
+                    )))
+                }
+            </Table.Body>
+        </Table>
+    )
+}
+
+export default TableNewCustomerSetting;

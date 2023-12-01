@@ -17,6 +17,7 @@ import IBrandState from "stores/brand/models/IBrandState";
 import ICustomerState from "stores/customer/models/ICustomerState";
 import ICustomerSettingState from "stores/customer-setting/models/ICustomerState";
 import ISalesAssignState from "stores/customer-sales/models/ISalesAssignState";
+import ICustomerNameState from "stores/customer-name/models/ICustomerNameState";
 
 export default interface IStore {
   readonly error: IErrorState;
@@ -38,4 +39,5 @@ export default interface IStore {
   readonly customer: ICustomerState;
   readonly customerSetting: ICustomerSettingState;
   readonly customerSalesAssign: ISalesAssignState;
+  readonly customerName: ICustomerNameState;
 }
