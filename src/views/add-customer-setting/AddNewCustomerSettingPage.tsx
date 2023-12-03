@@ -1,4 +1,5 @@
 import React, { Fragment, useState, useCallback,} from "react";
+import "./AddNewCustomerSetting.scss";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLevelActions";
@@ -149,6 +150,26 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
         setSalesAssign(arrayFltered);
     }
 
+    /** Add setting */
+    const [shareable, setShareable] = useState("FALSE");
+    const [pmoCustomer, setPmoCustomer] = useState("FALSE");
+
+    const handleShareable = () => {
+        if(shareable == "FALSE") {
+            setShareable("TRUE")
+        } else {
+            setShareable("FALSE")
+        }
+    }
+
+    const handlePmoCustomer = () => {
+        if(pmoCustomer == "FALSE") {
+            setPmoCustomer("TRUE")
+        } else {
+            setPmoCustomer("FALSE")
+        }
+    }
+
     /** Invoicing schedule */
     const days = ["All days", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     const [daysArray, setDaysArray] = useState([]);
@@ -215,15 +236,14 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
         <Fragment>
             <Link to="/customer-setting" style={{fontSize: "1.25rem", color:"grey", fontWeight:"bold"}}>{"< Back to Customer Setting List"}</Link>
 
-            <div style={{ margin:"2.5rem", marginBottom: "4rem" }}>
-                <div style={{ display: "flex", flexDirection: "column", backgroundColor: "white", borderRadius: "1rem" }}>
+                <div className="form-container">
                     {/* judul add new customer setting */}
-                    <p style={{ textAlign: "left", margin:"0", color: "#55637A", fontWeight: "bold", padding:"14px 2rem 0 2rem" }}>ADD NEW CUSTOMER SETTING</p>
+                    <p style={{ textAlign: "left", margin:"0", fontWeight: "bold", padding:"14px 2rem 0 2rem" }} className="grey">ADD NEW CUSTOMER SETTING</p>
 
                     <Divider></Divider>
 
                     {/* search customer name dan data customer */}
-                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", flexWrap: "wrap", padding:"0 2rem"}}>
+                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", flexWrap: "wrap" }} className="padding-horizontal">
                         <div>
                             <FinalForm
                                 onSubmit={(values: any) => onSubmitCustomerHandler(values)}
@@ -267,28 +287,28 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                 )}/>
                             </div>
 
-                            <div style={{ display: "flex", flexDirection: "column", textAlign: "center"}}>
-                                <label style={{ marginRight: '10px', marginBottom: "5px", color: "#A0A8B3" }}>CustomerID</label>
-                                <p style={{ color: "#55637A", fontSize: "24px", fontWeight: "bold"}}>{customerSettingData.customerGenID}</p>
+                            <div className="customer-data-container">
+                                <label className="customer-data-label">CustomerID</label>
+                                <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">{customerSettingData.customerGenID}</p>
                             </div>
 
-                            <div style={{ display: "flex", flexDirection: "column" }}>
-                                <label style={{ marginRight: '10px', marginBottom: "5px", color: "#A0A8B3" }}>Blacklist</label>
+                            <div className="customer-data-container">
+                                <label className="customer-data-label">Blacklist</label>
                                 <Label color="teal" style={{ borderRadius: "20px", width: "fit-content"}}>
                                     <Icon name='address book'/>No
                                 </Label>
                             </div>
 
-                            <div style={{ display: "flex", flexDirection: "column" }}>
-                                <label style={{ marginRight: '10px', marginBottom: "5px", color: "#A0A8B3" }}>Holdshipment</label>
+                            <div className="customer-data-container">
+                                <label className="customer-data-label">Holdshipment</label>
                                 <Label color="purple" style={{ borderRadius: "20px", width: "fit-content" }}>
                                     <Icon name='truck'/>No
                                 </Label>
                             </div>
 
-                            <div style={{ display: "flex", flexDirection: "column", textAlign: "center"}}>
-                                <label style={{ marginRight: '10px', marginBottom: "5px", color: "#A0A8B3" }}>Avg. AR (days)</label>
-                                <p style={{ color: "#55637A", fontSize: "24px", fontWeight: "bold"}}>12.5</p>
+                            <div className="customer-data-container">
+                                <label className="customer-data-label">Avg. AR (days)</label>
+                                <p style={{ fontSize: "24px", fontWeight: "bold"}} className="grey">12.5</p>
                             </div>
                          </>
                         }
@@ -296,15 +316,15 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                     
                     {customerSettingData != undefined &&
                         <>
-                            <div style={{ margin: "14px 0", padding:"0 2rem"}}>
+                            <div style={{ margin: "14px 0" }} className="padding-horizontal">
                                 <label style={{ marginRight: '10px', marginBottom: "5px", color: "#A0A8B3" }}>Address</label>
-                                <p style={{ color: "#55637A", fontSize: "20px"}}>{customerSettingData?.address}</p>
+                                <p style={{ fontSize: "20px"}} className="grey">{customerSettingData?.address}</p>
                             </div>
                             
                             {/* data get mengenai customer */}
-                            <div style={{ padding:"0 2rem" }}>
-                                <div style={{ backgroundColor: "#FFFB9A", borderRadius: "1rem", color: "#55637A"}}>
-                                    <div style={{ padding: "1rem", display: "flex", flexDirection: "row", justifyContent: "space-between", cursor: "pointer"}} onClick={() => setOpenPicList(!openPicList)}>
+                            <div className="padding-horizontal">
+                                <div style={{ backgroundColor: "#FFFB9A", borderRadius: "1rem" }} className="grey">
+                                    <div className="accordion-container" onClick={() => setOpenPicList(!openPicList)}>
                                         <span style={{ fontWeight: "bold"}}>CUSTOMER PIC LIST</span>
                                         {openPicList ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
                                     </div>
@@ -312,14 +332,14 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                     
                                     {openPicList &&
                                         <>
-                                        <div style={{ padding: "1rem", backgroundColor: "#FFEF9A"}}>
+                                        <div className="table-container">
                                             <TableNewCustomerSetting data={data.picData} header={data.picHeader} sequenceNum={true}/>
                                         </div>
                                         <Divider style={{ margin: "0px"}}></Divider>
                                         </>
                                     }
 
-                                    <div style={{ padding: "1rem", display: "flex", flexDirection: "row", justifyContent: "space-between", cursor: "pointer"}} onClick={() => setOpenBrandSummary(!openBrandSummary)}>
+                                    <div className="accordion-container" onClick={() => setOpenBrandSummary(!openBrandSummary)}>
                                         <span style={{ fontWeight: "bold"}}>BRAND SUMMARY</span>
                                         {openBrandSummary ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
                                     </div>
@@ -327,14 +347,14 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
 
                                     {openBrandSummary &&
                                         <>
-                                        <div style={{ padding: "1rem", backgroundColor: "#FFEF9A"}}>
+                                        <div className="table-container">
                                             <TableNewCustomerSetting data={data.brandData} header={data.brandHeader} sequenceNum={true}/>
                                         </div>
                                         <Divider style={{ margin: "0px"}}></Divider>
                                         </>
                                     }
 
-                                    <div style={{ padding: "1rem", display: "flex", flexDirection: "row", justifyContent: "space-between", cursor: "pointer"}} onClick={() => setOpenServiceSummary(!openServiceSummary)}>
+                                    <div className="accordion-container" onClick={() => setOpenServiceSummary(!openServiceSummary)}>
                                         <span style={{ fontWeight: "bold"}}>SERVICE SUMMARY</span>
                                         {openServiceSummary ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
                                     </div>
@@ -342,14 +362,14 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
 
                                     {openServiceSummary &&
                                         <>
-                                        <div style={{ padding: "1rem", backgroundColor: "#FFEF9A"}}>
+                                        <div className="table-container">
                                             <TableNewCustomerSetting data={data.serviceData} header={data.serviceHeader} sequenceNum={true}/>
                                         </div>
                                         <Divider style={{ margin: "0px"}}></Divider>
                                         </>
                                     }
 
-                                    <div style={{ padding: "1rem", display: "flex", flexDirection: "row", justifyContent: "space-between", cursor: "pointer"}} onClick={() => setOpenSalesHistory(!openSalesHistory)}>
+                                    <div className="accordion-container" onClick={() => setOpenSalesHistory(!openSalesHistory)}>
                                         <span style={{ fontWeight: "bold"}}>SALES ASSIGN HISTORY</span>
                                         {openSalesHistory ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
                                     </div>
@@ -357,14 +377,14 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
 
                                     {openSalesHistory &&
                                         <>
-                                        <div style={{ padding: "1rem", backgroundColor: "#FFEF9A"}}>
+                                        <div className="table-container">
                                             <TableNewCustomerSetting data={data.salesHistoryData} header={data.salesHistoryHeader} sequenceNum={true}/>
                                         </div>
                                         <Divider style={{ margin: "0px"}}></Divider>
                                         </>
                                     }
 
-                                    <div style={{ padding: "1rem", display: "flex", flexDirection: "row", justifyContent: "space-between", cursor: "pointer"}} onClick={() => setOpenProjectHistory(!openProjectHistory)}>
+                                    <div className="accordion-container" onClick={() => setOpenProjectHistory(!openProjectHistory)}>
                                         <span style={{ fontWeight: "bold"}}>PROJECT CUSTOMER HISTORY</span>
                                         {openProjectHistory ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
                                     </div>
@@ -372,14 +392,14 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
 
                                     {openProjectHistory &&
                                         <>
-                                        <div style={{ padding: "1rem", backgroundColor: "#FFEF9A"}}>
+                                        <div className="table-container">
                                             <TableNewCustomerSetting data={data.projectHistoryData} header={data.projectHistoryHeader} sequenceNum={false} />
                                         </div>
                                         <Divider style={{ margin: "0px"}}></Divider>
                                         </>
                                     }
 
-                                    <div style={{ padding: "1rem", display: "flex", flexDirection: "row", justifyContent: "space-between", cursor: "pointer"}} onClick={() => setOpenCollectionHistory(!openCollectionHistory)}>
+                                    <div className="accordion-container" onClick={() => setOpenCollectionHistory(!openCollectionHistory)}>
                                         <span style={{ fontWeight: "bold"}}>COLLECTION HISTORY</span>
                                         {openCollectionHistory ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
                                     </div>
@@ -387,14 +407,14 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
 
                                     {openCollectionHistory &&
                                         <>
-                                        <div style={{ padding: "1rem", backgroundColor: "#FFEF9A"}}>
+                                        <div className="table-container">
                                         <TableNewCustomerSetting data={data.collectionHistoryData} header={data.collectionHistoryHeader} sequenceNum={false} />
                                         </div>
                                         <Divider style={{ margin: "0px"}}></Divider>
                                         </>
                                     }
 
-                                    <div style={{ padding: "1rem", display: "flex", flexDirection: "row", justifyContent: "space-between", cursor: "pointer"}} onClick={() => setOpenConfigItem(!openConfigItem)}>
+                                    <div className="accordion-container" onClick={() => setOpenConfigItem(!openConfigItem)}>
                                         <span style={{ fontWeight: "bold"}}>CONFIG ITEM</span>
                                         {openConfigItem ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
                                     </div>
@@ -402,7 +422,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                     {openConfigItem &&
                                         <>
                                         <Divider style={{ margin: "0px"}}></Divider>
-                                        <div style={{ padding: "1rem", backgroundColor: "#FFEF9A"}}>
+                                        <div className="table-container">
                                         <TableNewCustomerSetting data={data.configItemData} header={data.configItemHeader} sequenceNum={false}/>
                                         </div>
                                         </>
@@ -412,9 +432,9 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
 
                             <Divider></Divider>
                             
-                            <div style={{ display: "flex", flexDirection: "column", flexWrap: "wrap", padding: "0 2rem" }}>
-                                <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
-                                    <div style={{ display: "flex", flexDirection: "row", alignItems: "flex-end", width: "50%" }}>
+                            <div style={{ display: "flex", flexDirection: "column", padding: "0 2rem" }}>
+                                <div className="sales-assign-container">
+                                    <div style={{ display: "flex", flexDirection: "row", alignItems: "flex-end", flexWrap: "wrap" }}>
                                         <FinalForm
                                             onSubmit={(values: any) => onSubmitSalesHandler(values)}
                                             render={({ handleSubmit, pristine, invalid }) => (
@@ -435,26 +455,26 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                         <Button color='blue' content='Assign Me' style={{ height: "fit-content", marginLeft: "2rem"}}/>
                                     </div>
 
-                                    <div style={{ display: "flex", flexDirection: "column", width: "50%" }}>
+                                    <div className="setting-position">
                                         <Divider style={{ margin: "0px"}}/>
 
                                         <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: "0.5rem"}}>
                                             <p style={{ margin: 0 }}>Shareable customer</p>
-                                            <div><span>OFF</span><Checkbox toggle style={{ margin: "0 0.5rem"}}></Checkbox><span>ON</span></div>
+                                            <div><span>OFF</span><Checkbox toggle checked={shareable=="TRUE" ? true : false} onChange={() => handleShareable()} style={{ margin: "0 0.5rem"}}></Checkbox><span>ON</span></div>
                                         </div>
 
                                         <Divider style={{ margin: "0px"}}/>
 
                                         <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: "0.5rem"}}>
                                             <p style={{ margin: 0 }}>PMO customer</p>
-                                            <div><span>OFF</span><Checkbox toggle style={{ margin: "0 0.5rem"}}></Checkbox><span>ON</span></div>
+                                            <div><span>OFF</span><Checkbox toggle  checked={pmoCustomer=="TRUE" ? true : false} onChange={() => handlePmoCustomer()} style={{ margin: "0 0.5rem"}}></Checkbox><span>ON</span></div>
                                         </div>
 
                                         <Divider style={{ margin: "0px"}}/>
                                     </div>
                                 </div>
 
-                                <div style={{ width: "50%" }}>
+                                <div className="sales-assign-list">
                                     <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
                                         {salesAssign.map((data) => {
                                             return (
@@ -478,7 +498,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
 
                             <Divider></Divider>
 
-                            <p style={{ textAlign: "left", margin:"0", color: "#55637A", fontWeight: "bold", padding:"0 2rem" }}>INVOICING SCHEDULE SETTING</p>
+                            <p style={{ textAlign: "left", margin:"0", fontWeight: "bold" }} className="padding-horizontal grey">INVOICING SCHEDULE SETTING</p>
 
                             <Divider></Divider>
 
@@ -502,9 +522,9 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                     </div>
                                 </div>
                                 
-                                <div style={{ display: "flex", flexDirection: "row", width: "100%", justifyContent: "space-between", marginTop: "14px" }}>
+                                <div style={{ display: "flex", flexDirection: "row", width: "100%", justifyContent: "space-between", marginTop: "14px" }} className="invoicing-schedule-position">
                                     <div style={{ backgroundColor: "#DCDCDC", display: "flex", flexDirection: "column", width: "fit-content", height: "fit-content", padding: "1rem", borderRadius: "1rem", marginRight: "1rem"}}>
-                                        <p style={{ color: "#55637A", fontWeight: "bold" }}>Invoicing Date Range <span style={{ color: "red"}}>*</span></p>
+                                        <p style={{ fontWeight: "bold" }} className="grey">Invoicing Date Range <span style={{ color: "red"}}>*</span></p>
                                         <div style={{ display: "flex", flexDirection: "row"}}>
                                             <div style={{ display: "flex", flexDirection: "column", width: "7rem", marginRight: "1rem"}}>
                                                 <label htmlFor="minDate">Min. Date(Day)</label>
@@ -531,12 +551,12 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
 
                             <Divider></Divider>
 
-                            <p style={{ textAlign: "left", margin:"0", color: "#55637A", fontWeight: "bold", padding:"0 2rem" }}>INVOICING CONDITION</p>
+                            <p style={{ textAlign: "left", margin:"0", fontWeight: "bold" }} className="padding-horizontal grey">INVOICING CONDITION</p>
 
                             <Divider></Divider>
 
                             <div style={{ padding: "0 2rem" }}>
-                                <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+                                <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap"}}>
                                     <div style={{ width: "30%"}}>
                                         <FinalForm
                                             onSubmit={(values: any) => onSubmitProjectType(values)}
@@ -584,8 +604,8 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
 
                             <Divider></Divider>
 
-                            <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding:"0 2rem"}}>
-                                <p style={{ textAlign: "left", margin:"0", color: "#55637A", fontWeight: "bold" }}>RELATED CUSTOMER</p>
+                            <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap" }} className="padding-horizontal">
+                                <p style={{ textAlign: "left", margin:"0", fontWeight: "bold" }} className="grey">RELATED CUSTOMER</p>
                                 <Button color="yellow" size="small" onClick={onAddRelatedCustomer}><Icon name="add"/>Add Related Customer</Button>
                             </div>
 
@@ -620,8 +640,8 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
 
                             <Divider></Divider>
 
-                            <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding:"0 2rem"}}>
-                                <p style={{ textAlign: "left", margin:"0", color: "#55637A", fontWeight: "bold" }}>UPLOAD RELATED FILE</p>
+                            <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap" }} className="padding-horizontal">
+                                <p style={{ textAlign: "left", margin:"0", fontWeight: "bold" }} className="grey">UPLOAD RELATED FILE</p>
                                 <Button color="yellow" size="small" onClick={onAddRelatedFile}><Icon name="add"/>Add Related File</Button>
                             </div>
 
@@ -661,7 +681,6 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                             <Button color="blue">Submit</Button>
                         </div>
                     </div>
-                </div>
 
             </div>
         </Fragment>
