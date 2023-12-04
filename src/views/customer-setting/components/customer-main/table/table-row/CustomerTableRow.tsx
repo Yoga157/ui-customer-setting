@@ -3,6 +3,7 @@ import {
   Table,
   Dropdown,
   Confirm,
+  Icon,
   Button,
   Checkbox,
   TableCell,
@@ -53,11 +54,6 @@ const CustomerTableRow: React.FC<IProps> = (
     } else {
       getRowData([...props.data, data]);
     }
-
-    // if(props.data.lenght != 0){
-    //   getRowData([])
-    // } else {
-    // }
   };
 
   const reassignClick = () => {
@@ -76,35 +72,6 @@ const CustomerTableRow: React.FC<IProps> = (
     });
   };
 
-  // const moveToAddNewFunnel = () => {
-  //   props.history.push({
-  //     pathname: RouteEnum.FunnelForm,
-  //     state: {
-  //       eventName: rowData.eventName,
-  //       customerName: rowData.customerName,
-  //       funnelOpportunityID: rowData.funnelOpportunityID,
-  //       eventDate: rowData.eventDate,
-  //     },
-  //   });
-  // };
-  // const showConfirmCancel = () => setOpenConfirm(true);
-
-  // // const handleConfirm = () => {
-  // //     dispatch(ModalFirstLevelActions.OPEN(<FunnelNotesForm funnelGenID={rowData.funnelGenID.toString()} fromForm="FormCancel" />,ModalSizeEnum.Tiny));
-  // //     setOpenConfirm(false);
-  // // }
-
-  // const onClickCancel = () =>
-  //   dispatch(
-  //     ModalFirstLevelActions.OPEN(
-  //       <FunnelNotesForm fromForm="FormCancel" />,
-  //       ModalSizeEnum.Tiny
-  //     )
-  //   );
-
-  const handleCancel = () => setOpenConfirm(false);
-  const showConfirm = () => setOpenConfirm(true);
-
   useEffect(() => {
     console.log("Efect");
   }, []);
@@ -122,7 +89,6 @@ const CustomerTableRow: React.FC<IProps> = (
             </label>
           </div>
         </TableCell>
-
         <Table.Cell width="1">
           <Dropdown pointing="left" icon="ellipsis vertical">
             <Dropdown.Menu>
@@ -132,36 +98,43 @@ const CustomerTableRow: React.FC<IProps> = (
                 onClick={onEdit}
               />
 
-              {/* )}*/}
-
               <Dropdown.Item
                 text="Assign Sales"
                 icon="users"
                 onClick={reassignClick}
               />
 
-              {rowData.status != "CANCEL" && rowData.CustomerSettingID == "" && (
-                <Dropdown.Item
-                  text="Cancel"
-                  icon="remove circle"
-                  // onClick={showConfirm}
-                />
-              )}
+              {rowData.status != "CANCEL" &&
+                rowData.CustomerSettingID == "" && (
+                  <Dropdown.Item text="Cancel" icon="remove circle" />
+                )}
             </Dropdown.Menu>
           </Dropdown>
         </Table.Cell>
-        <Table.Cell>{rowData.customerGenID}</Table.Cell>
+        <Table.Cell textAlign="center">{rowData.customerGenID}</Table.Cell>
         <Table.Cell>{rowData.customerCategory}</Table.Cell>
         <Table.Cell>{rowData.customerName}</Table.Cell>
         <Table.Cell>{rowData.lastProjectName}</Table.Cell>
-        <Table.Cell>{rowData.shareable}</Table.Cell>
-        <Table.Cell>{rowData.salesAssign}</Table.Cell>
-        <Table.Cell>{rowData.pmoCustomer}</Table.Cell>
+        <Table.Cell textAlign="center">{rowData.shareable}</Table.Cell>
+        <Table.Cell textAlign="center">{rowData.salesAssign}</Table.Cell>
+        <Table.Cell textAlign="center">{rowData.pmoCustomer}</Table.Cell>
         <Table.Cell textAlign="center">{rowData.relatedCustomer}</Table.Cell>
-        <Table.Cell textAlign="center">{rowData.invoiceCondition}</Table.Cell>
-        <Table.Cell>{rowData.blacklist}</Table.Cell>
-        <Table.Cell>{rowData.holdshipment}</Table.Cell>
-        <Table.Cell>{rowData.createUserID}</Table.Cell>
+        <Table.Cell>{rowData.invoiceCondition}</Table.Cell>
+        <Table.Cell textAlign="center">
+          {rowData.blacklist === "Yes" ? (
+            <Icon name="phone" color="red" />
+          ) : (
+            <Icon name="phone" color="green" />
+          )}
+        </Table.Cell>{" "}
+        <Table.Cell textAlign="center">
+          {rowData.holdshipment === "Yes" ? (
+            <Icon name="truck" color="yellow" />
+          ) : (
+            <Icon name="truck" color="blue" />
+          )}
+        </Table.Cell>
+        <Table.Cell textAlign="center">{rowData.createUserID}</Table.Cell>
         <Table.Cell>{rowData.createDate}</Table.Cell>
         <Table.Cell>{rowData.modifyUserID}</Table.Cell>
         <Table.Cell>{rowData.modifyDate}</Table.Cell>

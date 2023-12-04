@@ -1,13 +1,18 @@
 import React, { Fragment, useEffect, useState, useCallback } from "react";
 import { isRequired } from "revalidate";
+import { FormSpy } from "react-final-form";
 import { useDispatch, useSelector } from "react-redux";
+import { Dispatch } from "redux";
 import IStore from "models/IStore";
+import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
 import { Divider, Grid, Form, Select } from "semantic-ui-react";
 import { Button, SelectInput } from "views/components/UI";
 import { Form as FinalForm, Field } from "react-final-form";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import { selectSalesSearchOptions } from "selectors/select-options/SalesAssignSelector";
+import CustomerSettingModel from "stores/customer-setting/models/CustomerSettingModel";
+import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 
 interface IProps {
   rowData: any;
@@ -16,16 +21,84 @@ interface IProps {
 const FilterCustomer: React.FC<{
   setOpenFilter: React.Dispatch<React.SetStateAction<boolean>>;
   openFilter: boolean;
-}> = ({ setOpenFilter, openFilter }) => {
+} & IProps> = ({ setOpenFilter, openFilter, rowData }) => {
   const [salesName, setSalesName] = useState("");
   const [salesAssignArray, setSalesAssignArray] = useState([]);
+  const [shareableYesChecked, setShareableYesChecked] = useState(false);
+  const [shareableNoChecked, setShareableNoChecked] = useState(false);
+  const [pmo_customerYesChecked, setPmo_customerYesChecked] = useState(false);
+  const [pmo_customerNoChecked, setPmo_customerNoChecked] = useState(false);
+  const [holdshipmentYesChecked, setHoldshipmentYesChecked] = useState(false);
+  const [holdshipmentNoChecked, setHoldshipmentNoChecked] = useState(false);
+  const [blacklistYesChecked, setBlacklistYesChecked] = useState(false);
+  const [blacklistNoChecked, setBlacklistNoChecked] = useState(false);
+
+  const dispatch: Dispatch = useDispatch();
 
   const isRequesting: boolean = useSelector((state: IStore) =>
     selectRequesting(state, [])
   );
 
-  const onSubmitHandler = async (e) => {
-    const userId: any = localStorage.getItem("userLogin");
+  const onSubmitHandler = async (values) => {
+    console.log(values);
+    // console.log(pmoCustomer);
+
+    const shareable =
+      shareableYesChecked && shareableNoChecked
+        ? null
+        : shareableYesChecked
+        ? "true"
+        : shareableNoChecked
+        ? "false"
+        : null;
+
+    const pmo_customer =
+      pmo_customerYesChecked && pmo_customerNoChecked
+        ? null
+        : pmo_customerYesChecked
+        ? "true"
+        : pmo_customerNoChecked
+        ? "false"
+        : null;
+
+    const holdshipment =
+      holdshipmentYesChecked && holdshipmentNoChecked
+        ? null
+        : holdshipmentYesChecked
+        ? "true"
+        : holdshipmentNoChecked
+        ? "false"
+        : null;
+
+    const blacklist =
+      blacklistYesChecked && blacklistNoChecked
+        ? null
+        : blacklistYesChecked
+        ? "true"
+        : blacklistNoChecked
+        ? "false"
+        : null;
+
+    console.log(shareable);
+    console.log(pmo_customer);
+    console.log(holdshipment);
+    console.log(blacklist);
+
+    await dispatch(
+      CustomerSettingAct.requestSearchCustomerSett(
+        1,
+        10,
+        "CustomerSettingID",
+        null,
+        null,
+        null,
+        shareable,
+        pmo_customer,
+        holdshipment,
+        blacklist
+      )
+    );
+    dispatch(ModalAction.CLOSE());
   };
 
   const salesStoreSearch = useSelector((state: IStore) =>
@@ -39,7 +112,14 @@ const FilterCustomer: React.FC<{
     setSalesAssignArray(filteredArray);
   };
 
-  const resetClick = () => {};
+  const resetClick = () => {
+    setSalesName("");
+    setSalesAssignArray([]);
+    // setHoldshipmentCustomer(false);
+    // setShareable(false);
+    // setPmoCustomer(false);
+    // setBlacklist(false);
+  };
 
   return (
     <div
@@ -56,7 +136,6 @@ const FilterCustomer: React.FC<{
           width: "25rem",
           height: "100vh",
           backgroundColor: "#ffffff",
-          // color: "#fff",
           padding: "5px",
           boxSizing: "border-box",
         }}
@@ -115,11 +194,17 @@ const FilterCustomer: React.FC<{
                             }}
                           >
                             <input
+                              name="shareable"
                               type="checkbox"
+                              // value="yes"
+                              // value= {shareableYesChecked && shareableNoChecked ? null : shareableYesChecked ? 'true' : shareableNoChecked ? 'false' : null}
                               style={{
                                 marginRight: "0.5rem",
                                 transform: "scale(1)",
                               }}
+                              onChange={() =>
+                                setShareableYesChecked(!shareableYesChecked)
+                              }
                             ></input>
                             <span>Yes</span>
                           </label>
@@ -143,27 +228,14 @@ const FilterCustomer: React.FC<{
                                 marginRight: "0.5rem",
                                 transform: "scale(1)",
                               }}
+                              onChange={() =>
+                                setShareableNoChecked(!shareableNoChecked)
+                              }
                             ></input>
                             <span>No</span>
                           </label>
                         </div>
                       </div>
-                      {/* <Grid.Column widht={2}>
-                        <div>
-                          <label>
-                            <input type="checkbox"></input>
-                            <span>Yes</span>
-                          </label>
-                        </div>
-                      </Grid.Column>
-                      <Grid.Column widht={2}>
-                        <div>
-                          <label>
-                            <input type="checkbox"></input>
-                            <span>No</span>
-                          </label>
-                        </div>
-                      </Grid.Column> */}
                     </Grid.Row>
                   </Grid.Row>
                   <Divider></Divider>
@@ -191,11 +263,18 @@ const FilterCustomer: React.FC<{
                             }}
                           >
                             <input
+                              name="pmo_customer"
                               type="checkbox"
+                              value="yes"
                               style={{
                                 marginRight: "0.5rem",
                                 transform: "scale(1)",
                               }}
+                              onChange={() =>
+                                setPmo_customerYesChecked(
+                                  !pmo_customerYesChecked
+                                )
+                              }
                             ></input>
                             <span>Yes</span>
                           </label>
@@ -219,6 +298,9 @@ const FilterCustomer: React.FC<{
                                 marginRight: "0.5rem",
                                 transform: "scale(1)",
                               }}
+                              onChange={() =>
+                                setPmo_customerNoChecked(!pmo_customerNoChecked)
+                              }
                             ></input>
                             <span>No</span>
                           </label>
@@ -288,11 +370,18 @@ const FilterCustomer: React.FC<{
                             }}
                           >
                             <input
+                              name="holdshipment"
+                              value="yes"
                               type="checkbox"
                               style={{
                                 marginRight: "0.5rem",
                                 transform: "scale(1)",
                               }}
+                              onChange={() =>
+                                setHoldshipmentYesChecked(
+                                  !holdshipmentYesChecked
+                                )
+                              }
                             ></input>
                             <span>Yes</span>
                           </label>
@@ -316,6 +405,9 @@ const FilterCustomer: React.FC<{
                                 marginRight: "0.5rem",
                                 transform: "scale(1)",
                               }}
+                              onChange={() =>
+                                setHoldshipmentNoChecked(!holdshipmentNoChecked)
+                              }
                             ></input>
                             <span>No</span>
                           </label>
@@ -325,7 +417,7 @@ const FilterCustomer: React.FC<{
                   </Grid.Row>
                   <Divider></Divider>
                   <Grid.Row>
-                    <p>Holdshipment Customer</p>
+                    <p>Blacklist Customer</p>
                     <Grid.Row>
                       <div
                         style={{
@@ -349,10 +441,15 @@ const FilterCustomer: React.FC<{
                           >
                             <input
                               type="checkbox"
+                              name="blacklist"
+                              value="yes"
                               style={{
                                 marginRight: "0.5rem",
                                 transform: "scale(1)",
                               }}
+                              onChange={() =>
+                                setBlacklistYesChecked(!blacklistYesChecked)
+                              }
                             ></input>
                             <span>Yes</span>
                           </label>
@@ -376,6 +473,9 @@ const FilterCustomer: React.FC<{
                                 marginRight: "0.5rem",
                                 transform: "scale(1)",
                               }}
+                              onChange={() =>
+                                setBlacklistNoChecked(!blacklistNoChecked)
+                              }
                             ></input>
                             <span>No</span>
                           </label>
@@ -383,17 +483,19 @@ const FilterCustomer: React.FC<{
                       </div>
                     </Grid.Row>
                   </Grid.Row>
-                  <Divider></Divider>
-                  <br />
-                  <br />
+                  <Divider style={{ marginBottom: "4rem" }}></Divider>
                   <Divider></Divider>
                   <div style={{ textAlign: "center" }}>
                     <Grid.Row>
                       <Button
                         className="MarBot20"
                         type="submit"
-                        color="blue"
-                        style={{ width: "200px" }}
+                        // color="blue"
+                        style={{
+                          width: "18rem",
+                          color: "#f5f5f5",
+                          background: "#656dd1",
+                        }}
                       >
                         Apply Filter
                       </Button>
@@ -401,10 +503,14 @@ const FilterCustomer: React.FC<{
                     <Grid.Row>
                       <Button
                         type="button"
-                        onClick={resetClick}
-                        style={{ width: "200px" }}
+                        onClick={() => resetClick}
+                        style={{
+                          width: "18rem",
+                          color: "#656dd1",
+                          background: "#f5f5f5",
+                        }}
                       >
-                        Cancel
+                        <p>Reset Filter</p>
                       </Button>
                     </Grid.Row>
                   </div>

@@ -234,133 +234,306 @@ const CustomerSettingPage: React.FC<IProps> = (
 
   return (
     <Fragment>
-      <LoadingIndicator isActive={isRequesting}>
-        <Grid columns="equal" textAlign="center">
-          <Grid.Column width={1}>
-            <Button
-              className="m-05r"
-              icon="sliders horizontal"
-              color="yellow"
-              disabled={false}
-              size="tiny"
-              onClick={() => setOpenFilter(!openFilter)}
-            />
-          </Grid.Column>
-          <Grid.Column>
-            <InputSearch />
-          </Grid.Column>
-        </Grid>
+      {/* <LoadingIndicator isActive={isRequesting}> */}
+      <div
+        style={{ display: "flex", justifyContent: "center", margin: "1rem" }}
+      >
+        <Button
+          className="m-05r"
+          icon="sliders horizontal"
+          color="yellow"
+          disabled={false}
+          // size="small"
+          onClick={() => setOpenFilter(!openFilter)}
+        />
+        <InputSearch />
+      </div>
 
-        <Grid columns="equal">
-          <Grid.Column width={2} verticalAlign="middle">
-            <Header as="h4">
-              <Header.Content className="ml-1r-767">
-                {"Customer Setting"}
-              </Header.Content>
-            </Header>
-          </Grid.Column>
-
-          <Grid.Column width={14}>
-            <Tooltips
-              content="Sales Assign"
-              trigger={
-                <Button
-                  className="m-05r"
-                  icon="user"
-                  color="blue"
-                  disabled={rowData.length == 0 ? true : false}
-                  floated="left"
-                  size="tiny"
-                  content="Sales Assign"
-                  onClick={onAddSales}
-                />
-              }
-            />
-            <Tooltips
-              content="Adjust Setting"
-              trigger={
-                <Button
-                  className="m-05r"
-                  icon="setting"
-                  color="teal"
-                  disabled={rowData.length == 0 ? true : false}
-                  floated="left"
-                  size="tiny"
-                  content="Adjust Setting"
-                  onClick={onAddSetting}
-                />
-              }
-            />
-            <Tooltips
-              content="Delete"
-              trigger={
-                <Button
-                  className="m-05r"
-                  icon="trash"
-                  color="pink"
-                  disabled={rowData.length == 0 ? true : false}
-                  floated="left"
-                  size="tiny"
-                  content="Delete"
-                  onClick={onDelete}
-                />
-              }
-            />
-            <Tooltips
-              content="Export Xls"
-              trigger={
-                <Button
-                  className="m-05r"
-                  icon="file excel"
-                  color="teal"
-                  disabled={false}
-                  floated="right"
-                  size="tiny"
-                  content="Export Xls"
-                  onClick={exportTableToExcel}
-                />
-              }
-            />
-            <Tooltips
-              content="New Customer Setting"
-              trigger={
-                <Button
-                  className="m-05r"
-                  icon="plus"
-                  color="yellow"
-                  disabled={false}
-                  floated="right"
-                  size="tiny"
-                  content="New Customer Setting"
-                  onClick={moveToAddCustomer}
-                />
-              }
-            />
-          </Grid.Column>
-        </Grid>
-
-        <Grid columns="equal">
-          <Grid.Column>
-            <div className="wrapper-table">
-              <CustomerTable
-                history={props.history}
-                tableData={tableData}
-                getRowData={setNewRowData}
-                data={rowData}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          marginBottom: "1rem",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <h2
+            style={{
+              fontStyle: "Bold",
+              color: "#55637a",
+              marginTop: "0",
+              fontSize: "1.7rem",
+              fontWeight: "bold",
+            }}
+          >
+            Customer List
+          </h2>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            textAlign: "left",
+            justifyContent: "center",
+          }}
+        >
+          <Tooltips
+            content="Add Sales"
+            trigger={
+              <Button
+                style={{
+                  height: "fit-content",
+                  marginLeft: "1rem",
+                  color: "#656dd1",
+                  background: "white",
+                  fontSize: "0.7rem",
+                  alignItems: "center",
+                }}
+                icon="user plus"
+                disabled={rowData.length == 0 ? true : false}
+                size="mini"
+                content="Add Sales"
+                onClick={onAddSales}
               />
-            </div>
-            <Pagination
-              activePage={activePage}
-              onPageChange={(e, data) => handlePaginationChange(e, data)}
-              totalPage={tableData.totalRow}
-              pageSize={pageSize}
+            }
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            textAlign: "left",
+            justifyContent: "center",
+          }}
+        >
+          <Tooltips
+            content="Adjust Setting"
+            trigger={
+              <Button
+                style={{
+                  height: "fit-content",
+                  marginLeft: "0.5rem",
+                  color: "#34d7aa",
+                  background: "white",
+                  fontSize: "0.7rem",
+                  alignItems: "center",
+                }}
+                icon="setting"
+                // disabled={rowData.length == 0 ? true : false}
+                size="mini"
+                content="Adjust Setting"
+                onClick={onAddSetting}
+              />
+            }
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            textAlign: "left",
+            justifyContent: "center",
+          }}
+        >
+          <Tooltips
+            content="Delete"
+            trigger={
+              <Button
+                style={{
+                  height: "fit-content",
+                  marginLeft: "0.5rem",
+                  color: "#f97452",
+                  background: "white",
+                  fontSize: "0.7rem",
+                  alignItems: "center",
+                }}
+                icon="user plus"
+                color="white"
+                disabled={rowData.length == 0 ? true : false}
+                size="mini"
+                content="Delete"
+                onClick={onDelete}
+              />
+            }
+          />
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            textAlign: "right",
+            justifyContent: "center",
+            marginLeft: "auto",
+          }}
+        >
+          <Tooltips
+            content="New Customer Setting"
+            trigger={
+              <Button
+                className="m-05r"
+                icon="plus"
+                color="yellow"
+                disabled={false}
+                floated="right"
+                size="small"
+                content="New Customer Setting"
+                onClick={moveToAddCustomer}
+              />
+            }
+          />
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            textAlign: "right",
+            justifyContent: "center",
+          }}
+        >
+          <Tooltips
+            content="Export Excel"
+            trigger={
+              <Button
+                className="m-05r"
+                icon="file excel"
+                color="blue"
+                disabled={false}
+                floated="right"
+                size="small"
+                content="Export Excel"
+                onClick={exportTableToExcel}
+              />
+            }
+          />
+        </div>
+      </div>
+
+      {/* <Grid columns="equal">
+        <Grid.Column width={2} verticalAlign="middle">
+          <Header as="h4">
+            <Header.Content className="ml-1r-767">
+              <span style={{ fontWeight: "bold", fontSize: "1.2em" }}>
+                {"Customer List"}
+              </span>
+            </Header.Content>
+          </Header>
+        </Grid.Column>
+
+        <Grid.Column width={14}>
+          <Tooltips
+            content="Add Sales"
+            trigger={
+              <Button
+                style={{ background: "white", color: "blue" }}
+                className="m-05r"
+                icon="user plus"
+                color="blue"
+                disabled={rowData.length == 0 ? true : false}
+                floated="left"
+                size="mini"
+                content="Add Sales"
+                onClick={onAddSales}
+              />
+            }
+          />
+          <Tooltips
+            content="Adjust Setting"
+            trigger={
+              <Button
+                className="m-05r"
+                icon="setting"
+                color="teal"
+                disabled={rowData.length == 0 ? true : false}
+                floated="left"
+                size="mini"
+                content="Adjust Setting"
+                onClick={onAddSetting}
+              />
+            }
+          />
+          <Tooltips
+            content="Delete"
+            trigger={
+              <Button
+                className="m-05r"
+                icon="trash"
+                color="pink"
+                disabled={rowData.length == 0 ? true : false}
+                floated="left"
+                size="mini"
+                content="Delete"
+                onClick={onDelete}
+              />
+            }
+          />
+          <Tooltips
+            content="Export Xls"
+            trigger={
+              <Button
+                className="m-05r"
+                icon="file excel"
+                color="teal"
+                disabled={false}
+                floated="right"
+                size="small"
+                content="Export Xls"
+                onClick={exportTableToExcel}
+              />
+            }
+          />
+          <Tooltips
+            content="New Customer Setting"
+            trigger={
+              <Button
+                className="m-05r"
+                icon="plus"
+                color="yellow"
+                disabled={false}
+                floated="right"
+                size="small"
+                content="New Customer Setting"
+                onClick={moveToAddCustomer}
+              />
+            }
+          />
+        </Grid.Column>
+      </Grid> */}
+
+      <Grid columns="equal">
+        <Grid.Column>
+          <div className="wrapper-table">
+            <CustomerTable
+              history={props.history}
+              tableData={tableData}
+              getRowData={setNewRowData}
+              data={rowData}
             />
-          </Grid.Column>
-        </Grid>
-      </LoadingIndicator>
+          </div>
+          <Pagination
+            activePage={activePage}
+            onPageChange={(e, data) => handlePaginationChange(e, data)}
+            totalPage={tableData.totalRow}
+            pageSize={pageSize}
+          />
+        </Grid.Column>
+      </Grid>
+      {/* </LoadingIndicator> */}
 
       {openFilter && (
-        <FilterCustomer setOpenFilter={setOpenFilter} openFilter={openFilter} />
+        <FilterCustomer
+          setOpenFilter={setOpenFilter}
+          openFilter={openFilter}
+          rowData={rowData}
+        />
       )}
     </Fragment>
   );

@@ -211,11 +211,11 @@ const AdjSetting: React.FC<IProps> = (
                 <Grid.Row>
                   <Grid.Column>
                     <Field
-                      name="Cust. Category"
+                      name="Customer Category"
                       component={SelectInput}
-                      placeholder="Brand"
+                      placeholder="Enterprise"
                       thousandSeparator={true}
-                      labelName="Brand"
+                      labelName="Cust.Category"
                       mandatory={false}
                       // options={}
                     />
@@ -237,7 +237,7 @@ const AdjSetting: React.FC<IProps> = (
                       <span>OFF</span>
                       <Checkbox
                         toggle
-                        style={{ margin: "0 0.5rem" }}
+                        style={{ margin: "-6px 0.5rem" }}
                       ></Checkbox>
                       <span>ON</span>
                     </div>
@@ -257,15 +257,12 @@ const AdjSetting: React.FC<IProps> = (
                     <p style={{ margin: 0 }}>PMO customer</p>
                     <div>
                       <span>OFF</span>
-                      <Checkbox
-                        toggle
-                        style={{ margin: "0 0.5rem" }}
-                      ></Checkbox>
+                      <Checkbox toggle style={{ margin: "-6px 0.5rem" }} />
                       <span>ON</span>
                     </div>
                   </div>
                 </Grid.Row>
-              </div>{" "}
+              </div>
               <Divider></Divider>
               <div style={{ textAlign: "center" }}>
                 <Button type="button" onClick={cancelClick}>

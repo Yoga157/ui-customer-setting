@@ -29,22 +29,24 @@ export const requestCustomerSett = async (
 export const requestSearchCustomerSett = async (
   page: number,
   pageSize: number,
-  column: string,
-  search: string,
-  sorting?: string,
-  salesAssign?: string,
-  shareable?: boolean,
-  pmo_customer?: boolean,
-  holdshipment?: boolean,
-  blacklist?: boolean
+  column: string | null,
+  search: string | null,
+  sorting?: string | null,
+  salesAssign?: string | null,
+  shareable?: string | null,
+  pmo_customer?: string | null,
+  holdshipment?: string | null,
+  blacklist?: string | null
 ): Promise<CustomerSettingModel | HttpErrorResponseModel> => {
   const controllerName = `CustomerSetting/GetListCustomerSettingBySearch?page=${page}&pageSize=${pageSize}&column=${column}&search=${search}${
-    sorting ? `&sorting=${sorting}` : ``
-  }${salesAssign ? `&salesAssign=${salesAssign}` : ``}${
-    shareable ? `&shareable=${shareable}` : ``
-  }${pmo_customer ? `&pmo_customer=${pmo_customer}` : ``}${
-    holdshipment ? `&holdshipment=${holdshipment}` : ``
-  }${blacklist ? `&blacklist=${blacklist}` : ``}`;
+    sorting || sorting != null ? `&sorting=${sorting}` : ``
+  }${salesAssign || salesAssign != null ? `&salesAssign=${salesAssign}` : ``}${
+    shareable || shareable != null ? `&shareable=${shareable}` : ``
+  }${
+    pmo_customer || pmo_customer != null ? `&pmo_customer=${pmo_customer}` : ``
+  }${
+    holdshipment || holdshipment != null ? `&holdshipment=${holdshipment}` : ``
+  }${blacklist || blacklist != null ? `&blacklist=${blacklist}` : ``}`;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName

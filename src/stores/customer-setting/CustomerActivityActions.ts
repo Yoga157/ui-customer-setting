@@ -12,6 +12,7 @@ type ActionUnion =
   | HttpErrorResponseModel
   | CustomerSettingModel
   | CustomerSettingRow
+  | boolean
   | ResultActions;
 
 export const REQUEST_CUSTOMERS_SETTING: string =
@@ -50,10 +51,10 @@ export const requestSearchCustomerSett = (
   search: string,
   sorting?: string,
   salesAssign?: string,
-  shareable?: boolean,
-  pmo_customer?: boolean,
-  holdshipment?: boolean,
-  blacklist?: boolean
+  shareable?: string,
+  pmo_customer?: string,
+  holdshipment?: string,
+  blacklist?: string
 ): any => {
   return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
     await ActionUtility.createThunkEffect<CustomerSettingModel>(
@@ -77,6 +78,12 @@ export const requestSearchCustomerSett = (
 export const SET_PAGE: string = "CustomerActions.SET_PAGE";
 export const setActivePage = (activePage: number): IAction<number> => {
   return ActionUtility.createAction(SET_PAGE, activePage);
+};
+
+export const REQUEST_RESET_FILTER: string =
+  "CustomerActions.REQUEST_RESET_FILTER";
+export const requestResetFilter = (): IAction<boolean> => {
+  return ActionUtility.createAction(REQUEST_RESET_FILTER, true);
 };
 
 export const DEL_CUSTOMERS_SETTING: string =

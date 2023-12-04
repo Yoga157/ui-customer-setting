@@ -88,6 +88,7 @@ const CustomerTable: React.FC<IProps> = (
             Last Project Name
           </Table.HeaderCell>
           <Table.HeaderCell
+            textAlign="center"
             sorted={columns === "Shareable" ? direction : null}
             onClick={() => reloads("Shareable")}
           >
@@ -100,12 +101,14 @@ const CustomerTable: React.FC<IProps> = (
             Sales Assign
           </Table.HeaderCell>
           <Table.HeaderCell
+            textAlign="center"
             sorted={columns === "PMOCustomer" ? direction : null}
             onClick={() => reloads("PMOCustomer")}
           >
             PMO Cust.
           </Table.HeaderCell>
           <Table.HeaderCell
+            textAlign="center"
             sorted={columns === "RelatedCustomer" ? direction : null}
             onClick={() => reloads("RelatedCustomer")}
           >
@@ -119,18 +122,21 @@ const CustomerTable: React.FC<IProps> = (
           </Table.HeaderCell>
 
           <Table.HeaderCell
+            textAlign="center"
             sorted={columns === "Blacklist" ? direction : null}
             onClick={() => reloads("Blacklist")}
           >
             Blacklist
           </Table.HeaderCell>
           <Table.HeaderCell
+            textAlign="center"
             sorted={columns === "Holdshipment" ? direction : null}
             onClick={() => reloads("Holdshipment")}
           >
             Hold Shipment
           </Table.HeaderCell>
           <Table.HeaderCell
+            textAlign="center"
             sorted={columns === "CreateUserID" ? direction : null}
             onClick={() => reloads("CreateUserID")}
           >

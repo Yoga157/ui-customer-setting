@@ -90,11 +90,11 @@ const AddSalesAssign: React.FC<IProps> = (
   const onSubmitHandler = async (e) => {
     const userId: any = localStorage.getItem("userLogin");
 
-    console.log(rowData);
-    console.log(salesAssignArray);
+    // console.log(rowData);
+    // console.log(salesAssignArray);
 
     for (let j = 0; j < rowData.lenght; j++) {
-      console.log(`rowData id ${rowData[j].customerSettingID}`);
+      // console.log(`rowData id ${rowData[j].customerSettingID}`);
       for (let i = 0; i < salesAssignArray.length; i++) {
         const NewAssignSales = new SalesAssignPostModel(e);
         NewAssignSales.assignID = 0;
