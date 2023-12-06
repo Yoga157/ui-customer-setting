@@ -1,6 +1,8 @@
 import { createSelector, ParametricSelector } from "reselect";
 import IStore from "../../models/IStore";
 import { Selector } from "react-redux";
+import CustomerSettingRow from "stores/customer-setting/models/CustomerSettingRow";
+import CustomerSettingById from "stores/customer-setting/models/CustomerSettingById";
 
 const _selectCustomerSetting = (models: any): any => {
   return {
@@ -43,6 +45,23 @@ export const selectCustomerSetting: Selector<IStore, any> = createSelector(
   (state: IStore) => state.customerSetting.data!,
   _selectCustomerSetting
 );
+
+const _selectCustomerSettingById = (model: any): any => {
+  return {
+    customerSettingID: model.customerSettingID === null ? null : model.customerSettingID,
+    customerGenID: model.customerGenID === null ? null : model.customerGenID,
+    customerCategoryID: model.customerCategoryID === "" ? null : model.customerCategoryID,
+    shareable: model.shareable === null ? null : model.shareable,
+    pmoCustomer: model.pmoCustomer === null ? null : model.pmoCustomer,
+    blacklist: model.blacklist === null ? null : model.blacklist,
+    holdshipment: model.holdshipment === null ? null : model.holdshipment,
+    avgAR: model.avgAR === null ? null : model.avgAR,
+  }
+}
+
+export const selectCustomerSettingByCustomerId: Selector<IStore, any> = createSelector(
+  (state: IStore) => state.customerSetting.dataByCustomerId, _selectCustomerSettingById
+)
 
 // const _selectCustomerName = (models: any[]): any[] => {
 //   return models.map((model: any): any => ({

@@ -5,22 +5,62 @@ import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
 import { Divider, Form } from "semantic-ui-react";
 import { Form as FinalForm, Field } from "react-final-form";
 import { DropdownClearInput, Button } from "views/components/UI";
+import InvoicingConditionModel from "stores/invoicing-condition/models/InvoicingConditionModel";
+import * as InvoicingCondition from "stores/invoicing-condition/InvoicingConditionActivityActions"
 
 interface IProps {
-    history: any;
-  }
+    customerSettingID: number;
+}
 
 const ModalNewInvoicingCondition: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
     const dispatch: Dispatch = useDispatch();
     const [projectType, setProjectType] = useState("")
     const [documentInvoicing, setDocumentInvoicing] = useState("")
 
-    const onSubmitProjectType = (data) => {
+    const projectTypeData = [
+        {
+            text: "Manage Operation",
+            value: "Manage Operation"
+        },
+        {
+            text: "Manage Service",
+            value: "Manage Service"
+        },
+        {
+            text: "Project Type",
+            value: "Project Type"
+        },
+    ]
 
-    }
+    const documentInvoicingData = [
+        {
+            text: "BAST",
+            value: "BAST"
+        },
+        {
+            text: "Document 1",
+            value: "Document 1"
+        },
+        {
+            text: "Document 2",
+            value: "Document 2"
+        },
+    ]
 
-    const onSubmitDocumentInvoicing = (data) => {
+    const onSubmitHandler = (data: any): any => {
+        console.log(data)
+        console.log(props.customerSettingID)
 
+        const NewInvoicingCondition = new InvoicingConditionModel({});
+        NewInvoicingCondition.conditionID = 0;
+        NewInvoicingCondition.customerSettingID = props.customerSettingID;
+        NewInvoicingCondition.projectType = data.projectType;
+        NewInvoicingCondition.conditionName = data.documentInvoicing;
+        NewInvoicingCondition.createUserID = 0;
+        NewInvoicingCondition.modifyUserID = 0;
+
+        dispatch(InvoicingCondition.postInvoicingCondition(NewInvoicingCondition))
+        dispatch(ModalAction.CLOSE());
     }
 
     const cancelClick = () => {
@@ -32,63 +72,54 @@ const ModalNewInvoicingCondition: React.FC<IProps> = (props: React.PropsWithChil
             <p style={{ textAlign: "left", margin:"0", color: "#55637A", fontWeight: "bold" }}>ADD NEW INVOICING CONDITION</p>
             <Divider></Divider>
 
-            <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
-                <div style={{ width: "49%" }}>
-                    <FinalForm
-                        onSubmit={(values: any) => onSubmitProjectType(values)}
-                        render={({ handleSubmit, pristine, invalid }) => (
-                        <Form onSubmit={handleSubmit}>
+            <FinalForm
+                onSubmit={(values: any) => onSubmitHandler(values)}
+                render={({ handleSubmit, pristine, invalid }) => (
+                <Form onSubmit={handleSubmit}>
+
+                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
+                        <div style={{ width: "49%" }}>
                             <Field
                                 name="projectType"
                                 component={DropdownClearInput}
-                                // placeholder="Type customer name here.."
+                                placeholder="Select project type"
                                 labelName="Project Type"
-                                // handleSearchChange={handleSearchChangeCustomer}
-                                // onResultSelect={onResultSelectCustomer}
-                                // results={customerResult}
+                                options={projectTypeData}
                                 values={projectType}
                                 mandatory={true}
                             />
-                        </Form>
-                    )}/>
-                </div>
+                        </div>
 
-                <div style={{ width: "49%" }}>
-                    <FinalForm
-                        onSubmit={(values: any) => onSubmitDocumentInvoicing(values)}
-                        render={({ handleSubmit, pristine, invalid }) => (
-                        <Form onSubmit={handleSubmit}>
-                            <Field
-                                name="documentInvoicing"
-                                component={DropdownClearInput}
-                                // placeholder="Type customer name here.."
-                                labelName="Document Invoicing"
-                                // handleSearchChange={handleSearchChangeCustomer}
-                                // onResultSelect={onResultSelectCustomer}
-                                // results={customerResult}
-                                values={projectType}
-                                mandatory={true}
-                            />
-                        </Form>
-                    )}/>
-                </div>
-            </div>
+                        <div style={{ width: "49%" }}>
+                                <Field
+                                    name="documentInvoicing"
+                                    component={DropdownClearInput}
+                                    placeholder="Select document invoicing"
+                                    labelName="Document Invoicing"
+                                    options={documentInvoicingData}
+                                    values={documentInvoicing}
+                                    mandatory={true}
+                                />
+                        </div>
+                    </div>
 
-            <Divider></Divider>
+                    <Divider></Divider>
 
-            <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
-                <Button
-                    textAlign="center"
-                    className="MarBot10"
-                    type="submit"
-                    color="blue"
-                >
-                    Submit
-                </Button>
-                <Button type="button" onClick={cancelClick}>
-                Cancel
-                </Button>
-            </div>
+                    <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+                        <Button
+                            textAlign="center"
+                            className="MarBot10"
+                            type="submit"
+                            color="blue"
+                        >
+                            Submit
+                        </Button>
+                        <Button type="button" onClick={cancelClick}>
+                        Cancel
+                        </Button>
+                    </div>
+                </Form>
+            )}/>
         </Fragment>
     )
 }

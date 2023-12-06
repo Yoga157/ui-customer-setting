@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useCallback,} from "react";
+import React, { Fragment, useState, useCallback, useEffect,} from "react";
 import "./AddNewCustomerSetting.scss";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,16 +14,38 @@ import ModalNewInvoicingCondition from "./components/modal/modal-new-invoicing-c
 import ModalNewRelatedCondition from "./components/modal/modal-new-related-customer/ModalNewRelatedCustomer";
 import ModalNewRelatedFile from "./components/modal/modal-new-related-file/ModalNewRelatedFile";
 import TableNewCustomerSetting from "./components/table/table-new-customer-setting/TableNewCustomerSetting";
+import { DeletePopUp } from "./components/delete";
 
 import { selectCustomerSearchOptions } from "selectors/select-options/CustomerNameSelector";
 import IStore from "models/IStore";
 import * as CustomerName from "stores/customer-name/CustomerNameActivityActions"
+import * as CustomerSetting from "stores/customer-setting/CustomerActivityActions"
+import * as CustomerPIC from "stores/customer-pic/CustomerPICActions"
+import * as BrandSummary from "stores/brand-summary/BrandSummaryActivityActions"
+import * as ServiceSummary from "stores/service-summary/ServiceSummaryActivityActions"
+import * as InvoicingSchedule from "stores/invoicing-schedule/InvoicingScheduleActivityActions"
+import * as InvoicingCondition from "stores/invoicing-condition/InvoicingConditionActivityActions"
+import { selectCustomerPIC } from "selectors/customer-pic/CustomerPICSelectors";
+import { selectCustomerSettingByCustomerId } from "selectors/customer-setting/CustomerSettingSelector";
+import { selectBrandSummary } from "selectors/brand-summary/BrandSummarySelector";
+import { selectServiceSummary } from "selectors/service-summary/ServiceSummarySelector";
+import InvoicingScheduleModel from "stores/invoicing-schedule/models/InvoicingScheduleModel";
+import { selectInvoicingCondition } from "selectors/invoicing-condition/InvoicingConditionSelector";
 
 interface IProps {
     history: any;
   }
 
 interface CustomerSetting {
+    title: string;
+    customerGenID: number;
+    address: string;
+    blacklist?: string;
+    holdshipment?: string;
+    avgAR?: number;
+}
+
+interface CustomerData {
     title: string;
     customerGenID: number;
     address: string;
@@ -36,13 +58,8 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
     const [customerName, setCustomerName] = useState('');
     
     /** Customer data */
-    // const [customerSettingData, setCustomerSettingData] = useState<CustomerSetting | undefined>(undefined)
-    const [customerSettingData, setCustomerSettingData] = useState<CustomerSetting | undefined>({
-        title: "PT HAWLETT",
-        customerGenID: 1,
-        address: "Jl. Musi No. 37"
-    })
-    
+    const [customerData, setCustomerData] = useState<CustomerData | undefined>(undefined)
+
     const customerStoreSearch = useSelector((state: IStore) =>
         selectCustomerSearchOptions(state)
     );
@@ -54,12 +71,16 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
         } 
     }, [dispatch])
 
-    const onResultSelectCustomer = (data: any) => {
-        setCustomerName(data.result.customerName);
-        setCustomerSettingData(data.result)
-        console.log(customerSettingData)
-    };
+    const customerSettingData = useSelector((state: IStore) => selectCustomerSettingByCustomerId(state));
+    console.log(customerSettingData)
 
+    const onResultSelectCustomer = async (data: any) => {
+        setCustomerName(data.result.customerName);
+        
+        await dispatch(CustomerSetting.requestCustomerSettingByCustomerId(data.result.customerGenID))
+        // await dispatch(CustomerPIC.requestGetCustomerPIC(customerSettingData.customerSettingID))
+        setCustomerData(data.result)
+    };
 
     const onSubmitCustomerHandler = async (e) => {
         console.log(e);
@@ -79,6 +100,11 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
     const [openProjectHistory, setOpenProjectHistory] = useState(false);
     const [openCollectionHistory, setOpenCollectionHistory] = useState(false);
     const [openConfigItem, setOpenConfigItem] = useState(false);
+
+    const picData = useSelector((state: IStore) => selectCustomerPIC(state));
+    const brandSummaryData = useSelector((state: IStore) => selectBrandSummary(state));
+    const serviceSummaryData = useSelector((state: IStore) => selectServiceSummary(state));
+
 
     /** Search Sales */
     const [salesName, setSalesName] = useState('');
@@ -122,22 +148,17 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
         setSalesName(data);
         if(data.length >= 2) {
             setSalesResult(salesData.filter((sales) => sales.salesName.includes(data)))
-            // console.log(customerResult)
-            // results.filter(({name, city}) => filters.name.some(n => name.includes(n)) && filters.city.includes(city));
         } else if(data.length == 0) {
             setSalesResult(salesData);
         }
     }
 
     const onResultSelectSales = (data: any) => {
-        // console.log(data);
         setSalesName("");
         setSalesAssign([...salesAssign, {
             salesName: data.result.salesName,
             salesID: data.result.salesID
         }])
-        // console.log("select result: ", customerName);
-        // setCustomerId(data.result.price);
     };
 
     const onSubmitSalesHandler = async (e) => {
@@ -197,8 +218,54 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
         console.log(daysArray)
     }
 
+    const [minDate, setMinDate] = useState(0)
+    const [maxDate, setMaxDate] = useState(0)
+    const [remark, setRemark] = useState("")
+
+    const onSubmitCustomerSettingHandler = async (values) => {
+        console.log(values)
+
+        /** post invoicing schedule */
+        let remark = values.remark;
+
+        const NewInvoicingSchedule = new InvoicingScheduleModel({});
+        NewInvoicingSchedule.scheduleID = 0;
+        NewInvoicingSchedule.customerSettingID = customerSettingData.customerSettingID;
+        NewInvoicingSchedule.scheduleDays = daysArray.join(", ");
+        NewInvoicingSchedule.remark = remark;
+        NewInvoicingSchedule.minDate = minDate;
+        NewInvoicingSchedule.maxDate = maxDate;
+        NewInvoicingSchedule.createUserID = 0;
+        NewInvoicingSchedule.modifyUserID = 0;
+
+        dispatch(InvoicingSchedule.postInvoicingSchedule(NewInvoicingSchedule))
+
+        /** put customer setting */
+    }
+
     /** Project Type */
-    const onSubmitProjectType = (data) => {
+    const [projectType, setProjectType] = useState("")
+    const projectTypeData = [
+        {
+            text: "Manage Operation",
+            value: "Manage Operation"
+        },
+        {
+            text: "Manage Service",
+            value: "Manage Service"
+        },
+        {
+            text: "Project Type",
+            value: "Project Type"
+        },
+    ]
+
+    const onChangeProjectType = (data: any): any => {
+        console.log(data)
+        setProjectType(data)
+    }
+
+    const onSubmitData = (data) => {
 
     }
 
@@ -206,11 +273,30 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
     const onAddInvoicingCondition = useCallback((): void => {
         dispatch(
           ModalFirstLevelActions.OPEN(
-            <ModalNewInvoicingCondition history={""} />,
+            <ModalNewInvoicingCondition customerSettingID={customerSettingData.customerSettingID} />,
             ModalSizeEnum.Small
           )
         );
+    }, [dispatch, customerSettingData]);
+
+    const invoicingConditionData = useSelector((state: IStore) => selectInvoicingCondition(state));
+
+    const deleteInvoicingCondition = useCallback((id: number): void => {
+        dispatch(
+          ModalFirstLevelActions.OPEN(
+            <DeletePopUp deleteFunc={()=>{}} id={id} content="invoicing condition" />,
+            ModalSizeEnum.Tiny
+          )
+        );
       }, [dispatch]);
+
+    // useEffect(() => {
+    //     if(!Number.isNaN(customerSettingData.customerSettingID)) {
+    //         dispatch(InvoicingCondition.requestInvoicingCondition(customerSettingData.customerSettingID))
+    //     }
+    // }, [dispatch, customerSettingData])
+
+    console.log(invoicingConditionData)
 
     /** Related customer */
     const onAddRelatedCustomer = useCallback((): void => {
@@ -231,6 +317,16 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
           )
         );
       }, [dispatch]);
+    
+      /** data yang perlu di get */
+      useEffect(() => {
+        if(!Number.isNaN(customerSettingData.customerSettingID)) {
+            dispatch(CustomerPIC.requestGetCustomerPIC(customerSettingData.customerSettingID))
+            dispatch(BrandSummary.requestBrandSummary(customerSettingData.customerSettingID))
+            dispatch(ServiceSummary.requestServiceSummary(customerSettingData.customerSettingID))
+            dispatch(InvoicingCondition.requestInvoicingCondition(customerSettingData.customerSettingID))
+        }
+    }, [dispatch, customerSettingData])
 
     return (
         <Fragment>
@@ -265,7 +361,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                             <p style={{ fontStyle: "italic", color: "#A9B0BC", marginTop: "0", fontSize: "12px"}}>Type customer name and press ENTER</p>
                         </div>
 
-                        {customerSettingData != undefined && 
+                        {(customerData != undefined && !Number.isNaN(customerSettingData.customerSettingID) && picData.length != 0) &&
                          <>
                             <div>
                                 <FinalForm
@@ -289,36 +385,36 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
 
                             <div className="customer-data-container">
                                 <label className="customer-data-label">CustomerID</label>
-                                <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">{customerSettingData.customerGenID}</p>
+                                <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">{customerData.customerGenID}</p>
                             </div>
 
                             <div className="customer-data-container">
                                 <label className="customer-data-label">Blacklist</label>
-                                <Label color="teal" style={{ borderRadius: "20px", width: "fit-content"}}>
-                                    <Icon name='address book'/>No
+                                <Label color={customerSettingData.blacklist ? "red" : "teal"} style={{ borderRadius: "20px", width: "fit-content"}}>
+                                    <Icon name='address book'/>{customerSettingData.blacklist ? "Yes" : "No"}
                                 </Label>
                             </div>
 
                             <div className="customer-data-container">
                                 <label className="customer-data-label">Holdshipment</label>
-                                <Label color="purple" style={{ borderRadius: "20px", width: "fit-content" }}>
-                                    <Icon name='truck'/>No
+                                <Label color={customerSettingData.holdshipment ? "red" : "blue"} style={{ borderRadius: "20px", width: "fit-content" }}>
+                                    <Icon name='truck'/>{customerSettingData.holdshipment ? "Yes" : "No"}
                                 </Label>
                             </div>
 
                             <div className="customer-data-container">
                                 <label className="customer-data-label">Avg. AR (days)</label>
-                                <p style={{ fontSize: "24px", fontWeight: "bold"}} className="grey">12.5</p>
+                                <p style={{ fontSize: "24px", fontWeight: "bold"}} className="grey">{customerSettingData.avgAR}</p>
                             </div>
                          </>
                         }
                     </div>
                     
-                    {customerSettingData != undefined &&
+                    {(customerData != undefined && !Number.isNaN(customerSettingData.customerSettingID) && picData.length != 0) ?
                         <>
                             <div style={{ margin: "14px 0" }} className="padding-horizontal">
                                 <label style={{ marginRight: '10px', marginBottom: "5px", color: "#A0A8B3" }}>Address</label>
-                                <p style={{ fontSize: "20px"}} className="grey">{customerSettingData?.address}</p>
+                                <p style={{ fontSize: "20px"}} className="grey">{customerData?.address}</p>
                             </div>
                             
                             {/* data get mengenai customer */}
@@ -333,7 +429,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                     {openPicList &&
                                         <>
                                         <div className="table-container">
-                                            <TableNewCustomerSetting data={data.picData} header={data.picHeader} sequenceNum={true}/>
+                                            <TableNewCustomerSetting data={picData} header={data.picHeader} sequenceNum={true}/>
                                         </div>
                                         <Divider style={{ margin: "0px"}}></Divider>
                                         </>
@@ -348,7 +444,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                     {openBrandSummary &&
                                         <>
                                         <div className="table-container">
-                                            <TableNewCustomerSetting data={data.brandData} header={data.brandHeader} sequenceNum={true}/>
+                                            <TableNewCustomerSetting data={brandSummaryData} header={data.brandHeader} sequenceNum={true}/>
                                         </div>
                                         <Divider style={{ margin: "0px"}}></Divider>
                                         </>
@@ -363,7 +459,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                     {openServiceSummary &&
                                         <>
                                         <div className="table-container">
-                                            <TableNewCustomerSetting data={data.serviceData} header={data.serviceHeader} sequenceNum={true}/>
+                                            <TableNewCustomerSetting data={serviceSummaryData} header={data.serviceHeader} sequenceNum={true}/>
                                         </div>
                                         <Divider style={{ margin: "0px"}}></Divider>
                                         </>
@@ -502,186 +598,211 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
 
                             <Divider></Divider>
 
-                            <div style={{ padding: "0 2rem" }}>
-                                <div>
-                                    <div style={{ marginBottom: "0.5rem"}}>
-                                        <label style={{ marginRight: '10px' }}>
-                                        Days
-                                            <label style={{ color: 'red' }} className="mandatory">
-                                                {' '}
-                                                *
-                                            </label>
-                                        </label>
-                                    </div>
-                                    <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
-                                        {days.map((day) => {
-                                            return (
-                                                <CheckboxInvoicing label={day} value={day} disabled={isAllDaysChecked && day !== "All days"} style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
-                                            )
-                                        })}
-                                    </div>
-                                </div>
-                                
-                                <div style={{ display: "flex", flexDirection: "row", width: "100%", justifyContent: "space-between", marginTop: "14px" }} className="invoicing-schedule-position">
-                                    <div style={{ backgroundColor: "#DCDCDC", display: "flex", flexDirection: "column", width: "fit-content", height: "fit-content", padding: "1rem", borderRadius: "1rem", marginRight: "1rem"}}>
-                                        <p style={{ fontWeight: "bold" }} className="grey">Invoicing Date Range <span style={{ color: "red"}}>*</span></p>
-                                        <div style={{ display: "flex", flexDirection: "row"}}>
-                                            <div style={{ display: "flex", flexDirection: "column", width: "7rem", marginRight: "1rem"}}>
-                                                <label htmlFor="minDate">Min. Date(Day)</label>
-                                                <input name="minDate"/>
+                            <FinalForm
+                                onSubmit={(values: any) => onSubmitCustomerSettingHandler(values)}
+                                render={({ handleSubmit, pristine, invalid }) => (
+                                <Form onSubmit={handleSubmit} >
+
+                                    <div style={{ padding: "0 2rem" }}>
+                                        <div>
+                                            <div style={{ marginBottom: "0.5rem"}}>
+                                                <label style={{ marginRight: '10px' }}>
+                                                Days
+                                                    <label style={{ color: 'red' }} className="mandatory">
+                                                        {' '}
+                                                        *
+                                                    </label>
+                                                </label>
                                             </div>
-                                            <div style={{ display: "flex", flexDirection: "column", width: "7rem"}}>
-                                                <label htmlFor="maxDate">Max. Date(Day)</label>
-                                                <input name="maxDate"/>
+                                            <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
+                                                {days.map((day) => {
+                                                    return (
+                                                        <CheckboxInvoicing label={day} value={day} disabled={isAllDaysChecked && day !== "All days"} style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+                                        
+                                        <div style={{ display: "flex", flexDirection: "row", width: "100%", justifyContent: "space-between", marginTop: "14px" }} className="invoicing-schedule-position">
+                                            <div style={{ backgroundColor: "#DCDCDC", display: "flex", flexDirection: "column", width: "fit-content", height: "fit-content", padding: "1rem", borderRadius: "1rem", marginRight: "1rem"}}>
+                                                <p style={{ fontWeight: "bold" }} className="grey">Invoicing Date Range <span style={{ color: "red"}}>*</span></p>
+                                                <div style={{ display: "flex", flexDirection: "row"}}>
+                                                    <div style={{ display: "flex", flexDirection: "column", width: "7rem", marginRight: "1rem"}}>
+                                                        <label htmlFor="minDate">Min. Date(Day)</label>
+                                                        <input name="minDate" type="number" value={minDate} onChange={(e) => setMinDate(parseInt(e.target.value, 10))}/>
+                                                    </div>
+                                                    <div style={{ display: "flex", flexDirection: "column", width: "7rem"}}>
+                                                        <label htmlFor="maxDate">Max. Date(Day)</label>
+                                                        <input name="maxDate" type="number" value={maxDate} onChange={(e) => setMaxDate(parseInt(e.target.value, 10))}/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div style={{ width: "100%" }}>
+                                                <Field name="remark" component={RichTextEditor} placeholder="e.g. Remark" labelName="Remark" />  
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div style={{ width: "100%" }}>
-                                        <FinalForm
-                                            onSubmit={(values: any) => onSubmitSalesHandler(values)}
-                                            render={({ handleSubmit, pristine, invalid }) => (
-                                            <Form onSubmit={handleSubmit} >
-                                                <Field name="remark" component={RichTextEditor} placeholder="e.g. Remark" labelName="Remark" />
-                                            </Form>
-                                        )}/>
+                                    <Divider></Divider>
+
+                                    <p style={{ textAlign: "left", margin:"0", fontWeight: "bold" }} className="padding-horizontal grey">INVOICING CONDITION</p>
+
+                                    <Divider></Divider>
+
+                                    <div style={{ padding: "0 2rem" }}>
+                                        <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap"}}>
+                                            <div style={{ width: "30%"}}>
+                                                {/* <FinalForm
+                                                    onSubmit={(values: any) => onSubmitProjectType(values)}
+                                                    render={({ handleSubmit, pristine, invalid }) => (
+                                                    <Form onSubmit={handleSubmit}> */}
+                                                        <Field
+                                                            name="projectType"
+                                                            component={DropdownClearInput}
+                                                            placeholder="Select project type"
+                                                            labelName="Project Type"
+                                                            options={projectTypeData}
+                                                            values={projectType}
+                                                            onChanged={onChangeProjectType}
+                                                            mandatory={true}
+                                                        />
+                                                    {/* </Form>
+                                                )}/> */}
+                                            </div>
+
+                                            <Button color="yellow" size="small" onClick={onAddInvoicingCondition}><Icon name="add"/>Add Invoicing Condition</Button>
+                                        </div>
+
+                                        <Table
+                                        striped
+                                        >
+                                        <Table.Header>
+                                            <Table.Row>
+                                                <Table.HeaderCell>No</Table.HeaderCell>
+                                                <Table.HeaderCell>Action</Table.HeaderCell>
+                                                <Table.HeaderCell>Project Type</Table.HeaderCell>
+                                                <Table.HeaderCell>Document Requirement</Table.HeaderCell>
+                                            </Table.Row>
+                                        </Table.Header>
+
+                                        <Table.Body>
+                                            {invoicingConditionData.length == 0 ?
+                                                <Table.Row>
+                                                    <Table.Cell colSpan={16} textAlign="center">
+                                                    No data
+                                                    </Table.Cell>
+                                                </Table.Row>
+                                            :
+                                                (invoicingConditionData.map((data, index) => (
+                                                <Table.Row key={index}>
+                                                        <Table.Cell>{index + 1}</Table.Cell>
+                                                        <Table.Cell>
+                                                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "#F97452", padding: "0.5rem", borderRadius: "100%", width: "fit-content", cursor: "pointer"}} onClick={() => deleteInvoicingCondition(data.conditionID)}>
+                                                                <Icon style={{ margin: "0", padding: "0", display: "flex", justifyContent: "center", alignItems: "center", color:"white"}} name="trash alternate"/>
+                                                            </div>
+                                                        </Table.Cell>
+                                                        <Table.Cell>{data.projectType}</Table.Cell>
+                                                        <Table.Cell>{data.conditionName}</Table.Cell>
+                                                </Table.Row>
+                                                )))
+                                            }
+                                            </Table.Body>
+                                        </Table>
                                     </div>
-                                </div>
-                            </div>
 
-                            <Divider></Divider>
+                                    <Divider></Divider>
 
-                            <p style={{ textAlign: "left", margin:"0", fontWeight: "bold" }} className="padding-horizontal grey">INVOICING CONDITION</p>
-
-                            <Divider></Divider>
-
-                            <div style={{ padding: "0 2rem" }}>
-                                <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap"}}>
-                                    <div style={{ width: "30%"}}>
-                                        <FinalForm
-                                            onSubmit={(values: any) => onSubmitProjectType(values)}
-                                            render={({ handleSubmit, pristine, invalid }) => (
-                                            <Form onSubmit={handleSubmit}>
-                                                <Field
-                                                    name="projectType"
-                                                    component={DropdownClearInput}
-                                                    // placeholder="Type customer name here.."
-                                                    labelName="Project Type"
-                                                    // handleSearchChange={handleSearchChangeCustomer}
-                                                    // onResultSelect={onResultSelectCustomer}
-                                                    // results={customerResult}
-                                                    values={customerName}
-                                                    mandatory={true}
-                                                />
-                                            </Form>
-                                        )}/>
+                                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap" }} className="padding-horizontal">
+                                        <p style={{ textAlign: "left", margin:"0", fontWeight: "bold" }} className="grey">RELATED CUSTOMER</p>
+                                        <Button color="yellow" size="small" onClick={onAddRelatedCustomer}><Icon name="add"/>Add Related Customer</Button>
                                     </div>
 
-                                    <Button color="yellow" size="small" onClick={onAddInvoicingCondition}><Icon name="add"/>Add Invoicing Condition</Button>
+                                    <Divider></Divider>
+
+                                    <div style={{ padding: "0 2rem"}}>
+                                        <Table
+                                        striped
+                                        >
+                                        <Table.Header>
+                                            <Table.Row>
+                                                <Table.HeaderCell>No</Table.HeaderCell>
+                                                <Table.HeaderCell>Action</Table.HeaderCell>
+                                                <Table.HeaderCell>Customer Name</Table.HeaderCell>
+                                                <Table.HeaderCell>Address</Table.HeaderCell>
+                                                <Table.HeaderCell>Cust. Category</Table.HeaderCell>
+                                                <Table.HeaderCell>Avg. AR (Days)</Table.HeaderCell>
+                                                <Table.HeaderCell>Blacklist</Table.HeaderCell>
+                                                <Table.HeaderCell>Holdshipment</Table.HeaderCell>
+                                            </Table.Row>
+                                        </Table.Header>
+
+                                            <Table.Body>
+                                            <Table.Row>
+                                                <Table.Cell colSpan={16} textAlign="center">
+                                                No data
+                                                </Table.Cell>
+                                            </Table.Row>
+                                            </Table.Body>
+                                        </Table>
+                                    </div>
+
+                                    <Divider></Divider>
+
+                                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap" }} className="padding-horizontal">
+                                        <p style={{ textAlign: "left", margin:"0", fontWeight: "bold" }} className="grey">UPLOAD RELATED FILE</p>
+                                        <Button color="yellow" size="small" onClick={onAddRelatedFile}><Icon name="add"/>Add Related File</Button>
+                                    </div>
+
+                                    <Divider></Divider>
+
+                                    <div style={{ padding: "0 2rem"}}>
+                                        <Table
+                                        striped
+                                        >
+                                        <Table.Header>
+                                            <Table.Row>
+                                                <Table.HeaderCell>No</Table.HeaderCell>
+                                                <Table.HeaderCell>Action</Table.HeaderCell>
+                                                <Table.HeaderCell>Document Name</Table.HeaderCell>
+                                                <Table.HeaderCell>Type</Table.HeaderCell>
+                                                <Table.HeaderCell>Upload Date</Table.HeaderCell>
+                                                <Table.HeaderCell>Upload By</Table.HeaderCell>
+                                            </Table.Row>
+                                        </Table.Header>
+
+                                            <Table.Body>
+                                            <Table.Row>
+                                                <Table.Cell colSpan={16} textAlign="center">
+                                                No data
+                                                </Table.Cell>
+                                            </Table.Row>
+                                            </Table.Body>
+                                        </Table>
+                                    </div>
+                                
+                                    <Divider style={{ marginBottom: "0px"}}></Divider>
+                                    <div style={{ display: "flex", justifyContent: "center", width: "100%", margin: "1.5rem"}}>
+                                        <div style={{ display: "flex", flexDirection: "row", width: "fit-content"}}>
+                                            <Button color="grey" style={{ marginRight: "1rem" }}>Cancel</Button>
+                                            <Button color="blue" type="submit">Submit</Button>
+                                        </div>
+                                    </div>
+
+                            </Form>
+                            )}/>
+                        </>
+                    :
+                        <>
+                            <Divider style={{ marginBottom: "0px"}}></Divider>
+                            <div style={{ display: "flex", justifyContent: "center", width: "100%", margin: "1.5rem"}}>
+                                <div style={{ display: "flex", flexDirection: "row", width: "fit-content"}}>
+                                    <Button color="grey" style={{ marginRight: "1rem" }}>Cancel</Button>
+                                    <Button color="blue" disabled>Submit</Button>
                                 </div>
-
-                                <Table
-                                striped
-                                >
-                                <Table.Header>
-                                    <Table.Row>
-                                        <Table.HeaderCell>No</Table.HeaderCell>
-                                        <Table.HeaderCell>Action</Table.HeaderCell>
-                                        <Table.HeaderCell>Project Type</Table.HeaderCell>
-                                        <Table.HeaderCell>Document Requirement</Table.HeaderCell>
-                                    </Table.Row>
-                                </Table.Header>
-
-                                    <Table.Body>
-                                    <Table.Row>
-                                        <Table.Cell colSpan={16} textAlign="center">
-                                        No data
-                                        </Table.Cell>
-                                    </Table.Row>
-                                    </Table.Body>
-                                </Table>
-                            </div>
-
-                            <Divider></Divider>
-
-                            <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap" }} className="padding-horizontal">
-                                <p style={{ textAlign: "left", margin:"0", fontWeight: "bold" }} className="grey">RELATED CUSTOMER</p>
-                                <Button color="yellow" size="small" onClick={onAddRelatedCustomer}><Icon name="add"/>Add Related Customer</Button>
-                            </div>
-
-                            <Divider></Divider>
-
-                            <div style={{ padding: "0 2rem"}}>
-                                <Table
-                                striped
-                                >
-                                <Table.Header>
-                                    <Table.Row>
-                                        <Table.HeaderCell>No</Table.HeaderCell>
-                                        <Table.HeaderCell>Action</Table.HeaderCell>
-                                        <Table.HeaderCell>Customer Name</Table.HeaderCell>
-                                        <Table.HeaderCell>Address</Table.HeaderCell>
-                                        <Table.HeaderCell>Cust. Category</Table.HeaderCell>
-                                        <Table.HeaderCell>Avg. AR (Days)</Table.HeaderCell>
-                                        <Table.HeaderCell>Blacklist</Table.HeaderCell>
-                                        <Table.HeaderCell>Holdshipment</Table.HeaderCell>
-                                    </Table.Row>
-                                </Table.Header>
-
-                                    <Table.Body>
-                                    <Table.Row>
-                                        <Table.Cell colSpan={16} textAlign="center">
-                                        No data
-                                        </Table.Cell>
-                                    </Table.Row>
-                                    </Table.Body>
-                                </Table>
-                            </div>
-
-                            <Divider></Divider>
-
-                            <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap" }} className="padding-horizontal">
-                                <p style={{ textAlign: "left", margin:"0", fontWeight: "bold" }} className="grey">UPLOAD RELATED FILE</p>
-                                <Button color="yellow" size="small" onClick={onAddRelatedFile}><Icon name="add"/>Add Related File</Button>
-                            </div>
-
-                            <Divider></Divider>
-
-                            <div style={{ padding: "0 2rem"}}>
-                                <Table
-                                striped
-                                >
-                                <Table.Header>
-                                    <Table.Row>
-                                        <Table.HeaderCell>No</Table.HeaderCell>
-                                        <Table.HeaderCell>Action</Table.HeaderCell>
-                                        <Table.HeaderCell>Document Name</Table.HeaderCell>
-                                        <Table.HeaderCell>Type</Table.HeaderCell>
-                                        <Table.HeaderCell>Upload Date</Table.HeaderCell>
-                                        <Table.HeaderCell>Upload By</Table.HeaderCell>
-                                    </Table.Row>
-                                </Table.Header>
-
-                                    <Table.Body>
-                                    <Table.Row>
-                                        <Table.Cell colSpan={16} textAlign="center">
-                                        No data
-                                        </Table.Cell>
-                                    </Table.Row>
-                                    </Table.Body>
-                                </Table>
                             </div>
                         </>
                     }
-
-                    <Divider style={{ marginBottom: "0px"}}></Divider>
-                    <div style={{ display: "flex", justifyContent: "center", width: "100%", margin: "1.5rem"}}>
-                        <div style={{ display: "flex", flexDirection: "row", width: "fit-content"}}>
-                            <Button color="grey" style={{ marginRight: "1rem" }}>Cancel</Button>
-                            <Button color="blue">Submit</Button>
-                        </div>
-                    </div>
-
             </div>
         </Fragment>
     )
