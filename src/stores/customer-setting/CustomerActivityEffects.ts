@@ -3,7 +3,7 @@ import HttpErrorResponseModel from "../../models/HttpErrorResponseModel";
 import * as EffectUtility from "../../utilities/EffectUtility";
 import CustomerSettingModel from "./models/CustomerSettingModel";
 import CustomerSettingRow from "./models/CustomerSettingRow";
-// import OppUpload from './models/OppUpload';
+import CustomerSettingById from "./models/CustomerSettingById";
 import ResultActions from "models/ResultActions";
 import { NumberFormatState } from "react-number-format";
 
@@ -70,3 +70,16 @@ export const deleteCustomerSett = async (
     endpoint
   );
 };
+
+export const requestCustomerSettingByCustomerId = async (customerSettingID: number): Promise<CustomerSettingById | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting/GetCustomerSettingByCustomerGenID?customerGenID=" + customerSettingID;
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+
+  return EffectUtility.getToModel<CustomerSettingById>(
+    CustomerSettingById,
+    endpoint
+  );
+}

@@ -1,8 +1,79 @@
 .form-container {
-    display: "flex";
-    flex-direction: "column";
-    background-color: "white";
-    margin :"1.5rem";
-    padding: "1.5rem";
-    border-radius: "1rem";
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    margin :1.5rem;
+    border-radius: 1rem;
+}
+
+.padding-horizontal {
+    padding: 0 2rem;
+}
+
+.grey {
+    color: #55637A;
+}
+
+.customer-data-container {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.customer-data-label {
+    margin-right: 10px;
+    margin-bottom: 5px;
+    color: #A0A8B3
+}
+
+.accordion-container {
+    padding: 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.table-container {
+    padding: 1rem;
+    background-color: #FFEF9A;
+}
+
+.sales-assign-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+    flex-wrap: wrap-reverse;
+}
+
+.setting-position {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+
+.sales-assign-list {
+    width: 50%;
+}
+
+@media only screen and (max-width: 767px) {
+    .form-container {
+        margin: 0.25rem;
+    }
+    
+    .setting-position {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .sales-assign-list {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    .invoicing-schedule-position {
+        flex-wrap: wrap;
+    }
 }

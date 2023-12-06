@@ -4,43 +4,46 @@ import { Table } from "semantic-ui-react";
 interface IProps {
     header: any[];
     data: any[];
+    sequenceNum: any;
 }
 
 const TableNewCustomerSetting: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
-    const { header, data } = props; 
+    const { header, data, sequenceNum } = props; 
 
     return (
-        <Table
-        striped
-        >
-            <Table.Header>
-                <Table.Row>
-                    <Table.HeaderCell>No</Table.HeaderCell>
-                    {header.map((header) => (
-                        <Table.HeaderCell>{header.header}</Table.HeaderCell>
-                    ))}
-                </Table.Row>
-            </Table.Header>
-
-            <Table.Body>
-                {data.length == 0 ?
+        <div className="wrapper-table" style={{ height: "fit-content"}}>
+            <Table
+            striped
+            >
+                <Table.Header>
                     <Table.Row>
-                        <Table.Cell colSpan={16} textAlign="center">
-                        No data
-                        </Table.Cell>
-                    </Table.Row>
-                :
-                    (data.map((data, index) => (
-                    <Table.Row key={index}>
-                        <Table.Cell>{index + 1}</Table.Cell>
+                        {sequenceNum && <Table.HeaderCell>No</Table.HeaderCell>}
                         {header.map((header) => (
-                            <Table.Cell key={header.key}>{data[header.key]}</Table.Cell>
+                            <Table.HeaderCell>{header.header}</Table.HeaderCell>
                         ))}
                     </Table.Row>
-                    )))
-                }
-            </Table.Body>
-        </Table>
+                </Table.Header>
+
+                <Table.Body>
+                    {data.length == 0 ?
+                        <Table.Row>
+                            <Table.Cell colSpan={16} textAlign="center">
+                            No data
+                            </Table.Cell>
+                        </Table.Row>
+                    :
+                        (data.map((data, index) => (
+                        <Table.Row key={index}>
+                            {sequenceNum && <Table.Cell>{index + 1}</Table.Cell>}
+                            {header.map((header) => (
+                                <Table.Cell key={header.key}>{data[header.key]}</Table.Cell>
+                            ))}
+                        </Table.Row>
+                        )))
+                    }
+                </Table.Body>
+            </Table>
+        </div>
     )
 }
 

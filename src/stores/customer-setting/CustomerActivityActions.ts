@@ -6,12 +6,14 @@ import CustomerSettingModel from "./models/CustomerSettingModel";
 import CustomerSettingRow from "./models/CustomerSettingRow";
 import ResultActions from "models/ResultActions";
 import IAction from "models/IAction";
+import CustomerSettingById from "./models/CustomerSettingById";
 
 type ActionUnion =
   | undefined
   | HttpErrorResponseModel
   | CustomerSettingModel
   | CustomerSettingRow
+  | CustomerSettingById
   | boolean
   | ResultActions;
 
@@ -96,6 +98,21 @@ export const deleteCustomerSett = (customerSettingID: number): any => {
       dispatch,
       DEL_CUSTOMERS_SETTING,
       CustomerEffect.deleteCustomerSett,
+      customerSettingID
+    );
+  };
+};
+
+export const REQUEST_CUSTOMER_SETTING_BY_CUSTOMER_ID: string =
+  "CustomerActions.REQUEST_CUSTOMER_SETTING_BY_CUSTOMER_ID";
+export const REQUEST_CUSTOMER_SETTING_BY_CUSTOMER_ID_FINISHED =
+  "CustomerActions.REQUEST_CUSTOMER_SETTING_BY_CUSTOMER_ID_FINISHED";
+export const requestCustomerSettingByCustomerId = (customerSettingID: number): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<CustomerSettingById>(
+      dispatch,
+      REQUEST_CUSTOMER_SETTING_BY_CUSTOMER_ID,
+      CustomerEffect.requestCustomerSettingByCustomerId,
       customerSettingID
     );
   };

@@ -9,6 +9,7 @@ import ResultActions from "models/ResultActions";
 
 export const initialState: ICustomerState = {
   data: new CustomerSettingModel({}),
+  dataByCustomerId: new CustomerSettingRow({}),
   error: false,
   refreshPage: false,
   resultActions: new ResultActions({}),
@@ -60,6 +61,16 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
       error: action.error!,
       refreshPage: action.error ? false : true,
     };
+  },
+
+  [CustomerActions.REQUEST_CUSTOMER_SETTING_BY_CUSTOMER_ID_FINISHED](
+    state: ICustomerState,
+    action: IAction<CustomerSettingRow>
+  ): ICustomerState {
+    return {
+      ...state,
+      dataByCustomerId: action.payload!
+    }
   },
 
   [CustomerActions.REQUEST_RESET_FILTER](
