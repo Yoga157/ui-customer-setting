@@ -21,6 +21,11 @@ import funnelReducer from "./funnel/FunnelReducer";
 import customerSettingReducer from "./customer-setting/CustomerActivityReducer";
 import SalesAssignReducer from "./customer-sales/SalesAssignActivityReducer";
 import CustomerNameReducer from "./customer-name/CustomerNameActivityReducer";
+import CustomerPICReducer from "./customer-pic/CustomerPICReducer";
+import BrandSummaryReducer from "./brand-summary/BrandSummaryActivityReducer";
+import ServiceSummaryReducer from "./service-summary/ServiceSummaryActivityReducer"
+import InvoicingScheduleReducer from "./invoicing-schedule/InvoicingScheduleActivityReducer";
+import InvoicingConditionReducer from "./invoicing-condition/InvoicingConditionActivityReducer";
 
 const rootReducer = (history: History): Reducer<IStore> => {
   const reducerMap: ReducersMapObject<IStore> = {
@@ -43,7 +48,12 @@ const rootReducer = (history: History): Reducer<IStore> => {
     brand: brandReducer,
     customerSetting: customerSettingReducer,
     customerSalesAssign: SalesAssignReducer,
-    customerName: CustomerNameReducer
+    customerName: CustomerNameReducer,
+    customerPIC: CustomerPICReducer,
+    brandSummary: BrandSummaryReducer,
+    serviceSummary: ServiceSummaryReducer,
+    invoicingSchedule: InvoicingScheduleReducer,
+    invoicingCondition: InvoicingConditionReducer
   };
 
   return combineReducers(reducerMap);

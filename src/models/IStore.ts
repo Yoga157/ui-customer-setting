@@ -18,6 +18,11 @@ import ICustomerState from "stores/customer/models/ICustomerState";
 import ICustomerSettingState from "stores/customer-setting/models/ICustomerState";
 import ISalesAssignState from "stores/customer-sales/models/ISalesAssignState";
 import ICustomerNameState from "stores/customer-name/models/ICustomerNameState";
+import ICustomerPICState from "stores/customer-pic/models/ICustomerPICState";
+import IBrandSummaryState from "stores/brand-summary/models/IBrandSummaryState";
+import IServiceSummaryState from "stores/service-summary/models/IServiceSummaryState";
+import IInvoicingScheduleState from "stores/invoicing-schedule/models/IInvoicingScheduleState";
+import IInvoicingConditionState from "stores/invoicing-condition/models/IInvoicingConditionState";
 
 export default interface IStore {
   readonly error: IErrorState;
@@ -40,4 +45,9 @@ export default interface IStore {
   readonly customerSetting: ICustomerSettingState;
   readonly customerSalesAssign: ISalesAssignState;
   readonly customerName: ICustomerNameState;
+  readonly customerPIC: ICustomerPICState;
+  readonly brandSummary: IBrandSummaryState;
+  readonly serviceSummary: IServiceSummaryState;
+  readonly invoicingSchedule: IInvoicingScheduleState;
+  readonly invoicingCondition: IInvoicingConditionState;
 }

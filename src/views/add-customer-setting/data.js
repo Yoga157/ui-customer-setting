@@ -1,6 +1,10 @@
 import React from "react";
 import { Icon } from "semantic-ui-react"
 
+const onClickPayment = (data) => {
+    console.log(data)
+}
+
 export const picHeader = [
     {
         key: "picName",
@@ -200,7 +204,11 @@ export const projectHistoryHeader = [
 
 export const projectHistoryData = [
     {
-        payment: <Icon name="eye"/>,
+        payment: 
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "#656DD1", padding: "0.5rem", borderRadius: "100%", width: "fit-content"}} onClick={(event) => onClickPayment('payment diklik')}>
+                <Icon style={{ margin: "0", padding: "0", display: "flex", justifyContent: "center", alignItems: "center", color:"white"}} name="eye"/>
+            </div>
+        ,
         funnelID: 13345,
         so: 1225,
         top: 456678,
@@ -211,7 +219,7 @@ export const projectHistoryData = [
         saDate: "01/12/2023",
         soCloseDate: "20/12/2023",
         soAmount: 11234000,
-        lastCollectionDate: "02/12/2023"
+        lastCollectionDate: "02/12/2023",
     }
 ]
 
@@ -237,7 +245,81 @@ export const collectionHistoryHeader = [
         header: "Collection Amount"
     },
     {
-        key: "invoiceNumber",
-        header: "Invoice Number"
+        key: "collectionDate",
+        header: "Collection Date"
     },
+]
+
+export const collectionHistoryData = [
+    {
+        invoiceNumber: "46-162821",
+        invoiceDate: "15/10/2023",
+        so: 12915,
+        top: 456997,
+        collectionAmount: 125254000,
+        collectionDate: "02/12/2023"
+    }
+]
+
+export const configItemHeader = [
+    {
+        key: "productNumber",
+        header: "Product Number"
+    },
+    {
+        key: "soNumber",
+        header: "SO Number"
+    },
+    {
+        key: "poNumber",
+        header: "PO Number"
+    },
+    {
+        key: "poDate",
+        header: "PO Date"
+    },
+    {
+        key: "etaByPurchasing",
+        header: "ETA By. Purchasing"
+    },
+    {
+        key: "etaByPMO",
+        header: "ETA By. PMO"
+    },
+    {
+        key: "doDate",
+        header: "DO Date"
+    },
+    {
+        key: "descriptionItem",
+        header: "Description Item"
+    },
+    {
+        key: "brand",
+        header: "Brand"
+    },
+    {
+        key: "quantity",
+        header: "Quantity"
+    },
+    {
+        key: "warrantyStartDate",
+        header: "Cust. Warranty Start Date"
+    },
+]
+
+export const configItemData = [
+    {
+        productNumber: "XYZ-00456",
+        soNumber: 1234,
+        poNumber: 128821,
+        poDate: "20/03/2022",
+        etaByPurchasing: "10/05/2022",
+        etaByPMO: "10/05/2022",
+        doDate: "10/06/2022",
+        descriptionItem: "Lorem Ipsun",
+        brand: "LENOVO",
+        quantity: 1,
+        warrantyStartDate: "11/06/2022"
+    }
 ]
