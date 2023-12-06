@@ -17,26 +17,6 @@ type ActionUnion =
   | SalesNameMode
   | ResultActions;
 
-// //Get sales assign history by customer id
-// export const REQUEST_SALES_ASSIGN: string = "SalesActions.REQUEST_SALES_ASSIGN";
-// export const REQUEST_SALES_ASSIGN_FISNISHED: string =
-//   "SalesActions.REQUEST_SALES_ASSIGN_FISNISHED";
-
-// export const requestAssignSales = (
-//   data: SalesAssignRow,
-//   customerSettingId: number
-// ): any => {
-//   return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
-//     await ActionUtility.createThunkEffect<ResultActions>(
-//       dispatch,
-//       REQUEST_SALES_ASSIGN,
-//       SalesAssignEffect.requestAssignSales,
-//       data,
-//       customerSettingId
-//     );
-//   };
-// };
-
 //Get sales by Name
 export const REQUEST_SALES_BY_NAME: string = "SalesAction.EQUEST_SALES_BY_NAME";
 export const REQUEST_SALES_BY_NAME_FINISHED: string =
@@ -56,14 +36,30 @@ export const requestSalesByName = (search: string): any => {
   };
 };
 
+//Get List Sales for Dropdown
+export const REQUEST_SALES_LIST: string = "SalesAction.REQUEST_SALES_LIST";
+export const REQUEST_SALES_LIST_FINISHED: string =
+  "SalesAction.REQUEST_SALES_LIST_FINISHED";
+
+export const requestSalesDropdown = (): any => {
+  return async (
+    dispatch: ReduxDispatch<ActionUnion>,
+    getState: () => IStore
+  ): Promise<void> => {
+    await ActionUtility.createThunkEffect<SalesNameMode>(
+      dispatch,
+      REQUEST_SALES_LIST,
+      SalesAssignEffect.requestSalesDropdown
+    );
+  };
+};
+
 // Assign sales
 export const POST_ASSIGN_SALES: string = "SalesActions.POST_CUSTOMERS_SALES";
 export const POST_ASSIGN_SALES_FISNISHED: string =
   "SalesActions.POST_CUSTOMERS_SALES_FISNISHED";
 
-export const postAssignedSales = (
-  data: SalesAssignPostModel
-): any => {
+export const postAssignedSales = (data: SalesAssignPostModel): any => {
   return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
     await ActionUtility.createThunkEffect<ResultActions>(
       dispatch,
@@ -73,28 +69,6 @@ export const postAssignedSales = (
     );
   };
 };
-
-// //Update assigned sales by customer id
-// export const PUT_ASSIGN_SALES: string = "SalesActions.PUT_CUSTOMERS_SALES";
-// export const PUT_ASSIGN_SALES_FISNISHED: string =
-//   "SalesActions.PUT_CUSTOMERS_SALES_FISNISHED";
-
-// export const putAssignedSales = (
-//   data: SalesAssignRow,
-//   UserLoginID: number,
-//   id: number
-// ): any => {
-//   return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
-//     await ActionUtility.createThunkEffect<ResultActions>(
-//       dispatch,
-//       POST_ASSIGN_SALES,
-//       SalesAssignEffect.postAssignedSales,
-//       data,
-//       UserLoginID,
-//       id
-//     );
-//   };
-// };
 
 export const CLEAR_RESULT_SALES: string = "SalesActions.CLEAR_RESULT_SALES";
 export const CLEAR_RESULT_SALES_FINISHED: string =

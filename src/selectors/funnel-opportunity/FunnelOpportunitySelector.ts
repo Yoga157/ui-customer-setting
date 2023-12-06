@@ -1,6 +1,6 @@
-import { createSelector, ParametricSelector } from 'reselect';
-import IStore from '../../models/IStore';
-import { Selector } from 'react-redux';
+import { createSelector, ParametricSelector } from "reselect";
+import IStore from "../../models/IStore";
+import { Selector } from "react-redux";
 
 interface IOptionsData {
   readonly value: number;
@@ -20,18 +20,21 @@ const _createTableRows = (models: any[]): any[] => {
 
 const _mappingObjectTableRow = (model: any): any => {
   return {
-    funnelOpportunityID: model.funnelOpportunityID.toString() === 'undefined' ? 0 : model.funnelOpportunityID,
-    salesName: model.salesName === '' ? '' : model.salesName,
-    funnelID: model.funnelID === null ? '' : model.funnelID,
-    eventName: model.eventName === '' ? '' : model.eventName,
-    customerName: model.customerName === '' ? '' : model.customerName,
+    funnelOpportunityID:
+      model.funnelOpportunityID.toString() === "undefined"
+        ? 0
+        : model.funnelOpportunityID,
+    salesName: model.salesName === "" ? "" : model.salesName,
+    funnelID: model.funnelID === null ? "" : model.funnelID,
+    eventName: model.eventName === "" ? "" : model.eventName,
+    customerName: model.customerName === "" ? "" : model.customerName,
     createUserID: model.createUserID === null ? null : model.createUserID,
-    status: model.status === '' ? '' : model.status,
+    status: model.status === "" ? "" : model.status,
     createDate: model.createDate === null ? null : model.createDate,
     brand: model.brand === null ? null : model.brand,
-    eventDate: model.eventDate === '' ? null : model.eventDate,
-    direktorat: model.direktorat === '' ? null : model.direktorat,
-    agingDays: model.agingDays === '' ? null : model.agingDays,
+    eventDate: model.eventDate === "" ? null : model.eventDate,
+    direktorat: model.direktorat === "" ? null : model.direktorat,
+    agingDays: model.agingDays === "" ? null : model.agingDays,
   };
 };
 
@@ -47,7 +50,10 @@ const _selectCustomerName = (models: any[]): any[] => {
   }));
 };
 
-export const selectCustomerName: Selector<IStore, IOptionsData[]> = createSelector(
+export const selectCustomerName: Selector<
+  IStore,
+  IOptionsData[]
+> = createSelector(
   (state: IStore) => state.funnelOpportunity.listCustomer,
   _selectCustomerName
 );
@@ -71,7 +77,10 @@ const _selectDirektorat = (models: any[]): any[] => {
   }));
 };
 
-export const selectDirektorat: Selector<IStore, IOptionsData[]> = createSelector(
+export const selectDirektorat: Selector<
+  IStore,
+  IOptionsData[]
+> = createSelector(
   (state: IStore) => state.funnelOpportunity.listDirektorat,
   _selectDirektorat
 );
@@ -83,7 +92,7 @@ const _mappingOppFailedTableRow = (model: any) => {
     eventName: model.eventName,
     notes: model.notes,
     errorMessage: model.errorMessage,
-    messageError: model.errorMessage.join(','),
+    messageError: model.errorMessage.join(","),
   };
 };
 const _selectResultOpp = (models: any[]): any[] => {

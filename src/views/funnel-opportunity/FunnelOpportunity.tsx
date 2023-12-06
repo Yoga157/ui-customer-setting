@@ -319,17 +319,11 @@ const FunnelPage: React.FC<IProps> = (
               />{" "}
             </Grid.Column>
           )}
-
-          {/* <Grid.Column textAlign="center">
-              
-          </Grid.Column>
-          <Grid.Column textAlign="left">
-                 </Grid.Column> */}
         </Grid>
 
         <Grid columns="equal">
           <Grid.Column>
-            <div className="wrapper-table">
+            <div className="  ">
               <FunnelTable history={props.history} tableData={tableData} />
             </div>
             <Pagination
