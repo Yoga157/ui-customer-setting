@@ -16,7 +16,6 @@ import { selectUserResult } from "selectors/user/UserSelector";
 import IUserResult from "selectors/user/models/IUserResult";
 import IStore from "models/IStore";
 import "./CustomerTableRowStyle.scss";
-// import { SalesFormCard } from '../../form/index';
 import AddSalesAssign from "../../form/form-create/FormAdd";
 import RouteEnum from "constants/RouteEnum";
 import * as CustomerSettActions from "stores/customer-setting/CustomerActivityActions";
@@ -37,7 +36,6 @@ const CustomerTableRow: React.FC<IProps> = (
     selectUserResult(state)
   );
 
-  const [colorStatus, setColorStatus] = useState("grey" as any);
   const { rowData, getRowData } = props;
 
   const setRowData = (data) => {
@@ -79,59 +77,125 @@ const CustomerTableRow: React.FC<IProps> = (
   return (
     <Fragment>
       <Table.Row key={rowData.CustomerSettingID}>
-        <TableCell>
-          <div>
-            <label>
-              <input
-                type="checkbox"
-                onClick={() => setRowData(rowData)}
-              ></input>
-            </label>
+        <Table.Cell width="4">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            <div>
+              <label style={{ margin: "0.8rem", verticalAlign: "middle" }}>
+                <input
+                  type="checkbox"
+                  onClick={() => setRowData(rowData)}
+                ></input>
+              </label>
+            </div>
+            <Dropdown pointing="left" icon="ellipsis vertical">
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  text="View/Edit"
+                  icon="edit outline"
+                  onClick={onEdit}
+                />
+
+                <Dropdown.Item
+                  text="Assign Sales"
+                  icon="users"
+                  onClick={reassignClick}
+                />
+
+                {rowData.status != "CANCEL" &&
+                  rowData.CustomerSettingID == "" && (
+                    <Dropdown.Item text="Cancel" icon="remove circle" />
+                  )}
+              </Dropdown.Menu>
+            </Dropdown>
           </div>
-        </TableCell>
-        <Table.Cell width="1">
-          <Dropdown pointing="left" icon="ellipsis vertical">
-            <Dropdown.Menu>
-              <Dropdown.Item
-                text="View/Edit"
-                icon="edit outline"
-                onClick={onEdit}
-              />
-
-              <Dropdown.Item
-                text="Assign Sales"
-                icon="users"
-                onClick={reassignClick}
-              />
-
-              {rowData.status != "CANCEL" &&
-                rowData.CustomerSettingID == "" && (
-                  <Dropdown.Item text="Cancel" icon="remove circle" />
-                )}
-            </Dropdown.Menu>
-          </Dropdown>
         </Table.Cell>
         <Table.Cell textAlign="center">{rowData.customerGenID}</Table.Cell>
         <Table.Cell>{rowData.customerCategory}</Table.Cell>
         <Table.Cell>{rowData.customerName}</Table.Cell>
         <Table.Cell>{rowData.lastProjectName}</Table.Cell>
-        <Table.Cell textAlign="center">{rowData.shareable}</Table.Cell>
-        <Table.Cell textAlign="center">{rowData.salesAssign}</Table.Cell>
-        <Table.Cell textAlign="center">{rowData.pmoCustomer}</Table.Cell>
-        <Table.Cell textAlign="center">{rowData.relatedCustomer}</Table.Cell>
-        <Table.Cell>{rowData.invoiceCondition}</Table.Cell>
         <Table.Cell textAlign="center">
-          {rowData.blacklist === "Yes" ? (
-            <Icon name="phone" color="red" />
+          {rowData.shareable === true ? (
+            <div style={{ textAlign: "center" }}>
+              <span>Yes</span>
+            </div>
           ) : (
-            <Icon name="phone" color="green" />
+            <div style={{ textAlign: "center" }}>
+              <span>No</span>
+            </div>
           )}
-        </Table.Cell>{" "}
+        </Table.Cell>
+        <Table.Cell>{rowData.salesAssign}</Table.Cell>
+        <Table.Cell textAlign="center">
+          {rowData.pmoCustomer === true ? (
+            <div style={{ textAlign: "center" }}>
+              <span>Yes</span>
+            </div>
+          ) : (
+            <div style={{ textAlign: "center" }}>
+              <span>No</span>
+            </div>
+          )}
+        </Table.Cell>
+        <Table.Cell>{rowData.relatedCustomer}</Table.Cell>
+        <Table.Cell>{rowData.invoiceCondition}</Table.Cell>
+        <Table.Cell textAlign="center" verticalAlign="middle">
+          {rowData.blacklist === true ? (
+            <div
+              style={{
+                backgroundColor: "#fb7757",
+                color: "white",
+                borderRadius: "1rem",
+                width: "3.8rem",
+              }}
+            >
+              <Icon name="address book" size="small" />
+              <span>Yes</span>
+            </div>
+          ) : (
+            <div
+              style={{
+                backgroundColor: "#27d4a5",
+                color: "white",
+                borderRadius: "1rem",
+                width: "3.8rem",
+              }}
+            >
+              <Icon name="address book" size="small" />
+              <span>No</span>
+            </div>
+          )}
+        </Table.Cell>
         <Table.Cell textAlign="center">
           {rowData.holdshipment === "Yes" ? (
-            <Icon name="truck" color="yellow" />
+            <div
+              style={{
+                backgroundColor: "#f6a52c",
+                color: "white",
+                borderRadius: "1rem",
+                width: "3.8rem",
+              }}
+            >
+              <Icon name="truck" size="small" />
+              <span>Yes</span>
+            </div>
           ) : (
-            <Icon name="truck" color="blue" />
+            <div
+              style={{
+                backgroundColor: "#656dd1",
+                color: "white",
+                borderRadius: "1rem",
+                width: "3.8rem",
+              }}
+            >
+              <Icon name="truck" size="small" />
+              <span>No</span>
+            </div>
           )}
         </Table.Cell>
         <Table.Cell textAlign="center">{rowData.createUserID}</Table.Cell>

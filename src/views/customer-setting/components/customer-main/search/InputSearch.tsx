@@ -16,10 +16,6 @@ export const InputSearch: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [btnCancel, setBtnCancel] = useState(false);
 
-  const currentUser: IUserResult = useSelector((state: IStore) =>
-    selectUserResult(state)
-  );
-
   const onChangeSearch = (event: any, data: any) => {
     setBtnCancel(false);
     setSearchText(data.value);

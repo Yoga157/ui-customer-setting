@@ -19,6 +19,7 @@ export const selectEmployeeOptions: Selector<
   IStore,
   IOptionsData[]
 > = createSelector((state: IStore) => state.employee.data, _selectEmployee);
+
 export const selectEmployeeRolePMOSOptions: Selector<
   IStore,
   IOptionsData[]

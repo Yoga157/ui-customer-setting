@@ -1,13 +1,5 @@
 import React, { useEffect, Fragment, useState, useCallback } from "react";
-import {
-  SelectInput,
-  TextInput,
-  Button,
-  SearchInput,
-  RichTextEditor,
-  Tooltips,
-  DateInput,
-} from "views/components/UI";
+import { Button, SearchInput } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
@@ -32,23 +24,10 @@ import {
 } from "revalidate";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
-import { selectUserResult } from "selectors/user/UserSelector";
-
-import { selectDirektorat } from "selectors/funnel-opportunity/FunnelOpportunitySelector";
 import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
-
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
-import { format } from "date-fns";
-import IOptionsData from "selectors/select-options/models/IOptionsData";
-import environtment from "environment";
-import axios from "axios";
-import * as ToastsAction from "stores/toasts/ToastsAction";
-import ToastStatusEnum from "constants/ToastStatusEnum";
 
 interface IProps {
-  // customerSettingID: number;
-  // customerName: string;
-  // type: string;
   rowData: any;
 }
 
@@ -56,11 +35,7 @@ const AddSalesAssign: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
-  const [customerName, setCustomerName] = useState(props.rowData.customerName);
   const [salesName, setSalesName] = useState("");
-  const [salesId, setSalesId] = useState(0);
-  const [shareable, setshareable] = useState(false);
-  const [pmoCustomer, setpmoCustomer] = useState(false);
   const [salesAssignArray, setSalesAssignArray] = useState([]);
   const { rowData } = props;
 
@@ -71,13 +46,22 @@ const AddSalesAssign: React.FC<IProps> = (
   const handleSearchChangeSales = useCallback(
     (data) => {
       setSalesName(data);
-
       if (data.length >= 2) {
         dispatch(SalesAssign.requestSalesByName(data));
+      } else {
+        clearSearchResults();
       }
     },
     [dispatch]
   );
+
+  const clearSearchResults = () => {
+    setSalesAssignArray([]);
+  };
+
+  useEffect(() => {
+    dispatch(SalesAssign.clearResult());
+  }, [dispatch]);
 
   const cancelClick = () => {
     dispatch(ModalAction.CLOSE());
@@ -87,14 +71,13 @@ const AddSalesAssign: React.FC<IProps> = (
     selectRequesting(state, [])
   );
 
-  const onSubmitHandler = async (e) => {
+  const onSubmitHandler = (e) => {
     const userId: any = localStorage.getItem("userLogin");
 
     // console.log(rowData);
     // console.log(salesAssignArray);
 
-    for (let j = 0; j < rowData.lenght; j++) {
-      // console.log(`rowData id ${rowData[j].customerSettingID}`);
+    for (let j = 0; j < rowData.length; j++) {
       for (let i = 0; i < salesAssignArray.length; i++) {
         const NewAssignSales = new SalesAssignPostModel(e);
         NewAssignSales.assignID = 0;
@@ -105,15 +88,16 @@ const AddSalesAssign: React.FC<IProps> = (
         NewAssignSales.modifyUserID = 0;
 
         dispatch(SalesAssign.postAssignedSales(NewAssignSales));
-        // console.log(
-        //   `rowData id ${rowData[j].customerSettingID} dan sales ID ${salesAssignArray[i].salesID}`
-        // );
       }
     }
     dispatch(ModalAction.CLOSE());
     dispatch(
       CustomerSettingAct.requestCustomerSett(1, 10, "CustomerSettingID")
     );
+  };
+
+  const onHandlerSearch = () => {
+    // console.log("search");
   };
 
   const deleteClick = (salesID) => {
@@ -124,8 +108,6 @@ const AddSalesAssign: React.FC<IProps> = (
   };
 
   const onResultSelectSales = (data: any) => {
-    setSalesName(" ");
-
     let checkSales = salesAssignArray.find(
       (obj) => obj.salesID === data.result.salesID
     );
@@ -164,8 +146,8 @@ const AddSalesAssign: React.FC<IProps> = (
       <LoadingIndicator isActive={isRequesting}>
         <FinalForm
           validate={validate}
-          onSubmit={(values: any) => onSubmitHandler(values)}
-          render={({ handleSubmit, pristine, invalid }) => (
+          onSubmit={() => onHandlerSearch()}
+          render={({ handleSubmit }) => (
             <Form onSubmit={handleSubmit}>
               <div>
                 {rowData.map((data) => {
@@ -209,21 +191,6 @@ const AddSalesAssign: React.FC<IProps> = (
                       </div>
 
                       <Divider></Divider>
-                      {/* <Grid.Row>
-                      <Grid.Column className="ui four wide">
-                        <h4>
-                          Shareable Customer{"  "}
-                          {data.shareable && <i className="tiny circular inverted teal check icon align-icon"></i>}
-                        </h4>
-                      </Grid.Column>
-                      <Grid.Column width={1}>{"|"}</Grid.Column>
-                      <Grid.Column className="ui four wide MarBot-47">
-                        <h4>
-                          PMO Customer{"  "}
-                          {data.holdshipment && <i className="tiny circular inverted teal check icon align-icon"></i>}
-                        </h4>
-                      </Grid.Column>
-                    </Grid.Row> */}
                     </>
                   );
                 })}
@@ -261,18 +228,23 @@ const AddSalesAssign: React.FC<IProps> = (
                   </Grid.Column>
                 </Grid.Row>
               </div>{" "}
-              <Divider></Divider>
-              <div style={{ textAlign: "center" }}>
-                <Button type="button" onClick={cancelClick}>
-                  Cancel
-                </Button>
-                <Button className="MarBot10" type="submit" color="blue">
-                  Submit
-                </Button>
-              </div>
             </Form>
           )}
         />
+        <Divider></Divider>
+        <div style={{ textAlign: "center" }}>
+          <Button type="button" onClick={cancelClick}>
+            Cancel
+          </Button>
+          <Button
+            className="MarBot10"
+            type="submit"
+            color="blue"
+            onClick={onSubmitHandler}
+          >
+            Submit
+          </Button>
+        </div>
       </LoadingIndicator>
     </Fragment>
   );

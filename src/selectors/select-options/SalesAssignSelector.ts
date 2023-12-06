@@ -1,9 +1,8 @@
 import { createSelector, Selector } from "reselect";
 import IStore from "../../models/IStore";
 import IOptionsData from "./models/IOptionsData";
-import ISearchResult from "./models/ISearchResult";
-import IOptionsDataString from "./models/IOptionsDataString";
 import SalesNameModel from "stores/customer-sales/models/SalesNameModel";
+import ISalesResultFilter from "./models/ISalesResultFilter";
 
 export default interface ISearchResultSales {
   readonly title: string;
@@ -25,4 +24,21 @@ export const selectSalesSearchOptions: Selector<
 > = createSelector(
   (state: IStore) => state.customerSalesAssign.sales,
   _selectSalesSearch
+);
+
+const _selectSales = (models: SalesNameModel[]): ISalesResultFilter[] => {
+  return models.map(
+    (model: SalesNameModel): ISalesResultFilter => ({
+      value: { salesName: model.salesName, salesID: model.salesID },
+      text: model.salesName,
+    })
+  );
+};
+
+export const selectSalesOptions: Selector<
+  IStore,
+  ISalesResultFilter[]
+> = createSelector(
+  (state: IStore) => state.customerSalesAssign.sales,
+  _selectSales
 );

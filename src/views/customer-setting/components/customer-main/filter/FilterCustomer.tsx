@@ -3,16 +3,19 @@ import { isRequired } from "revalidate";
 import { FormSpy } from "react-final-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
+import IOptionsData from "selectors/select-options/models/IOptionsData";
 import IStore from "models/IStore";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
 import { Divider, Grid, Form, Select } from "semantic-ui-react";
-import { Button, SelectInput } from "views/components/UI";
+import { Button, DropdownClearInput, SelectInput } from "views/components/UI";
 import { Form as FinalForm, Field } from "react-final-form";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
-import { selectSalesSearchOptions } from "selectors/select-options/SalesAssignSelector";
+import { selectSalesOptions } from "selectors/select-options/SalesAssignSelector";
 import CustomerSettingModel from "stores/customer-setting/models/CustomerSettingModel";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
+import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
+import { event } from "jquery";
 
 interface IProps {
   rowData: any;
@@ -24,6 +27,7 @@ const FilterCustomer: React.FC<{
 } & IProps> = ({ setOpenFilter, openFilter, rowData }) => {
   const [salesName, setSalesName] = useState("");
   const [salesAssignArray, setSalesAssignArray] = useState([]);
+  const [salesFilter, setSalesFilter] = useState([]);
   const [shareableYesChecked, setShareableYesChecked] = useState(false);
   const [shareableNoChecked, setShareableNoChecked] = useState(false);
   const [pmo_customerYesChecked, setPmo_customerYesChecked] = useState(false);
@@ -39,71 +43,90 @@ const FilterCustomer: React.FC<{
     selectRequesting(state, [])
   );
 
-  const onSubmitHandler = async (values) => {
-    console.log(values);
-    // console.log(pmoCustomer);
+  const onResultSelectSales = (data: any): any => {
+    console.log(data);
+    let checkSales = salesAssignArray.find((obj) => obj.sales === data.salesID);
+    if (checkSales === undefined) {
+      setSalesAssignArray([
+        ...salesAssignArray,
+        {
+          salesName: data.salesName,
+          salesID: data.salesID,
+        },
+      ]);
 
+      setSalesFilter([...salesFilter, data.salesName]);
+    }
+  };
+
+  const onSubmitHandler = async () => {
     const shareable =
       shareableYesChecked && shareableNoChecked
         ? null
         : shareableYesChecked
-        ? "true"
+        ? true
         : shareableNoChecked
-        ? "false"
+        ? false
         : null;
 
     const pmo_customer =
       pmo_customerYesChecked && pmo_customerNoChecked
         ? null
         : pmo_customerYesChecked
-        ? "true"
+        ? true
         : pmo_customerNoChecked
-        ? "false"
+        ? false
         : null;
+
+    const newsalesAssign =
+      salesFilter.length == 0 ? null : salesFilter.join(" ");
 
     const holdshipment =
       holdshipmentYesChecked && holdshipmentNoChecked
         ? null
         : holdshipmentYesChecked
-        ? "true"
+        ? true
         : holdshipmentNoChecked
-        ? "false"
+        ? false
         : null;
 
     const blacklist =
       blacklistYesChecked && blacklistNoChecked
         ? null
         : blacklistYesChecked
-        ? "true"
+        ? true
         : blacklistNoChecked
-        ? "false"
+        ? false
         : null;
 
-    console.log(shareable);
-    console.log(pmo_customer);
-    console.log(holdshipment);
-    console.log(blacklist);
+    console.log(newsalesAssign);
+    // console.log(pmo_customer);
+    // console.log(holdshipment);
+    // console.log(blacklist);
 
-    await dispatch(
+    dispatch(
       CustomerSettingAct.requestSearchCustomerSett(
         1,
         10,
         "CustomerSettingID",
         null,
-        null,
-        null,
+        "ascending",
+        newsalesAssign,
         shareable,
         pmo_customer,
         holdshipment,
         blacklist
       )
     );
-    dispatch(ModalAction.CLOSE());
   };
 
-  const salesStoreSearch = useSelector((state: IStore) =>
-    selectSalesSearchOptions(state)
+  const salesStoreDropdown = useSelector((state: IStore) =>
+    selectSalesOptions(state)
   );
+
+  useEffect(() => {
+    dispatch(SalesAssign.requestSalesDropdown());
+  }, [dispatch]);
 
   const deleteClick = (salesID) => {
     let filteredArray = salesAssignArray.filter(
@@ -112,13 +135,18 @@ const FilterCustomer: React.FC<{
     setSalesAssignArray(filteredArray);
   };
 
-  const resetClick = () => {
+  const resetClick = (event) => {
+    setShareableYesChecked(event.target.checked);
+    setShareableNoChecked(event.target.checked);
+    setPmo_customerYesChecked(event.target.checked);
+    setPmo_customerNoChecked(event.target.checked);
+    setHoldshipmentYesChecked(event.target.checked);
+    setHoldshipmentNoChecked(event.target.checked);
+    setShareableYesChecked(event.target.checked);
+    setShareableNoChecked(event.target.checked);
+    setBlacklistYesChecked(event.target.checked);
+    setBlacklistNoChecked(event.target.checked);
     setSalesName("");
-    setSalesAssignArray([]);
-    // setHoldshipmentCustomer(false);
-    // setShareable(false);
-    // setPmoCustomer(false);
-    // setBlacklist(false);
   };
 
   return (
@@ -167,8 +195,8 @@ const FilterCustomer: React.FC<{
           <Divider></Divider>
           <LoadingIndicator isActive={isRequesting}>
             <FinalForm
-              onSubmit={(values: any) => onSubmitHandler(values)}
-              render={({ handleSubmit, pristine, invalid }) => (
+              onSubmit={() => onSubmitHandler()}
+              render={({ handleSubmit }) => (
                 <Form onSubmit={handleSubmit}>
                   <Grid.Row>
                     <p>Shareable</p>
@@ -196,12 +224,11 @@ const FilterCustomer: React.FC<{
                             <input
                               name="shareable"
                               type="checkbox"
-                              // value="yes"
-                              // value= {shareableYesChecked && shareableNoChecked ? null : shareableYesChecked ? 'true' : shareableNoChecked ? 'false' : null}
                               style={{
                                 marginRight: "0.5rem",
                                 transform: "scale(1)",
                               }}
+                              checked={shareableYesChecked}
                               onChange={() =>
                                 setShareableYesChecked(!shareableYesChecked)
                               }
@@ -228,6 +255,7 @@ const FilterCustomer: React.FC<{
                                 marginRight: "0.5rem",
                                 transform: "scale(1)",
                               }}
+                              checked={shareableNoChecked}
                               onChange={() =>
                                 setShareableNoChecked(!shareableNoChecked)
                               }
@@ -265,6 +293,7 @@ const FilterCustomer: React.FC<{
                             <input
                               name="pmo_customer"
                               type="checkbox"
+                              checked={pmo_customerYesChecked}
                               value="yes"
                               style={{
                                 marginRight: "0.5rem",
@@ -298,6 +327,7 @@ const FilterCustomer: React.FC<{
                                 marginRight: "0.5rem",
                                 transform: "scale(1)",
                               }}
+                              checked={pmo_customerNoChecked}
                               onChange={() =>
                                 setPmo_customerNoChecked(!pmo_customerNoChecked)
                               }
@@ -315,13 +345,11 @@ const FilterCustomer: React.FC<{
                       <p>Sales Assign</p>
                       <Field
                         name="salesName"
-                        // labelName="Sales Assign"
-                        component={SelectInput}
+                        component={DropdownClearInput}
                         placeholder="-Choose Sales-"
-                        thousandSeparator={true}
-                        // mandatory={true}
-                        options={salesStoreSearch}
                         values={salesName}
+                        options={salesStoreDropdown}
+                        onChanged={onResultSelectSales}
                       />
                     </Grid.Column>
                   </Grid.Row>
@@ -331,6 +359,7 @@ const FilterCustomer: React.FC<{
                       {salesAssignArray.map((data) => {
                         return (
                           <div
+                            style={{ marginTop: "0.5rem" }}
                             className="ui label labelBorPad"
                             key={data.salesID}
                           >
@@ -373,6 +402,7 @@ const FilterCustomer: React.FC<{
                               name="holdshipment"
                               value="yes"
                               type="checkbox"
+                              checked={holdshipmentYesChecked}
                               style={{
                                 marginRight: "0.5rem",
                                 transform: "scale(1)",
@@ -405,6 +435,7 @@ const FilterCustomer: React.FC<{
                                 marginRight: "0.5rem",
                                 transform: "scale(1)",
                               }}
+                              checked={holdshipmentNoChecked}
                               onChange={() =>
                                 setHoldshipmentNoChecked(!holdshipmentNoChecked)
                               }
@@ -416,6 +447,7 @@ const FilterCustomer: React.FC<{
                     </Grid.Row>
                   </Grid.Row>
                   <Divider></Divider>
+
                   <Grid.Row>
                     <p>Blacklist Customer</p>
                     <Grid.Row>
@@ -447,6 +479,7 @@ const FilterCustomer: React.FC<{
                                 marginRight: "0.5rem",
                                 transform: "scale(1)",
                               }}
+                              checked={blacklistYesChecked}
                               onChange={() =>
                                 setBlacklistYesChecked(!blacklistYesChecked)
                               }
@@ -473,6 +506,7 @@ const FilterCustomer: React.FC<{
                                 marginRight: "0.5rem",
                                 transform: "scale(1)",
                               }}
+                              checked={blacklistNoChecked}
                               onChange={() =>
                                 setBlacklistNoChecked(!blacklistNoChecked)
                               }
@@ -483,8 +517,11 @@ const FilterCustomer: React.FC<{
                       </div>
                     </Grid.Row>
                   </Grid.Row>
+
                   <Divider style={{ marginBottom: "4rem" }}></Divider>
+
                   <Divider></Divider>
+
                   <div style={{ textAlign: "center" }}>
                     <Grid.Row>
                       <Button
@@ -503,7 +540,7 @@ const FilterCustomer: React.FC<{
                     <Grid.Row>
                       <Button
                         type="button"
-                        onClick={() => resetClick}
+                        onClick={(event) => resetClick(event)}
                         style={{
                           width: "18rem",
                           color: "#656dd1",

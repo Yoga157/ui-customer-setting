@@ -62,7 +62,6 @@ const CustomerTable: React.FC<IProps> = (
       <Table.Header>
         <Table.Row>
           <Table.HeaderCell textAlign="center"></Table.HeaderCell>
-          <Table.HeaderCell textAlign="center"></Table.HeaderCell>
           <Table.HeaderCell
             sorted={columns === "CustomerGenID" ? direction : null}
             onClick={() => reloads("CustomerGenID")}
