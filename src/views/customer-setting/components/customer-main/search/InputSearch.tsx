@@ -16,10 +16,6 @@ export const InputSearch: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [btnCancel, setBtnCancel] = useState(false);
 
-  const currentUser: IUserResult = useSelector((state: IStore) =>
-    selectUserResult(state)
-  );
-
   const onChangeSearch = (event: any, data: any) => {
     setBtnCancel(false);
     setSearchText(data.value);
@@ -59,29 +55,42 @@ export const InputSearch: React.FC = () => {
   );
 
   return (
-    <Grid.Column className="SearchFormDQ">
-      <Input
-        className={styles.Rounded + " roundedSearchInput "}
-        placeholder="Search..."
-        onChange={onChangeSearch}
-        onKeyPress={(event) => {
-          if (event.charCode == 13) {
-            onSearch();
-          }
-        }}
-        value={searchText}
-        id={"search-input-customer"}
-      />
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        // width: "fit-content",
+        alignItems: "center",
+      }}
+    >
+      <div style={{ flex: "1" }}>
+        {" "}
+        <Input
+          style={{ width: "45rem", maxWidth: "40rem", height: "3rem" }}
+          className={styles.Rounded + " roundedSearchInput "}
+          placeholder="Search..."
+          onChange={onChangeSearch}
+          onKeyPress={(event) => {
+            if (event.charCode == 13) {
+              onSearch();
+            }
+          }}
+          value={searchText}
+          id={"search-input-customer"}
+        />
+      </div>
 
-      <Button
-        className="Rounded SearchBtn"
-        icon={btnCancel ? "close" : "search"}
-        size="small"
-        color="blue"
-        onClick={onSearch}
-        loading={isRequesting}
-      />
-    </Grid.Column>
+      <div>
+        <Button
+          className="Rounded SearchBtn"
+          icon={btnCancel ? "close" : "search"}
+          // size="small"
+          color="blue"
+          onClick={onSearch}
+          // loading={isRequesting}
+        />
+      </div>
+    </div>
   );
 };
 export default InputSearch;

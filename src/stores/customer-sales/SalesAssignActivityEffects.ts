@@ -7,25 +7,22 @@ import ResultActions from "models/ResultActions";
 import SalesNameMode from "./models/SalesNameModel";
 import SalesAssignPostModel from "./models/SalesAssignPostModel";
 
-// //Get sales assign history by customer id
-// export const requestAssignSales = async (
-//   data: SalesAssignRow,
-//   customerSettingId: number
-// ): Promise<ResultActions | HttpErrorResponseModel> => {
-//   const controllerName =
-//     "CustomerSalesAssign?customerSettingID=" + customerSettingId;
-//   const endpoint: string = environment.api.customer.replace(
-//     ":controller",
-//     controllerName
-//   );
-//   return EffectUtility.getToModel<ResultActions>(ResultActions, endpoint, data);
-// };
-
-//Get Sales By Name
 export const requestSalesByName = async (
   search: string
 ): Promise<SalesNameMode | HttpErrorResponseModel> => {
   const controllerName = "CustomerSetting/SalesName?&search=" + search;
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+
+  return EffectUtility.getToModel<SalesNameMode>(SalesNameMode, endpoint);
+};
+
+export const requestSalesDropdown = async (): Promise<
+  SalesNameMode | HttpErrorResponseModel
+> => {
+  const controllerName = "CustomerSetting/ListSalesName";
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName
@@ -50,22 +47,7 @@ export const postAssignedSales = async (
   );
 };
 
-// //Update assigned sales by customer id
-// export const putAssignedSales = async (
-//   data: SalesAssignRow,
-//   UserLoginID: number,
-//   id: number
-// ): Promise<ResultActions | HttpErrorResponseModel> => {
-//   const controllerName =
-//     "CustomerSalesAssign/" + id + "?UserLoginID=" + UserLoginID;
-//   const endpoint: string = environment.api.customer.replace(
-//     ":controller",
-//     controllerName
-//   );
-//   return EffectUtility.putToModel<ResultActions>(ResultActions, endpoint, data);
-// };
-
 export const clearResult = async (): Promise<any> => {
-  const clear = new ResultActions({});
+  const clear = new SalesNameMode({});
   return clear;
 };

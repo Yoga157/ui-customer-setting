@@ -21,19 +21,19 @@ export const initialState: ISalesAssignState = {
 };
 
 const SalesAssignReducer: Reducer = baseReducer(initialState, {
-  // [SalesActions.REQUEST_SALES_ASSIGN_FISNISHED](
-  //   state: ISalesAssignState,
-  //   action: IAction<SalesAssignModel>
-  // ): ISalesAssignState {
-  //   return {
-  //     ...state,
-  //     data: [action.payload!],
-  //     error: false,
-  //     refreshPage: false,
-  //   };
-  // },
-
   [SalesActions.REQUEST_SALES_BY_NAME_FINISHED](
+    state: ISalesAssignState,
+    action: IAction<SalesNameModel[]>
+  ): ISalesAssignState {
+    return {
+      ...state,
+      sales: action.payload!,
+      error: false,
+      refreshPage: false,
+    };
+  },
+
+  [SalesActions.REQUEST_SALES_LIST_FINISHED](
     state: ISalesAssignState,
     action: IAction<SalesNameModel[]>
   ): ISalesAssignState {
@@ -56,18 +56,6 @@ const SalesAssignReducer: Reducer = baseReducer(initialState, {
       resultActions: action.payload!,
     };
   },
-
-  //   [SalesActions.PUT_ASSIGN_SALES_FISNISHED](
-  //     state: ISalesAssignState,
-  //     action: IAction<SalesAssignModel>
-  //   ): ISalesAssignState {
-  //     return {
-  //       ...state,
-  //       data: [action.payload!],
-  //       error: false,
-  //       refreshPage: false,
-  //     };
-  //   },
 
   [SalesActions.CLEAR_RESULT_SALES_FINISHED](
     state: ISalesAssignState,
