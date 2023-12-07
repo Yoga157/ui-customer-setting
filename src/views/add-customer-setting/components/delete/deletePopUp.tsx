@@ -13,8 +13,10 @@ import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 
 interface IProps {
-  deleteFunc: (data: any) => void;
+  deleteFunc: (data: any) => any;
+  refreshFunc: (data: any) => any;
   id: number;
+  customerSettingID: number;
   content: string;
 }
 
@@ -31,9 +33,10 @@ const DeletePopUp: React.FC<IProps> = (
     selectRequesting(state, [])
   );
 
-  const deleteClick = () => {
-    dispatch(ModalAction.CLOSE());
-    // dispatch(CustomerSettingAct.requestCustomerSett(1, 10, "CustomerSettingID"));
+  const deleteClick = async () => {
+    await dispatch(props.deleteFunc(props.id))
+    await dispatch(props.refreshFunc(props.customerSettingID))
+    await dispatch(ModalAction.CLOSE());
   };
 
   return (

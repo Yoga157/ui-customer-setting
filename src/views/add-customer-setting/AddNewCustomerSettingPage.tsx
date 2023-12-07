@@ -284,19 +284,11 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
     const deleteInvoicingCondition = useCallback((id: number): void => {
         dispatch(
           ModalFirstLevelActions.OPEN(
-            <DeletePopUp deleteFunc={()=>{}} id={id} content="invoicing condition" />,
+            <DeletePopUp deleteFunc={InvoicingCondition.deleteInvoicingCondition} refreshFunc={InvoicingCondition.requestInvoicingCondition} id={id} customerSettingID={customerSettingData.customerSettingID} content="invoicing condition" />,
             ModalSizeEnum.Tiny
           )
         );
-      }, [dispatch]);
-
-    // useEffect(() => {
-    //     if(!Number.isNaN(customerSettingData.customerSettingID)) {
-    //         dispatch(InvoicingCondition.requestInvoicingCondition(customerSettingData.customerSettingID))
-    //     }
-    // }, [dispatch, customerSettingData])
-
-    console.log(invoicingConditionData)
+      }, [dispatch, customerSettingData]);
 
     /** Related customer */
     const onAddRelatedCustomer = useCallback((): void => {

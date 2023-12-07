@@ -8,14 +8,16 @@ import ResultActions from "models/ResultActions";
 import { NumberFormatState } from "react-number-format";
 
 export const requestCustomerSett = async (
-  page: number,
-  pageSize: number,
-  column: string,
+  page?: number,
+  pageSize?: number,
+  column?: string,
   sorting?: string
 ): Promise<CustomerSettingModel | HttpErrorResponseModel> => {
-  const controllerName = `CustomerSetting/GetListCustomerSetting?page=${page}&pageSize=${pageSize}&column=${column}${
-    sorting ? `&sorting=${sorting}` : ``
-  }`;
+  const controllerName = `CustomerSetting/GetListCustomerSetting?
+  ${ page ? `page=${page}`: ``}
+  ${ pageSize ? `&pageSize=${pageSize}` : ``}
+  ${ column ? `&column=${column}` : ``}
+  ${ sorting ? `&sorting=${sorting}` : ``}`;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName
