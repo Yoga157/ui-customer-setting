@@ -25,3 +25,17 @@ export const requestSearchCustomerName = (search: string): any => {
         )
     }
 }
+
+export const CLEAR_RESULT_CUSTOMER_NAME: string = "CustomerNameActions.CLEAR_RESULT_CUSTOMER_NAME";
+export const CLEAR_RESULT_CUSTOMER_NAME_FINISHED: string =
+  "CustomerNameActions.CLEAR_RESULT_CUSTOMER_NAME_FINISHED";
+
+export const clearResult = (): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      CLEAR_RESULT_CUSTOMER_NAME,
+      CustomerNameEffect.clearResult
+    );
+  };
+};

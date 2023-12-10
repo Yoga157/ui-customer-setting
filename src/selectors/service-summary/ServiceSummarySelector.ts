@@ -13,7 +13,7 @@ const _selectServiceSummary = (models: ServiceSummaryModel[]): IServiceSummary[]
       (model: ServiceSummaryModel): IServiceSummary => ({
         serviceName: model.serviceName,
         years: model.years,
-        purchase: model.purchase.toString()
+        purchase: model.purchase.toString() + " %"
       })
     );
   };

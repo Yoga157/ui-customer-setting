@@ -8,26 +8,55 @@ import { DropdownClearInput, Button } from "views/components/UI";
 
 import * as CustomerSetting from "stores/customer-setting/CustomerActivityActions"
 import { selectCustomerSetting, selectCustomerSettingOptions } from "selectors/customer-setting/CustomerSettingSelector";
+import RelatedCustomerPostModel from "stores/related-customer/models/RelatedCustomerPostModel";
+import * as RelatedCustomer from "stores/related-customer/RelatedCustomerActivityActions"
+
 import IStore from "models/IStore";
 
 interface IProps {
-    history: any;
-  }
+    customerSettingID: number
+}
+
+interface customerData {
+    customerName: string;
+    customerSettingID: number;
+    customerGenID: number;
+    blacklist: boolean;
+    holdshipment: boolean;
+    avgAR: number;
+    address: string;
+}
 
 const ModalNewRelatedCondition: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
     const dispatch: Dispatch = useDispatch();
     const [customerName, setCustomerName] = useState();
-    const [customerData, setCustomerData] = useState();
+    const [customerData, setCustomerData] = useState<customerData | undefined>(undefined);
 
     const customerSettingData = useSelector((state: IStore) => selectCustomerSettingOptions(state));
     
     const customerOnChange = (data) => {
-        console.log(data)
-        setCustomerData(data)
+        if(data) {
+            // console.log(data)
+            setCustomerData(data)
+        } else {
+            setCustomerData(undefined)
+        }
     }
 
     const onSubmitCustomerName = (data) => {
+    }
 
+    const onSubmitHandler = async () => {
+        let newRelatedCustomer = new RelatedCustomerPostModel({})
+        newRelatedCustomer.relatedID = 0;
+        newRelatedCustomer.customerSettingID = props.customerSettingID;
+        newRelatedCustomer.relatedCustomerSettingID = customerData.customerSettingID;
+        newRelatedCustomer.createUserID = 0;
+        newRelatedCustomer.modifyUserID = 0;
+
+        await dispatch(RelatedCustomer.postRelatedCustomer(newRelatedCustomer));
+        await dispatch(RelatedCustomer.requestRelatedCustomer(customerData.customerSettingID));
+        await dispatch(ModalAction.CLOSE());
     }
 
     const cancelClick = () => {
@@ -65,37 +94,37 @@ const ModalNewRelatedCondition: React.FC<IProps> = (props: React.PropsWithChildr
                 </div>
             </div>
 
-            {customerData != null && 
+            {customerData != undefined && 
              <>
                 <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", margin: "14px 0"}}>
                     <div style={{ display: "flex", flexDirection: "column", textAlign: "center"}}>
                         <label style={{ marginRight: '10px', marginBottom: "5px", color: "#A0A8B3" }}>CustomerID</label>
-                        <p style={{ color: "#55637A", fontSize: "24px", fontWeight: "bold"}}>12345</p>
+                        <p style={{ color: "#55637A", fontSize: "24px", fontWeight: "bold"}}>{customerData.customerGenID}</p>
                     </div>
 
                     <div style={{ display: "flex", flexDirection: "column" }}>
                         <label style={{ marginRight: '10px', marginBottom: "5px", color: "#A0A8B3" }}>Blacklist</label>
-                        <Label color="teal" style={{ borderRadius: "20px", width: "fit-content"}}>
-                            <Icon name='address book'/>No
+                        <Label color={customerData.blacklist ? "red" : "teal"} style={{ borderRadius: "20px", width: "fit-content"}}>
+                            <Icon name='address book'/>{customerData.blacklist ? "Yes" : "No"}
                         </Label>
                     </div>
 
                     <div style={{ display: "flex", flexDirection: "column" }}>
                         <label style={{ marginRight: '10px', marginBottom: "5px", color: "#A0A8B3" }}>Holdshipment</label>
-                        <Label color="purple" style={{ borderRadius: "20px", width: "fit-content" }}>
-                            <Icon name='truck'/>No
+                        <Label color={customerData.holdshipment ? "red" : "blue"} style={{ borderRadius: "20px", width: "fit-content" }}>
+                            <Icon name='truck'/>{customerData.holdshipment ? "Yes" : "No"}
                         </Label>
                     </div>
 
                     <div style={{ display: "flex", flexDirection: "column", textAlign: "center"}}>
                         <label style={{ marginRight: '10px', marginBottom: "5px", color: "#A0A8B3" }}>Avg. AR (days)</label>
-                        <p style={{ color: "#55637A", fontSize: "24px", fontWeight: "bold"}}>12.5</p>
+                        <p style={{ color: "#55637A", fontSize: "24px", fontWeight: "bold"}}>{customerData.avgAR}</p>
                     </div>
                 </div>
 
                 <div style={{ margin: "14px 0" }}>
                     <label style={{ marginRight: '10px', marginBottom: "5px", color: "#A0A8B3" }}>Address</label>
-                    <p style={{ color: "#55637A", fontSize: "20px"}}>Jalani saja dulu</p>
+                    <p style={{ color: "#55637A", fontSize: "20px"}}>{customerData.address}</p>
                 </div>
 
                 <Divider></Divider>
@@ -106,6 +135,7 @@ const ModalNewRelatedCondition: React.FC<IProps> = (props: React.PropsWithChildr
                         className="MarBot10"
                         type="submit"
                         color="blue"
+                        onClick={onSubmitHandler}
                     >
                         Submit
                     </Button>
@@ -114,6 +144,26 @@ const ModalNewRelatedCondition: React.FC<IProps> = (props: React.PropsWithChildr
                     </Button>
                 </div>
              </>
+            }
+
+            { customerData == undefined && 
+                <>    
+                    <Divider></Divider>
+
+                    <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+                        <Button
+                            textAlign="center"
+                            className="MarBot10"
+                            color="blue"
+                            disabled
+                        >
+                            Submit
+                        </Button>
+                        <Button type="button" onClick={cancelClick}>
+                        Cancel
+                        </Button>
+                    </div>
+                </>
             }
         </Fragment>
     )

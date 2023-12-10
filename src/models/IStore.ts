@@ -23,6 +23,8 @@ import IBrandSummaryState from "stores/brand-summary/models/IBrandSummaryState";
 import IServiceSummaryState from "stores/service-summary/models/IServiceSummaryState";
 import IInvoicingScheduleState from "stores/invoicing-schedule/models/IInvoicingScheduleState";
 import IInvoicingConditionState from "stores/invoicing-condition/models/IInvoicingConditionState";
+import IRelatedCustomerState from "stores/related-customer/models/IRelatedCustomerState"
+import IRelatedFileState from "stores/related-file/models/IRelatedFileState";
 
 export default interface IStore {
   readonly error: IErrorState;
@@ -50,4 +52,6 @@ export default interface IStore {
   readonly serviceSummary: IServiceSummaryState;
   readonly invoicingSchedule: IInvoicingScheduleState;
   readonly invoicingCondition: IInvoicingConditionState;
+  readonly relatedCustomer: IRelatedCustomerState;
+  readonly relatedFile: IRelatedFileState;
 }

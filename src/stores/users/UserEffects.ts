@@ -8,7 +8,7 @@ import UserResultModel from './models/UserResultModel';
 
 export const postLogin = async (data: LoginModel): Promise<UserResultModel | HttpErrorResponseModel> => {
   const controllerName = 'Auth/Login';
-  const endpoint: string = environment.api.auth.replace(':controller', controllerName);
+  const endpoint: string = environment.api.login.replace(':controller', controllerName);
   return EffectUtility.postToModel<UserResultModel>(UserResultModel, endpoint, data);
 };
 

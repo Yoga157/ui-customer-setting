@@ -26,6 +26,8 @@ import BrandSummaryReducer from "./brand-summary/BrandSummaryActivityReducer";
 import ServiceSummaryReducer from "./service-summary/ServiceSummaryActivityReducer"
 import InvoicingScheduleReducer from "./invoicing-schedule/InvoicingScheduleActivityReducer";
 import InvoicingConditionReducer from "./invoicing-condition/InvoicingConditionActivityReducer";
+import RelatedCustomerReducer from "./related-customer/RelatedCustomerActivityReducer"
+import RelatedFileReducer from "./related-file/RelatedFileActivityReducer";
 
 const rootReducer = (history: History): Reducer<IStore> => {
   const reducerMap: ReducersMapObject<IStore> = {
@@ -53,7 +55,9 @@ const rootReducer = (history: History): Reducer<IStore> => {
     brandSummary: BrandSummaryReducer,
     serviceSummary: ServiceSummaryReducer,
     invoicingSchedule: InvoicingScheduleReducer,
-    invoicingCondition: InvoicingConditionReducer
+    invoicingCondition: InvoicingConditionReducer,
+    relatedCustomer: RelatedCustomerReducer,
+    relatedFile: RelatedFileReducer
   };
 
   return combineReducers(reducerMap);

@@ -74,6 +74,7 @@ const _selectCustomerSettingOptions = (models: any[]): ICustomerSettingOptions[]
       text: model.customerName,
       value: {
         customerName: model.customerName,
+        customerSettingID: model.customerSettingID,
         customerGenID: model.customerGenID,
         blacklist: model.blacklist,
         holdshipment: model.holdshipment,

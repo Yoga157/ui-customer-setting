@@ -99,8 +99,8 @@ const FilterCustomer: React.FC<{
         ? false
         : null;
 
-    console.log(newsalesAssign);
-    // console.log(pmo_customer);
+    // console.log(newsalesAssign);
+    console.log(pmo_customer);
     // console.log(holdshipment);
     // console.log(blacklist);
 
