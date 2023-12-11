@@ -92,13 +92,6 @@ const FilterCustomer: React.FC<{
         ? false
         : null;
 
-    console.log(pmo_customer);
-
-    // console.log(newsalesAssign);
-    // console.log(pmo_customer);
-    // console.log(holdshipment);
-    // console.log(blacklist);
-
     dispatch(
       CustomerSettingAct.requestSearchCustomerSett(
         1,

@@ -25,12 +25,19 @@ import * as BrandSummary from "stores/brand-summary/BrandSummaryActivityActions"
 import * as ServiceSummary from "stores/service-summary/ServiceSummaryActivityActions"
 import * as InvoicingSchedule from "stores/invoicing-schedule/InvoicingScheduleActivityActions"
 import * as InvoicingCondition from "stores/invoicing-condition/InvoicingConditionActivityActions"
+import * as RelatedCustomer from "stores/related-customer/RelatedCustomerActivityActions"
+import * as RelatedFile from "stores/related-file/RelatedFileActivityActions"
+import * as SalesAssign from "stores/customer-sales-assign/SalesAssignActivityActions"
 import { selectCustomerPIC } from "selectors/customer-pic/CustomerPICSelectors";
 import { selectCustomerSettingByCustomerId } from "selectors/customer-setting/CustomerSettingSelector";
 import { selectBrandSummary } from "selectors/brand-summary/BrandSummarySelector";
 import { selectServiceSummary } from "selectors/service-summary/ServiceSummarySelector";
 import InvoicingScheduleModel from "stores/invoicing-schedule/models/InvoicingScheduleModel";
 import { selectInvoicingCondition } from "selectors/invoicing-condition/InvoicingConditionSelector";
+import { selectRelatedCustomer } from "selectors/related-customer/RelatedCustomerSelector";
+import { selectRelatedFile } from "selectors/related-file/RelatedFileSelector";
+import { selectEmployeeOptions } from "selectors/select-options";
+import { selectSalesSearchOptions } from "selectors/select-options/SalesAssignSelector";
 
 interface IProps {
     history: any;
@@ -72,13 +79,11 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
     }, [dispatch])
 
     const customerSettingData = useSelector((state: IStore) => selectCustomerSettingByCustomerId(state));
-    console.log(customerSettingData)
 
     const onResultSelectCustomer = async (data: any) => {
         setCustomerName(data.result.customerName);
         
         await dispatch(CustomerSetting.requestCustomerSettingByCustomerId(data.result.customerGenID))
-        // await dispatch(CustomerPIC.requestGetCustomerPIC(customerSettingData.customerSettingID))
         setCustomerData(data.result)
     };
 
@@ -142,23 +147,28 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
     ]
     
     const [salesAssign, setSalesAssign] = useState([]);
-    const [salesResult, setSalesResult] = useState(salesData);
+    // const [salesResult, setSalesResult] = useState(salesData);
+    const salesStoreSearch = useSelector((state: IStore) => selectSalesSearchOptions(state));
+    console.log(salesStoreSearch)
 
-    const handleSearchChangeSales = (data) => {
+    const handleSearchChangeSales = useCallback((data) => {
         setSalesName(data);
         if(data.length >= 2) {
-            setSalesResult(salesData.filter((sales) => sales.salesName.includes(data)))
-        } else if(data.length == 0) {
-            setSalesResult(salesData);
+            dispatch(SalesAssign.requestSalesByName(data));
+            // setSalesResult(salesData.fi)lter((sales) => sales.salesName.includes(data)))
         }
-    }
+    }, [dispatch])
 
     const onResultSelectSales = (data: any) => {
         setSalesName("");
-        setSalesAssign([...salesAssign, {
-            salesName: data.result.salesName,
-            salesID: data.result.salesID
-        }])
+        let checkSales = salesAssign.find((obj) => obj.salesID === data.result.salesID);
+
+        if (checkSales === undefined) {
+            setSalesAssign([...salesAssign, {
+                salesName: data.result.title,
+                salesID: data.result.salesID
+            }])
+        }
     };
 
     const onSubmitSalesHandler = async (e) => {
@@ -167,8 +177,8 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
     }
 
     const onDeleteSalesAssign = (salesID) => {
-        const arrayFltered = salesAssign.filter(sales => sales.salesID !== salesID);
-        setSalesAssign(arrayFltered);
+        const arrayFiltered = salesAssign.filter(sales => sales.salesID !== salesID);
+        setSalesAssign(arrayFiltered);
     }
 
     /** Add setting */
@@ -284,47 +294,63 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
     const deleteInvoicingCondition = useCallback((id: number): void => {
         dispatch(
           ModalFirstLevelActions.OPEN(
-            <DeletePopUp deleteFunc={()=>{}} id={id} content="invoicing condition" />,
+            <DeletePopUp deleteFunc={InvoicingCondition.deleteInvoicingCondition} refreshFunc={InvoicingCondition.requestInvoicingCondition} id={id} customerSettingID={customerSettingData.customerSettingID} content="invoicing condition" />,
             ModalSizeEnum.Tiny
           )
         );
-      }, [dispatch]);
-
-    // useEffect(() => {
-    //     if(!Number.isNaN(customerSettingData.customerSettingID)) {
-    //         dispatch(InvoicingCondition.requestInvoicingCondition(customerSettingData.customerSettingID))
-    //     }
-    // }, [dispatch, customerSettingData])
-
-    console.log(invoicingConditionData)
+      }, [dispatch, customerSettingData]);
 
     /** Related customer */
     const onAddRelatedCustomer = useCallback((): void => {
         dispatch(
           ModalFirstLevelActions.OPEN(
-            <ModalNewRelatedCondition history={""} />,
+            <ModalNewRelatedCondition customerSettingID={customerSettingData.customerSettingID} />,
             ModalSizeEnum.Tiny
           )
         );
-      }, [dispatch]);
+      }, [dispatch, customerSettingData]);
+
+    const relatedCustomerData = useSelector((state: IStore) => selectRelatedCustomer(state));
     
+    const deleteRelatedCustomer = useCallback((id: number): void => {
+        dispatch(
+          ModalFirstLevelActions.OPEN(
+            <DeletePopUp deleteFunc={RelatedCustomer.deleteRelatedCustomer} refreshFunc={RelatedCustomer.requestRelatedCustomer} id={id} customerSettingID={customerSettingData.customerSettingID} content="related customer" />,
+            ModalSizeEnum.Tiny
+          )
+        );
+      }, [dispatch, customerSettingData]);
+
     /** RelatedFile */
     const onAddRelatedFile = useCallback((): void => {
         dispatch(
           ModalFirstLevelActions.OPEN(
-            <ModalNewRelatedFile history={""} />,
+            <ModalNewRelatedFile customerSettingID={customerSettingData.customerSettingID} />,
             ModalSizeEnum.Small
           )
         );
-      }, [dispatch]);
+      }, [dispatch, customerSettingData]);
     
-      /** data yang perlu di get */
-      useEffect(() => {
+    const relatedFileData = useSelector((state: IStore) => selectRelatedFile(state));
+
+    const deleteRelatedFile = useCallback((id: number): void => {
+        dispatch(
+        ModalFirstLevelActions.OPEN(
+            <DeletePopUp deleteFunc={RelatedFile.deleteRelatedFile} refreshFunc={RelatedFile.requestRelatedFile} id={id} customerSettingID={customerSettingData.customerSettingID} content="related file" />,
+            ModalSizeEnum.Tiny
+        )
+        );
+    }, [dispatch, customerSettingData]);
+    
+    /** data yang perlu di get */
+    useEffect(() => {
         if(!Number.isNaN(customerSettingData.customerSettingID)) {
             dispatch(CustomerPIC.requestGetCustomerPIC(customerSettingData.customerSettingID))
             dispatch(BrandSummary.requestBrandSummary(customerSettingData.customerSettingID))
             dispatch(ServiceSummary.requestServiceSummary(customerSettingData.customerSettingID))
             dispatch(InvoicingCondition.requestInvoicingCondition(customerSettingData.customerSettingID))
+            dispatch(RelatedCustomer.requestRelatedCustomer(customerSettingData.customerSettingID))
+            dispatch(RelatedFile.requestRelatedFile(customerSettingData.customerSettingID))
         }
     }, [dispatch, customerSettingData])
 
@@ -542,7 +568,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                                     labelName="Search sales to assign"
                                                     handleSearchChange={handleSearchChangeSales}
                                                     onResultSelect={onResultSelectSales}
-                                                    results={salesResult}
+                                                    results={salesStoreSearch}
                                                     values={salesName}
                                                     mandatory={true}
                                                 />
@@ -575,10 +601,10 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                         {salesAssign.map((data) => {
                                             return (
                                                 <div style={{ display: "flex", flexDirection: "row", width: "fit-content", margin: "0 0.5rem 0.5rem 0" }} key={data.salesID}>
-                                                    <div style={{ backgroundColor: "#DCDCDC", borderRadius: "2rem 0 0 2rem", padding: "0.75rem"}}>
+                                                    <div style={{ backgroundColor: "#DCDCDC", borderRadius: "2rem 0 0 2rem", padding: "0.5rem 0.75rem"}}>
                                                         {data.salesName}
                                                     </div>
-                                                    <div style={{ backgroundColor: "#C8C8C8", borderRadius: "0 2rem 2rem 0", padding: "0.75rem"}} onClick={() => onDeleteSalesAssign(data.salesID)}>
+                                                    <div style={{ backgroundColor: "#C8C8C8", borderRadius: "0 2rem 2rem 0", padding: "0.5rem"}} onClick={() => onDeleteSalesAssign(data.salesID)}>
                                                         <Icon name="close"/>
                                                     </div>
                                                 </div>
@@ -707,7 +733,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                                 </Table.Row>
                                                 )))
                                             }
-                                            </Table.Body>
+                                        </Table.Body>
                                         </Table>
                                     </div>
 
@@ -737,13 +763,40 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                             </Table.Row>
                                         </Table.Header>
 
-                                            <Table.Body>
-                                            <Table.Row>
-                                                <Table.Cell colSpan={16} textAlign="center">
-                                                No data
-                                                </Table.Cell>
-                                            </Table.Row>
-                                            </Table.Body>
+                                        <Table.Body>
+                                            {relatedCustomerData.length == 0 ?
+                                                <Table.Row>
+                                                    <Table.Cell colSpan={16} textAlign="center">
+                                                    No data
+                                                    </Table.Cell>
+                                                </Table.Row>
+                                            :
+                                                (relatedCustomerData.map((data, index) => (
+                                                <Table.Row key={index}>
+                                                        <Table.Cell>{index + 1}</Table.Cell>
+                                                        <Table.Cell>
+                                                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "#F97452", padding: "0.5rem", borderRadius: "100%", width: "fit-content", cursor: "pointer"}} onClick={() => deleteRelatedCustomer(data.relatedID)}>
+                                                                <Icon style={{ margin: "0", padding: "0", display: "flex", justifyContent: "center", alignItems: "center", color:"white"}} name="trash alternate"/>
+                                                            </div>
+                                                        </Table.Cell>
+                                                        <Table.Cell>{data.customerName}</Table.Cell>
+                                                        <Table.Cell>{data.address}</Table.Cell>
+                                                        <Table.Cell>Category</Table.Cell>
+                                                        <Table.Cell>{data.avgAR}</Table.Cell>
+                                                        <Table.Cell>
+                                                            <Label color={data.blacklist ? "red" : "teal"} style={{ borderRadius: "20px", width: "fit-content"}}>
+                                                                <Icon name='address book'/>{data.blacklist ? "Yes" : "No"}
+                                                            </Label>
+                                                        </Table.Cell>
+                                                        <Table.Cell>
+                                                            <Label color={data.holdshipment ? "red" : "blue"} style={{ borderRadius: "20px", width: "fit-content"}}>
+                                                                <Icon name='truck'/>{data.holdshipment ? "Yes" : "No"}
+                                                            </Label>
+                                                        </Table.Cell>
+                                                </Table.Row>
+                                                )))
+                                            }
+                                        </Table.Body>
                                         </Table>
                                     </div>
 
@@ -771,13 +824,30 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                             </Table.Row>
                                         </Table.Header>
 
-                                            <Table.Body>
-                                            <Table.Row>
-                                                <Table.Cell colSpan={16} textAlign="center">
-                                                No data
-                                                </Table.Cell>
-                                            </Table.Row>
-                                            </Table.Body>
+                                        <Table.Body>
+                                            {relatedFileData.length == 0 ?
+                                                <Table.Row>
+                                                    <Table.Cell colSpan={16} textAlign="center">
+                                                    No data
+                                                    </Table.Cell>
+                                                </Table.Row>
+                                            :
+                                                (relatedFileData.map((data, index) => (
+                                                <Table.Row key={index}>
+                                                        <Table.Cell>{index + 1}</Table.Cell>
+                                                        <Table.Cell>
+                                                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "#F97452", padding: "0.5rem", borderRadius: "100%", width: "fit-content", cursor: "pointer"}} onClick={() => deleteRelatedFile(data.relatedFileID)}>
+                                                                <Icon style={{ margin: "0", padding: "0", display: "flex", justifyContent: "center", alignItems: "center", color:"white"}} name="trash alternate"/>
+                                                            </div>
+                                                        </Table.Cell>
+                                                        <Table.Cell>{data.documentName}</Table.Cell>
+                                                        <Table.Cell>{data.documentType}</Table.Cell>
+                                                        <Table.Cell>{data.uploadDate}</Table.Cell>
+                                                        <Table.Cell>{data.uploadBy}</Table.Cell>
+                                                </Table.Row>
+                                                )))
+                                            }
+                                        </Table.Body>
                                         </Table>
                                     </div>
                                 

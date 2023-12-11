@@ -23,9 +23,9 @@ export const REQUEST_CUSTOMERS_SETTING_FINISHED: string =
   "CustomerActions.REQUEST_CUSTOMERS_SETTING_FINISHED";
 
 export const requestCustomerSett = (
-  page: number,
-  pageSize: number,
-  column: string,
+  page?: number,
+  pageSize?: number,
+  column?: string,
   sorting?: string
 ): any => {
   return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {

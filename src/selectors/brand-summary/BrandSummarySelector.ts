@@ -13,7 +13,7 @@ const _selectBrandSummary = (models: BrandSummaryModel[]): IBrandSummary[] => {
       (model: BrandSummaryModel): IBrandSummary => ({
         brandName: model.brandName,
         years: model.years,
-        purchase: model.purchase.toString()
+        purchase: model.purchase.toString() + " %"
       })
     );
   };

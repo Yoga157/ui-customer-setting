@@ -4,6 +4,11 @@ import { Selector } from "react-redux";
 import CustomerSettingRow from "stores/customer-setting/models/CustomerSettingRow";
 import CustomerSettingById from "stores/customer-setting/models/CustomerSettingById";
 
+export default interface ICustomerSettingOptions {
+  readonly text: string,
+  readonly value: {}
+}
+
 const _selectCustomerSetting = (models: any): any => {
   return {
     totalRow: models.totalRows,
@@ -61,6 +66,27 @@ const _selectCustomerSettingById = (model: any): any => {
 
 export const selectCustomerSettingByCustomerId: Selector<IStore, any> = createSelector(
   (state: IStore) => state.customerSetting.dataByCustomerId, _selectCustomerSettingById
+)
+
+const _selectCustomerSettingOptions = (models: any[]): ICustomerSettingOptions[] => {
+  return models.map(
+    (model: any): ICustomerSettingOptions => ({
+      text: model.customerName,
+      value: {
+        customerName: model.customerName,
+        customerSettingID: model.customerSettingID,
+        customerGenID: model.customerGenID,
+        blacklist: model.blacklist,
+        holdshipment: model.holdshipment,
+        avgAR: 0,
+        address: "Jalan-jalan ke Bandung, cakep!"
+      }
+    })
+  )
+}
+
+export const selectCustomerSettingOptions: Selector<IStore, ICustomerSettingOptions[]> = createSelector(
+  (state: IStore) => state.customerSetting.data.rows, _selectCustomerSettingOptions
 )
 
 // const _selectCustomerName = (models: any[]): any[] => {

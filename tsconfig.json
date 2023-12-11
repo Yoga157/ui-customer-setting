@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": false,
     "esModuleInterop": true,
@@ -17,7 +21,7 @@
     "suppressImplicitAnyIndexErrors": true,
     "baseUrl": "src",
     "noImplicitAny": false,
-    "strictNullChecks":false
+    "strictNullChecks": false
   },
   "include": [
     "src",
