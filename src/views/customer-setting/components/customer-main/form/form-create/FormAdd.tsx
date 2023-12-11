@@ -4,14 +4,7 @@ import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
 import { Form as FinalForm, Field } from "react-final-form";
-import {
-  Form,
-  Grid,
-  Card,
-  Divider,
-  DropdownProps,
-  Dropdown,
-} from "semantic-ui-react";
+import { Form, Grid, Card, Divider, Icon } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
 import { selectSalesSearchOptions } from "selectors/select-options/SalesAssignSelector";
 import CustomerSettingRow from "stores/customer-setting/models/CustomerSettingRow";
@@ -190,6 +183,31 @@ const AddSalesAssign: React.FC<IProps> = (
                         </div>
                       </div>
 
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        {data.salesAssign?.split(",").map((data) => {
+                          return (
+                            <div
+                              style={{
+                                backgroundColor: "#DCDCDC",
+                                borderRadius: "2rem",
+                                padding: "0.3rem",
+                                marginTop: "0.5rem",
+                                margin: "0.2rem",
+                                fontSize: "12px",
+                              }}
+                            >
+                              {data}
+                            </div>
+                          );
+                        })}
+                      </div>
+
                       <Divider></Divider>
                     </>
                   );
@@ -209,8 +227,103 @@ const AddSalesAssign: React.FC<IProps> = (
                     />
                   </Grid.Column>
                 </Grid.Row>
-                <Grid.Row>
-                  <Grid.Column>
+                <div className="sales-assign-list">
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      marginTop: "0.5rem",
+                    }}
+                  >
+                    {salesAssignArray.map((data) => {
+                      return (
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            width: "fit-content",
+                            margin: "0 0.5rem 0.5rem 0",
+                          }}
+                          key={data.salesID}
+                        >
+                          <div
+                            style={{
+                              backgroundColor: "#DCDCDC",
+                              borderRadius: "2rem 0 0 2rem",
+                              padding: "0.3rem",
+                              height: "fit-content",
+                              fontSize: "12px",
+                            }}
+                          >
+                            {data.salesName}
+                          </div>
+                          <div
+                            style={{
+                              backgroundColor: "#C8C8C8",
+                              borderRadius: "0 2rem 2rem 0",
+                              padding: "0.2rem",
+                              height: "fit-content",
+                            }}
+                            onClick={() => deleteClick(data.salesID)}
+                          >
+                            <Icon name="close" size="small" />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* <div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      textAlign: "center",
+                    }}
+                  >
+                    {salesAssignArray.map((data) => {
+                      return (
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            width: "fit-content",
+                            margin: "5px 0.5rem -0.5rem 0px",
+                          }}
+                          key={data.salesID}
+                        >
+                          <div
+                            style={{
+                              backgroundColor: "#DCDCDC",
+                              borderRadius: "2rem 0 0 2rem",
+                              padding: "1rem",
+                              textAlign: "center",
+                              fontSize: "12px",
+                              height: "fit-content",
+                            }}
+                          >
+                            {data.salesName}
+                          </div>
+                          <div
+                            style={{
+                              backgroundColor: "#C8C8C8",
+                              borderRadius: "0 2rem 2rem 0",
+                              padding: "0.75rem",
+                              height: "fit-content",
+                            }}
+                            onClick={() => deleteClick(data.salesID)}
+                          >
+                            <Icon name="close" />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div> */}
+                {/* <Grid.Column>
                     {salesAssignArray.map((data) => {
                       return (
                         <div
@@ -225,9 +338,8 @@ const AddSalesAssign: React.FC<IProps> = (
                         </div>
                       );
                     })}
-                  </Grid.Column>
-                </Grid.Row>
-              </div>{" "}
+                  </Grid.Column> */}
+              </div>
             </Form>
           )}
         />

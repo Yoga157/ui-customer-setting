@@ -43,7 +43,7 @@ export const requestSearchCustomerSett = async (
   }${sorting || sorting != null ? `&sorting=${sorting}` : ``}${
     salesAssign || salesAssign != null ? `&salesAssign=${salesAssign}` : ``
   }${shareable || shareable != null ? `&shareable=${shareable}` : ``}${
-    pmo_customer || pmo_customer != null ? `&pmo_customer=${pmo_customer}` : ``
+    pmo_customer || pmo_customer != null ? `&pmoCustomer=${pmo_customer}` : ``
   }${
     holdshipment || holdshipment != null ? `&holdshipment=${holdshipment}` : ``
   }${blacklist || blacklist != null ? `&blacklist=${blacklist}` : ``}`;
@@ -71,8 +71,12 @@ export const deleteCustomerSett = async (
   );
 };
 
-export const requestCustomerSettingByCustomerId = async (customerSettingID: number): Promise<CustomerSettingById | HttpErrorResponseModel> => {
-  const controllerName = "CustomerSetting/GetCustomerSettingByCustomerGenID?customerGenID=" + customerSettingID;
+export const requestCustomerSettingByCustomerId = async (
+  customerSettingID: number
+): Promise<CustomerSettingById | HttpErrorResponseModel> => {
+  const controllerName =
+    "CustomerSetting/GetCustomerSettingByCustomerGenID?customerGenID=" +
+    customerSettingID;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName
@@ -82,4 +86,4 @@ export const requestCustomerSettingByCustomerId = async (customerSettingID: numb
     CustomerSettingById,
     endpoint
   );
-}
+};

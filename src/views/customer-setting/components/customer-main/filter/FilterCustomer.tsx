@@ -1,22 +1,15 @@
 import React, { Fragment, useEffect, useState, useCallback } from "react";
-import { isRequired } from "revalidate";
-import { FormSpy } from "react-final-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
-import IOptionsData from "selectors/select-options/models/IOptionsData";
 import IStore from "models/IStore";
-import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
 import { Divider, Grid, Form, Select } from "semantic-ui-react";
 import { Button, DropdownClearInput, SelectInput } from "views/components/UI";
 import { Form as FinalForm, Field } from "react-final-form";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import { selectSalesOptions } from "selectors/select-options/SalesAssignSelector";
-import CustomerSettingModel from "stores/customer-setting/models/CustomerSettingModel";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
-import { event } from "jquery";
-
 interface IProps {
   rowData: any;
 }
@@ -99,7 +92,9 @@ const FilterCustomer: React.FC<{
         ? false
         : null;
 
-    console.log(newsalesAssign);
+    console.log(pmo_customer);
+
+    // console.log(newsalesAssign);
     // console.log(pmo_customer);
     // console.log(holdshipment);
     // console.log(blacklist);
@@ -147,6 +142,10 @@ const FilterCustomer: React.FC<{
     setBlacklistYesChecked(event.target.checked);
     setBlacklistNoChecked(event.target.checked);
     setSalesName("");
+
+    dispatch(
+      CustomerSettingAct.requestCustomerSett(1, 10, "CustomerSettingID")
+    );
   };
 
   return (
@@ -294,7 +293,6 @@ const FilterCustomer: React.FC<{
                               name="pmo_customer"
                               type="checkbox"
                               checked={pmo_customerYesChecked}
-                              value="yes"
                               style={{
                                 marginRight: "0.5rem",
                                 transform: "scale(1)",

@@ -1,0 +1,53 @@
+//Filter and Search
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin: 1rem;
+}
+
+//Fitur Container
+.fitur-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.center-fitur-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+//H2
+.h2-container {
+  font-style: Bold;
+  color: #55637a;
+  margin-top: 0;
+  font-size: 1.7rem;
+  font-weight: bold;
+}
+
+//Fitur Container Add, adjust, and delete
+.posision-container {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  justify-content: center;
+}
+
+//fitur new costomer setting and export excel
+.posision-container-right {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  justify-content: center;
+  margin-left: auto;
+}
+
+.posision-container-auto {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  justify-content: center;
+}
