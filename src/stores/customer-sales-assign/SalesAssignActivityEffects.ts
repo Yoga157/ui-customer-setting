@@ -25,7 +25,7 @@ export const requestAssignSales = async (
 export const requestSalesByName = async (
   search: string
 ): Promise<SalesNameMode | HttpErrorResponseModel> => {
-  const controllerName = "SalesName?search=" + search;
+  const controllerName = "CustomerSetting/SalesName?search=" + search;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName

@@ -8,6 +8,7 @@ import ResultActions from "models/ResultActions";
 
 export const initialState: ICustomerNameState = {
     data: [],
+    resultActions: new ResultActions({})
 };
 
 const CustomerNameReducer: Reducer = baseReducer(initialState, {
@@ -16,7 +17,17 @@ const CustomerNameReducer: Reducer = baseReducer(initialState, {
             ...state,
             data: action.payload!
         }
-    }
+    },
+
+    [CustomerNameAction.CLEAR_RESULT_CUSTOMER_NAME](
+        state: ICustomerNameState,
+        action: IAction<any>
+      ): ICustomerNameState {
+        return {
+          ...state,
+          resultActions: action.payload!
+        };
+      },
 })
 
 export default CustomerNameReducer

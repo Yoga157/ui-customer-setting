@@ -12,8 +12,7 @@ export const initialState: IInvoicingConditionState = {
 const InvoicingConditionReducer: Reducer = baseReducer(initialState, {
     [InvoicingConditionActions.POST_INVOICING_CONDITION_FINISHED](state: IInvoicingConditionState, action: IAction<InvoicingConditionModel[]>): IInvoicingConditionState {
         return {
-            ...state,
-            data: action.payload!
+            ...state
         }
     },
 
