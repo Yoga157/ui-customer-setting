@@ -1,13 +1,11 @@
 import React, { Fragment, useEffect, useState, useCallback } from "react";
-import { Divider, Grid, GridColumn, GridRow, Header } from "semantic-ui-react";
+import { Grid } from "semantic-ui-react";
 import CustomerTable from "./components/customer-main/table/CustomerTable";
 import InputSearch from "./components/customer-main/search/InputSearch";
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
 import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLevelActions";
-import * as ModalSecondLevelActions from "stores/modal/second-level/ModalSecondLevelActions";
-import * as ModalThirdLevelReducer from "stores/modal/third-level/ModalThirdLevelReducer";
-
+import "./CustomerSetting.scss";
 import IStore from "models/IStore";
 import * as CustomerActions from "stores/customer-setting/CustomerActivityActions";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
@@ -16,23 +14,12 @@ import { Pagination, Tooltips, Button } from "views/components/UI";
 import { selectUserResult } from "selectors/user/UserSelector";
 import IUserResult from "selectors/user/models/IUserResult";
 import TableToExcel from "@linways/table-to-excel";
-
-// import TotalSalesAndGpm from './components/total-sales-n-gpm/totalSalesAndGpm';
 import ModalSizeEnum from "constants/ModalSizeEnum";
-import { defaultDecoder } from "qs";
-import { format } from "date-fns";
 import CreateForm from "./components/customer-main/form/form-create/FormAdd";
 import AdjustSettingForm from "./components/customer-main/form/form-setting/FormSetting";
 import DeleteCustomer from "./components/customer-main/delete/delete-customer";
 import { selectCustomerSetting } from "selectors/customer-setting/CustomerSettingSelector";
-// import FormUpload from './components/funnel-main/form/form-create/FormUpload';
-import * as ToastsAction from "stores/toasts/ToastsAction";
-import ToastStatusEnum from "constants/ToastStatusEnum";
-import { Column } from "jspdf-autotable";
 import RouteEnum from "constants/RouteEnum";
-import { relative } from "path";
-// import * as FunnelActionss from 'stores/funnel/FunnelActions';
-
 import FilterCustomer from "./components/customer-main/filter/FilterCustomer";
 
 interface IProps {
@@ -56,15 +43,6 @@ const CustomerSettingPage: React.FC<IProps> = (
     setRowData(data);
     // console.log(data);
   };
-
-  const onFilter = useCallback((): void => {
-    dispatch(
-      ModalSecondLevelActions.OPEN(
-        <CreateForm rowData={rowData} />,
-        ModalSizeEnum.Small
-      )
-    );
-  }, [dispatch, rowData]);
 
   const onAddSales = useCallback((): void => {
     // console.log(rowData);
@@ -174,7 +152,6 @@ const CustomerSettingPage: React.FC<IProps> = (
     const search = document.querySelector(
       "#search-input-customer"
     )! as HTMLInputElement;
-    // console.log(search.value);
 
     if (window.location.pathname === "/data-quality/customer-setting") {
       if (search.value.length > 0) {
@@ -207,27 +184,6 @@ const CustomerSettingPage: React.FC<IProps> = (
     ])
   );
 
-  // const tableData = [
-  //   {
-  //     customerSettingID: 10,
-  //     customerGenID: 124,
-  //     customerCategory: "Entripise",
-  //     customerName: "Yoga",
-  //     lastProjectName: "HP",
-  //     salesAssign: "Tofa",
-  //     relatedCustomer: "relate",
-  //     invoiceCondition: "afa",
-  //     shareable: true,
-  //     pmoCustomer: "false",
-  //     blacklist: false,
-  //     holdshipment: false,
-  //     createUserID: "",
-  //     createDate: undefined,
-  //     modifyUserID: undefined,
-  //     modifyDate: undefined,
-  //   },
-  // ];
-
   const tableData = useSelector((state: IStore) =>
     selectCustomerSetting(state)
   );
@@ -238,9 +194,7 @@ const CustomerSettingPage: React.FC<IProps> = (
   return (
     <Fragment>
       <LoadingIndicator isActive={isRequesting}>
-        <div
-          style={{ display: "flex", justifyContent: "center", margin: "1rem" }}
-        >
+        <div className="search-container">
           <Button
             className="m-05r"
             icon="sliders horizontal"
@@ -251,41 +205,11 @@ const CustomerSettingPage: React.FC<IProps> = (
           <InputSearch />
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            marginBottom: "1rem",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <h2
-              style={{
-                fontStyle: "Bold",
-                color: "#55637a",
-                marginTop: "0",
-                fontSize: "1.7rem",
-                fontWeight: "bold",
-              }}
-            >
-              Customer List
-            </h2>
+        <div className="fitur-container">
+          <div className=" center-fitur-container">
+            <h2 className="h2-container">Customer List</h2>
           </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              textAlign: "left",
-              justifyContent: "center",
-            }}
-          >
+          <div className="posision-container">
             <Tooltips
               content="Add Sales"
               trigger={
@@ -307,14 +231,7 @@ const CustomerSettingPage: React.FC<IProps> = (
               }
             />
           </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              textAlign: "left",
-              justifyContent: "center",
-            }}
-          >
+          <div className="posision-container">
             <Tooltips
               content="Adjust Setting"
               trigger={
@@ -336,14 +253,7 @@ const CustomerSettingPage: React.FC<IProps> = (
               }
             />
           </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              textAlign: "left",
-              justifyContent: "center",
-            }}
-          >
+          <div className="posision-container">
             <Tooltips
               content="Delete"
               trigger={
@@ -367,15 +277,7 @@ const CustomerSettingPage: React.FC<IProps> = (
             />
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              textAlign: "right",
-              justifyContent: "center",
-              marginLeft: "auto",
-            }}
-          >
+          <div className="posision-container-right">
             <Tooltips
               content="New Customer Setting"
               trigger={
@@ -393,14 +295,7 @@ const CustomerSettingPage: React.FC<IProps> = (
             />
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              textAlign: "right",
-              justifyContent: "center",
-            }}
-          >
+          <div className="posision-container-auto">
             <Tooltips
               content="Export Excel"
               trigger={

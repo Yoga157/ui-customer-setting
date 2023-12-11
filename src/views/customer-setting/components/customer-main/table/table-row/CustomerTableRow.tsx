@@ -172,7 +172,7 @@ const CustomerTableRow: React.FC<IProps> = (
           )}
         </Table.Cell>
         <Table.Cell textAlign="center">
-          {rowData.holdshipment === "Yes" ? (
+          {rowData.holdshipment === true ? (
             <div
               style={{
                 backgroundColor: "#f6a52c",
