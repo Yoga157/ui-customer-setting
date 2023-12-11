@@ -27,6 +27,7 @@ import * as InvoicingSchedule from "stores/invoicing-schedule/InvoicingScheduleA
 import * as InvoicingCondition from "stores/invoicing-condition/InvoicingConditionActivityActions"
 import * as RelatedCustomer from "stores/related-customer/RelatedCustomerActivityActions"
 import * as RelatedFile from "stores/related-file/RelatedFileActivityActions"
+import * as SalesAssign from "stores/customer-sales-assign/SalesAssignActivityActions"
 import { selectCustomerPIC } from "selectors/customer-pic/CustomerPICSelectors";
 import { selectCustomerSettingByCustomerId } from "selectors/customer-setting/CustomerSettingSelector";
 import { selectBrandSummary } from "selectors/brand-summary/BrandSummarySelector";
@@ -35,6 +36,8 @@ import InvoicingScheduleModel from "stores/invoicing-schedule/models/InvoicingSc
 import { selectInvoicingCondition } from "selectors/invoicing-condition/InvoicingConditionSelector";
 import { selectRelatedCustomer } from "selectors/related-customer/RelatedCustomerSelector";
 import { selectRelatedFile } from "selectors/related-file/RelatedFileSelector";
+import { selectEmployeeOptions } from "selectors/select-options";
+import { selectSalesSearchOptions } from "selectors/select-options/SalesAssignSelector";
 
 interface IProps {
     history: any;
@@ -144,23 +147,28 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
     ]
     
     const [salesAssign, setSalesAssign] = useState([]);
-    const [salesResult, setSalesResult] = useState(salesData);
+    // const [salesResult, setSalesResult] = useState(salesData);
+    const salesStoreSearch = useSelector((state: IStore) => selectSalesSearchOptions(state));
+    console.log(salesStoreSearch)
 
-    const handleSearchChangeSales = (data) => {
+    const handleSearchChangeSales = useCallback((data) => {
         setSalesName(data);
         if(data.length >= 2) {
-            setSalesResult(salesData.filter((sales) => sales.salesName.includes(data)))
-        } else if(data.length == 0) {
-            setSalesResult(salesData);
+            dispatch(SalesAssign.requestSalesByName(data));
+            // setSalesResult(salesData.fi)lter((sales) => sales.salesName.includes(data)))
         }
-    }
+    }, [dispatch])
 
     const onResultSelectSales = (data: any) => {
         setSalesName("");
-        setSalesAssign([...salesAssign, {
-            salesName: data.result.salesName,
-            salesID: data.result.salesID
-        }])
+        let checkSales = salesAssign.find((obj) => obj.salesID === data.result.salesID);
+
+        if (checkSales === undefined) {
+            setSalesAssign([...salesAssign, {
+                salesName: data.result.title,
+                salesID: data.result.salesID
+            }])
+        }
     };
 
     const onSubmitSalesHandler = async (e) => {
@@ -169,8 +177,8 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
     }
 
     const onDeleteSalesAssign = (salesID) => {
-        const arrayFltered = salesAssign.filter(sales => sales.salesID !== salesID);
-        setSalesAssign(arrayFltered);
+        const arrayFiltered = salesAssign.filter(sales => sales.salesID !== salesID);
+        setSalesAssign(arrayFiltered);
     }
 
     /** Add setting */
@@ -560,7 +568,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                                     labelName="Search sales to assign"
                                                     handleSearchChange={handleSearchChangeSales}
                                                     onResultSelect={onResultSelectSales}
-                                                    results={salesResult}
+                                                    results={salesStoreSearch}
                                                     values={salesName}
                                                     mandatory={true}
                                                 />
