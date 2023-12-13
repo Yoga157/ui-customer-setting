@@ -1,13 +1,5 @@
 import React, { Fragment, useEffect, useState, useCallback } from "react";
-import {
-  Table,
-  Dropdown,
-  Confirm,
-  Icon,
-  Button,
-  Checkbox,
-  TableCell,
-} from "semantic-ui-react";
+import { Table, Dropdown, List, Icon } from "semantic-ui-react";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLevelActions";
