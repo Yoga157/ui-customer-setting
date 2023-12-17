@@ -8,6 +8,7 @@ import { Form, Grid, Card, Divider, Icon } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
 import { selectSalesSearchOptions } from "selectors/select-options/SalesAssignSelector";
 import SalesAssignPostModel from "stores/customer-sales/models/SalesAssignPostModel";
+import { format } from "date-fns";
 import {
   combineValidators,
   isRequired,
@@ -27,7 +28,7 @@ const AddSalesAssign: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
-  const [salesName, setSalesName] = useState("");
+  const [salesName, setSalesName] = useState(" ");
   const [salesAssignArray, setSalesAssignArray] = useState([]);
   const { rowData } = props;
   const salesStoreSearch = useSelector((state: IStore) =>
@@ -39,20 +40,10 @@ const AddSalesAssign: React.FC<IProps> = (
       setSalesName(data);
       if (data.length >= 2) {
         dispatch(SalesAssign.requestSalesByName(data));
-      } else {
-        clearSearchResults();
       }
     },
     [dispatch]
   );
-
-  const clearSearchResults = () => {
-    setSalesAssignArray([]);
-  };
-
-  useEffect(() => {
-    dispatch(SalesAssign.clearResult());
-  }, [dispatch]);
 
   const cancelClick = () => {
     dispatch(ModalAction.CLOSE());
@@ -62,23 +53,24 @@ const AddSalesAssign: React.FC<IProps> = (
     selectRequesting(state, [])
   );
 
-  const onSubmitHandler = (e) => {
+  const onSubmitHandler = async (e) => {
     const userId: any = localStorage.getItem("userLogin");
-
-    // console.log(rowData);
-    // console.log(salesAssignArray);
 
     for (let j = 0; j < rowData.length; j++) {
       for (let i = 0; i < salesAssignArray.length; i++) {
         const NewAssignSales = new SalesAssignPostModel(e);
-        NewAssignSales.assignID = 0;
+        NewAssignSales.assignID = JSON.parse(userId)?.employeeID;
         NewAssignSales.SalesID = salesAssignArray[i].salesID;
         NewAssignSales.CustomerSettingID = rowData[j].customerSettingID;
-        NewAssignSales.AssignedBy = 0;
-        NewAssignSales.createUserID = 0;
-        NewAssignSales.modifyUserID = 0;
+        NewAssignSales.AssignedBy = JSON.parse(userId)?.employeeID;
+        NewAssignSales.createDate = format(
+          new Date(props.rowData[j].createDate),
+          "yyyy-MM-dd"
+        );
+        NewAssignSales.createUserID = JSON.parse(userId)?.employeeID;
+        NewAssignSales.modifyUserID = JSON.parse(userId)?.employeeID;
 
-        dispatch(SalesAssign.postAssignedSales(NewAssignSales));
+        await dispatch(SalesAssign.postAssignedSales(NewAssignSales));
       }
     }
     dispatch(ModalAction.CLOSE());
@@ -109,6 +101,7 @@ const AddSalesAssign: React.FC<IProps> = (
         },
       ]);
     }
+    setSalesName("");
   };
 
   const isValidsalesName = createValidator(

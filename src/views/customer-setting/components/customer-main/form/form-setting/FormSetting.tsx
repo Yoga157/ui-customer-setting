@@ -64,7 +64,7 @@ const AdjSetting: React.FC<IProps> = (
     for (let j = 0; j < rowData.length; j++) {
       const CustomerSetting = new CustomerSettingID({});
       CustomerSetting.customerSettingID = props.rowData[j].customerSettingID;
-      CustomerSetting.customerGenID = props.rowData[j].customerGenID;
+      CustomerSetting.customerID = props.rowData[j].customerID;
       CustomerSetting.customerCategoryID = "";
       CustomerSetting.shareable = shareableChecked == "TRUE" ? true : false;
       CustomerSetting.pmoCustomer =

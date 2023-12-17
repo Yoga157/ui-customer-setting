@@ -83,3 +83,18 @@ export const clearResult = (): any => {
     );
   };
 };
+
+export const REMOVE_SUBMIT_RESULT_SEARCH: string =
+  "SalesActions.REMOVE_SUBMIT_RESULT_SEARCH";
+export const REMOVE_SUBMIT_RESULT_SEARCH_FINISHED =
+  "SalesActions.REMOVE_SUBMIT_RESULT_SEARCH_FINISHED";
+
+export const removeResultSearch = (): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      REMOVE_SUBMIT_RESULT_SEARCH,
+      SalesAssignEffect.removeResultSearch
+    );
+  };
+};

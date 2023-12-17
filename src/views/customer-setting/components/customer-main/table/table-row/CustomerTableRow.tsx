@@ -135,7 +135,15 @@ const CustomerTableRow: React.FC<IProps> = (
           )}
         </Table.Cell>
         <Table.Cell>{rowData.relatedCustomer}</Table.Cell>
-        <Table.Cell>{rowData.invoiceCondition}</Table.Cell>
+        <Table.Cell>
+          {rowData.invoiceCondition ? (
+            <ul>
+              {rowData.invoiceCondition.split(",").map((condition) => (
+                <li key={condition}>{condition.trim()}</li>
+              ))}
+            </ul>
+          ) : null}
+        </Table.Cell>
         <Table.Cell textAlign="center" verticalAlign="middle">
           {rowData.blacklist === true ? (
             <div

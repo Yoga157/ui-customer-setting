@@ -9,8 +9,8 @@ export default class SalesAssignPostModel extends BaseModel {
   SalesID: number = 0;
   CustomerSettingID: number = 0;
   AssignStartDate?: Date = undefined;
-  AssignedBy: number = 0;
-  createDate?: Date = undefined;
+  AssignedBy: string = "";
+  createDate: string = "";
   createUserID: number = 0;
   modifyDate?: Date = undefined;
   modifyUserID: number = 0;
@@ -24,8 +24,9 @@ export default class SalesAssignPostModel extends BaseModel {
       assignID: ConversionTypeEnum.Number,
       SalesID: ConversionTypeEnum.Number,
       CustomerSettingID: ConversionTypeEnum.Number,
-      AssignedBy: ConversionTypeEnum.Number,
+      AssignedBy: ConversionTypeEnum.String,
       createUserID: ConversionTypeEnum.Number,
+      createDate: ConversionTypeEnum.String,
       modifyUserID: ConversionTypeEnum.Number,
     };
     super.update(data, conversionOptions);

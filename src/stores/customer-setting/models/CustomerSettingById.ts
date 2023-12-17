@@ -6,7 +6,7 @@ import {
 
 export default class CustomerSettingById extends BaseModel {
   customerSettingID: number = 0;
-  customerGenID: number = 0;
+  customerID: number = 0;
   customerCategoryID: string = "";
   shareable: boolean = false;
   pmoCustomer: boolean = false;
@@ -23,7 +23,7 @@ export default class CustomerSettingById extends BaseModel {
   public update(data: Partial<CustomerSettingById>): void {
     const conversionOptions: IConversionOption = {
       customerSettingID: ConversionTypeEnum.Number,
-      customerGenID: ConversionTypeEnum.Number,
+      customerID: ConversionTypeEnum.Number,
       customerCategoryID: ConversionTypeEnum.String,
       shareable: ConversionTypeEnum.Boolean,
       pmoCustomer: ConversionTypeEnum.Boolean,

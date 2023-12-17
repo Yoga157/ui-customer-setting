@@ -68,6 +68,18 @@ const SalesAssignReducer: Reducer = baseReducer(initialState, {
       refreshPage: false,
     };
   },
+
+  [SalesActions.REMOVE_SUBMIT_RESULT_SEARCH_FINISHED](
+    state: ISalesAssignState,
+    action: IAction<ResultActions>
+  ): ISalesAssignState {
+    return {
+      ...state,
+      resultActions: new ResultActions({}),
+      error: false,
+      refreshPage: false,
+    };
+  },
 });
 
 export default SalesAssignReducer;
