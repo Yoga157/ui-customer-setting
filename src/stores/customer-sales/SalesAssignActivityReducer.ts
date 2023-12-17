@@ -9,6 +9,7 @@ import SalesAssignRow from "./models/SalesAssignRow";
 import ResultActions from "models/ResultActions";
 
 import SalesAssignPostModel from "./models/SalesAssignPostModel";
+import SalesAssignHistoryModel from "./models/SalesAssignHistoryModel";
 
 export const initialState: ISalesAssignState = {
   sales: [],
@@ -18,6 +19,7 @@ export const initialState: ISalesAssignState = {
   resultActions: new ResultActions({}),
   salesExstingModel: new SalesNameModel({}),
   SalesAssignPostModel: new SalesAssignPostModel({}),
+  salesHistory: []
 };
 
 const SalesAssignReducer: Reducer = baseReducer(initialState, {
@@ -66,6 +68,26 @@ const SalesAssignReducer: Reducer = baseReducer(initialState, {
       resultActions: action.payload!,
       error: false,
       refreshPage: false,
+    };
+  },
+
+  [SalesActions.REQUEST_SALES_HISTORY_FINISHED](
+    state: ISalesAssignState,
+    action: IAction<SalesAssignHistoryModel[]>
+  ): ISalesAssignState {
+    return {
+      ...state,
+      salesHistory: action.payload!
+    };
+  },
+
+  [SalesActions.DEL_SALES_ASSIGN_FINISHED](
+  state: ISalesAssignState,
+    action: IAction<ResultActions>
+  ): ISalesAssignState {
+    return {
+      ...state,
+      resultActions: action.payload!
     };
   },
 

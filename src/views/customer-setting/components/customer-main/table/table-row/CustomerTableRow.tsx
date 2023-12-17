@@ -32,13 +32,13 @@ const CustomerTableRow: React.FC<IProps> = (
 
   const setRowData = (data) => {
     let checkData = props.data.find(
-      (obj) => obj.customerGenID === data.customerGenID
+      (obj) => obj.customerID === data.customerID
     );
 
     if (checkData) {
       getRowData(
         props.data.filter(
-          (selectedData) => selectedData.customerGenID !== data.customerGenID
+          (selectedData) => selectedData.customerID !== data.customerID
         )
       );
     } else {
@@ -55,9 +55,9 @@ const CustomerTableRow: React.FC<IProps> = (
     );
   };
 
-  const onEdit = () => {
+  const onEdit = (id: number) => {
     props.history.push({
-      pathname: RouteEnum.AddNewCustomerSetting,
+      pathname: "customer-setting/" + id,
       state: { rowData },
     });
   };
@@ -90,7 +90,7 @@ const CustomerTableRow: React.FC<IProps> = (
                 <Dropdown.Item
                   text="View/Edit"
                   icon="edit outline"
-                  onClick={onEdit}
+                  onClick={() => onEdit(rowData.customerSettingID)}
                 />
 
                 <Dropdown.Item
@@ -107,7 +107,7 @@ const CustomerTableRow: React.FC<IProps> = (
             </Dropdown>
           </div>
         </Table.Cell>
-        <Table.Cell textAlign="center">{rowData.customerGenID}</Table.Cell>
+        <Table.Cell textAlign="center">{rowData.customerID}</Table.Cell>
         <Table.Cell>{rowData.customerCategory}</Table.Cell>
         <Table.Cell>{rowData.customerName}</Table.Cell>
         <Table.Cell>{rowData.lastProjectName}</Table.Cell>

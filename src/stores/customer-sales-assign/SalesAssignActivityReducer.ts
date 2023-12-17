@@ -8,6 +8,7 @@ import SalesAssignRow from "./models/SalesAssignRow";
 import ResultActions from "models/ResultActions";
 import SalesNameMode from "./models/SalesNameModel";
 import SalesAssignPostModel from "./models/SalesAssignPostModel";
+import SalesAssignHistoryModel from "../customer-sales/models/SalesAssignHistoryModel";
 
 export const initialState: ISalesAssignState = {
   data: [new SalesAssignModel({})],
@@ -16,6 +17,7 @@ export const initialState: ISalesAssignState = {
   resultActions: new ResultActions({}),
   salesExistingModel: [new SalesNameMode({})],
   SalesAssignPostModel: new SalesAssignPostModel({}),
+  salesHistory: [],
 };
 
 const SalesAssignReducer: Reducer = baseReducer(initialState, {

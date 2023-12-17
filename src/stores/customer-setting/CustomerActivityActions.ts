@@ -107,15 +107,60 @@ export const REQUEST_CUSTOMER_SETTING_BY_CUSTOMER_ID: string =
   "CustomerActions.REQUEST_CUSTOMER_SETTING_BY_CUSTOMER_ID";
 export const REQUEST_CUSTOMER_SETTING_BY_CUSTOMER_ID_FINISHED =
   "CustomerActions.REQUEST_CUSTOMER_SETTING_BY_CUSTOMER_ID_FINISHED";
-export const requestCustomerSettingByCustomerId = (
-  customerSettingID: number
-): any => {
+
+export const requestCustomerSettingByCustomerId = (customerId: number): any => {
   return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
     await ActionUtility.createThunkEffect<CustomerSettingById>(
       dispatch,
       REQUEST_CUSTOMER_SETTING_BY_CUSTOMER_ID,
       CustomerEffect.requestCustomerSettingByCustomerId,
-      customerSettingID
+      customerId
+    );
+  };
+};
+
+export const REQUEST_CUSTOMER_SETTING_BY_ID: string =
+  "CustomerActions.REQUEST_CUSTOMER_SETTING_BY_ID";
+export const REQUEST_CUSTOMER_SETTING_BY_ID_FINISHED =
+  "CustomerActions.REQUEST_CUSTOMER_SETTING_BY_ID_FINISHED";
+export const requestCustomerSettingById = (customerSettingId: number): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<CustomerSettingById>(
+      dispatch,
+      REQUEST_CUSTOMER_SETTING_BY_ID,
+      CustomerEffect.requestCustomerSettingById,
+      customerSettingId
+    );
+  };
+};
+
+export const POST_CUSTOMER_SETTING: string =
+  "CustomerActions.POST_CUSTOMER_SETTING";
+export const POST_CUSTOMER_SETTING_FINISHED =
+  "CustomerActions.POST_CUSTOMER_SETTING_FINISHED";
+export const postCustomerSetting = (data: CustomerSettingById): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      POST_CUSTOMER_SETTING,
+      CustomerEffect.postCustomerSetting,
+      data
+    );
+  };
+};
+
+export const PUT_CUSTOMER_SETTING: string =
+  "CustomerActions.PUT_CUSTOMER_SETTING";
+export const PUT_CUSTOMER_SETTING_FINISHED =
+  "CustomerActions.PUT_CUSTOMER_SETTING_FINISHED";
+export const putCustomerSetting = (data: CustomerSettingById, id: number): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      PUT_CUSTOMER_SETTING,
+      CustomerEffect.putCustomerSetting,
+      data,
+      id
     );
   };
 };

@@ -7,36 +7,48 @@ import { Form as FinalForm, Field } from "react-final-form";
 import { DropdownClearInput, Button } from "views/components/UI";
 
 import * as CustomerSetting from "stores/customer-setting/CustomerActivityActions"
+import * as CustomerName from "stores/customer-name/CustomerNameActivityActions"
 import { selectCustomerSetting, selectCustomerSettingOptions } from "selectors/customer-setting/CustomerSettingSelector";
 import RelatedCustomerPostModel from "stores/related-customer/models/RelatedCustomerPostModel";
 import * as RelatedCustomer from "stores/related-customer/RelatedCustomerActivityActions"
 
 import IStore from "models/IStore";
+import { selectCustomerSearchOptions, selectCustomerDropdownOptions } from "selectors/select-options/CustomerNameSelector";
 
 interface IProps {
-    customerSettingID: number
+    relatedCustomerData: any[];
+    setRelatedCustomerData: (data: any) => any;
 }
 
 interface customerData {
     customerName: string;
-    customerSettingID: number;
-    customerGenID: number;
+    customerID: number;
+    customerAddress: string;
     blacklist: boolean;
     holdshipment: boolean;
     avgAR: number;
-    address: string;
 }
 
 const ModalNewRelatedCondition: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
     const dispatch: Dispatch = useDispatch();
     const [customerName, setCustomerName] = useState();
     const [customerData, setCustomerData] = useState<customerData | undefined>(undefined);
+    const { relatedCustomerData, setRelatedCustomerData } = props
 
-    const customerSettingData = useSelector((state: IStore) => selectCustomerSettingOptions(state));
+    const customerSettingData = useSelector((state: IStore) => selectCustomerDropdownOptions(state) );
+
+    // const handleSearchChangeCustomer = useCallback((data) => {
+    //     setCustomerName(data);
+    //     if(data.length >= 2) {
+    //         dispatch(CustomerName.requestSearchCustomerName(data))
+    //     } 
+    // }, [dispatch])
+
+    // const customerSettingData = useSelector((state: IStore) => selectCustomerSettingOptions(state));
     
     const customerOnChange = (data) => {
+        console.log(data)
         if(data) {
-            // console.log(data)
             setCustomerData(data)
         } else {
             setCustomerData(undefined)
@@ -47,15 +59,22 @@ const ModalNewRelatedCondition: React.FC<IProps> = (props: React.PropsWithChildr
     }
 
     const onSubmitHandler = async () => {
-        let newRelatedCustomer = new RelatedCustomerPostModel({})
-        newRelatedCustomer.relatedID = 0;
-        newRelatedCustomer.customerSettingID = props.customerSettingID;
-        newRelatedCustomer.relatedCustomerSettingID = customerData.customerSettingID;
-        newRelatedCustomer.createUserID = 0;
-        newRelatedCustomer.modifyUserID = 0;
+        let userLogin = JSON.parse(localStorage.getItem('userLogin'));
+        
+        // let NewRelatedCustomer = new RelatedCustomerPostModel({})
+        // NewRelatedCustomer.relatedID = 0;
+        // NewRelatedCustomer.customerSettingID = props.customerSettingID;
+        // NewRelatedCustomer.relatedCustomerID = customerData.customerSettingID;
+        // NewRelatedCustomer.createUserID = userLogin.employeeID;
+        // NewRelatedCustomer.modifyUserID = userLogin.employeeID;
 
-        await dispatch(RelatedCustomer.postRelatedCustomer(newRelatedCustomer));
-        await dispatch(RelatedCustomer.requestRelatedCustomer(customerData.customerSettingID));
+        setRelatedCustomerData([
+            ...relatedCustomerData,
+            customerData
+        ])
+
+        // await dispatch(RelatedCustomer.postRelatedCustomer(newRelatedCustomer));
+        // await dispatch(RelatedCustomer.requestRelatedCustomer(customerData.customerSettingID));
         await dispatch(ModalAction.CLOSE());
     }
 
@@ -64,7 +83,8 @@ const ModalNewRelatedCondition: React.FC<IProps> = (props: React.PropsWithChildr
       };
 
     useEffect(() => {
-        dispatch(CustomerSetting.requestCustomerSett());
+        dispatch(CustomerName.requestSearchCustomerName("pt"))
+        // dispatch(CustomerSetting.requestCustomerSett());
     }, [dispatch]);
 
     return (
@@ -99,7 +119,7 @@ const ModalNewRelatedCondition: React.FC<IProps> = (props: React.PropsWithChildr
                 <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", margin: "14px 0"}}>
                     <div style={{ display: "flex", flexDirection: "column", textAlign: "center"}}>
                         <label style={{ marginRight: '10px', marginBottom: "5px", color: "#A0A8B3" }}>CustomerID</label>
-                        <p style={{ color: "#55637A", fontSize: "24px", fontWeight: "bold"}}>{customerData.customerGenID}</p>
+                        <p style={{ color: "#55637A", fontSize: "24px", fontWeight: "bold"}}>{customerData.customerID}</p>
                     </div>
 
                     <div style={{ display: "flex", flexDirection: "column" }}>
@@ -124,7 +144,7 @@ const ModalNewRelatedCondition: React.FC<IProps> = (props: React.PropsWithChildr
 
                 <div style={{ margin: "14px 0" }}>
                     <label style={{ marginRight: '10px', marginBottom: "5px", color: "#A0A8B3" }}>Address</label>
-                    <p style={{ color: "#55637A", fontSize: "20px"}}>{customerData.address}</p>
+                    <p style={{ color: "#55637A", fontSize: "20px"}}>{customerData.customerAddress}</p>
                 </div>
 
                 <Divider></Divider>

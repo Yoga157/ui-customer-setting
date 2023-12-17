@@ -6,7 +6,7 @@ import {
 
 export default class CustomerSettingRow extends BaseModel {
   customerSettingID: number = 0;
-  customerGenID: number = 0;
+  customerID: number = 0;
   customerCategory: string = "";
   customerName: string = "";
   lastProjectName: string = "";
@@ -30,7 +30,7 @@ export default class CustomerSettingRow extends BaseModel {
   public update(data: Partial<CustomerSettingRow>): void {
     const conversionOptions: IConversionOption = {
       customerSettingID: ConversionTypeEnum.Number,
-      customerGenID: ConversionTypeEnum.Number,
+      customerID: ConversionTypeEnum.Number,
       customerCategory: ConversionTypeEnum.String,
       customerName: ConversionTypeEnum.String,
       lastProjectName: ConversionTypeEnum.String,

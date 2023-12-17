@@ -25,6 +25,8 @@ import IInvoicingScheduleState from "stores/invoicing-schedule/models/IInvoicing
 import IInvoicingConditionState from "stores/invoicing-condition/models/IInvoicingConditionState";
 import IRelatedCustomerState from "stores/related-customer/models/IRelatedCustomerState"
 import IRelatedFileState from "stores/related-file/models/IRelatedFileState";
+import IConfigItemState from "stores/config-item/models/ConfigItemState";
+import ICollectionHistoryState from "stores/collection-history/models/CollectionHistoryState";
 
 export default interface IStore {
   readonly error: IErrorState;
@@ -54,4 +56,6 @@ export default interface IStore {
   readonly invoicingCondition: IInvoicingConditionState;
   readonly relatedCustomer: IRelatedCustomerState;
   readonly relatedFile: IRelatedFileState;
+  readonly configItem: IConfigItemState;
+  readonly collectionHistory: ICollectionHistoryState;
 }
