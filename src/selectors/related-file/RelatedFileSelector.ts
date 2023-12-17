@@ -19,7 +19,7 @@ const _selectRelatedFile = (models: RelatedFileModel[]): any => {
         documentType: model.documentType,
         docmentPath: model.documentPath,
         uploadDate: formatDate(model.createDate),
-        uploadBy: model.createUserID
+        uploadBy: model.createdBy
     }))
 }
 

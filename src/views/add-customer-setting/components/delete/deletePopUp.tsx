@@ -13,10 +13,9 @@ import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 
 interface IProps {
-  deleteFunc: (data: any) => any;
-  refreshFunc: (data: any) => any;
-  id: number;
-  customerSettingID: number;
+  array: any[];
+  setArray: (data: any) => any;
+  index: number;
   content: string;
 }
 
@@ -24,6 +23,7 @@ const DeletePopUp: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
+  const { array, setArray, index, content } = props
 
   const cancelClick = () => {
     dispatch(ModalAction.CLOSE());
@@ -33,10 +33,13 @@ const DeletePopUp: React.FC<IProps> = (
     selectRequesting(state, [])
   );
 
-  const deleteClick = async () => {
-    await dispatch(props.deleteFunc(props.id))
-    await dispatch(props.refreshFunc(props.customerSettingID))
-    await dispatch(ModalAction.CLOSE());
+  const deleteClick = () => {
+    // await dispatch(props.deleteFunc(props.id))
+    // await dispatch(props.refreshFunc(props.customerSettingID))
+    const arrayFiltered = array.filter((data, i) => i !== index);
+    setArray(arrayFiltered)
+
+    dispatch(ModalAction.CLOSE());
   };
 
   return (
@@ -66,7 +69,7 @@ const DeletePopUp: React.FC<IProps> = (
               </Grid.Row>
               <Grid.Row centered style={{ textAlign: "center" }}>
                 <span style={{ padding: "10px" }}>
-                  Are you sure you want to DELETE this {props.content}?
+                  Are you sure you want to DELETE this {content}?
                 </span>
               </Grid.Row>
               <Divider></Divider>

@@ -91,15 +91,40 @@ export const requestCustomerSettingByCustomerId = async (
   );
 };
 
-export const putCustomerSet = async (
-  data: CustomerSettingById,
-  CustomerSettingID: number
-): Promise<ResultActions | HttpErrorResponseModel> => {
-  const controllerName = "CustomerSetting/" + CustomerSettingID;
+export const requestCustomerSettingById = async (customerSettingID: number): Promise<CustomerSettingById | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting/" + customerSettingID;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName
   );
+
+  return EffectUtility.getToModel<CustomerSettingById>(
+    CustomerSettingById,
+    endpoint
+  );
+};
+
+export const postCustomerSetting = async (data: CustomerSettingById): Promise<ResultActions | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting";
+  const endpoint: string = environment.api.customer.replace(
+      ":controller",
+      controllerName
+  );
+
+  return EffectUtility.postToModel<ResultActions>(
+      ResultActions,
+      endpoint,
+      data
+  );
+}
+
+export const putCustomerSetting = async (data: CustomerSettingById, id: number): Promise<ResultActions | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting/" + id;
+  const endpoint: string = environment.api.customer.replace(
+      ":controller",
+      controllerName
+  );
+
   return EffectUtility.putToModel<ResultActions>(ResultActions, endpoint, data);
 };
 

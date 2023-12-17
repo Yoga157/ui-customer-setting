@@ -3,6 +3,7 @@ import IStore from "../../models/IStore";
 import { Selector } from "react-redux";
 import CustomerSettingRow from "stores/customer-setting/models/CustomerSettingRow";
 import CustomerSettingById from "stores/customer-setting/models/CustomerSettingById";
+import ResultActions from "models/ResultActions";
 
 export default interface ICustomerSettingOptions {
   readonly text: string,
@@ -26,7 +27,7 @@ const _mappingObjectTableRow = (model: any): any => {
       model.customerSettingID.toString() === "undefined"
         ? 0
         : model.customerSettingID,
-    customerGenID: model.customerGenID === null ? null : model.customerGenID,
+    customerID: model.customerID === null ? null : model.customerID,
     customerCategory:
       model.customerCategory === "" ? "" : model.customerCategory,
     customerName: model.customerName === "" ? "" : model.customerName,
@@ -51,16 +52,13 @@ export const selectCustomerSetting: Selector<IStore, any> = createSelector(
   _selectCustomerSetting
 );
 
-const _selectCustomerSettingById = (model: any): any => {
+const _selectCustomerSettingById = (model: CustomerSettingById): any => {
   return {
-    customerSettingID: model.customerSettingID === null ? null : model.customerSettingID,
-    customerGenID: model.customerGenID === null ? null : model.customerGenID,
-    customerCategoryID: model.customerCategoryID === "" ? null : model.customerCategoryID,
-    shareable: model.shareable === null ? null : model.shareable,
-    pmoCustomer: model.pmoCustomer === null ? null : model.pmoCustomer,
-    blacklist: model.blacklist === null ? null : model.blacklist,
-    holdshipment: model.holdshipment === null ? null : model.holdshipment,
-    avgAR: model.avgAR === null ? null : model.avgAR,
+    customerSettingID: model.customerSettingID,
+    customerID: model.customerID,
+    customerCategoryID: model.customerCategoryID,
+    shareable: model.shareable,
+    pmoCustomer: model.pmoCustomer
   }
 }
 
@@ -75,7 +73,7 @@ const _selectCustomerSettingOptions = (models: any[]): ICustomerSettingOptions[]
       value: {
         customerName: model.customerName,
         customerSettingID: model.customerSettingID,
-        customerGenID: model.customerGenID,
+        customerID: model.customerID,
         blacklist: model.blacklist,
         holdshipment: model.holdshipment,
         avgAR: 0,
@@ -89,59 +87,20 @@ export const selectCustomerSettingOptions: Selector<IStore, ICustomerSettingOpti
   (state: IStore) => state.customerSetting.data.rows, _selectCustomerSettingOptions
 )
 
-// const _selectCustomerName = (models: any[]): any[] => {
-//   return models.map((model: any): any => ({
-//     title: model.customerName,
-//     description: model.customerGenID,
-//   }));
-// };
+const _selectPostResponseCustomerSetting = (model: ResultActions): any => {
+  return {
+    customerSettingID: model.resultObj.customerSettingID,
+    customerID: model.resultObj.customerID,
+    customerCategoryID: model.resultObj.customerCategoryID,
+    shareable: model.resultObj.shareable,
+    pmoCustomer: model.resultObj.pmoCustomer,
+    createUserID: model.resultObj.createUserID,
+    createDate: model.resultObj.createDate,
+    modifyUserID: model.resultObj.modifyUserID,
+    modifyDate: model.resultObj.modifyDate,
+  }
+}
 
-// export const selectCustomerName: Selector<IStore, IOptionsData[]> = createSelector(
-//   (state: IStore) => state.funnelOpportunity.listCustomer,
-//   _selectCustomerName
-// );
-
-// const _selectSalesName = (models: any[]): any[] => {
-//   return models.map((model: any): any => ({
-//     text: model.textData,
-//     value: model.valueData,
-//   }));
-// };
-
-// export const selectSalesName: Selector<IStore, IOptionsData[]> = createSelector(
-//   (state: IStore) => state.funnelOpportunity.employee,
-//   _selectSalesName
-// );
-
-// const _selectDirektorat = (models: any[]): any[] => {
-//   return models.map((model: any): any => ({
-//     text: model.textData,
-//     value: model.valueData,
-//   }));
-// };
-
-// export const selectDirektorat: Selector<IStore, IOptionsData[]> = createSelector(
-//   (state: IStore) => state.funnelOpportunity.listDirektorat,
-//   _selectDirektorat
-// );
-
-// const _mappingOppFailedTableRow = (model: any) => {
-//   return {
-//     brand: model.brand,
-//     customerName: model.customerName,
-//     eventName: model.eventName,
-//     notes: model.notes,
-//     errorMessage: model.errorMessage,
-//     messageError: model.errorMessage.join(','),
-//   };
-// };
-// const _selectResultOpp = (models: any[]): any[] => {
-//   if (models.length > 0) {
-//     return models.map((model: any): any => _mappingOppFailedTableRow(model));
-//   }
-//   return [];
-// };
-// export const selectResultOpp: Selector<IStore, any[]> = createSelector(
-//   (state: IStore) => state.funnelOpportunity.resultActions.resultObj,
-//   _selectResultOpp
-// );
+export const selectPostResponseCustomerSetting: Selector<IStore, any> = createSelector(
+  (state: IStore) => state.customerSetting.resultActions, _selectPostResponseCustomerSetting
+)

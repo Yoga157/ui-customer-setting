@@ -28,6 +28,8 @@ import InvoicingScheduleReducer from "./invoicing-schedule/InvoicingScheduleActi
 import InvoicingConditionReducer from "./invoicing-condition/InvoicingConditionActivityReducer";
 import RelatedCustomerReducer from "./related-customer/RelatedCustomerActivityReducer"
 import RelatedFileReducer from "./related-file/RelatedFileActivityReducer";
+import ConfigItemReducer from "./config-item/ConfigItemActivityReducer";
+import CollectionHistoryReducer from "./collection-history/CollectionHistoryActivityReducer";
 
 const rootReducer = (history: History): Reducer<IStore> => {
   const reducerMap: ReducersMapObject<IStore> = {
@@ -57,7 +59,9 @@ const rootReducer = (history: History): Reducer<IStore> => {
     invoicingSchedule: InvoicingScheduleReducer,
     invoicingCondition: InvoicingConditionReducer,
     relatedCustomer: RelatedCustomerReducer,
-    relatedFile: RelatedFileReducer
+    relatedFile: RelatedFileReducer,
+    configItem: ConfigItemReducer,
+    collectionHistory: CollectionHistoryReducer 
   };
 
   return combineReducers(reducerMap);

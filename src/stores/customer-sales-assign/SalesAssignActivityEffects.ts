@@ -6,6 +6,7 @@ import SalesAssignRow from "./models/SalesAssignRow";
 import ResultActions from "models/ResultActions";
 import SalesNameMode from "./models/SalesNameModel";
 import SalesAssignPostModel from "./models/SalesAssignPostModel";
+import SalesAssignHistoryModel from "../customer-sales/models/SalesAssignHistoryModel";
 
 //Get sales assign history by customer id
 export const requestAssignSales = async (

@@ -26,6 +26,20 @@ export const requestSearchCustomerName = (search: string): any => {
     }
 }
 
+export const REQUEST_CUSTOMER_BY_ID: string = "CustomerNameAction.REQUEST_CUSTOMER_BY_ID";
+export const REQUEST_CUSTOMER_BY_ID_FINISHED: string = "CustomerNameAction.REQUEST_CUSTOMER_BY_ID_FINISHED";
+
+export const requestCustomerById = (customerId: number): any => {
+    return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+        await ActionUtility.createThunkEffect<CustomerNameModel>(
+            dispatch,
+            REQUEST_CUSTOMER_BY_ID,
+            CustomerNameEffect.requestCustomerById,
+            customerId
+        )
+    }
+}
+
 export const CLEAR_RESULT_CUSTOMER_NAME: string = "CustomerNameActions.CLEAR_RESULT_CUSTOMER_NAME";
 export const CLEAR_RESULT_CUSTOMER_NAME_FINISHED: string =
   "CustomerNameActions.CLEAR_RESULT_CUSTOMER_NAME_FINISHED";

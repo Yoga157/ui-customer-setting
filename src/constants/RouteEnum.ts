@@ -5,7 +5,8 @@ enum RouteEnum {
   FunnelForm = '/funnel-form',
   FunnelOpportunity = '/funnel-opportunity',
   CustomerSetting = '/customer-setting',
-  AddNewCustomerSetting="/customer-setting/add"
+  ViewCustomerSetting="/customer-setting/:id(\d+)",
+  AddNewCustomerSetting="/customer-setting/add",
 }
 
 export default RouteEnum;
