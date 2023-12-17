@@ -6,6 +6,7 @@ import CustomerSettingRow from "./models/CustomerSettingRow";
 import CustomerSettingById from "./models/CustomerSettingById";
 import ResultActions from "models/ResultActions";
 import { NumberFormatState } from "react-number-format";
+import { data } from "jquery";
 
 export const requestCustomerSett = async (
   page?: number,
@@ -14,10 +15,10 @@ export const requestCustomerSett = async (
   sorting?: string
 ): Promise<CustomerSettingModel | HttpErrorResponseModel> => {
   const controllerName = `CustomerSetting/GetListCustomerSetting?
-  ${ page ? `page=${page}`: ``}
-  ${ pageSize ? `&pageSize=${pageSize}` : ``}
-  ${ column ? `&column=${column}` : ``}
-  ${ sorting ? `&sorting=${sorting}` : ``}`;
+  ${page ? `page=${page}` : ``}
+  ${pageSize ? `&pageSize=${pageSize}` : ``}
+  ${column ? `&column=${column}` : ``}
+  ${sorting ? `&sorting=${sorting}` : ``}`;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName
@@ -124,9 +125,10 @@ export const putCustomerSetting = async (data: CustomerSettingById, id: number):
       controllerName
   );
 
-  return EffectUtility.putToModel<ResultActions>(
-      ResultActions,
-      endpoint,
-      data
-  );
-}
+  return EffectUtility.putToModel<ResultActions>(ResultActions, endpoint, data);
+};
+
+export const clearResult = async (): Promise<any> => {
+  const clear = new ResultActions({});
+  return clear;
+};

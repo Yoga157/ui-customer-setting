@@ -1,6 +1,7 @@
 import CustomerSettingById from "./CustomerSettingById";
 import CustomerSettingModel from "./CustomerSettingModel";
 import CustomerSettingRow from "./CustomerSettingRow";
+import CustomerSettingID from "./CustomerSettingById";
 
 export default interface ICustomerState {
   readonly data: CustomerSettingModel;

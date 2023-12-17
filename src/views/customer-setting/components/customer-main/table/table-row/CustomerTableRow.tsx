@@ -1,13 +1,5 @@
 import React, { Fragment, useEffect, useState, useCallback } from "react";
-import {
-  Table,
-  Dropdown,
-  Confirm,
-  Icon,
-  Button,
-  Checkbox,
-  TableCell,
-} from "semantic-ui-react";
+import { Table, Dropdown, List, Icon } from "semantic-ui-react";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLevelActions";
@@ -143,7 +135,15 @@ const CustomerTableRow: React.FC<IProps> = (
           )}
         </Table.Cell>
         <Table.Cell>{rowData.relatedCustomer}</Table.Cell>
-        <Table.Cell>{rowData.invoiceCondition}</Table.Cell>
+        <Table.Cell>
+          {rowData.invoiceCondition ? (
+            <ul>
+              {rowData.invoiceCondition.split(",").map((condition) => (
+                <li key={condition}>{condition.trim()}</li>
+              ))}
+            </ul>
+          ) : null}
+        </Table.Cell>
         <Table.Cell textAlign="center" verticalAlign="middle">
           {rowData.blacklist === true ? (
             <div

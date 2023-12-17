@@ -107,6 +107,7 @@ export const REQUEST_CUSTOMER_SETTING_BY_CUSTOMER_ID: string =
   "CustomerActions.REQUEST_CUSTOMER_SETTING_BY_CUSTOMER_ID";
 export const REQUEST_CUSTOMER_SETTING_BY_CUSTOMER_ID_FINISHED =
   "CustomerActions.REQUEST_CUSTOMER_SETTING_BY_CUSTOMER_ID_FINISHED";
+
 export const requestCustomerSettingByCustomerId = (customerId: number): any => {
   return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
     await ActionUtility.createThunkEffect<CustomerSettingById>(
@@ -160,6 +161,41 @@ export const putCustomerSetting = (data: CustomerSettingById, id: number): any =
       CustomerEffect.putCustomerSetting,
       data,
       id
+    );
+  };
+};
+
+export const PUT_CUSTOMER_SETTING: string =
+  "CustomerActions.PUT_CUSTOMER_SETTING";
+export const PUT_CUSTOMER_SETTING_FINISHED =
+  "CustomerActions.PUT_CUSTOMER_SETTING_FINISHED";
+
+export const putCustomerSet = (
+  data: CustomerSettingById,
+  CustomerSettingID: number
+): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      PUT_CUSTOMER_SETTING,
+      CustomerEffect.putCustomerSet,
+      data,
+      CustomerSettingID
+    );
+  };
+};
+
+export const CLEAR_CUSTOMER_SETTING: string =
+  "FunnelActions.CLEAR_CUSTOMER_SETTING";
+export const CLEAR_CUSTOMER_SETTING_FINISHED: string =
+  "FunnelActions.CLEAR_CUSTOMER_SETTING_FINISHED";
+
+export const clearResult = (): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      CLEAR_CUSTOMER_SETTING,
+      CustomerEffect.clearResult
     );
   };
 };

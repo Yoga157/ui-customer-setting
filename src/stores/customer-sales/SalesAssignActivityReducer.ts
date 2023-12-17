@@ -82,12 +82,24 @@ const SalesAssignReducer: Reducer = baseReducer(initialState, {
   },
 
   [SalesActions.DEL_SALES_ASSIGN_FINISHED](
-    state: ISalesAssignState,
+  state: ISalesAssignState,
     action: IAction<ResultActions>
   ): ISalesAssignState {
     return {
       ...state,
       resultActions: action.payload!
+    };
+  },
+
+  [SalesActions.REMOVE_SUBMIT_RESULT_SEARCH_FINISHED](
+    state: ISalesAssignState,
+    action: IAction<ResultActions>
+  ): ISalesAssignState {
+    return {
+      ...state,
+      resultActions: new ResultActions({}),
+      error: false,
+      refreshPage: false,
     };
   },
 });

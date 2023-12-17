@@ -70,8 +70,8 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
   ): ICustomerState {
     return {
       ...state,
-      dataByCustomerId: action.payload!
-    }
+      dataByCustomerId: action.payload!,
+    };
   },
 
   [CustomerActions.REQUEST_CUSTOMER_SETTING_BY_ID_FINISHED](
@@ -108,8 +108,19 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
   [CustomerActions.PUT_CUSTOMER_SETTING_FINISHED](
     state: ICustomerState,
     action: IAction<ResultActions>
+  ): any {
+    return {
+      ...state,
+      error: action.error!,
+      refreshPage: action.error ? false : true,
+      resultActions: action.payload!,
+    };
+  },
+
+  [CustomerActions.CLEAR_CUSTOMER_SETTING_FINISHED](
+    state: ICustomerState,
+    action: IAction<any>
   ): ICustomerState {
-    console.log(action)
     return {
       ...state,
       resultActions: action.payload!,

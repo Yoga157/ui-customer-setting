@@ -106,6 +106,7 @@ const FilterCustomer: React.FC<{
         blacklist
       )
     );
+    console.log(newsalesAssign);
   };
 
   const salesStoreDropdown = useSelector((state: IStore) =>

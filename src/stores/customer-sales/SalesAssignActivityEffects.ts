@@ -48,8 +48,15 @@ export const postAssignedSales = async (
   );
 };
 
+export const removeResultSearch = async (): Promise<
+  ResultActions | HttpErrorResponseModel
+> => {
+  const clearResult = new ResultActions({});
+  return clearResult;
+};
+
 export const clearResult = async (): Promise<any> => {
-  const clear = new SalesNameMode({});
+  const clear = new ResultActions({});
   return clear;
 };
 

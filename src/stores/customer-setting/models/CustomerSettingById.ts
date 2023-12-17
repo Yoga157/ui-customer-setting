@@ -34,4 +34,3 @@ import {
       super.update(data, conversionOptions);
     }
   }
-  
