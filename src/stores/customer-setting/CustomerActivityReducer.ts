@@ -6,6 +6,7 @@ import { Reducer } from "redux";
 import CustomerSettingModel from "./models/CustomerSettingModel";
 import CustomerSettingRow from "./models/CustomerSettingRow";
 import ResultActions from "models/ResultActions";
+import CustomerSettingById from "./models/CustomerSettingById";
 
 export const initialState: ICustomerState = {
   data: new CustomerSettingModel({}),
@@ -69,8 +70,8 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
   ): ICustomerState {
     return {
       ...state,
-      dataByCustomerId: action.payload!
-    }
+      dataByCustomerId: action.payload!,
+    };
   },
 
   [CustomerActions.REQUEST_RESET_FILTER](
@@ -78,6 +79,30 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     action: IAction<boolean>
   ): ICustomerState {
     return initialState;
+  },
+
+  [CustomerActions.PUT_CUSTOMER_SETTING_FINISHED](
+    state: ICustomerState,
+    action: IAction<ResultActions>
+  ): any {
+    return {
+      ...state,
+      error: action.error!,
+      refreshPage: action.error ? false : true,
+      resultActions: action.payload!,
+    };
+  },
+
+  [CustomerActions.CLEAR_CUSTOMER_SETTING_FINISHED](
+    state: ICustomerState,
+    action: IAction<any>
+  ): ICustomerState {
+    return {
+      ...state,
+      resultActions: action.payload!,
+      error: false,
+      refreshPage: false,
+    };
   },
 });
 

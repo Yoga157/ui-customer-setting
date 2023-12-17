@@ -1,55 +1,16 @@
-import React, { useEffect, Fragment, useState, useCallback } from "react";
-import {
-  SelectInput,
-  TextInput,
-  Button,
-  SearchInput,
-  RichTextEditor,
-  Tooltips,
-  DateInput,
-  LabelImage,
-} from "views/components/UI";
+import React, { Fragment } from "react";
+import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
-import { Form as FinalForm, Field } from "react-final-form";
-import {
-  Form,
-  Grid,
-  Card,
-  Divider,
-  DropdownProps,
-  Dropdown,
-} from "semantic-ui-react";
+import { Form as FinalForm } from "react-final-form";
+import { Form, Grid, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
-import { selectSalesSearchOptions } from "selectors/select-options/SalesAssignSelector";
-import CustomerSettingRow from "stores/customer-setting/models/CustomerSettingRow";
-import SalesAssignPostModel from "stores/customer-sales/models/SalesAssignPostModel";
-import {
-  combineValidators,
-  isRequired,
-  composeValidators,
-  createValidator,
-} from "revalidate";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
-import { selectUserResult } from "selectors/user/UserSelector";
-
-import { selectDirektorat } from "selectors/funnel-opportunity/FunnelOpportunitySelector";
-import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
-
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
-import { format } from "date-fns";
-import IOptionsData from "selectors/select-options/models/IOptionsData";
-import environtment from "environment";
-import axios from "axios";
-import * as ToastsAction from "stores/toasts/ToastsAction";
-import ToastStatusEnum from "constants/ToastStatusEnum";
 
 interface IProps {
-  // customerSettingID: number;
-  // customerName: string;
-  // type: string;
   rowData: any;
 }
 
@@ -57,15 +18,7 @@ const AddSalesAssign: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
-  const [customerSettingID, setcustomerSettingID] = useState(
-    props.rowData.customerSettingID
-  );
-  const [salesAssignArray, setSalesAssignArray] = useState([]);
   const { rowData } = props;
-
-  const salesStoreSearch = useSelector((state: IStore) =>
-    selectSalesSearchOptions(state)
-  );
 
   const cancelClick = () => {
     dispatch(ModalAction.CLOSE());

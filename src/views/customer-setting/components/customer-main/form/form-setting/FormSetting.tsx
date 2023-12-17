@@ -1,49 +1,16 @@
-import React, { useEffect, Fragment, useState, useCallback } from "react";
-import {
-  SelectInput,
-  CheckBox,
-  TextInput,
-  Button,
-  SearchInput,
-  RichTextEditor,
-  Tooltips,
-  DateInput,
-} from "views/components/UI";
+import React, { Fragment, useState, useEffect } from "react";
+import { SelectInput, Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
 import { Form as FinalForm, Field } from "react-final-form";
-import {
-  Form,
-  Grid,
-  Checkbox,
-  Card,
-  Divider,
-  DropdownProps,
-  Dropdown,
-  GridColumn,
-} from "semantic-ui-react";
+import { Form, Grid, Checkbox, Card, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
-import { selectSalesSearchOptions } from "selectors/select-options/SalesAssignSelector";
-import CustomerSettingRow from "stores/customer-setting/models/CustomerSettingRow";
-import SalesAssignPostModel from "stores/customer-sales/models/SalesAssignPostModel";
-import {
-  combineValidators,
-  isRequired,
-  composeValidators,
-  createValidator,
-} from "revalidate";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
-import { selectUserResult } from "selectors/user/UserSelector";
-
-import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
-
-import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
+import CustomerSettingID from "stores/customer-setting/models/CustomerSettingById";
 import { format } from "date-fns";
-import IOptionsData from "selectors/select-options/models/IOptionsData";
-import environtment from "environment";
-import axios from "axios";
+import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 import * as ToastsAction from "stores/toasts/ToastsAction";
 import ToastStatusEnum from "constants/ToastStatusEnum";
 
@@ -55,100 +22,74 @@ const AdjSetting: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
-  const [customerName, setCustomerName] = useState(props.rowData.customerName);
-  const [salesName, setSalesName] = useState("");
-  const [salesAssignArray, setSalesAssignArray] = useState([]);
+  const [shareableChecked, setSharebleChecked] = useState("FALSE");
+  const [pmo_customerChecked, setpmo_customerChecked] = useState("FALSE");
+  const result = useSelector(
+    (state: IStore) => state.customerSetting.resultActions
+  );
   const { rowData } = props;
-
-  const salesStoreSearch = useSelector((state: IStore) =>
-    selectSalesSearchOptions(state)
-  );
-
-  const handleSearchChangeSales = useCallback(
-    (data) => {
-      setSalesName(data);
-
-      if (data.length >= 2) {
-        dispatch(SalesAssign.requestSalesByName(data));
-      }
-    },
-    [dispatch]
-  );
-
   const cancelClick = () => {
     dispatch(ModalAction.CLOSE());
   };
-
   const isRequesting: boolean = useSelector((state: IStore) =>
     selectRequesting(state, [])
   );
 
-  const onSubmitHandler = async (e) => {
-    const userId: any = localStorage.getItem("userLogin");
-
-    console.log(rowData);
-    console.log(salesAssignArray);
-
-    for (let j = 0; j < rowData.lenght; j++) {
-      console.log(`rowData id ${rowData[j].customerSettingID}`);
-      for (let i = 0; i < salesAssignArray.length; i++) {
-        const NewAssignSales = new SalesAssignPostModel(e);
-        NewAssignSales.assignID = 0;
-        NewAssignSales.SalesID = salesAssignArray[i].salesID;
-        NewAssignSales.CustomerSettingID = rowData[j].customerSettingID;
-        NewAssignSales.AssignedBy = 0;
-        NewAssignSales.createUserID = 0;
-        NewAssignSales.modifyUserID = 0;
-
-        dispatch(SalesAssign.postAssignedSales(NewAssignSales));
-        console.log(
-          `rowData id ${rowData[j].customerSettingID} dan sales ID ${salesAssignArray[i].salesID}`
-        );
-      }
+  useEffect(() => {
+    if (result.message == "Update Success!") {
+      dispatch(ToastsAction.add(result.message, ToastStatusEnum.Success));
     }
+  }, [result.message]);
 
+  const handleShareable = () => {
+    if (shareableChecked == "FALSE") {
+      setSharebleChecked("TRUE");
+    } else {
+      setSharebleChecked("FALSE");
+    }
+  };
+
+  const handlepmocustomer = () => {
+    if (pmo_customerChecked == "FALSE") {
+      setpmo_customerChecked("TRUE");
+    } else {
+      setpmo_customerChecked("FALSE");
+    }
+  };
+
+  const onSubmitHandler = async () => {
+    const userId: any = localStorage.getItem("userLogin");
+    const date = new Date();
+
+    for (let j = 0; j < rowData.length; j++) {
+      const CustomerSetting = new CustomerSettingID({});
+      CustomerSetting.customerSettingID = props.rowData[j].customerSettingID;
+      CustomerSetting.customerID = props.rowData[j].customerID;
+      CustomerSetting.customerCategoryID = "";
+      CustomerSetting.shareable = shareableChecked == "TRUE" ? true : false;
+      CustomerSetting.pmoCustomer =
+        pmo_customerChecked == "TRUE" ? true : false;
+      CustomerSetting.createDate = format(
+        new Date(props.rowData[j].createDate),
+        "yyyy-MM-dd"
+      );
+      CustomerSetting.createUserID = props.rowData[j].createUserID;
+      CustomerSetting.modifyDate = date;
+      CustomerSetting.modifyUserID = JSON.parse(userId).employeeID;
+
+      await dispatch(
+        CustomerSettingAct.putCustomerSet(
+          CustomerSetting,
+          props.rowData[j].customerSettingID
+        )
+      );
+    }
     dispatch(ModalAction.CLOSE());
-    dispatch(
+    await dispatch(
       CustomerSettingAct.requestCustomerSett(1, 10, "CustomerSettingID")
     );
+    dispatch(CustomerSettingAct.clearResult());
   };
-
-  const deleteClick = (salesID) => {
-    let filteredArray = salesAssignArray.filter(
-      (obj) => obj.salesID !== salesID
-    );
-    setSalesAssignArray(filteredArray);
-  };
-
-  const onResultSelectSales = (data: any) => {
-    setSalesName(" ");
-
-    let checkSales = salesAssignArray.find(
-      (obj) => obj.salesID === data.result.salesID
-    );
-    if (checkSales === undefined) {
-      setSalesAssignArray([
-        ...salesAssignArray,
-        {
-          salesName: data.result.title,
-          salesID: data.result.salesID,
-        },
-      ]);
-    }
-  };
-
-  const isValidsalesName = createValidator(
-    (message) => (value) => {
-      if (value === 0) {
-        return message;
-      }
-    },
-    "Invalid Sales Name"
-  );
-
-  const validate = combineValidators({
-    salesName: composeValidators(isValidsalesName, isRequired("Sales Name"))(),
-  });
 
   return (
     <Fragment>
@@ -160,9 +101,8 @@ const AdjSetting: React.FC<IProps> = (
       <Divider></Divider>
       <LoadingIndicator isActive={isRequesting}>
         <FinalForm
-          validate={validate}
-          onSubmit={(values: any) => onSubmitHandler(values)}
-          render={({ handleSubmit, pristine, invalid }) => (
+          onSubmit={() => onSubmitHandler()}
+          render={({ handleSubmit }) => (
             <Form onSubmit={handleSubmit}>
               <div>
                 {rowData.map((data) => {
@@ -170,20 +110,14 @@ const AdjSetting: React.FC<IProps> = (
                     <>
                       <Grid.Row
                         width={1}
-                        style={{ padding: "0px" }}
+                        className="padding-0"
                         key={data.customerGenID}
                       >
                         <Grid.Column>
                           <h2>{data.customerName}</h2>
                         </Grid.Column>
                       </Grid.Row>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          width: "fit-content",
-                        }}
-                      >
+                      <div className="flex-row-container">
                         <div>
                           <h4>
                             Shareable Customer{"  "}
@@ -198,7 +132,7 @@ const AdjSetting: React.FC<IProps> = (
                         <div>
                           <h4>
                             PMO Customer{"  "}
-                            {data.holdshipment && (
+                            {data.pmoCustomer && (
                               <i className="tiny circular inverted teal check icon align-icon"></i>
                             )}
                           </h4>
@@ -217,27 +151,20 @@ const AdjSetting: React.FC<IProps> = (
                       thousandSeparator={true}
                       labelName="Cust.Category"
                       mandatory={false}
-                      // options={}
                     />
                   </Grid.Column>
                 </Grid.Row>
                 <Divider></Divider>
                 <Grid.Row>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      padding: "-0.5rem",
-                    }}
-                  >
-                    <p style={{ margin: 0 }}>Shareable customer</p>
+                  <div className="flex-adjust-setting ">
+                    <p className="margin-0">Shareable customer</p>
                     <div>
                       <span>OFF</span>
                       <Checkbox
                         toggle
-                        style={{ margin: "-6px 0.5rem" }}
+                        className="marginmix"
+                        checked={shareableChecked == "TRUE" ? true : false}
+                        onChange={() => handleShareable()}
                       ></Checkbox>
                       <span>ON</span>
                     </div>
@@ -245,19 +172,16 @@ const AdjSetting: React.FC<IProps> = (
                 </Grid.Row>
                 <Divider></Divider>
                 <Grid.Row>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      padding: "-0.5rem",
-                    }}
-                  >
-                    <p style={{ margin: 0 }}>PMO customer</p>
+                  <div className="flex-adjust-setting">
+                    <p className="margin-0">PMO customer</p>
                     <div>
                       <span>OFF</span>
-                      <Checkbox toggle style={{ margin: "-6px 0.5rem" }} />
+                      <Checkbox
+                        toggle
+                        style={{ margin: "-6px 0.5rem" }}
+                        checked={pmo_customerChecked == "TRUE" ? true : false}
+                        onChange={() => handlepmocustomer()}
+                      />
                       <span>ON</span>
                     </div>
                   </div>

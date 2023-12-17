@@ -155,7 +155,7 @@ const CustomerSettingPage: React.FC<IProps> = (
 
     if (window.location.pathname === "/data-quality/customer-setting") {
       if (search.value.length > 0) {
-        console.log("search");
+        // console.log("search");
         dispatch(
           CustomerActions.requestSearchCustomerSett(
             data.activePage,
