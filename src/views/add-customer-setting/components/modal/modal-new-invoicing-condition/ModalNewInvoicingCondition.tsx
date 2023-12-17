@@ -9,13 +9,15 @@ import InvoicingConditionModel from "stores/invoicing-condition/models/Invoicing
 import * as InvoicingCondition from "stores/invoicing-condition/InvoicingConditionActivityActions"
 
 interface IProps {
-    customerSettingID: number;
+    invoicingConditionData: any[];
+    setInvoicingConditionData: (data: any) => any;
 }
 
 const ModalNewInvoicingCondition: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
     const dispatch: Dispatch = useDispatch();
     const [projectType, setProjectType] = useState("")
     const [documentInvoicing, setDocumentInvoicing] = useState("")
+    const { invoicingConditionData, setInvoicingConditionData } = props
 
     const projectTypeData = [
         {
@@ -47,17 +49,29 @@ const ModalNewInvoicingCondition: React.FC<IProps> = (props: React.PropsWithChil
         },
     ]
 
-    const onSubmitHandler = async (data: any) => {
-        const NewInvoicingCondition = new InvoicingConditionModel({});
-        NewInvoicingCondition.conditionID = 0;
-        NewInvoicingCondition.customerSettingID = props.customerSettingID;
-        NewInvoicingCondition.projectType = data.projectType;
-        NewInvoicingCondition.conditionName = data.documentInvoicing;
-        NewInvoicingCondition.createUserID = 0;
-        NewInvoicingCondition.modifyUserID = 0;
+    const onSubmitHandler = (data: any) => {
+        let userLogin = JSON.parse(localStorage.getItem('userLogin'));
 
-        await dispatch(InvoicingCondition.postInvoicingCondition(NewInvoicingCondition))
-        await dispatch(InvoicingCondition.requestInvoicingCondition(props.customerSettingID))
+        // const NewInvoicingCondition = new InvoicingConditionModel({});
+        // NewInvoicingCondition.conditionID = 0;
+        // NewInvoicingCondition.customerSettingID = props.customerSettingID;
+        // NewInvoicingCondition.projectType = data.projectType;
+        // NewInvoicingCondition.conditionName = data.documentInvoicing;
+        // NewInvoicingCondition.createUserID = userLogin.employeeID;
+        // NewInvoicingCondition.modifyUserID = userLogin.employeeID;
+        
+        setInvoicingConditionData([
+            ...invoicingConditionData,
+            {
+                projectType: data.projectType,
+                conditionName: data.documentInvoicing,
+                createUserID: userLogin?.employeeID != null ? userLogin.employeeID : 0,
+                modifyUserID: userLogin?.employeeID != null ? userLogin.employeeID : 0,
+            }
+        ])
+
+        // await dispatch(InvoicingCondition.postInvoicingCondition(NewInvoicingCondition))
+        // await dispatch(InvoicingCondition.requestInvoicingCondition(props.customerSettingID))
         dispatch(ModalAction.CLOSE());
     }
 

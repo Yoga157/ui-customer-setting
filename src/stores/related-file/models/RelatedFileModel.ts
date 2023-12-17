@@ -10,6 +10,8 @@ export default class RelatedFileModel extends BaseModel {
     createDate?: Date = undefined;
     modifyUserID: number = 0;
     modifyDate?: Date = undefined;
+    createdBy?: string = "";
+    modifiedBy: string = "";
 
     constructor(data: Partial<RelatedFileModel>) {
         super();

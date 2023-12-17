@@ -6,10 +6,11 @@ import { Reducer } from "redux";
 import CustomerSettingModel from "./models/CustomerSettingModel";
 import CustomerSettingRow from "./models/CustomerSettingRow";
 import ResultActions from "models/ResultActions";
+import CustomerSettingById from "./models/CustomerSettingById";
 
 export const initialState: ICustomerState = {
   data: new CustomerSettingModel({}),
-  dataByCustomerId: new CustomerSettingRow({}),
+  dataByCustomerId: new CustomerSettingById({}),
   error: false,
   refreshPage: false,
   resultActions: new ResultActions({}),
@@ -65,8 +66,19 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
 
   [CustomerActions.REQUEST_CUSTOMER_SETTING_BY_CUSTOMER_ID_FINISHED](
     state: ICustomerState,
-    action: IAction<CustomerSettingRow>
+    action: IAction<CustomerSettingById>
   ): ICustomerState {
+    return {
+      ...state,
+      dataByCustomerId: action.payload!
+    }
+  },
+
+  [CustomerActions.REQUEST_CUSTOMER_SETTING_BY_ID_FINISHED](
+    state: ICustomerState,
+    action: IAction<CustomerSettingById>
+  ): ICustomerState {
+    console.log(action)
     return {
       ...state,
       dataByCustomerId: action.payload!
@@ -78,6 +90,32 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     action: IAction<boolean>
   ): ICustomerState {
     return initialState;
+  },
+
+  [CustomerActions.POST_CUSTOMER_SETTING_FINISHED](
+    state: ICustomerState,
+    action: IAction<ResultActions>
+  ): ICustomerState {
+    console.log(action)
+    return {
+      ...state,
+      resultActions: action.payload!,
+      error: false,
+      refreshPage: false,
+    };
+  },
+
+  [CustomerActions.PUT_CUSTOMER_SETTING_FINISHED](
+    state: ICustomerState,
+    action: IAction<ResultActions>
+  ): ICustomerState {
+    console.log(action)
+    return {
+      ...state,
+      resultActions: action.payload!,
+      error: false,
+      refreshPage: false,
+    };
   },
 });
 

@@ -6,6 +6,7 @@ import SalesAssignRow from "./models/SalesAssignRow";
 import ResultActions from "models/ResultActions";
 import SalesNameMode from "./models/SalesNameModel";
 import SalesAssignPostModel from "./models/SalesAssignPostModel";
+import SalesAssignHistoryModel from "./models/SalesAssignHistoryModel";
 
 export const requestSalesByName = async (
   search: string
@@ -51,3 +52,25 @@ export const clearResult = async (): Promise<any> => {
   const clear = new SalesNameMode({});
   return clear;
 };
+
+export const requestSalesHistory = async (customerSettingId: number): Promise<SalesAssignHistoryModel | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting/CustomerSalesAssign?customerSettingID=" + customerSettingId;
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+
+  return EffectUtility.getToModel<SalesAssignHistoryModel>(SalesAssignHistoryModel, endpoint);
+};
+
+export const deleteSalesAssign = async (id: number): Promise<ResultActions | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting/CustomerSalesAssign?AssignID=" + id;
+const endpoint: string = environment.api.customer.replace(
+  ":controller",
+  controllerName
+);
+return EffectUtility.delToModel<ResultActions>(
+  ResultActions,
+  endpoint
+);
+}

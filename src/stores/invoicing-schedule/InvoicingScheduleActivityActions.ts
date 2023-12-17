@@ -25,3 +25,32 @@ export const postInvoicingSchedule = (data: InvoicingScheduleModel): any => {
         )
     }
 }
+
+export const REQUEST_GET_INVOICING_SCHEDULE: string = "InvoicingScheduleActions.REQUEST_GET_INVOICING_SCHEDULE";
+export const REQUEST_GET_INVOICING_SCHEDULE_FINISHED: string = "InvoicingScheduleActions.REQUEST_GET_INVOICING_SCHEDULE_FINISHED";
+
+export const requestInvoicingSchedule = (customerSettingID: number): any => {
+    return async (dispatch: ReduxDispatch<ActionUnion>): Promise <void> => {
+        await ActionUtility.createThunkEffect<InvoicingScheduleModel>(
+            dispatch,
+            REQUEST_GET_INVOICING_SCHEDULE,
+            InvoicingScheduleEffect.requestInvoicingSchedule,
+            customerSettingID
+        )
+    }
+}
+
+export const PUT_INVOICING_SCHEDULE: string = "InvoicingScheduleActions.PUT_INVOICING_SCHEDULE";
+export const PUT_INVOICING_SCHEDULE_FINISHED: string = "InvoicingScheduleActions.PUT_INVOICING_SCHEDULE_FINISHED";
+
+export const putInvoicingSchedule = (data: InvoicingScheduleModel, id: number): any => {
+    return async (dispatch: ReduxDispatch<ActionUnion>): Promise <void> => {
+        await ActionUtility.createThunkEffect<ResultActions>(
+            dispatch,
+            PUT_INVOICING_SCHEDULE,
+            InvoicingScheduleEffect.putInvoicingSchedule,
+            data,
+            id
+        )
+    }
+}

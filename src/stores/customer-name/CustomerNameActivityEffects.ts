@@ -17,6 +17,19 @@ export const requestSearchCustomerName = async (search: string): Promise<Custome
     );
 }
 
+export const requestCustomerById = async (customerId: number): Promise<CustomerNameModel | HttpErrorResponseModel> => {
+    const controllerName = 'CustomerSetting/Customer/' + customerId;
+    const endpoint: string = environment.api.customer.replace(
+        ":controller",
+        controllerName
+    );
+
+    return EffectUtility.getToModel<CustomerNameModel>(
+        CustomerNameModel,
+        endpoint
+    );
+}
+
 export const clearResult = async (): Promise<any> => {
     const clear = new ResultActions({});
     return clear;

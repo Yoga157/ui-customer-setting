@@ -23,8 +23,11 @@ const CustomerSetting = lazy(() =>
   import("./customer-setting/CustomerSetting")
 );
 const AddNewCustomerSetting = lazy(() =>
-import("./add-customer-setting/AddNewCustomerSettingPage")
+  import("./add-customer-setting/AddNewCustomerSettingPage")
 );
+const ViewCustomerSetting = lazy(() => 
+  import("./view-customer-setting/ViewCustomerSettingPage")
+)
 
 const LoginPage = lazy(() => import("./login-page/LoginPage"));
 
@@ -59,6 +62,10 @@ const App: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => (
                 <Route
                   path={RouteEnum.AddNewCustomerSetting}
                   component={AddNewCustomerSetting}
+                />
+                <Route
+                  path="/customer-setting/:id(\d+)"
+                  component={ViewCustomerSetting}
                 />
                 <Route
                   path={RouteEnum.CustomerSetting}

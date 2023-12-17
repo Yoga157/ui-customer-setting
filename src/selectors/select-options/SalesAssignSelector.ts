@@ -3,6 +3,7 @@ import IStore from "../../models/IStore";
 import IOptionsData from "./models/IOptionsData";
 import SalesNameModel from "stores/customer-sales/models/SalesNameModel";
 import ISalesResultFilter from "./models/ISalesResultFilter";
+import SalesAssignHistoryModel from "stores/customer-sales/models/SalesAssignHistoryModel";
 
 export default interface ISearchResultSales {
   readonly title: string;
@@ -41,4 +42,22 @@ export const selectSalesOptions: Selector<
 > = createSelector(
   (state: IStore) => state.customerSalesAssign.sales,
   _selectSales
+);
+
+const _selectSalesHistory = (models: SalesAssignHistoryModel[]): any[] => {
+  return models.map(
+    (model: SalesAssignHistoryModel): any => ({
+      assignID: model.assignID,
+      customerSettingID: model.customerSettingID,
+      salesID: model.salesID,
+      salesName: model.salesName,
+      customerName: model.customerName,
+      yearAssign: model.yearAssign
+    })
+  )
+}
+
+export const selectSalesHistory: Selector<IStore, any[]> = createSelector(
+  (state: IStore) => state.customerSalesAssign.salesHistory,
+  _selectSalesHistory
 );

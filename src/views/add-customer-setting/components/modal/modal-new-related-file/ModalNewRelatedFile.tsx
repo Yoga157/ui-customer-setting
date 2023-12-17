@@ -6,11 +6,13 @@ import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
 import { Divider, Form, Input, Label } from "semantic-ui-react";
 import { Form as FinalForm, Field } from "react-final-form";
 import { DropdownClearInput, Button, FileUpload } from "views/components/UI";
+import { format } from "date-fns";
 import input from "views/components/UI/Input/Input";
 import axios from "axios";
 
 interface IProps {
-    customerSettingID: number;
+    relatedFileData: any[];
+    setRelatedFileData: (data: any) => any;
 }
 
 const ModalNewRelatedFile: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
@@ -18,6 +20,7 @@ const ModalNewRelatedFile: React.FC<IProps> = (props: React.PropsWithChildren<IP
     const [documentType, setDocumentType] = useState("")
     const [documentName, setDocumentName] = useState("")
     const [uploadFile, setUploadFile] = useState("")
+    const { relatedFileData, setRelatedFileData } = props
 
     const documentTypeData = [
         {
@@ -31,29 +34,41 @@ const ModalNewRelatedFile: React.FC<IProps> = (props: React.PropsWithChildren<IP
     ]
 
     const onSubmitDocument = async (data) => {
-        console.log(uploadFile)
-        console.log(documentName)
-        console.log(data)
+        let userLogin = JSON.parse(localStorage.getItem('userLogin'));
+        const date = format(new Date(), "yyyy-MM-dd");
 
-        let formData = new FormData();
-        formData.append("customerSettingID", `${props.customerSettingID}`);
-        formData.append("documentType", data.documentType);
-        formData.append("file", uploadFile);
+        setRelatedFileData([
+            ...relatedFileData,
+            {
+                documentName: documentName,
+                documentType: data.documentType,
+                uploadDate: date,
+                uploadBy: userLogin?.fullName,
+                createUserID: userLogin?.employeeID,
+                file: uploadFile
+            }
+        ])
+        // let formData = new FormData();
+        // formData.append("customerSettingID", `${props.customerSettingID}`);
+        // formData.append("documentName", documentName);
+        // formData.append("documentType", data.documentType);
+        // formData.append("file", uploadFile);
 
-        try {
-            const endpoint: string = environment.api.customer.replace(":controller", "CustomerSetting/RelatedFile");
+        // try {
+        //     const endpoint: string = environment.api.customer.replace(":controller", "CustomerSetting/RelatedFile");
 
-            const response = await axios.post(endpoint, formData, {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            });
+        //     const response = await axios.post(endpoint, formData, {
+        //       headers: {
+        //         "Content-Type": "multipart/form-data",
+        //       },
+        //     });
       
-            setUploadFile("")
-            dispatch(ModalAction.CLOSE());
-        } catch (error) {
-            console.error(error);
-        }
+        //     setUploadFile("")
+        //     dispatch(ModalAction.CLOSE());
+        // } catch (error) {
+        //     console.error(error);
+        // }
+        dispatch(ModalAction.CLOSE());
     }
 
     const onSubmitDocumentType = (data) => {

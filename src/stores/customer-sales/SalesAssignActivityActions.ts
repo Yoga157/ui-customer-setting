@@ -8,6 +8,7 @@ import ResultActions from "models/ResultActions";
 import IStore from "../../models/IStore";
 import SalesNameMode from "./models/SalesNameModel";
 import SalesAssignPostModel from "./models/SalesAssignPostModel";
+import SalesAssignHistoryModel from "./models/SalesAssignHistoryModel";
 
 type ActionUnion =
   | undefined
@@ -83,3 +84,35 @@ export const clearResult = (): any => {
     );
   };
 };
+
+export const REQUEST_SALES_HISTORY: string = "SalesAction.REQUEST_SALES_HISTORY";
+export const REQUEST_SALES_HISTORY_FINISHED: string =
+  "SalesAction.REQUEST_SALES_HISTORY_FINISHED";
+
+export const requestSalesHistory = (customerSettingId: number): any => {
+  return async (
+    dispatch: ReduxDispatch<ActionUnion>,
+    getState: () => IStore
+  ): Promise<void> => {
+    await ActionUtility.createThunkEffect<SalesAssignHistoryModel>(
+      dispatch,
+      REQUEST_SALES_HISTORY,
+      SalesAssignEffect.requestSalesHistory,
+      customerSettingId
+    );
+  };
+};
+
+export const DEL_SALES_ASSIGN: string = "InvoicingConditionActions.DEL_SALES_ASSIGN";
+export const DEL_SALES_ASSIGN_FINISHED: string = "InvoicingConditionActions.DEL_SALES_ASSIGN_FINISHED";
+
+export const deleteSalesAssign = (id: number): any => {
+    return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+      await ActionUtility.createThunkEffect<ResultActions>(
+        dispatch,
+        DEL_SALES_ASSIGN,
+        SalesAssignEffect.deleteSalesAssign,
+        id
+      );
+    };
+  };

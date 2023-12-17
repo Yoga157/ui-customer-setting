@@ -17,3 +17,30 @@ export const postInvoicingSchedule = async (data: InvoicingScheduleModel): Promi
         data
     );
 }
+
+export const requestInvoicingSchedule = async (customerSettingID: number): Promise<InvoicingScheduleModel | HttpErrorResponseModel> => {
+    const controllerName = "CustomerSetting/InvoicingSchedule?customerSettingID=" + customerSettingID;
+    const endpoint: string = environment.api.customer.replace(
+        ":controller",
+        controllerName
+    );
+
+    return EffectUtility.getToModel<InvoicingScheduleModel>(
+        InvoicingScheduleModel,
+        endpoint,
+    );
+}
+
+export const putInvoicingSchedule = async (data: InvoicingScheduleModel, id: number): Promise<ResultActions | HttpErrorResponseModel> => {
+    const controllerName = "CustomerSetting/InvoicingSchedule/" + id;
+    const endpoint: string = environment.api.customer.replace(
+        ":controller",
+        controllerName
+    );
+
+    return EffectUtility.putToModel<ResultActions>(
+        ResultActions,
+        endpoint,
+        data
+    );
+}

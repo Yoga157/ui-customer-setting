@@ -8,6 +8,7 @@ import ResultActions from "models/ResultActions";
 
 export const initialState: ICustomerNameState = {
     data: [],
+    customerById: new CustomerNameModel({}),
     resultActions: new ResultActions({})
 };
 
@@ -17,6 +18,13 @@ const CustomerNameReducer: Reducer = baseReducer(initialState, {
             ...state,
             data: action.payload!
         }
+    },
+
+    [CustomerNameAction.REQUEST_CUSTOMER_BY_ID_FINISHED](state: ICustomerNameState, action: IAction<CustomerNameModel>): ICustomerNameState {
+      return {
+          ...state,
+          customerById: action.payload[0]!
+      }
     },
 
     [CustomerNameAction.CLEAR_RESULT_CUSTOMER_NAME](
