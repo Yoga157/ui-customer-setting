@@ -4,7 +4,7 @@ import environment, { Environment } from './base';
 
 //const baseApi = 'https://192.168.1.113:5009';
 // const baseApi = 'http://10.0.2.41:7000';
-const baseApi = 'https://localhost:7001';
+const baseApi = 'https://localhost:5001';
 const env = environment(baseApi);
 
 const developmentEnv: Environment = {
