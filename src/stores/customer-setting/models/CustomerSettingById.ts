@@ -11,7 +11,7 @@ import {
     shareable: boolean = false;
     pmoCustomer: boolean = false;
     createUserID: number = 0;
-    createDate?: string = "";
+    createDate?: string = null;
     modifyUserID: number = 0;
     modifyDate?: Date = undefined;
   

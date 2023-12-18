@@ -30,6 +30,7 @@ import RelatedCustomerReducer from "./related-customer/RelatedCustomerActivityRe
 import RelatedFileReducer from "./related-file/RelatedFileActivityReducer";
 import ConfigItemReducer from "./config-item/ConfigItemActivityReducer";
 import CollectionHistoryReducer from "./collection-history/CollectionHistoryActivityReducer";
+import ProjectHistoryReducer from "./project-history/ProjectHistoryActivityReducer";
 
 const rootReducer = (history: History): Reducer<IStore> => {
   const reducerMap: ReducersMapObject<IStore> = {
@@ -61,7 +62,8 @@ const rootReducer = (history: History): Reducer<IStore> => {
     relatedCustomer: RelatedCustomerReducer,
     relatedFile: RelatedFileReducer,
     configItem: ConfigItemReducer,
-    collectionHistory: CollectionHistoryReducer 
+    collectionHistory: CollectionHistoryReducer,
+    projectHistory: ProjectHistoryReducer
   };
 
   return combineReducers(reducerMap);
