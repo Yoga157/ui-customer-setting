@@ -31,6 +31,7 @@ import * as RelatedFile from "stores/related-file/RelatedFileActivityActions"
 import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions"
 import * as ConfigItem from "stores/config-item/ConfigItemActivityActions"
 import * as CollectionHistory from "stores/collection-history/CollectionHistoryActivityActions"
+import * as ProjectHistory from "stores/project-history/ProjectHistoryActivityActions"
 import * as ToastsAction from 'stores/toasts/ToastsAction';
 import { selectCustomerPIC } from "selectors/customer-pic/CustomerPICSelectors";
 import { selectCustomerSettingByCustomerId } from "selectors/customer-setting/CustomerSettingSelector";
@@ -47,6 +48,8 @@ import ToastStatusEnum from "constants/ToastStatusEnum";
 import { selectConfigItem } from "selectors/config-item/ConfigItemSelector";
 import { selectCollectionHistory } from "selectors/collection-history/CollectionHistorySelector";
 import { selectInvoicingSchedule } from "selectors/invoicing-schedule/InvoicingScheduleSelector";
+import { selectRequesting } from "selectors/requesting/RequestingSelector";
+import { selectProjectHistory } from "selectors/project-history/ProjectHistorySelector";
 
 interface IProps {
     history: any;
@@ -82,6 +85,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
     const serviceSummaryData = useSelector((state: IStore) => selectServiceSummary(state));
     const configItemData = useSelector((state: IStore) => selectConfigItem(state));
     const collectionHistoryData = useSelector((state: IStore) => selectCollectionHistory(state));
+    const projectHistoryData = useSelector((state: IStore) => selectProjectHistory(state));
     
     /** Search Sales */
     const salesHistoryData = useSelector((state: IStore) => selectSalesHistory(state));
@@ -219,6 +223,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
             NewAssignSales.SalesID = data.salesID;
             NewAssignSales.CustomerSettingID = Number(id);
             NewAssignSales.AssignedBy = userLogin?.employeeID;
+            NewAssignSales.createDate = new Date();
             NewAssignSales.createUserID = userLogin?.employeeID;
             NewAssignSales.modifyUserID = userLogin?.employeeID;
 
@@ -321,14 +326,9 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
     
     /** data yang perlu di get */
     useEffect(() => {
-            dispatch(CustomerPIC.requestGetCustomerPIC(Number(id)))
-            dispatch(BrandSummary.requestBrandSummary(Number(id)))
-            dispatch(ServiceSummary.requestServiceSummary(Number(id)))
             dispatch(InvoicingCondition.requestInvoicingCondition(Number(id)))
             dispatch(RelatedCustomer.requestRelatedCustomer(Number(id)))
             dispatch(RelatedFile.requestRelatedFile(Number(id)))
-            dispatch(ConfigItem.requestConfigItem(Number(id)))
-            dispatch(CollectionHistory.requestCollectionHistory(Number(id)))
             dispatch(SalesAssign.requestSalesHistory(Number(id)))
             dispatch(InvoicingSchedule.requestInvoicingSchedule(Number(id)))
             dispatch(CustomerSetting.requestCustomerSettingById(Number(id)))
@@ -340,6 +340,12 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
         console.log(customerSettingData)
         if(!Number.isNaN(customerSettingData.customerID)) {
             dispatch(CustomerName.requestCustomerById(customerSettingData.customerID))
+            dispatch(ConfigItem.requestConfigItem(customerSettingData.customerID))
+            dispatch(CollectionHistory.requestCollectionHistory(customerSettingData.customerID))
+            dispatch(CustomerPIC.requestGetCustomerPIC(customerSettingData.customerID))
+            dispatch(BrandSummary.requestBrandSummary(customerSettingData.customerID))
+            dispatch(ServiceSummary.requestServiceSummary(customerSettingData.customerID))
+            dispatch(ProjectHistory.requestServiceSummary(customerSettingData.customerID))
             setShareable(customerSettingData.shareable ? "TRUE": "FALSE")
             setPmoCustomer(customerSettingData.pmoCustomer ? "TRUE": "FALSE")
             
@@ -349,6 +355,8 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
         if(!Number.isNaN(invoicingSchedule.scheduleID)) {
             if(invoicingSchedule.scheduleDays === "Monday, Tuesday, Wednesday, Thursday, Friday") {
                 setIsAllDaysChecked(true)
+            } else {
+                setIsAllDaysChecked(false)
             }
 
             setDaysArray(invoicingSchedule.scheduleDays.split(", "))
@@ -359,9 +367,22 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
         }
     }, [dispatch, customerSettingData, invoicingSchedule])
 
-    const reset = () => {
-        
-    }
+    const isRequesting: boolean = useSelector((state: IStore) =>
+        selectRequesting(state, [
+            InvoicingCondition.REQUEST_GET_INVOICING_CONDITION,
+            RelatedFile.REQUEST_GET_RELATED_FILE,
+            SalesAssign.REQUEST_SALES_HISTORY,
+            InvoicingSchedule.REQUEST_GET_INVOICING_SCHEDULE,
+            CustomerSetting.REQUEST_CUSTOMER_SETTING_BY_ID,
+            CustomerName.REQUEST_CUSTOMER_BY_ID,
+            ConfigItem.REQUEST_GET_CONFIG_ITEM,
+            CollectionHistory.REQUEST_GET_COLLECTION_HISTORY,
+            CustomerPIC.REQUEST_GET_CUSTOMER_PIC,
+            BrandSummary.REQUEST_GET_BRAND_SUMMARY,
+            ServiceSummary.REQUEST_GET_SERVICE_SUMMARY,
+            ProjectHistory.REQUEST_GET_PROJECT_HISTORY
+        ])
+    );
 
     return (
         <Fragment>
@@ -373,6 +394,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
 
                     <Divider></Divider>
 
+                    <LoadingIndicator isActive={isRequesting}>
                     {/* search customer name dan data customer */}
                     <div className="padding-horizontal customer-search-container">
 
@@ -411,7 +433,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
                     </div>
                     
                     {(customerData.customerID != 0 && !Number.isNaN(customerSettingData.customerID)) ?
-                        <LoadingIndicator isActive={false}>
+                        <>
                             <div style={{ margin: "14px 0" }} className="padding-horizontal">
                                 <label className="address-font-label">Address</label>
                                 <p style={{ fontSize: "20px"}} className="grey">{customerData?.customerAddress}</p>
@@ -489,7 +511,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
                                     {openProjectHistory &&
                                         <>
                                         <div className="table-container">
-                                            <TableNewCustomerSetting data={data.projectHistoryData} header={data.projectHistoryHeader} sequenceNum={false} />
+                                            <TableNewCustomerSetting data={projectHistoryData} header={data.projectHistoryHeader} sequenceNum={false} />
                                         </div>
                                         <Divider className="margin-0"></Divider>
                                         </>
@@ -529,7 +551,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
                             <Divider></Divider>
                             
                             <div className="padding-horizontal setting-container">
-                                <div className="sales-assign-container">
+                                <div className="sales-assign">
                                     <div className="sales-assign-search">
                                         <FinalForm
                                             onSubmit={(values: any) => onSubmitSalesHandler(values)}
@@ -842,7 +864,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
 
                             </Form>
                             )}/>
-                        </LoadingIndicator>
+                        </>
                     :
                         <>
                             <Divider style={{ marginBottom: "0px"}}></Divider>
@@ -854,6 +876,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
                             </div>
                         </>
                     }
+                    </LoadingIndicator>
             </div>
         </Fragment>
     )

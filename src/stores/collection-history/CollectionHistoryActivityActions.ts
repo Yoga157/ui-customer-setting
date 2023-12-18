@@ -15,13 +15,13 @@ type ActionUnion =
 export const REQUEST_GET_COLLECTION_HISTORY: string = "CollectionHistoryActions.REQUEST_GET_COLLECTION_HISTORY";
 export const REQUEST_GET_COLLECTION_HISTORY_FINISHED: string = "CollectionHistoryActions.REQUEST_GET_COLLECTION_HISTORY_FINISHED";
 
-export const requestCollectionHistory = (customerSettingID: number): any => {
+export const requestCollectionHistory = (customerID: number): any => {
     return async (dispatch: ReduxDispatch<ActionUnion>): Promise <void> => {
         await ActionUtility.createThunkEffect<CollectionHistoryModel>(
             dispatch,
             REQUEST_GET_COLLECTION_HISTORY,
             CollectionHistoryEffect.requestCollectionHistory,
-            customerSettingID
+            customerID
         )
     }
 }

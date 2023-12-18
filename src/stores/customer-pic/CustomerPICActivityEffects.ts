@@ -3,8 +3,8 @@ import HttpErrorResponseModel from "../../models/HttpErrorResponseModel";
 import * as EffectUtility from "../../utilities/EffectUtility";
 import CustomerPICModel from "./models/CustomerPICModel";
 
-export const requestGetCustomerPIC = async (customerSettingID:number) : Promise<CustomerPICModel | HttpErrorResponseModel> => {
-    const controllerName = 'CustomerSetting/CustomerPIC?CustomerSettingID=' + customerSettingID;
+export const requestGetCustomerPIC = async (customerID:number) : Promise<CustomerPICModel | HttpErrorResponseModel> => {
+    const controllerName = 'CustomerSetting/CustomerPIC?CustomerID=' + customerID;
     const endpoint: string = environment.api.customer.replace(
         ":controller",
         controllerName

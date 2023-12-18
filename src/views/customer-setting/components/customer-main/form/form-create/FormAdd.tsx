@@ -63,10 +63,7 @@ const AddSalesAssign: React.FC<IProps> = (
         NewAssignSales.SalesID = salesAssignArray[i].salesID;
         NewAssignSales.CustomerSettingID = rowData[j].customerSettingID;
         NewAssignSales.AssignedBy = JSON.parse(userId)?.employeeID;
-        NewAssignSales.createDate = format(
-          new Date(props.rowData[j].createDate),
-          "yyyy-MM-dd"
-        );
+        NewAssignSales.createDate = new Date(props.rowData[j].createDate);
         NewAssignSales.createUserID = JSON.parse(userId)?.employeeID;
         NewAssignSales.modifyUserID = JSON.parse(userId)?.employeeID;
 

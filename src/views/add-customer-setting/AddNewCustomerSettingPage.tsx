@@ -33,6 +33,7 @@ import * as RelatedFile from "stores/related-file/RelatedFileActivityActions"
 import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions"
 import * as ConfigItem from "stores/config-item/ConfigItemActivityActions"
 import * as CollectionHistory from "stores/collection-history/CollectionHistoryActivityActions"
+import * as ProjectHistory from "stores/project-history/ProjectHistoryActivityActions"
 import * as ToastsAction from 'stores/toasts/ToastsAction';
 import { selectCustomerPIC } from "selectors/customer-pic/CustomerPICSelectors";
 import { selectCustomerSettingByCustomerId, selectPostResponseCustomerSetting } from "selectors/customer-setting/CustomerSettingSelector";
@@ -51,6 +52,7 @@ import { selectCollectionHistory } from "selectors/collection-history/Collection
 import InvoicingConditionModel from "stores/invoicing-condition/models/InvoicingConditionModel";
 import RelatedCustomerPostModel from "stores/related-customer/models/RelatedCustomerPostModel";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
+import { selectProjectHistory } from "selectors/project-history/ProjectHistorySelector";
 
 interface IProps {
     history: any;
@@ -110,11 +112,12 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
     const [openCollectionHistory, setOpenCollectionHistory] = useState(false);
     const [openConfigItem, setOpenConfigItem] = useState(false);
 
-    // const picData = useSelector((state: IStore) => selectCustomerPIC(state));
-    // const brandSummaryData = useSelector((state: IStore) => selectBrandSummary(state));
-    // const serviceSummaryData = useSelector((state: IStore) => selectServiceSummary(state));
-    // const configItemData = useSelector((state: IStore) => selectConfigItem(state));
-    // const collectionHistoryData = useSelector((state: IStore) => selectCollectionHistory(state));
+    const picData = useSelector((state: IStore) => selectCustomerPIC(state));
+    const brandSummaryData = useSelector((state: IStore) => selectBrandSummary(state));
+    const serviceSummaryData = useSelector((state: IStore) => selectServiceSummary(state));
+    const configItemData = useSelector((state: IStore) => selectConfigItem(state));
+    const collectionHistoryData = useSelector((state: IStore) => selectCollectionHistory(state));
+    const projectHistoryData = useSelector((state: IStore) => selectProjectHistory(state));
 
     /** Search Sales */
     const [salesName, setSalesName] = useState('');    
@@ -285,16 +288,14 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
     
     /** data yang perlu di get */
     useEffect(() => {
-        // if(!Number.isNaN(1) || (1 === undefined)) {
-        //     dispatch(CustomerPIC.requestGetCustomerPIC(1))
-        //     dispatch(BrandSummary.requestBrandSummary(1))
-        //     dispatch(ServiceSummary.requestServiceSummary(1))
-        //     dispatch(InvoicingCondition.requestInvoicingCondition(1))
-        //     dispatch(RelatedCustomer.requestRelatedCustomer(1))
-        //     dispatch(RelatedFile.requestRelatedFile(1))
-        //     dispatch(ConfigItem.requestConfigItem(1))
-        //     dispatch(CollectionHistory.requestCollectionHistory(1))
-        // }
+        if(customerData != undefined) {
+            dispatch(CustomerPIC.requestGetCustomerPIC(customerData.customerID))
+            dispatch(BrandSummary.requestBrandSummary(customerData.customerID))
+            dispatch(ServiceSummary.requestServiceSummary(customerData.customerID))
+            dispatch(ConfigItem.requestConfigItem(customerData.customerID))
+            dispatch(CollectionHistory.requestCollectionHistory(customerData.customerID))
+            dispatch(ProjectHistory.requestServiceSummary(customerData.customerID))
+        }
     }, [dispatch])
 
     /** submit data baru */
@@ -323,15 +324,6 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
         if(postResponse.customerSettingID != undefined) {
             setIsRequesting(true)
 
-            console.log(postResponse)
-            console.log("submit setting data")
-            console.log(invoicingConditionData)
-            console.log(relatedCustomerData)
-            console.log(relatedFileData)
-            console.log(salesAssign)
-            console.log(customerData)
-            console.log(shareable, pmoCustomer)
-
             /** post sales assign */
             salesAssign.map((data) => {
                 const NewAssignSales = new SalesAssignPostModel({});
@@ -339,6 +331,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                 NewAssignSales.SalesID = data.salesID;
                 NewAssignSales.CustomerSettingID = postResponse.customerSettingID;
                 NewAssignSales.AssignedBy = userLogin?.employeeID;
+                NewAssignSales.createDate = new Date();
                 NewAssignSales.createUserID = userLogin?.employeeID;
                 NewAssignSales.modifyUserID = userLogin?.employeeID;
     
@@ -516,7 +509,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                     {openPicList &&
                                         <>
                                         <div className="table-container">
-                                            <TableNewCustomerSetting data={data.picData} header={data.picHeader} sequenceNum={true}/>
+                                            <TableNewCustomerSetting data={picData} header={data.picHeader} sequenceNum={true}/>
                                         </div>
                                         <Divider className="margin-0"></Divider>
                                         </>
@@ -531,7 +524,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                     {openBrandSummary &&
                                         <>
                                         <div className="table-container">
-                                            <TableNewCustomerSetting data={data.brandData} header={data.brandHeader} sequenceNum={true}/>
+                                            <TableNewCustomerSetting data={brandSummaryData} header={data.brandHeader} sequenceNum={true}/>
                                         </div>
                                         <Divider className="margin-0"></Divider>
                                         </>
@@ -546,22 +539,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                     {openServiceSummary &&
                                         <>
                                         <div className="table-container">
-                                            <TableNewCustomerSetting data={data.serviceData} header={data.serviceHeader} sequenceNum={true}/>
-                                        </div>
-                                        <Divider className="margin-0"></Divider>
-                                        </>
-                                    }
-
-                                    <div className="accordion-container" onClick={() => setOpenSalesHistory(!openSalesHistory)}>
-                                        <span className="bold">SALES ASSIGN HISTORY</span>
-                                        {openSalesHistory ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
-                                    </div>
-                                    <Divider className="margin-0"></Divider>
-
-                                    {openSalesHistory &&
-                                        <>
-                                        <div className="table-container">
-                                            <TableNewCustomerSetting data={data.salesHistoryData} header={data.salesHistoryHeader} sequenceNum={true}/>
+                                            <TableNewCustomerSetting data={serviceSummaryData} header={data.serviceHeader} sequenceNum={true}/>
                                         </div>
                                         <Divider className="margin-0"></Divider>
                                         </>
@@ -576,7 +554,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                     {openProjectHistory &&
                                         <>
                                         <div className="table-container">
-                                            <TableNewCustomerSetting data={data.projectHistoryData} header={data.projectHistoryHeader} sequenceNum={false} />
+                                            <TableNewCustomerSetting data={projectHistoryData} header={data.projectHistoryHeader} sequenceNum={false} />
                                         </div>
                                         <Divider className="margin-0"></Divider>
                                         </>
@@ -591,7 +569,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                     {openCollectionHistory &&
                                         <>
                                         <div className="table-container">
-                                        <TableNewCustomerSetting data={data.collectionHistoryData} header={data.collectionHistoryHeader} sequenceNum={false} />
+                                        <TableNewCustomerSetting data={collectionHistoryData} header={data.collectionHistoryHeader} sequenceNum={false} />
                                         </div>
                                         <Divider className="margin-0"></Divider>
                                         </>
@@ -606,7 +584,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                         <>
                                         <Divider className="margin-0"></Divider>
                                         <div className="table-container">
-                                        <TableNewCustomerSetting data={data.configItemData} header={data.configItemHeader} sequenceNum={false}/>
+                                        <TableNewCustomerSetting data={configItemData} header={data.configItemHeader} sequenceNum={false}/>
                                         </div>
                                         </>
                                     }
@@ -616,7 +594,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                             <Divider></Divider>
                             
                             <div className="padding-horizontal setting-container">
-                                <div className="sales-assign-container">
+                                <div className="sales-assign">
                                     <div className="sales-assign-search">
                                         <FinalForm
                                             onSubmit={(values: any) => onSubmitSalesHandler(values)}

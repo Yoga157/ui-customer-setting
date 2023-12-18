@@ -15,13 +15,13 @@ type ActionUnion =
 export const REQUEST_GET_CUSTOMER_PIC: string = "CustomerNameAction.REQUEST_GET_CUSTOMER_PIC";
 export const REQUEST_GET_CUSTOMER_PIC_FINISHED: string = "CustomerNameAction.REQUEST_GET_CUSTOMER_PIC_FINISHED";
 
-export const requestGetCustomerPIC = (customerSettingID: number): any => {
+export const requestGetCustomerPIC = (customerID: number): any => {
     return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
         await ActionUtility.createThunkEffect<CustomerPICModel>(
             dispatch,
             REQUEST_GET_CUSTOMER_PIC,
             CustomerPICEffects.requestGetCustomerPIC,
-            customerSettingID
+            customerID
         )
     }
 }
