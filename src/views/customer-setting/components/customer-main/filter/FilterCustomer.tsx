@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
 import IStore from "models/IStore";
@@ -106,7 +106,6 @@ const FilterCustomer: React.FC<{
         blacklist
       )
     );
-    console.log(newsalesAssign);
   };
 
   const salesStoreDropdown = useSelector((state: IStore) =>
@@ -124,18 +123,19 @@ const FilterCustomer: React.FC<{
     setSalesAssignArray(filteredArray);
   };
 
-  const resetClick = (event) => {
-    setShareableYesChecked(event.target.checked);
-    setShareableNoChecked(event.target.checked);
-    setPmo_customerYesChecked(event.target.checked);
-    setPmo_customerNoChecked(event.target.checked);
-    setHoldshipmentYesChecked(event.target.checked);
-    setHoldshipmentNoChecked(event.target.checked);
-    setShareableYesChecked(event.target.checked);
-    setShareableNoChecked(event.target.checked);
-    setBlacklistYesChecked(event.target.checked);
-    setBlacklistNoChecked(event.target.checked);
+  const resetClick = () => {
+    setShareableYesChecked(false);
+    setShareableNoChecked(false);
+    setPmo_customerYesChecked(false);
+    setPmo_customerNoChecked(false);
+    setHoldshipmentYesChecked(false);
+    setHoldshipmentNoChecked(false);
+    setShareableYesChecked(false);
+    setShareableNoChecked(false);
+    setBlacklistYesChecked(false);
+    setBlacklistNoChecked(false);
     setSalesName("");
+    setSalesAssignArray([]);
 
     dispatch(
       CustomerSettingAct.requestCustomerSett(1, 10, "CustomerSettingID")
@@ -155,7 +155,7 @@ const FilterCustomer: React.FC<{
         style={{
           borderRadius: "2rem 0 0 0",
           width: "25rem",
-          height: "100vh",
+          height: "120vh",
           backgroundColor: "#ffffff",
           padding: "5px",
           boxSizing: "border-box",
@@ -510,8 +510,6 @@ const FilterCustomer: React.FC<{
                     </Grid.Row>
                   </Grid.Row>
 
-                  <Divider style={{ marginBottom: "4rem" }}></Divider>
-
                   <Divider></Divider>
 
                   <div style={{ textAlign: "center" }}>
@@ -519,7 +517,6 @@ const FilterCustomer: React.FC<{
                       <Button
                         className="MarBot20"
                         type="submit"
-                        // color="blue"
                         style={{
                           width: "18rem",
                           color: "#f5f5f5",
@@ -532,7 +529,7 @@ const FilterCustomer: React.FC<{
                     <Grid.Row>
                       <Button
                         type="button"
-                        onClick={(event) => resetClick(event)}
+                        onClick={() => resetClick()}
                         style={{
                           width: "18rem",
                           color: "#656dd1",

@@ -22,9 +22,6 @@ interface IProps {
 const CustomerTable: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
-  const currentUser: IUserResult = useSelector((state: IStore) =>
-    selectUserResult(state)
-  );
   const dispatch: Dispatch = useDispatch();
   const [pageSize] = useState(10);
   const [activePage, setActivePage] = useState(1);
@@ -152,13 +149,13 @@ const CustomerTable: React.FC<IProps> = (
             sorted={columns === "modifyUserID" ? direction : null}
             onClick={() => reloads("modifyUserID")}
           >
-            Latest Modified By
+            Modified By
           </Table.HeaderCell>
           <Table.HeaderCell
             sorted={columns === "modifyDate" ? direction : null}
             onClick={() => reloads("modifyDate")}
           >
-            Latest Modified Date
+            M odified Date
           </Table.HeaderCell>
         </Table.Row>
       </Table.Header>
