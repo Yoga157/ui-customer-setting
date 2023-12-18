@@ -15,13 +15,13 @@ type ActionUnion =
 export const REQUEST_GET_CONFIG_ITEM: string = "ConfigItemActions.REQUEST_GET_CONFIG_ITEM";
 export const REQUEST_GET_CONFIG_ITEM_FINISHED: string = "ConfigItemActions.REQUEST_GET_CONFIG_ITEM_FINISHED";
 
-export const requestConfigItem = (customerSettingID: number): any => {
+export const requestConfigItem = (customerID: number): any => {
     return async (dispatch: ReduxDispatch<ActionUnion>): Promise <void> => {
         await ActionUtility.createThunkEffect<ConfigItemModel>(
             dispatch,
             REQUEST_GET_CONFIG_ITEM,
             ConfigItemEffect.requestConfigItem,
-            customerSettingID
+            customerID
         )
     }
 }

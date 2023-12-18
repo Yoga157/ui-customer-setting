@@ -4,8 +4,8 @@ import * as EffectUtility from "../../utilities/EffectUtility";
 import CollectionHistoryModel from "./models/CollectionHistoryModel";
 import ResultActions from "models/ResultActions";
 
-export const requestCollectionHistory = async (customerSettingId: number): Promise<CollectionHistoryModel | HttpErrorResponseModel> => {
-    const controllerName = "CustomerSetting/CollectionHistory?customerSettingID=" + customerSettingId;
+export const requestCollectionHistory = async (customerId: number): Promise<CollectionHistoryModel | HttpErrorResponseModel> => {
+    const controllerName = "CustomerSetting/CollectionHistory?customerID=" + customerId;
     const endpoint: string = environment.api.customer.replace(
         ":controller",
         controllerName

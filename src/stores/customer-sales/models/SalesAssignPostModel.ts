@@ -10,7 +10,7 @@ export default class SalesAssignPostModel extends BaseModel {
   CustomerSettingID: number = 0;
   AssignStartDate?: Date = undefined;
   AssignedBy: string = "";
-  createDate: string = "";
+  createDate?: Date = new Date();
   createUserID: number = 0;
   modifyDate?: Date = undefined;
   modifyUserID: number = 0;

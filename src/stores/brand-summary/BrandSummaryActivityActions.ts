@@ -15,13 +15,13 @@ type ActionUnion =
 export const REQUEST_GET_BRAND_SUMMARY: string = "CustomerNameAction.REQUEST_GET_BRAND_SUMMARY";
 export const REQUEST_GET_BRAND_SUMMARY_FINISHED: string = "CustomerNameAction.REQUEST_GET_BRAND_SUMMARY_FINISHED";
 
-export const requestBrandSummary = (customerSettingID: number): any => {
+export const requestBrandSummary = (customerID: number): any => {
     return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
         await ActionUtility.createThunkEffect<BrandSummaryModel>(
             dispatch,
             REQUEST_GET_BRAND_SUMMARY,
             BrandSummaryEffect.requestBrandSummary,
-            customerSettingID
+            customerID
         )
     }
 }

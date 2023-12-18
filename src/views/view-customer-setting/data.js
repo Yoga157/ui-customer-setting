@@ -154,7 +154,8 @@ export const salesHistoryData = [
 export const projectHistoryHeader = [
     {
         key: "payment",
-        header: "View Payment"
+        header: "View Payment",
+        type: "html"
     },
     {
         key: "funnelID",
@@ -163,10 +164,6 @@ export const projectHistoryHeader = [
     {
         key: "so",
         header: "SO ID"
-    },
-    {
-        key: "top",
-        header: "TOP Number"
     },
     {
         key: "projectName",
@@ -181,12 +178,8 @@ export const projectHistoryHeader = [
         header: "Sales Name"
     },
     {
-        key: "salesDepartment",
+        key: "salesDept",
         header: "Sales Dept."
-    },
-    {
-        key: "saDate",
-        header: "SA Date"
     },
     {
         key: "soCloseDate",
@@ -195,11 +188,7 @@ export const projectHistoryHeader = [
     {
         key: "soAmount",
         header: "SO Amount (IDR)"
-    },
-    {
-        key: "lastCollectionDate",
-        header: "Last Collection Date"
-    },
+    }
 ]
 
 export const projectHistoryData = [

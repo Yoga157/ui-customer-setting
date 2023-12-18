@@ -27,6 +27,7 @@ import IRelatedCustomerState from "stores/related-customer/models/IRelatedCustom
 import IRelatedFileState from "stores/related-file/models/IRelatedFileState";
 import IConfigItemState from "stores/config-item/models/ConfigItemState";
 import ICollectionHistoryState from "stores/collection-history/models/CollectionHistoryState";
+import IProjectHistoryState from "stores/project-history/models/IProjectHistoryState";
 
 export default interface IStore {
   readonly error: IErrorState;
@@ -58,4 +59,5 @@ export default interface IStore {
   readonly relatedFile: IRelatedFileState;
   readonly configItem: IConfigItemState;
   readonly collectionHistory: ICollectionHistoryState;
+  readonly projectHistory: IProjectHistoryState;
 }
