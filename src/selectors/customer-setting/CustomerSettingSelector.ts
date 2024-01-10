@@ -6,8 +6,8 @@ import CustomerSettingById from "stores/customer-setting/models/CustomerSettingB
 import ResultActions from "models/ResultActions";
 
 export default interface ICustomerSettingOptions {
-  readonly text: string,
-  readonly value: {}
+  readonly text: string;
+  readonly value: {};
 }
 
 const _selectCustomerSetting = (models: any): any => {
@@ -58,15 +58,21 @@ const _selectCustomerSettingById = (model: CustomerSettingById): any => {
     customerID: model.customerID,
     customerCategoryID: model.customerCategoryID,
     shareable: model.shareable,
-    pmoCustomer: model.pmoCustomer
-  }
-}
+    pmoCustomer: model.pmoCustomer,
+  };
+};
 
-export const selectCustomerSettingByCustomerId: Selector<IStore, any> = createSelector(
-  (state: IStore) => state.customerSetting.dataByCustomerId, _selectCustomerSettingById
-)
+export const selectCustomerSettingByCustomerId: Selector<
+  IStore,
+  any
+> = createSelector(
+  (state: IStore) => state.customerSetting.dataByCustomerId,
+  _selectCustomerSettingById
+);
 
-const _selectCustomerSettingOptions = (models: any[]): ICustomerSettingOptions[] => {
+const _selectCustomerSettingOptions = (
+  models: any[]
+): ICustomerSettingOptions[] => {
   return models.map(
     (model: any): ICustomerSettingOptions => ({
       text: model.customerName,
@@ -77,15 +83,19 @@ const _selectCustomerSettingOptions = (models: any[]): ICustomerSettingOptions[]
         blacklist: model.blacklist,
         holdshipment: model.holdshipment,
         avgAR: 0,
-        address: "Jalan-jalan ke Bandung, cakep!"
-      }
+        address: "Jalan-jalan ke Bandung, cakep!",
+      },
     })
-  )
-}
+  );
+};
 
-export const selectCustomerSettingOptions: Selector<IStore, ICustomerSettingOptions[]> = createSelector(
-  (state: IStore) => state.customerSetting.data.rows, _selectCustomerSettingOptions
-)
+export const selectCustomerSettingOptions: Selector<
+  IStore,
+  ICustomerSettingOptions[]
+> = createSelector(
+  (state: IStore) => state.customerSetting.data.rows,
+  _selectCustomerSettingOptions
+);
 
 const _selectPostResponseCustomerSetting = (model: ResultActions): any => {
   return {
@@ -98,9 +108,13 @@ const _selectPostResponseCustomerSetting = (model: ResultActions): any => {
     createDate: model.resultObj.createDate,
     modifyUserID: model.resultObj.modifyUserID,
     modifyDate: model.resultObj.modifyDate,
-  }
-}
+  };
+};
 
-export const selectPostResponseCustomerSetting: Selector<IStore, any> = createSelector(
-  (state: IStore) => state.customerSetting.resultActions, _selectPostResponseCustomerSetting
-)
+export const selectPostResponseCustomerSetting: Selector<
+  IStore,
+  any
+> = createSelector(
+  (state: IStore) => state.customerSetting.resultActions,
+  _selectPostResponseCustomerSetting
+);
