@@ -115,7 +115,7 @@ const CustomerTableRow: React.FC<IProps> = (
               backgroundColor: "#949aa1",
               color: "white",
               borderRadius: "1rem",
-              width: "100%",
+              width: "10rem",
               margin: "auto",
               height: "2rem",
               display: "flex",
