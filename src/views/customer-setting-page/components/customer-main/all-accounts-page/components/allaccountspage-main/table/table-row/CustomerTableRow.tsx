@@ -89,17 +89,51 @@ const CustomerTableRow: React.FC<IProps> = (
             </div>
             <Dropdown pointing="left" icon="ellipsis vertical">
               <Dropdown.Menu>
-                <Dropdown.Item
-                  text="View/Edit"
-                  icon="edit outline"
-                  onClick={() => onEdit(rowData.customerSettingID)}
-                />
+                {rowData.Status == "Shareable Accounts" &&
+                  <>
+                    <Dropdown.Item
+                      text="View/Edit"
+                      icon="edit outline"
+                      onClick={() => onEdit(rowData.customerSettingID)}
+                    />
+                  </>
+                }
 
-                <Dropdown.Item
-                  text="Claim Account"
-                  icon="circle check"
-                  onClick={onClaimAccount}
-                />
+                {rowData.Status == "No Name Accounts" &&
+                  <>
+                    <Dropdown.Item
+                      text="View/Edit"
+                      icon="edit outline"
+                      onClick={() => onEdit(rowData.customerSettingID)}
+                    />
+    
+                    <Dropdown.Item
+                      text="Claim Account"
+                      icon="circle check"
+                      onClick={onClaimAccount}
+                    />
+                  </>
+                }
+
+                {rowData.Status == "Name Accounts" &&
+                  <>
+                    <Dropdown.Item
+                      text="View/Edit"
+                      icon="edit outline"
+                      onClick={() => onEdit(rowData.customerSettingID)}
+                    />
+
+                    <Dropdown.Item
+                      text="Request Share Account"
+                      icon="share"
+                    />
+    
+                    <Dropdown.Item
+                      text="Release Account"
+                      icon="remove circle"
+                    />
+                  </>
+                }
 
                 {rowData.status != "CANCEL" &&
                   rowData.CustomerSettingID == "" && (
