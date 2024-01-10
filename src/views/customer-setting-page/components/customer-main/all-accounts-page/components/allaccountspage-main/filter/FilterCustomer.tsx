@@ -192,7 +192,7 @@ const FilterCustomer: React.FC<{
               render={({ handleSubmit }) => (
                 <Form onSubmit={handleSubmit}>
                   <Grid.Row>
-                    <p>Shareable</p>
+                    <p>Account Status</p>
                     <Grid.Row>
                       <div
                         style={{
@@ -206,6 +206,9 @@ const FilterCustomer: React.FC<{
                           style={{
                             display: "flex",
                             alignItems: "center",
+                            backgroundColor: "#949AA1",
+                            width: "11rem",
+                            borderRadius: "2rem",
                           }}
                         >
                           <label
@@ -218,22 +221,29 @@ const FilterCustomer: React.FC<{
                               name="shareable"
                               type="checkbox"
                               style={{
-                                marginRight: "0.5rem",
                                 transform: "scale(1)",
+                                margin: "0.5rem",
                               }}
                               checked={shareableYesChecked}
                               onChange={() =>
                                 setShareableYesChecked(!shareableYesChecked)
                               }
                             ></input>
-                            <span>Yes</span>
+                            <span style={{ color: "white" }}>
+                              No Name Account
+                            </span>
                           </label>
                         </div>
-                        <div style={{ margin: "0 1rem" }}></div>
+
+                        <div style={{ margin: "0.3rem" }}></div>
+
                         <div
                           style={{
                             display: "flex",
                             alignItems: "center",
+                            backgroundColor: "#27D4A5",
+                            width: "11rem",
+                            borderRadius: "2rem",
                           }}
                         >
                           <label
@@ -247,17 +257,61 @@ const FilterCustomer: React.FC<{
                               style={{
                                 marginRight: "0.5rem",
                                 transform: "scale(1)",
+                                margin: "0.5rem",
                               }}
                               checked={shareableNoChecked}
                               onChange={() =>
                                 setShareableNoChecked(!shareableNoChecked)
                               }
                             ></input>
-                            <span>No</span>
+                            <span style={{ color: "white" }}>
+                              Shareable Account
+                            </span>
                           </label>
                         </div>
                       </div>
                     </Grid.Row>
+                  </Grid.Row>
+                  <Grid.Row>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        width: "fit-content",
+                        marginTop: "1rem",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          backgroundColor: "#656DD1",
+                          width: "11rem",
+                          borderRadius: "2rem",
+                        }}
+                      >
+                        <label
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <input
+                            name="shareable"
+                            type="checkbox"
+                            style={{
+                              transform: "scale(1)",
+                              margin: "0.5rem",
+                            }}
+                            checked={shareableYesChecked}
+                            onChange={() =>
+                              setShareableYesChecked(!shareableYesChecked)
+                            }
+                          ></input>
+                          <span style={{ color: "white" }}>Named Account</span>
+                        </label>
+                      </div>
+                    </div>
                   </Grid.Row>
                   <Divider></Divider>
                   <Grid.Row>
