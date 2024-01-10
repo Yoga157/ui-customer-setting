@@ -89,7 +89,7 @@ const CustomerTableRow: React.FC<IProps> = (
             </div>
             <Dropdown pointing="left" icon="ellipsis vertical">
               <Dropdown.Menu>
-                {rowData.Status == "Shareable Accounts" &&
+                {rowData.Status == "Shareable Accounts" && (
                   <>
                     <Dropdown.Item
                       text="View/Edit"
@@ -97,25 +97,25 @@ const CustomerTableRow: React.FC<IProps> = (
                       onClick={() => onEdit(rowData.customerSettingID)}
                     />
                   </>
-                }
+                )}
 
-                {rowData.Status == "No Name Accounts" &&
+                {rowData.Status == "No Name Accounts" && (
                   <>
                     <Dropdown.Item
                       text="View/Edit"
                       icon="edit outline"
                       onClick={() => onEdit(rowData.customerSettingID)}
                     />
-    
+
                     <Dropdown.Item
                       text="Claim Account"
                       icon="circle check"
                       onClick={onClaimAccount}
                     />
                   </>
-                }
+                )}
 
-                {rowData.Status == "Name Accounts" &&
+                {rowData.Status == "Name Accounts" && (
                   <>
                     <Dropdown.Item
                       text="View/Edit"
@@ -123,17 +123,14 @@ const CustomerTableRow: React.FC<IProps> = (
                       onClick={() => onEdit(rowData.customerSettingID)}
                     />
 
-                    <Dropdown.Item
-                      text="Request Share Account"
-                      icon="share"
-                    />
-    
+                    <Dropdown.Item text="Request Share Account" icon="share" />
+
                     <Dropdown.Item
                       text="Release Account"
                       icon="remove circle"
                     />
                   </>
-                }
+                )}
 
                 {rowData.status != "CANCEL" &&
                   rowData.CustomerSettingID == "" && (
@@ -144,24 +141,66 @@ const CustomerTableRow: React.FC<IProps> = (
           </div>
         </Table.Cell>
         <Table.Cell>
-          <div
-            style={{
-              backgroundColor: "#28d4a5",
-              color: "white",
-              borderRadius: "1rem",
-              width: "10rem",
-              margin: "auto",
-              height: "2rem",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <p style={{ fontSize: "1rem", textAlign: "center" }}>
-              {" "}
-              {rowData.Status}
-            </p>{" "}
-          </div>
+          {rowData.Status === "No Name Accounts" && (
+            <div
+              style={{
+                backgroundColor: "#949aa1",
+                color: "white",
+                borderRadius: "1rem",
+                width: "10rem",
+                margin: "auto",
+                height: "2rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <p style={{ fontSize: "1rem", textAlign: "center" }}>
+                {rowData.Status}
+              </p>
+            </div>
+          )}
+
+          {rowData.Status === "Name Accounts" && (
+            <div
+              style={{
+                backgroundColor: "#656dd1",
+                color: "white",
+                borderRadius: "1rem",
+                width: "10rem",
+                margin: "auto",
+                height: "2rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <p style={{ fontSize: "1rem", textAlign: "center" }}>
+                {rowData.Status}
+              </p>
+            </div>
+          )}
+
+          {rowData.Status === "Shareable Accounts" && (
+            // Menambahkan logika atau elemen JSX sesuai kebutuhan
+            <div
+              style={{
+                backgroundColor: "#28d4a5",
+                color: "white",
+                borderRadius: "1rem",
+                width: "10rem",
+                margin: "auto",
+                height: "2rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <p style={{ fontSize: "1rem", textAlign: "center" }}>
+                {rowData.Status}
+              </p>
+            </div>
+          )}
         </Table.Cell>
         <Table.Cell textAlign="center">{rowData.customerID}</Table.Cell>
         <Table.Cell>{rowData.customerCategory}</Table.Cell>
