@@ -22,12 +22,17 @@ const FunnelOpportunity = lazy(() =>
 const CustomerSetting = lazy(() =>
   import("./customer-setting/CustomerSetting")
 );
+
 const AddNewCustomerSetting = lazy(() =>
   import("./add-customer-setting/AddNewCustomerSettingPage")
 );
-const ViewCustomerSetting = lazy(() => 
+const ViewCustomerSetting = lazy(() =>
   import("./view-customer-setting/ViewCustomerSettingPage")
-)
+);
+
+const CustomerSettingPage = lazy(() =>
+  import("./customer-setting-page/CustomerSettingPage")
+);
 
 const LoginPage = lazy(() => import("./login-page/LoginPage"));
 
@@ -70,6 +75,10 @@ const App: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => (
                 <Route
                   path={RouteEnum.CustomerSetting}
                   component={CustomerSetting}
+                />
+                <Route
+                  path={RouteEnum.CustomerSettingPage}
+                  component={CustomerSettingPage}
                 />
                 <Route path={RouteEnum.Dashboard} component={DashboardPage} />
               </Switch>

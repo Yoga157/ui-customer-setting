@@ -156,10 +156,10 @@ const SidebarNav: React.FC<IProps> = (
             <Menu.Item
               className={classes.NoBorderMenu + "" + " BlueIcon "}
               onClick={() => {
-                handleLeaveFunnelFormEdit(RouteEnum.CustomerSetting);
+                handleLeaveFunnelFormEdit(RouteEnum.CustomerSettingPage);
               }}
               as={MenuNavLink}
-              to={RouteEnum.CustomerSetting}
+              to={RouteEnum.CustomerSettingPage}
             >
               <Image src="/assets/Opportunity-Dq.svg " size="mini" />
             </Menu.Item>
