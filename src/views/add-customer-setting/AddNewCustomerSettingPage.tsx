@@ -887,7 +887,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                                     <Divider style={{ marginBottom: "0px"}}></Divider>
                                     <div className="button-container">
                                         <div className="button-inner-container">
-                                            <Button color="grey" style={{ marginRight: "1rem" }} type="button">Cancel</Button>
+                                            <Button style={{ marginRight: "1rem" }} type="button">Cancel</Button>
                                             <Button color="blue" type="submit">Submit</Button>
                                         </div>
                                     </div>
@@ -900,7 +900,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
                             <Divider style={{ marginBottom: "0px"}}></Divider>
                             <div className="button-container">
                                 <div className="button-inner-container">
-                                    <Button color="grey" style={{ marginRight: "1rem" }}>Cancel</Button>
+                                    <Button style={{ marginRight: "1rem" }}>Cancel</Button>
                                     <Button color="blue" disabled>Submit</Button>
                                 </div>
                             </div>
