@@ -14,7 +14,7 @@
 .customer-search-container {
     display: flex !important;
     flex-direction: row !important;
-    // justify-content: space-between !important;
+    justify-content: space-between !important;
     flex-wrap: wrap !important;
 }
 
@@ -79,7 +79,6 @@
     display: flex !important;
     flex-direction: column !important;
     text-align: center !important;
-    margin-right: 4rem !important;
 }
 
 .customer-data-label {
@@ -128,13 +127,6 @@
     width: 50% !important;
 }
 
-.pmo-toggle {
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    padding: 14px 2rem 0 2rem !important;
-}
 
 .setting-toggle-container {
     display: flex !important;

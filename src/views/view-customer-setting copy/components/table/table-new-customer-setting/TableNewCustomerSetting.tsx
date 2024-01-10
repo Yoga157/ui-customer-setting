@@ -34,12 +34,9 @@ const TableNewCustomerSetting: React.FC<IProps> = (props: React.PropsWithChildre
                     :
                         (data.map((data, index) => (
                         <Table.Row key={index}>
-                            {sequenceNum && <Table.Cell textAlign="center">{index + 1}</Table.Cell>}
+                            {sequenceNum && <Table.Cell>{index + 1}</Table.Cell>}
                             {header.map((header) => (
-                                header.textCenter ? 
-                                    <Table.Cell key={header.key} textAlign="center">{data[header.key]}</Table.Cell>
-                                :
-                                    <Table.Cell key={header.key}>{data[header.key]}</Table.Cell>
+                                <Table.Cell key={header.key}>{data[header.key]}</Table.Cell>
                             ))}
                         </Table.Row>
                         )))

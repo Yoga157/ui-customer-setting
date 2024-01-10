@@ -75,7 +75,7 @@ const AdjSetting: React.FC<IProps> = (
       );
       CustomerSetting.createUserID = props.rowData[j].createUserID;
       CustomerSetting.modifyDate = date;
-      CustomerSetting.modifyUserID = JSON.parse(userId).employeeID;
+      CustomerSetting.modifyUserID = JSON.parse(userId)?.employeeID;
 
       await dispatch(
         CustomerSettingAct.putCustomerSetting(

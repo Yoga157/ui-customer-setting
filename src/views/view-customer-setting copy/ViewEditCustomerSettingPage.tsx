@@ -6,8 +6,8 @@ import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLeve
 import ModalSizeEnum from "constants/ModalSizeEnum";
 import { Form as FinalForm, Field } from "react-final-form";
 import { Link, useParams } from "react-router-dom";
-import { Divider, Dropdown, Form, Label, Icon, Table, Button, Checkbox, Input } from "semantic-ui-react";
-import { SearchInput, DropdownClearInput, CheckBox as CheckboxInvoicing, RichTextEditor, Pagination } from "views/components/UI";
+import { Divider, Dropdown, Form, Label, Icon, Table, Button, Checkbox } from "semantic-ui-react";
+import { SearchInput, DropdownClearInput, CheckBox as CheckboxInvoicing, RichTextEditor } from "views/components/UI";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import * as data from "./data"
 
@@ -50,8 +50,6 @@ import { selectCollectionHistory } from "selectors/collection-history/Collection
 import { selectInvoicingSchedule } from "selectors/invoicing-schedule/InvoicingScheduleSelector";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import { selectProjectHistory } from "selectors/project-history/ProjectHistorySelector";
-import TableProjectHistory from "./components/table/table-project-history/TableProjectHistory";
-import TableCollectionHistory from "./components/table/table-collection-history/TableCollectionHistory";
 
 interface IProps {
     history: any;
@@ -88,70 +86,6 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
     const configItemData = useSelector((state: IStore) => selectConfigItem(state));
     const collectionHistoryData = useSelector((state: IStore) => selectCollectionHistory(state));
     const projectHistoryData = useSelector((state: IStore) => selectProjectHistory(state));
-    
-    /** Project History */
-    const [allHistoryData, setAllHistoryData] = useState(data.projectHistoryData)
-    const [historyPageSize, setHistoryPageSize] = useState(3)
-    const [historyActivePage, setHistoryActivePage] = useState(1)
-    const [historyData, setHistoryData] = useState(allHistoryData.slice(0, historyPageSize))
-
-    // fungsi mengatur perubahan halaman
-    const historyChangePage = (e, page) => {
-        const startIndex = (page.activePage - 1) * historyPageSize;
-        const endIndex = startIndex + historyPageSize;
-        const paginatedData = allHistoryData.slice(startIndex, endIndex);
-
-        setHistoryData(paginatedData)
-        setHistoryActivePage(page.activePage)
-    }
-
-    const [searchText, setSearchText] = useState("");
-    const [cancelBtn, setCancelBtn] = useState(false);
-
-    const onChangeSearch = (event: any, data: any) => {
-        // console.log(data)
-        setSearchText(data.value);
-        if(data.value == "") {
-            setCancelBtn(false);
-        } else {
-            setCancelBtn(true);
-        }
-    };
-    
-    // fungsi untuk mengatur pencarian
-    const onSearch = () => {
-        if (searchText.length === 0) {
-            setAllHistoryData(data.projectHistoryData)
-            setSearchText("");
-            setCancelBtn(false);
-
-        } else {
-            if (searchText.length > 1) {
-                setCancelBtn(true);
-                const lowerKeyword = searchText.toLowerCase();
-
-                const filteredArray = data.projectHistoryData.filter((item) =>
-                    Object.values(item).some((value) =>
-                        typeof value === 'string' && value.toLowerCase().includes(lowerKeyword)
-                    )
-                );
-
-                setAllHistoryData(filteredArray);
-            }
-        }
-    };
-
-    useEffect(() => {
-        setHistoryData(allHistoryData.slice(0, historyPageSize));
-        setHistoryActivePage(1);
-    }, [allHistoryData])
-
-    const onClickedCancelButton = () => {
-        setAllHistoryData(data.projectHistoryData)
-        setSearchText("");
-        setCancelBtn(false);
-    }
-
     
     /** Search Sales */
     const salesHistoryData = useSelector((state: IStore) => selectSalesHistory(state));
@@ -456,36 +390,19 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
 
                 <div className="form-container">
                     {/* judul add new customer setting */}
-                    <div style={{ display: "flex", justifyContent: "space-between"}}>
-                        <p className="page-title grey">VIEW/EDIT CUSTOMER SETTING</p>
-                        <div className="pmo-toggle">
-                            <p style={{ margin: "0 1rem 0 0"}}>PMO customer</p>
-                            <div style={{ display: "flex", justifyContent: "center"}}>
-                                <p className="margin-0">OFF</p>
-                                <Checkbox toggle  checked={pmoCustomer=="TRUE" ? true : false} onChange={() => handlePmoCustomer()} className="toggle-margin"></Checkbox>
-                                <p className="margin-0">ON</p>
-                            </div>
-                        </div>
-                    </div>
+                    <p className="page-title grey">VIEW/EDIT CUSTOMER SETTING</p>
 
                     <Divider></Divider>
 
                     <LoadingIndicator isActive={isRequesting}>
                     {/* search customer name dan data customer */}
+                    <div className="padding-horizontal customer-search-container">
 
-                    {/* {(customerData.customerID != 0 && !Number.isNaN(customerSettingData.customerID)) && */}
+                        {(customerData.customerID != 0 && !Number.isNaN(customerSettingData.customerID)) &&
                          <>
-                        <div className="padding-horizontal customer-search-container">
                             <div className="customer-data-container">
-                                <label className="address-font-label" style={{ textAlign: "left"}}>Account Status</label>
-                                <Label color="green" className="boolean-container">
-                                    <p>Shareable Account</p>
-                                </Label>
-                            </div>
-
-                            <div className="customer-data-container">
-                                <label className="customer-data-label">Cust. Category</label>
-                                <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">Enterprise</p>
+                                <label className="address-font-label" style={{ textAlign: "left"}}>Customer Name</label>
+                                <p style={{ fontSize: "20px"}} className="grey">{customerData?.customerName}</p>
                             </div>
 
                             <div className="customer-data-container">
@@ -511,38 +428,17 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
                                 <label className="customer-data-label">Avg. AR (days)</label>
                                 <p className="grey avgar-font">{customerData.avgAR}</p>
                             </div>
-                        </div>
-
-                        <div style={{ margin: "14px 0" }} className="padding-horizontal">
-                            <label className="address-font-label" style={{ textAlign: "left"}}>Customer Name</label>
-                            <p style={{ fontSize: "20px", fontWeight: "bold"}} className="grey">Customer Name</p>
-                        </div>
-
-                        <div style={{ margin: "14px 0" }} className="padding-horizontal">
-                            <label className="address-font-label">Address</label>
-                            <p style={{ fontSize: "20px"}} className="grey">Alamat</p>
-                        </div>
-
-                        </>
-                    {/* } */}
-
-                    <Divider></Divider>
-
-                    <div className="padding-horizontal title-button-row">
-                        <p className="grey margin-0 bold text-align-left">ACCOUNT OWNER SETTING</p>
-                        <Button color="yellow" size="small" type="button" onClick={() => {}}><Icon name="check circle"/>Claim Account</Button>
+                         </>
+                        }
                     </div>
-
-                    <Divider></Divider>
-
-                    <div style={{ }} className="padding-horizontal">
-                        <TableNewCustomerSetting data={data.accOwnerData} header={data.accOwnerHeader} sequenceNum={true} />
-                    </div>
-                    <Divider></Divider>
-
                     
-                    {/* {(customerData.customerID != 0 && !Number.isNaN(customerSettingData.customerID)) ? */}
-                        <>                        
+                    {(customerData.customerID != 0 && !Number.isNaN(customerSettingData.customerID)) ?
+                        <>
+                            <div style={{ margin: "14px 0" }} className="padding-horizontal">
+                                <label className="address-font-label">Address</label>
+                                <p style={{ fontSize: "20px"}} className="grey">{customerData?.customerAddress}</p>
+                            </div>
+                            
                             {/* data get mengenai customer */}
                             <div className="padding-horizontal">
                                 <div className="grey get-data-container">
@@ -615,40 +511,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
                                     {openProjectHistory &&
                                         <>
                                         <div className="table-container">
-                                            <div style={{ marginBottom: "1rem", width: "35%"}}>
-                                                <label className="customer-data-label">Filter Search</label>
-                                                <div style={{ marginTop: "0.5rem", position: "relative", width: "100%" }}>
-                                                    <Input
-                                                        style={{ width: "100%", height: "2.5rem" }}
-                                                        placeholder="Search..."
-                                                        onChange={onChangeSearch}
-                                                        onKeyPress={(event) => {
-                                                            if (event.charCode == 13) {
-                                                                onSearch();
-                                                            }
-                                                        }}
-                                                        value={searchText}
-                                                    />
-                                                    <div style={{ position: "absolute", display: "flex", right: "0", top: "0", height: "100%", alignItems: "center"}}>
-                                                        {cancelBtn ?
-                                                            <Icon name="cancel" onClick={onClickedCancelButton} style={{ marginBottom: "0.3rem", marginRight: "1rem" }}/>
-                                                        :
-                                                            <Icon name="search" style={{ marginBottom: "0.3rem", marginRight: "1rem" }}/>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <TableProjectHistory data={historyData} setOpenCollectionHistory={setOpenCollectionHistory}/>
-
-                                            <div style={{ marginTop: "1rem" }}>
-                                                <Pagination
-                                                    activePage={historyActivePage}
-                                                    onPageChange={(e, data) => historyChangePage(e, data)}
-                                                    totalPage={allHistoryData.length}
-                                                    pageSize={historyPageSize}
-                                                />
-                                            </div>
+                                            <TableNewCustomerSetting data={projectHistoryData} header={data.projectHistoryHeader} sequenceNum={false} />
                                         </div>
                                         <Divider className="margin-0"></Divider>
                                         </>
@@ -663,8 +526,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
                                     {openCollectionHistory &&
                                         <>
                                         <div className="table-container">
-                                            <TableCollectionHistory data={data.collectionHistoryData}/>
-                                        {/* <TableNewCustomerSetting data={data.collectionHistoryData} header={data.collectionHistoryHeader} sequenceNum={false} /> */}
+                                        <TableNewCustomerSetting data={collectionHistoryData} header={data.collectionHistoryHeader} sequenceNum={false} />
                                         </div>
                                         <Divider className="margin-0"></Divider>
                                         </>
@@ -679,18 +541,89 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
                                         <>
                                         <Divider className="margin-0"></Divider>
                                         <div className="table-container">
-                                            <TableNewCustomerSetting data={configItemData} header={data.configItemHeader} sequenceNum={false}/>
-                                            <div style={{ marginTop: "1rem" }}>
-                                                <Pagination
-                                                    activePage={1}
-                                                    onPageChange={() => {}}
-                                                    totalPage={2}
-                                                    pageSize={1}
-                                                />
-                                            </div>
+                                        <TableNewCustomerSetting data={configItemData} header={data.configItemHeader} sequenceNum={false}/>
                                         </div>
                                         </>
                                     }
+                                </div>
+                            </div>
+
+                            <Divider></Divider>
+                            
+                            <div className="padding-horizontal setting-container">
+                                <div className="sales-assign">
+                                    <div className="sales-assign-search">
+                                        <FinalForm
+                                            onSubmit={(values: any) => onSubmitSalesHandler(values)}
+                                            render={({ handleSubmit, pristine, invalid }) => (
+                                            <Form onSubmit={handleSubmit}>
+                                                <Field
+                                                    name="salesName"
+                                                    component={SearchInput}
+                                                    placeholder="Search sales name here.."
+                                                    labelName="Search sales to assign"
+                                                    handleSearchChange={handleSearchChangeSales}
+                                                    onResultSelect={onResultSelectSales}
+                                                    results={salesStoreSearch}
+                                                    values={salesName}
+                                                    mandatory={true}
+                                                />
+                                            </Form>
+                                        )}/>
+                                        <Button color='blue' content='Assign Me' className="assign-me-button"/>
+                                    </div>
+
+                                    <div className="setting-position">
+                                        <Divider className="margin-0"/>
+
+                                        <div className="setting-toggle-container">
+                                            <p className="margin-0">Shareable customer</p>
+                                            <div><span>OFF</span><Checkbox toggle checked={shareable=="TRUE" ? true : false} onChange={() => handleShareable()} className="toggle-margin"></Checkbox><span>ON</span></div>
+                                        </div>
+
+                                        <Divider className="margin-0"/>
+
+                                        <div className="setting-toggle-container">
+                                            <p className="margin-0">PMO customer</p>
+                                            <div><span>OFF</span><Checkbox toggle  checked={pmoCustomer=="TRUE" ? true : false} onChange={() => handlePmoCustomer()} className="toggle-margin"></Checkbox><span>ON</span></div>
+                                        </div>
+
+                                        <Divider className="margin-0"/>
+                                    </div>
+                                </div>
+
+                                <div className="sales-assign-list">
+                                    <div className="sales-list-container">
+                                        {salesHistoryData.map((data) => {
+                                            return (
+                                                <div className="sales-container" key={data.salesID}>
+                                                    <div className="sales-name">
+                                                        {data.salesName}
+                                                    </div>
+                                                    <div className="sales-delete" onClick={() => deleteSalesAssign(data.assignID)}>
+                                                        <Icon name="close"/>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+
+                                        {salesAssign.map((data) => {
+                                            return (
+                                                <div className="sales-container" key={data.salesID}>
+                                                    <div className="sales-name">
+                                                        {data.salesName}
+                                                    </div>
+                                                    <div className="sales-delete" onClick={() => onDeleteSalesAssign(data.salesID)}>
+                                                        <Icon name="close"/>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+
+                                <div>
+
                                 </div>
                             </div>
 
@@ -716,7 +649,13 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
                                                     </label>
                                                 </label>
                                             </div>
-                                            <p style={{ fontSize: "20px", fontWeight: "bold"}}>Monday, Tuesday</p>
+                                            <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
+                                                {days.map((day) => {
+                                                    return (
+                                                        <CheckboxInvoicing label={day} value={day} defaultChecked={isAllDaysChecked && day=="All days" ? isAllDaysChecked : (isAllDaysChecked ? !daysArray.includes(day) : daysArray.includes(day))} disabled={isAllDaysChecked && day !== "All days"} style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
+                                                    )
+                                                })}
+                                            </div>
                                         </div>
                                         
                                         <div className="invoicing-schedule-position">
@@ -725,18 +664,17 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
                                                 <div className="date-range-container-input">
                                                     <div className="date-range-input" style={{ marginRight: "1rem"}}>
                                                         <label htmlFor="minDate">Min. Date(Day)</label>
-                                                        <p style={{ textAlign: "right", fontSize: "18px", fontWeight: "bold"}}>1</p>
+                                                        <input name="minDate" type="number" value={minDate} onChange={(e) => setMinDate(parseInt(e.target.value, 10))}/>
                                                     </div>
                                                     <div className="date-range-input">
                                                         <label htmlFor="maxDate">Max. Date(Day)</label>
-                                                        <p style={{ textAlign: "right", fontSize: "18px", fontWeight: "bold"}}>20</p>
+                                                        <input name="maxDate" type="number" value={maxDate} onChange={(e) => setMaxDate(parseInt(e.target.value, 10))}/>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div style={{ width: "100%" }}>
-                                                <label className="customer-data-label">Remark</label>
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                                <Field name="remark" defaultValue={remark} value={remark} component={RichTextEditor} placeholder="e.g. Remark" labelName="Remark" />  
                                             </div>
                                         </div>
                                     </div>
@@ -927,7 +865,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
                             </Form>
                             )}/>
                         </>
-                    {/* :
+                    :
                         <>
                             <Divider style={{ marginBottom: "0px"}}></Divider>
                             <div className="button-container">
@@ -937,7 +875,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
                                 </div>
                             </div>
                         </>
-                    } */}
+                    }
                     </LoadingIndicator>
             </div>
         </Fragment>
