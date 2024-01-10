@@ -5,38 +5,6 @@ const onClickPayment = (data) => {
     console.log(data)
 }
 
-export const accOwnerHeader = [
-    {
-        key: "assignRelease",
-        header: "Assign/Release",
-        textCenter: true
-    },
-    {
-        key: "salesName",
-        header: "Sales Name",
-        textCenter: true
-    },
-    {
-        key: "requestBy",
-        header: "Request By",
-        textCenter: true
-    },
-    {
-        key: "date",
-        header: "Date",
-        textCenter: true
-    },
-]
-
-export const accOwnerData = [
-    {
-        assignRelease: "Assign",
-        salesName: "Rosa Amalia",
-        requestBy: "Rosa Amalia",
-        date: "02/01/2024"
-    }
-]
-
 export const picHeader = [
     {
         key: "picName",
@@ -186,7 +154,7 @@ export const salesHistoryData = [
 export const projectHistoryHeader = [
     {
         key: "payment",
-        header: "Action",
+        header: "View Payment",
         type: "html"
     },
     {
@@ -225,6 +193,11 @@ export const projectHistoryHeader = [
 
 export const projectHistoryData = [
     {
+        payment: 
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "#656DD1", padding: "0.5rem", borderRadius: "100%", width: "fit-content"}} onClick={(event) => onClickPayment('payment diklik')}>
+                <Icon style={{ margin: "0", padding: "0", display: "flex", justifyContent: "center", alignItems: "center", color:"white"}} name="eye"/>
+            </div>
+        ,
         funnelID: 13345,
         so: 1225,
         top: 456678,
@@ -236,138 +209,29 @@ export const projectHistoryData = [
         soCloseDate: "20/12/2023",
         soAmount: 11234000,
         lastCollectionDate: "02/12/2023",
-    },
-    {
-        funnelID: 13345,
-        so: 1226,
-        top: 456678,
-        projectName: "Lorem ipsun sir dolor amet",
-        customerName: "PT HAWLETT",
-        salesName: "Ina Nur Astuti",
-        salesDepartment: "CI",
-        saDate: "01/12/2023",
-        soCloseDate: "20/12/2024",
-        soAmount: 11234000,
-        lastCollectionDate: "02/12/2024",
-    },
-    {
-        funnelID: 13345,
-        so: 1227,
-        top: 456678,
-        projectName: "Lorem ipsun",
-        customerName: "PT HAWLETT",
-        salesName: "Yoga Maulana",
-        salesDepartment: "CI",
-        saDate: "01/12/2023",
-        soCloseDate: "20/12/2024",
-        soAmount: 11234000,
-        lastCollectionDate: "02/12/2024",
-    },
-    {
-        funnelID: 13345,
-        so: 1228,
-        top: 456678,
-        projectName: "Lorem ipsun",
-        customerName: "PT HAWLETT",
-        salesName: "Rosa Amalia",
-        salesDepartment: "CI",
-        saDate: "01/12/2023",
-        soCloseDate: "20/12/2023",
-        soAmount: 11234000,
-        lastCollectionDate: "02/12/2023",
-    },
-    {
-        funnelID: 13345,
-        so: 1229,
-        top: 456678,
-        projectName: "Lorem ipsun sir dolor amet",
-        customerName: "PT HAWLETT",
-        salesName: "Ina Nur Astuti",
-        salesDepartment: "CI",
-        saDate: "01/12/2023",
-        soCloseDate: "20/12/2024",
-        soAmount: 11234000,
-        lastCollectionDate: "02/12/2024",
-    },
-    {
-        funnelID: 13345,
-        so: 1230,
-        top: 456678,
-        projectName: "Lorem ipsun",
-        customerName: "PT HAWLETT",
-        salesName: "Yoga Maulana",
-        salesDepartment: "CI",
-        saDate: "01/12/2023",
-        soCloseDate: "20/12/2024",
-        soAmount: 11234000,
-        lastCollectionDate: "02/12/2024",
-    },
-    {
-        funnelID: 13345,
-        so: 1231,
-        top: 456678,
-        projectName: "Lorem ipsun",
-        customerName: "PT HAWLETT",
-        salesName: "Lazuardy Aruna",
-        salesDepartment: "CI",
-        saDate: "01/12/2023",
-        soCloseDate: "20/12/2023",
-        soAmount: 11234000,
-        lastCollectionDate: "02/12/2023",
-    },
-    {
-        funnelID: 13345,
-        so: 1232,
-        top: 456678,
-        projectName: "Lorem ipsun sir dolor amet",
-        customerName: "PT HAWLETT",
-        salesName: "Anjar Wahyudi",
-        salesDepartment: "CI",
-        saDate: "01/12/2023",
-        soCloseDate: "20/12/2024",
-        soAmount: 11234000,
-        lastCollectionDate: "02/12/2024",
-    },
-    {
-        funnelID: 13345,
-        so: 1233,
-        top: 456678,
-        projectName: "Lorem ipsun",
-        customerName: "PT HAWLETT",
-        salesName: "Yoga Zikri Saputra",
-        salesDepartment: "CI",
-        saDate: "01/12/2023",
-        soCloseDate: "20/12/2024",
-        soAmount: 11234000,
-        lastCollectionDate: "02/12/2024",
-    },
+    }
 ]
 
 export const collectionHistoryHeader = [
     {
         key: "invoiceNumber",
-        header: "Invoice Number",
-        textCenter: true
+        header: "Invoice Number"
     },
     {
         key: "invoiceDate",
-        header: "Invoice Date",
-        textCenter: true
+        header: "Invoice Date"
     },
     {
         key: "soid",
-        header: "SO ID",
-        textCenter: true
+        header: "SO ID"
     },
     {
         key: "collectionAmount",
-        header: "Collection Amount",
-        textCenter: true
+        header: "Collection Amount"
     },
     {
         key: "collectionDate",
-        header: "Collection Date",
-        textCenter: true
+        header: "Collection Date"
     },
 ]
 
@@ -375,66 +239,10 @@ export const collectionHistoryData = [
     {
         invoiceNumber: "46-162821",
         invoiceDate: "15/10/2023",
-        soid: 1225,
+        soid: 12915,
         collectionAmount: 125254000,
         collectionDate: "02/12/2023"
-    },
-    {
-        invoiceNumber: "46-162821",
-        invoiceDate: "15/10/2023",
-        soid: 1226,
-        collectionAmount: 125254000,
-        collectionDate: "02/12/2023"
-    },
-    {
-        invoiceNumber: "46-162821",
-        invoiceDate: "15/10/2023",
-        soid: 1227,
-        collectionAmount: 125254000,
-        collectionDate: "02/12/2023"
-    },
-    {
-        invoiceNumber: "46-162821",
-        invoiceDate: "15/10/2023",
-        soid: 1228,
-        collectionAmount: 125254000,
-        collectionDate: "02/12/2023"
-    },
-    {
-        invoiceNumber: "46-162821",
-        invoiceDate: "15/10/2023",
-        soid: 1229,
-        collectionAmount: 125254000,
-        collectionDate: "02/12/2023"
-    },
-    {
-        invoiceNumber: "46-162821",
-        invoiceDate: "15/10/2023",
-        soid: 1230,
-        collectionAmount: 125254000,
-        collectionDate: "02/12/2023"
-    },
-    {
-        invoiceNumber: "46-162821",
-        invoiceDate: "15/10/2023",
-        soid: 1231,
-        collectionAmount: 125254000,
-        collectionDate: "02/12/2023"
-    },
-    {
-        invoiceNumber: "46-162821",
-        invoiceDate: "15/10/2023",
-        soid: 1232,
-        collectionAmount: 125254000,
-        collectionDate: "02/12/2023"
-    },
-    {
-        invoiceNumber: "46-162821",
-        invoiceDate: "15/10/2023",
-        soid: 1233,
-        collectionAmount: 125254000,
-        collectionDate: "02/12/2023"
-    },
+    }
 ]
 
 export const configItemHeader = [
