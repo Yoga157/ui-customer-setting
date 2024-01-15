@@ -1,10 +1,9 @@
-import React, { Fragment, useEffect, useState, useCallback } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Grid } from "semantic-ui-react";
 import CustomerTable from "./components/allaccountspage-main/table/CustomerTable";
 import InputSearch from "./components/allaccountspage-main/search/InputSearch";
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
-import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLevelActions";
 import "./AllAccountsPage.scss";
 import IStore from "models/IStore";
 import * as CustomerActions from "stores/customer-setting/CustomerActivityActions";
@@ -14,10 +13,6 @@ import { Pagination, Tooltips, Button } from "views/components/UI";
 import { selectUserResult } from "selectors/user/UserSelector";
 import IUserResult from "selectors/user/models/IUserResult";
 import TableToExcel from "@linways/table-to-excel";
-import ModalSizeEnum from "constants/ModalSizeEnum";
-import CreateForm from "./components/allaccountspage-main/form/form-create/FormAdd";
-import AdjustSettingForm from "./components/allaccountspage-main/form/form-setting/FormSetting";
-import DeleteCustomer from "./components/allaccountspage-main/delete/delete-customer";
 import { selectAllAccount } from "selectors/customer-setting/CustomerSettingSelector";
 import RouteEnum from "constants/RouteEnum";
 import FilterCustomer from "./components/allaccountspage-main/filter/FilterCustomer";
@@ -41,7 +36,6 @@ const AllAccountsPage: React.FC<IProps> = (
 
   const setNewRowData = (data) => {
     setRowData(data);
-    // console.log(data);
   };
 
   const moveToAddCustomer = () => {
@@ -59,7 +53,7 @@ const AllAccountsPage: React.FC<IProps> = (
         CustomerActions.requestSearchAllAcc(
           1,
           tableData.totalRow,
-          "CustomerSettingID",
+          "CustomerID",
           search.value
         )
       );
@@ -68,7 +62,7 @@ const AllAccountsPage: React.FC<IProps> = (
         CustomerActions.requestAllAcc(
           1,
           tableData.totalRow,
-          "CustomerSettingID",
+          "CustomerID",
           "ascending"
         )
       );
@@ -78,7 +72,7 @@ const AllAccountsPage: React.FC<IProps> = (
         let tableSelect: any;
         let tableHead: any;
 
-        if (window.location.pathname === "/data-quality/customer-setting") {
+        if (window.location.pathname === "/customer-setting-page") {
           tableSelect = document.getElementById(
             "exporttosetting"
           ) as HTMLTableElement;
@@ -114,7 +108,9 @@ const AllAccountsPage: React.FC<IProps> = (
   };
 
   useEffect(() => {
-    dispatch(CustomerActions.requestAllAcc(1, pageSize, "CustomerSettingID"));
+    dispatch(
+      CustomerActions.requestAllAcc(1, pageSize, "CustomerID", "ascending")
+    );
   }, [dispatch]);
 
   const handlePaginationChange = (e: any, data: any) => {
@@ -123,14 +119,14 @@ const AllAccountsPage: React.FC<IProps> = (
       "#search-input-customer"
     )! as HTMLInputElement;
 
-    if (window.location.pathname === "/data-quality/customer-setting") {
+    if (window.location.pathname === "/customer-setting-page") {
       if (search.value.length > 0) {
         // console.log("search");
         dispatch(
           CustomerActions.requestSearchAllAcc(
             data.activePage,
             pageSize,
-            "CustomerSettingID",
+            "CustomerID",
             search.value
           )
         );
@@ -139,7 +135,7 @@ const AllAccountsPage: React.FC<IProps> = (
           CustomerActions.requestAllAcc(
             data.activePage,
             pageSize,
-            "CustomerSettingID",
+            "CustomerID",
             "ascending"
           )
         );
@@ -150,7 +146,7 @@ const AllAccountsPage: React.FC<IProps> = (
   const isRequesting: boolean = useSelector((state: IStore) =>
     selectRequesting(state, [
       CustomerActions.REQUEST_ALL_ACCOUNTS,
-      CustomerActions.REQUEST_ALL_SEARCH_FINISHED,
+      CustomerActions.REQUEST_ALL_SEARCH,
     ])
   );
 

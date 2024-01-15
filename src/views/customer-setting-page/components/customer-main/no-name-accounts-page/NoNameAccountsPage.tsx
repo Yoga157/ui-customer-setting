@@ -16,11 +16,7 @@ import IUserResult from "selectors/user/models/IUserResult";
 import TableToExcel from "@linways/table-to-excel";
 import ModalSizeEnum from "constants/ModalSizeEnum";
 import ClaimForm from "./components/nonamepage-main/form/form-claim/FormClaim";
-import CreateForm from "./components/nonamepage-main/form/form-create/FormAdd";
-import AdjustSettingForm from "./components/nonamepage-main/form/form-setting/FormSetting";
-import DeleteCustomer from "./components/nonamepage-main/delete/delete-customer";
 import { selectCustomerSetting } from "selectors/customer-setting/CustomerSettingSelector";
-import RouteEnum from "constants/RouteEnum";
 import FilterCustomer from "./components/nonamepage-main/filter/FilterCustomer";
 
 interface IProps {
@@ -55,7 +51,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
 
   useEffect(() => {
     dispatch(
-      CustomerActions.requestNoNameAcc(1, pageSize, "CustomerSettingID")
+      CustomerActions.requestNoNameAcc(1, pageSize, "CustomerID", "ascending")
     );
   }, [dispatch]);
 
@@ -68,7 +64,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
         CustomerActions.requestSearchNoNameAcc(
           1,
           tableData.totalRow,
-          "CustomerSettingID",
+          "CustomerID",
           search.value
         )
       );
@@ -77,7 +73,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
         CustomerActions.requestNoNameAcc(
           1,
           tableData.totalRow,
-          "CustomerSettingID",
+          "CustomerID",
           "ascending"
         )
       );
@@ -134,7 +130,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
           CustomerActions.requestSearchNoNameAcc(
             data.activePage,
             pageSize,
-            "CustomerSettingID",
+            "CustomerID",
             search.value
           )
         );
@@ -143,7 +139,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
           CustomerActions.requestNoNameAcc(
             data.activePage,
             pageSize,
-            "CustomerSettingID",
+            "CustomerID",
             "ascending"
           )
         );

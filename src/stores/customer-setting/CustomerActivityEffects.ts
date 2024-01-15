@@ -53,7 +53,7 @@ export const requestNamedAcc = async (
 export const requestShareabledAcc = async (
   page?: number,
   pageSize?: number,
-  column?: string,
+  column?: string | null,
   sorting?: string
 ): Promise<CustomerSettingModel | HttpErrorResponseModel> => {
   const controllerName = `CustomerSetting/GetCustomerSettingSharebleAccount?${
@@ -170,16 +170,18 @@ export const requestSearchNamedAcc = async (
 export const requestSearchShareabelAcc = async (
   page: number,
   pageSize: number,
-  column: string | null,
+  column: string,
   search: string | null,
   sorting?: string | null,
   pmo_customer?: boolean | null,
   holdshipment?: boolean | null,
   blacklist?: boolean | null
 ): Promise<CustomerSettingModel | HttpErrorResponseModel> => {
-  const controllerName = `CustomerSetting/GetCustomerSettingSharebleAccount?page=${page}&pageSize=${pageSize}&column=${column}${
-    search || search != null ? `&search=${search}` : ``
-  }${sorting || sorting != null ? `&sorting=${sorting}` : ``}${
+  const controllerName = `CustomerSetting/GetCustomerSettingSharebleAccount?page=${page}&pageSize=${pageSize}&column=${
+    column || column != null ? `&column=${column}` : ``
+  }${search || search != null ? `&search=${search}` : ``}${
+    sorting || sorting != null ? `&sorting=${sorting}` : ``
+  }${
     pmo_customer || pmo_customer != null ? `&pmoCustomer=${pmo_customer}` : ``
   }${
     holdshipment || holdshipment != null ? `&holdshipment=${holdshipment}` : ``

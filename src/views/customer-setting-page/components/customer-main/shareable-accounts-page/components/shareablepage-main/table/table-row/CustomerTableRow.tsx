@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState, useCallback } from "react";
-import { Table, Dropdown, List, Icon } from "semantic-ui-react";
+import { Table, Dropdown, Icon } from "semantic-ui-react";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLevelActions";
@@ -8,9 +8,6 @@ import { selectUserResult } from "selectors/user/UserSelector";
 import IUserResult from "selectors/user/models/IUserResult";
 import IStore from "models/IStore";
 import "./CustomerTableRowStyle.scss";
-import AddSalesAssign from "../../form/form-create/FormAdd";
-import RouteEnum from "constants/RouteEnum";
-import * as CustomerSettActions from "stores/customer-setting/CustomerActivityActions";
 import ClaimForm from "../../form/form-claim/FormClaim";
 
 interface IProps {
@@ -48,7 +45,6 @@ const CustomerTableRow: React.FC<IProps> = (
   };
 
   const onClaimAccount = useCallback((): void => {
-    // console.log(rowData);
     dispatch(
       ModalFirstLevelActions.OPEN(
         <ClaimForm rowData={[rowData]} />,
@@ -59,7 +55,7 @@ const CustomerTableRow: React.FC<IProps> = (
 
   const onEdit = (id: number) => {
     props.history.push({
-      pathname: "customer-setting/" + id,
+      pathname: "customer-setting-page/" + id,
       state: { rowData },
     });
   };
@@ -70,7 +66,7 @@ const CustomerTableRow: React.FC<IProps> = (
 
   return (
     <Fragment>
-      <Table.Row key={rowData.CustomerSettingID}>
+      <Table.Row key={rowData.customerID}>
         <Table.Cell width="4">
           <div
             style={{
@@ -92,7 +88,7 @@ const CustomerTableRow: React.FC<IProps> = (
                 <Dropdown.Item
                   text="View/Edit"
                   icon="edit outline"
-                  onClick={() => onEdit(rowData.customerSettingID)}
+                  onClick={() => onEdit(rowData.customerID)}
                 />
 
                 <Dropdown.Item
@@ -101,10 +97,9 @@ const CustomerTableRow: React.FC<IProps> = (
                   onClick={onClaimAccount}
                 />
 
-                {rowData.status != "CANCEL" &&
-                  rowData.CustomerSettingID == "" && (
-                    <Dropdown.Item text="Cancel" icon="remove circle" />
-                  )}
+                {rowData.status != "CANCEL" && rowData.customerID == "" && (
+                  <Dropdown.Item text="Cancel" icon="remove circle" />
+                )}
               </Dropdown.Menu>
             </Dropdown>
           </div>

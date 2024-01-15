@@ -260,7 +260,7 @@ export const requestSearchShareabelAcc = (
   return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
     await ActionUtility.createThunkEffect<CustomerSettingModel>(
       dispatch,
-      REQUEST_NAMED_SEARCH,
+      REQUEST_SHAREABLE_SEARCH,
       CustomerEffect.requestSearchShareabelAcc,
       page,
       pageSize,

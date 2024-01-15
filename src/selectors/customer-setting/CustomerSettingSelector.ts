@@ -1,7 +1,6 @@
 import { createSelector, ParametricSelector } from "reselect";
 import IStore from "../../models/IStore";
 import { Selector } from "react-redux";
-import CustomerSettingRow from "stores/customer-setting/models/CustomerSettingRow";
 import CustomerSettingById from "stores/customer-setting/models/CustomerSettingById";
 import ResultActions from "models/ResultActions";
 
@@ -24,10 +23,10 @@ const _createTableRows = (models: any[]): any[] => {
 
 const _mappingObjectTableRow = (model: any): any => {
   return {
-    customerSettingID:
-      model.customerSettingID.toString() === "undefined"
-        ? 0
-        : model.customerSettingID,
+    // customerSettingID:
+    //   model.customerSettingID.toString() === "undefined"
+    //     ? 0
+    //     : model.customerSettingID,
     customerID: model.customerID === null ? null : model.customerID,
     customerCategory:
       model.customerCategory === "" ? "" : model.customerCategory,
@@ -69,10 +68,10 @@ const _createTableNameRows = (models: any[]): any[] => {
 
 const _mappingObjectTableNameRow = (model: any): any => {
   return {
-    customerSettingID:
-      model.customerSettingID.toString() === "undefined"
-        ? 0
-        : model.customerSettingID,
+    // customerSettingID:
+    //   model.customerSettingID.toString() === "undefined"
+    //     ? 0
+    //     : model.customerSettingID,
     customerID: model.customerID === null ? null : model.customerID,
     customerCategory:
       model.customerCategory === "" ? "" : model.customerCategory,
@@ -112,10 +111,10 @@ const _createTableShareableRows = (models: any[]): any[] => {
 
 const _mappingObjectTableShareableRow = (model: any): any => {
   return {
-    customerSettingID:
-      model.customerSettingID.toString() === "undefined"
-        ? 0
-        : model.customerSettingID,
+    // customerSettingID:
+    //   model.customerSettingID.toString() === "undefined"
+    //     ? 0
+    //     : model.customerSettingID,
     customerID: model.customerID === null ? null : model.customerID,
     customerCategory:
       model.customerCategory === "" ? "" : model.customerCategory,
@@ -153,10 +152,10 @@ const _createTableAllRows = (models: any[]): any[] => {
 
 const _mappingObjectTableAllRow = (model: any): any => {
   return {
-    customerSettingID:
-      model.customerSettingID.toString() === "undefined"
-        ? 0
-        : model.customerSettingID,
+    // customerSettingID:
+    //   model.customerSettingID.toString() === "undefined"
+    //     ? 0
+    //     : model.customerSettingID,
     customerID: model.customerID === null ? null : model.customerID,
     customerCategory:
       model.customerCategory === "" ? "" : model.customerCategory,

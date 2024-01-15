@@ -81,7 +81,7 @@ const CustomerTableRow: React.FC<IProps> = (
 
   return (
     <Fragment>
-      <Table.Row key={rowData.CustomerSettingID}>
+      <Table.Row key={rowData.CustomerID}>
         <Table.Cell width="4">
           <div
             style={{
@@ -103,7 +103,7 @@ const CustomerTableRow: React.FC<IProps> = (
                 <Dropdown.Item
                   text="View/Edit"
                   icon="edit outline"
-                  onClick={() => onEdit(rowData.customerSettingID)}
+                  onClick={() => onEdit(rowData.customerID)}
                 />
 
                 <Dropdown.Item
@@ -118,10 +118,9 @@ const CustomerTableRow: React.FC<IProps> = (
                   onClick={onReleaseAccount}
                 />
 
-                {rowData.status != "CANCEL" &&
-                  rowData.CustomerSettingID == "" && (
-                    <Dropdown.Item text="Cancel" icon="remove circle" />
-                  )}
+                {rowData.status != "CANCEL" && rowData.CustomerID == "" && (
+                  <Dropdown.Item text="Cancel" icon="remove circle" />
+                )}
               </Dropdown.Menu>
             </Dropdown>
           </div>

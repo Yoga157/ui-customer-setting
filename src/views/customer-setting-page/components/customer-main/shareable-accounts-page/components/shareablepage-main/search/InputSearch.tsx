@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import { Input, Button, Grid } from "semantic-ui-react";
+import { Input, Button } from "semantic-ui-react";
 import styles from "./InputSearch.module.scss";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUserResult } from "selectors/user/UserSelector";
 import IStore from "models/IStore";
-import IUserResult from "selectors/user/models/IUserResult";
 import * as CustomerSetting from "stores/customer-setting/CustomerActivityActions";
-import { useLocation, RouteProps } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
 
 export const InputSearch: React.FC = () => {
@@ -22,15 +20,10 @@ export const InputSearch: React.FC = () => {
   };
 
   const onSearch = () => {
-    if (location.pathname == "/customer-setting") {
+    if (location.pathname == "/customer-setting-page") {
       if (btnCancel || searchText.length === 0) {
         dispatch(
-          CustomerSetting.requestShareabledAcc(
-            1,
-            10,
-            "CustomerSettingID",
-            "ascending"
-          )
+          CustomerSetting.requestShareabledAcc(1, 10, "CustomerID", "ascending")
         );
         dispatch(CustomerSetting.setActivePage(1));
         setSearchText("");
@@ -59,7 +52,6 @@ export const InputSearch: React.FC = () => {
       style={{
         display: "flex",
         flexDirection: "row",
-        // width: "fit-content",
         alignItems: "center",
       }}
     >

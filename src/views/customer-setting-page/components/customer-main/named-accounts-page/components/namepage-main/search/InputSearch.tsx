@@ -22,15 +22,10 @@ export const InputSearch: React.FC = () => {
   };
 
   const onSearch = () => {
-    if (location.pathname == "/customer-setting") {
+    if (location.pathname == "/customer-setting-page") {
       if (btnCancel || searchText.length === 0) {
         dispatch(
-          CustomerSetting.requestNamedAcc(
-            1,
-            10,
-            "CustomerSettingID",
-            "ascending"
-          )
+          CustomerSetting.requestNamedAcc(1, 10, "CustomerID", "ascending")
         );
         dispatch(CustomerSetting.setActivePage(1));
         setSearchText("");
@@ -38,7 +33,12 @@ export const InputSearch: React.FC = () => {
       } else {
         if (searchText.length > 1) {
           dispatch(
-            CustomerSetting.requestSearchNamedAcc(1, 10, null, searchText)
+            CustomerSetting.requestSearchNamedAcc(
+              1,
+              10,
+              "CustomerID",
+              searchText
+            )
           );
           dispatch(CustomerSetting.setActivePage(1));
           setBtnCancel(!btnCancel);
