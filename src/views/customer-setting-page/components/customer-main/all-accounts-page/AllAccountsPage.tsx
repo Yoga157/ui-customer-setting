@@ -18,10 +18,9 @@ import ModalSizeEnum from "constants/ModalSizeEnum";
 import CreateForm from "./components/allaccountspage-main/form/form-create/FormAdd";
 import AdjustSettingForm from "./components/allaccountspage-main/form/form-setting/FormSetting";
 import DeleteCustomer from "./components/allaccountspage-main/delete/delete-customer";
-import { selectCustomerSetting } from "selectors/customer-setting/CustomerSettingSelector";
+import { selectAllAccount } from "selectors/customer-setting/CustomerSettingSelector";
 import RouteEnum from "constants/RouteEnum";
 import FilterCustomer from "./components/allaccountspage-main/filter/FilterCustomer";
-import { ShareableData } from "./shareabledata";
 
 interface IProps {
   history: any;
@@ -57,7 +56,7 @@ const AllAccountsPage: React.FC<IProps> = (
     )! as HTMLInputElement;
     if (search.value.length > 0) {
       dispatch(
-        CustomerActions.requestSearchCustomerSett(
+        CustomerActions.requestSearchAllAcc(
           1,
           tableData.totalRow,
           "CustomerSettingID",
@@ -66,7 +65,7 @@ const AllAccountsPage: React.FC<IProps> = (
       );
     } else {
       dispatch(
-        CustomerActions.requestCustomerSett(
+        CustomerActions.requestAllAcc(
           1,
           tableData.totalRow,
           "CustomerSettingID",
@@ -115,9 +114,7 @@ const AllAccountsPage: React.FC<IProps> = (
   };
 
   useEffect(() => {
-    dispatch(
-      CustomerActions.requestCustomerSett(1, pageSize, "CustomerSettingID")
-    );
+    dispatch(CustomerActions.requestAllAcc(1, pageSize, "CustomerSettingID"));
   }, [dispatch]);
 
   const handlePaginationChange = (e: any, data: any) => {
@@ -130,7 +127,7 @@ const AllAccountsPage: React.FC<IProps> = (
       if (search.value.length > 0) {
         // console.log("search");
         dispatch(
-          CustomerActions.requestSearchCustomerSett(
+          CustomerActions.requestSearchAllAcc(
             data.activePage,
             pageSize,
             "CustomerSettingID",
@@ -139,7 +136,7 @@ const AllAccountsPage: React.FC<IProps> = (
         );
       } else {
         dispatch(
-          CustomerActions.requestCustomerSett(
+          CustomerActions.requestAllAcc(
             data.activePage,
             pageSize,
             "CustomerSettingID",
@@ -152,77 +149,74 @@ const AllAccountsPage: React.FC<IProps> = (
 
   const isRequesting: boolean = useSelector((state: IStore) =>
     selectRequesting(state, [
-      CustomerActions.REQUEST_CUSTOMERS_SETTING,
-      CustomerActions.REQUEST_CUSTOMERS_SETTING_SEARCH,
+      CustomerActions.REQUEST_ALL_ACCOUNTS,
+      CustomerActions.REQUEST_ALL_SEARCH_FINISHED,
     ])
   );
 
-  const tableData = useSelector((state: IStore) =>
-    selectCustomerSetting(state)
-  );
+  const tableData = useSelector((state: IStore) => selectAllAccount(state));
 
   /** Advanced filter */
   const [openFilter, setOpenFilter] = useState(false);
 
   return (
     <Fragment>
-      {/* <LoadingIndicator isActive={isRequesting}> */}
-      <div className="search-container">
-        <Button
-          className="m-05r"
-          icon="sliders horizontal"
-          size="big"
-          color="yellow"
-          disabled={false}
-          onClick={() => setOpenFilter(!openFilter)}
-        />
-        <InputSearch />
-      </div>
-
-      <div className="fitur-container">
-        <div className=" center-fitur-container">
-          <h2 className="h2-container">Customer List</h2>
-        </div>
-
-        <div className="posision-container-right">
-          <Tooltips
-            content="Export Excel"
-            trigger={
-              <Button
-                className="m-05r"
-                icon="file excel"
-                color="blue"
-                disabled={false}
-                floated="right"
-                size="small"
-                content="Export Excel"
-                onClick={exportTableToExcel}
-              />
-            }
+      <LoadingIndicator isActive={isRequesting}>
+        <div className="search-container">
+          <Button
+            className="m-05r"
+            icon="sliders horizontal"
+            size="big"
+            color="yellow"
+            disabled={false}
+            onClick={() => setOpenFilter(!openFilter)}
           />
+          <InputSearch />
         </div>
-      </div>
 
-      <Grid columns="equal">
-        <Grid.Column>
-          <div className="wrapper-table">
-            <CustomerTable
-              history={props.history}
-              tableData={ShareableData}
-              // tableData={NameData}
-              getRowData={setNewRowData}
-              data={rowData}
+        <div className="fitur-container">
+          <div className=" center-fitur-container">
+            <h2 className="h2-container">Customer List</h2>
+          </div>
+
+          <div className="posision-container-right">
+            <Tooltips
+              content="Export Excel"
+              trigger={
+                <Button
+                  className="m-05r"
+                  icon="file excel"
+                  color="blue"
+                  disabled={false}
+                  floated="right"
+                  size="small"
+                  content="Export Excel"
+                  onClick={exportTableToExcel}
+                />
+              }
             />
           </div>
-          <Pagination
-            activePage={activePage}
-            onPageChange={(e, data) => handlePaginationChange(e, data)}
-            totalPage={tableData.totalRow}
-            pageSize={pageSize}
-          />
-        </Grid.Column>
-      </Grid>
-      {/* </LoadingIndicator> */}
+        </div>
+
+        <Grid columns="equal">
+          <Grid.Column>
+            <div className="wrapper-table">
+              <CustomerTable
+                history={props.history}
+                tableData={tableData}
+                getRowData={setNewRowData}
+                data={rowData}
+              />
+            </div>
+            <Pagination
+              activePage={activePage}
+              onPageChange={(e, data) => handlePaginationChange(e, data)}
+              totalPage={tableData.totalRow}
+              pageSize={pageSize}
+            />
+          </Grid.Column>
+        </Grid>
+      </LoadingIndicator>
 
       {openFilter && (
         <FilterCustomer

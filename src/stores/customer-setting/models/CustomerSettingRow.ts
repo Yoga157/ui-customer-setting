@@ -9,18 +9,20 @@ export default class CustomerSettingRow extends BaseModel {
   customerID: number = 0;
   customerCategory: string = "";
   customerName: string = "";
+  customerAddress: string = "";
   lastProjectName: string = "";
-  salesAssign: boolean = false;
+  salesName: string = "";
   relatedCustomer: string = "";
   invoiceCondition: string = "";
   shareable: boolean = false;
   pmoCustomer: boolean = false;
   blacklist: boolean = false;
+  named: boolean = false;
   holdshipment: boolean = false;
-  createUserID: string = "";
-  createDate?: Date = undefined;
-  modifyUserID: string = "";
-  modifyDate?: Date = undefined;
+  createdBy: string = "";
+  createdDate?: Date = undefined;
+  modifiedBy: string = "";
+  modifiedDate?: Date = undefined;
 
   constructor(data: Partial<CustomerSettingRow>) {
     super();
@@ -33,16 +35,18 @@ export default class CustomerSettingRow extends BaseModel {
       customerID: ConversionTypeEnum.Number,
       customerCategory: ConversionTypeEnum.String,
       customerName: ConversionTypeEnum.String,
+      customerAddress: ConversionTypeEnum.String,
       lastProjectName: ConversionTypeEnum.String,
-      salesAssign: ConversionTypeEnum.Boolean,
+      salesName: ConversionTypeEnum.String,
       relatedCustomer: ConversionTypeEnum.String,
       invoiceCondition: ConversionTypeEnum.String,
       shareable: ConversionTypeEnum.Boolean,
       pmoCustomer: ConversionTypeEnum.Boolean,
       blacklist: ConversionTypeEnum.Boolean,
+      named: ConversionTypeEnum.Boolean,
       holdshipment: ConversionTypeEnum.Boolean,
-      createUserID: ConversionTypeEnum.String,
-      modifyUserID: ConversionTypeEnum.String,
+      createdBy: ConversionTypeEnum.String,
+      modifiedBy: ConversionTypeEnum.String,
     };
 
     super.update(data, conversionOptions);

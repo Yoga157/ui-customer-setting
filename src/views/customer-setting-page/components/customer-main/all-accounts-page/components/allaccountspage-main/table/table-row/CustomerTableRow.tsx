@@ -89,7 +89,7 @@ const CustomerTableRow: React.FC<IProps> = (
             </div>
             <Dropdown pointing="left" icon="ellipsis vertical">
               <Dropdown.Menu>
-                {rowData.Status == "Shareable Accounts" && (
+                {rowData.shareable == true && (
                   <>
                     <Dropdown.Item
                       text="View/Edit"
@@ -99,7 +99,7 @@ const CustomerTableRow: React.FC<IProps> = (
                   </>
                 )}
 
-                {rowData.Status == "No Name Accounts" && (
+                {rowData.named == false && (
                   <>
                     <Dropdown.Item
                       text="View/Edit"
@@ -115,7 +115,7 @@ const CustomerTableRow: React.FC<IProps> = (
                   </>
                 )}
 
-                {rowData.Status == "Name Accounts" && (
+                {rowData.named == true && (
                   <>
                     <Dropdown.Item
                       text="View/Edit"
@@ -141,7 +141,7 @@ const CustomerTableRow: React.FC<IProps> = (
           </div>
         </Table.Cell>
         <Table.Cell>
-          {rowData.Status === "No Name Accounts" && (
+          {rowData.named === false && (
             <div
               style={{
                 backgroundColor: "#949aa1",
@@ -156,12 +156,12 @@ const CustomerTableRow: React.FC<IProps> = (
               }}
             >
               <p style={{ fontSize: "1rem", textAlign: "center" }}>
-                {rowData.Status}
+                No Name Accounts
               </p>
             </div>
           )}
 
-          {rowData.Status === "Name Accounts" && (
+          {rowData.named === true && (
             <div
               style={{
                 backgroundColor: "#656dd1",
@@ -176,12 +176,12 @@ const CustomerTableRow: React.FC<IProps> = (
               }}
             >
               <p style={{ fontSize: "1rem", textAlign: "center" }}>
-                {rowData.Status}
+                Named Accounts
               </p>
             </div>
           )}
 
-          {rowData.Status === "Shareable Accounts" && (
+          {rowData.shareable === true && (
             // Menambahkan logika atau elemen JSX sesuai kebutuhan
             <div
               style={{
@@ -197,7 +197,7 @@ const CustomerTableRow: React.FC<IProps> = (
               }}
             >
               <p style={{ fontSize: "1rem", textAlign: "center" }}>
-                {rowData.Status}
+                Shareable Accounts
               </p>
             </div>
           )}
@@ -229,7 +229,19 @@ const CustomerTableRow: React.FC<IProps> = (
             </p>{" "}
           </div>
         </Table.Cell>
-        <Table.Cell>{rowData.CustomerAddress}</Table.Cell>
+        <Table.Cell>
+          {" "}
+          <div
+            style={{
+              borderRadius: "1rem",
+              width: "40rem",
+              margin: "auto",
+              display: "flex",
+            }}
+          >
+            <p style={{ fontSize: "1rem" }}> {rowData.customerAddress}</p>{" "}
+          </div>
+        </Table.Cell>
         <Table.Cell>
           <div
             style={{
@@ -275,7 +287,7 @@ const CustomerTableRow: React.FC<IProps> = (
               }}
             >
               {" "}
-              {rowData.salesAssign}{" "}
+              {rowData.salesName}{" "}
             </p>{" "}
           </div>
         </Table.Cell>
@@ -393,13 +405,13 @@ const CustomerTableRow: React.FC<IProps> = (
               }}
             >
               {" "}
-              {rowData.createUserID}
+              {rowData.createdBy}
             </p>{" "}
           </div>
         </Table.Cell>
-        <Table.Cell>{rowData.createDate}</Table.Cell>
-        <Table.Cell>{rowData.modifyUserID}</Table.Cell>
-        <Table.Cell>{rowData.modifyDate}</Table.Cell>
+        <Table.Cell>{rowData.createdDate}</Table.Cell>
+        <Table.Cell>{rowData.modifiedBy}</Table.Cell>
+        <Table.Cell>{rowData.modifiedDate}</Table.Cell>
       </Table.Row>
     </Fragment>
   );

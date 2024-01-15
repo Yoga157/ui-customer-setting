@@ -125,7 +125,7 @@ const CustomerTableRow: React.FC<IProps> = (
           >
             <p style={{ fontSize: "1rem", textAlign: "center" }}>
               {" "}
-              {rowData.Status}
+              Shareable Account{" "}
             </p>{" "}
           </div>
         </Table.Cell>
@@ -139,7 +139,6 @@ const CustomerTableRow: React.FC<IProps> = (
               maxWidth: "20rem",
               width: "15rem",
               margin: "auto",
-              height: "2rem",
               display: "flex",
               // justifyContent: "center",
               // textAlign: "center",
@@ -156,14 +155,26 @@ const CustomerTableRow: React.FC<IProps> = (
             </p>{" "}
           </div>
         </Table.Cell>
-        <Table.Cell>{rowData.CustomerAddress}</Table.Cell>
+        <Table.Cell>
+          {" "}
+          <div
+            style={{
+              borderRadius: "1rem",
+              width: "40rem",
+              margin: "auto",
+              display: "flex",
+            }}
+          >
+            <p style={{ fontSize: "1rem" }}> {rowData.customerAddress}</p>{" "}
+          </div>
+        </Table.Cell>
         <Table.Cell>
           <div
             style={{
               color: "white",
               borderRadius: "1rem",
-              maxWidth: "25rem",
-              width: "20rem",
+              maxWidth: "20rem",
+              width: "15rem",
               margin: "auto",
               height: "2rem",
               display: "flex",
@@ -320,13 +331,13 @@ const CustomerTableRow: React.FC<IProps> = (
               }}
             >
               {" "}
-              {rowData.createUserID}
+              {rowData.createdBy}
             </p>{" "}
           </div>
         </Table.Cell>
-        <Table.Cell>{rowData.createDate}</Table.Cell>
-        <Table.Cell>{rowData.modifyUserID}</Table.Cell>
-        <Table.Cell>{rowData.modifyDate}</Table.Cell>
+        <Table.Cell>{rowData.createdDate}</Table.Cell>
+        <Table.Cell>{rowData.modifiedBy}</Table.Cell>
+        <Table.Cell>{rowData.modifiedDate}</Table.Cell>
       </Table.Row>
     </Fragment>
   );

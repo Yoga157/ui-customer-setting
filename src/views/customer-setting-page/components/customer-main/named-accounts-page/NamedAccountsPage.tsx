@@ -18,10 +18,9 @@ import ModalSizeEnum from "constants/ModalSizeEnum";
 import ModReleaseForm from "./components/namepage-main/form/form-releasemodal/FormRealeseMod";
 import AdjustSettingForm from "./components/namepage-main/form/form-setting/FormSetting";
 import DeleteCustomer from "./components/namepage-main/delete/delete-customer";
-import { selectCustomerSetting } from "selectors/customer-setting/CustomerSettingSelector";
+import { selectNameAccount } from "selectors/customer-setting/CustomerSettingSelector";
 import RouteEnum from "constants/RouteEnum";
 import FilterCustomer from "./components/namepage-main/filter/FilterCustomer";
-import { NameData } from "./dataname";
 
 interface IProps {
   history: any;
@@ -42,7 +41,6 @@ const NamedAccountsPage: React.FC<IProps> = (
 
   const setNewRowData = (data) => {
     setRowData(data);
-    // console.log(data);
   };
 
   const onReleaseAccount = useCallback((): void => {
@@ -60,7 +58,7 @@ const NamedAccountsPage: React.FC<IProps> = (
     )! as HTMLInputElement;
     if (search.value.length > 0) {
       dispatch(
-        CustomerActions.requestSearchCustomerSett(
+        CustomerActions.requestSearchNamedAcc(
           1,
           tableData.totalRow,
           "CustomerSettingID",
@@ -69,7 +67,7 @@ const NamedAccountsPage: React.FC<IProps> = (
       );
     } else {
       dispatch(
-        CustomerActions.requestCustomerSett(
+        CustomerActions.requestNamedAcc(
           1,
           tableData.totalRow,
           "CustomerSettingID",
@@ -82,7 +80,9 @@ const NamedAccountsPage: React.FC<IProps> = (
         let tableSelect: any;
         let tableHead: any;
 
-        if (window.location.pathname === "/data-quality/customer-setting") {
+        if (
+          window.location.pathname === "/data-quality/customer-setting-page"
+        ) {
           tableSelect = document.getElementById(
             "exporttosetting"
           ) as HTMLTableElement;
@@ -118,9 +118,7 @@ const NamedAccountsPage: React.FC<IProps> = (
   };
 
   useEffect(() => {
-    dispatch(
-      CustomerActions.requestCustomerSett(1, pageSize, "CustomerSettingID")
-    );
+    dispatch(CustomerActions.requestNamedAcc(1, pageSize, "CustomerSettingID"));
   }, [dispatch]);
 
   const handlePaginationChange = (e: any, data: any) => {
@@ -129,11 +127,10 @@ const NamedAccountsPage: React.FC<IProps> = (
       "#search-input-customer"
     )! as HTMLInputElement;
 
-    if (window.location.pathname === "/data-quality/customer-setting") {
+    if (window.location.pathname === "/data-quality/customer-setting-page") {
       if (search.value.length > 0) {
-        // console.log("search");
         dispatch(
-          CustomerActions.requestSearchCustomerSett(
+          CustomerActions.requestSearchNamedAcc(
             data.activePage,
             pageSize,
             "CustomerSettingID",
@@ -142,7 +139,7 @@ const NamedAccountsPage: React.FC<IProps> = (
         );
       } else {
         dispatch(
-          CustomerActions.requestCustomerSett(
+          CustomerActions.requestNamedAcc(
             data.activePage,
             pageSize,
             "CustomerSettingID",
@@ -155,14 +152,12 @@ const NamedAccountsPage: React.FC<IProps> = (
 
   const isRequesting: boolean = useSelector((state: IStore) =>
     selectRequesting(state, [
-      CustomerActions.REQUEST_CUSTOMERS_SETTING,
-      CustomerActions.REQUEST_CUSTOMERS_SETTING_SEARCH,
+      CustomerActions.REQUEST_NAMED_ACCOUNTS,
+      CustomerActions.REQUEST_NAMED_SEARCH_FINISHED,
     ])
   );
 
-  const tableData = useSelector((state: IStore) =>
-    selectCustomerSetting(state)
-  );
+  const tableData = useSelector((state: IStore) => selectNameAccount(state));
 
   /** Advanced filter */
   const [openFilter, setOpenFilter] = useState(false);
@@ -247,8 +242,7 @@ const NamedAccountsPage: React.FC<IProps> = (
           <div className="wrapper-table">
             <CustomerTable
               history={props.history}
-              tableData={NameData}
-              // tableData={NameData}
+              tableData={tableData}
               getRowData={setNewRowData}
               data={rowData}
             />

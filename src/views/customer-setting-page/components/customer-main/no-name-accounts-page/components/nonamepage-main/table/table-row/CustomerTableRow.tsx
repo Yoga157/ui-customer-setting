@@ -59,14 +59,16 @@ const CustomerTableRow: React.FC<IProps> = (
 
   const onEdit = (id: number) => {
     props.history.push({
-      pathname: "customer-setting/" + id,
+      pathname: "customer-setting-page/" + id,
       state: { rowData },
     });
   };
 
-  useEffect(() => {
-    console.log("Efect");
-  }, []);
+  // useEffect(() => {
+  //   console.log("Efect");
+  //   console.log("props.data", props.data);
+  //   console.log("rowData", rowData);
+  // }, [props.data, rowData]);
 
   return (
     <Fragment>
@@ -125,13 +127,36 @@ const CustomerTableRow: React.FC<IProps> = (
           >
             <p style={{ fontSize: "1rem", textAlign: "center" }}>
               {" "}
-              {rowData.Status}
+              No Name Accounts{" "}
             </p>{" "}
           </div>
         </Table.Cell>
         <Table.Cell textAlign="center">{rowData.customerID}</Table.Cell>
-        <Table.Cell>{rowData.customerName}</Table.Cell>
-        <Table.Cell>{rowData.CustomerAddress}</Table.Cell>
+        <Table.Cell>
+          <div
+            style={{
+              borderRadius: "1rem",
+              width: "15rem",
+              margin: "auto",
+              display: "flex",
+            }}
+          >
+            <p style={{ fontSize: "1rem" }}> {rowData.customerName}</p>{" "}
+          </div>
+        </Table.Cell>
+        <Table.Cell>
+          {" "}
+          <div
+            style={{
+              borderRadius: "1rem",
+              width: "40rem",
+              margin: "auto",
+              display: "flex",
+            }}
+          >
+            <p style={{ fontSize: "1rem" }}> {rowData.customerAddress}</p>{" "}
+          </div>
+        </Table.Cell>
         <Table.Cell textAlign="center">
           {rowData.blacklist === true ? (
             <div
@@ -190,10 +215,27 @@ const CustomerTableRow: React.FC<IProps> = (
             </div>
           )}
         </Table.Cell>
-        <Table.Cell textAlign="center">{rowData.createUserID}</Table.Cell>
-        <Table.Cell>{rowData.createDate}</Table.Cell>
-        <Table.Cell>{rowData.modifyUserID}</Table.Cell>
-        <Table.Cell>{rowData.modifyDate}</Table.Cell>
+        <Table.Cell textAlign="center">
+          {" "}
+          <div
+            style={{
+              borderRadius: "1rem",
+              width: "10rem",
+              margin: "auto",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <p style={{ fontSize: "1rem", textAlign: "center" }}>
+              {" "}
+              {rowData.createdBy}
+            </p>{" "}
+          </div>
+        </Table.Cell>
+        <Table.Cell>{rowData.createdDate}</Table.Cell>
+        <Table.Cell>{rowData.modifiedBy}</Table.Cell>
+        <Table.Cell>{rowData.modifiedDate}</Table.Cell>
       </Table.Row>
     </Fragment>
   );
