@@ -6,7 +6,7 @@ export default interface ICustomerState {
   readonly dataNoName: CustomerSettingModel;
   readonly dataNamed: CustomerSettingModel;
   readonly dataShareable: CustomerSettingModel;
-  readonly alldata: CustomerSettingModel;
+  readonly dataAll: CustomerSettingModel;
   readonly activePage: number;
   readonly dataByCustomerId: CustomerSettingById;
   error: boolean;

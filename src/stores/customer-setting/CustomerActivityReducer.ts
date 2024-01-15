@@ -13,7 +13,7 @@ export const initialState: ICustomerState = {
   dataNoName: new CustomerSettingModel({}),
   dataNamed: new CustomerSettingModel({}),
   dataShareable: new CustomerSettingModel({}),
-  alldata: new CustomerSettingModel({}),
+  dataAll: new CustomerSettingModel({}),
   dataByCustomerId: new CustomerSettingById({}),
   error: false,
   refreshPage: false,
@@ -64,7 +64,7 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
   ): ICustomerState {
     return {
       ...state,
-      alldata: action.payload!,
+      dataAll: action.payload!,
       error: false,
       refreshPage: false,
     };
@@ -119,13 +119,13 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     };
   },
 
-  [CustomerActions.REQUEST_ALL_SEARCH](
+  [CustomerActions.REQUEST_ALL_SEARCH_FINISHED](
     state: ICustomerState,
     action: IAction<CustomerSettingModel>
   ): ICustomerState {
     return {
       ...state,
-      alldata: action.payload!,
+      dataAll: action.payload!,
       error: false,
       refreshPage: false,
     };

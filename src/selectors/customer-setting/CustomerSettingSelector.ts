@@ -176,7 +176,7 @@ const _mappingObjectTableAllRow = (model: any): any => {
 };
 
 export const selectAllAccount: Selector<IStore, any> = createSelector(
-  (state: IStore) => state.customerSetting.alldata!,
+  (state: IStore) => state.customerSetting.dataAll!,
   _selectAllAccount
 );
 
