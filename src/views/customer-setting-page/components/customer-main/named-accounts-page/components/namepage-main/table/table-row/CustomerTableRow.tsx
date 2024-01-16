@@ -8,9 +8,6 @@ import { selectUserResult } from "selectors/user/UserSelector";
 import IUserResult from "selectors/user/models/IUserResult";
 import IStore from "models/IStore";
 import "./CustomerTableRowStyle.scss";
-import AddSalesAssign from "../../form/form-releasemodal/FormRealeseMod";
-import RouteEnum from "constants/RouteEnum";
-import * as CustomerSettActions from "stores/customer-setting/CustomerActivityActions";
 import RequestForm from "../../form/form-reqshareaccount/FormReqShare";
 import ReleaseForm from "../../form/form-release/FormRelease";
 
@@ -31,6 +28,11 @@ const CustomerTableRow: React.FC<IProps> = (
   );
 
   const { rowData, getRowData } = props;
+  const [isChecked, setIsChecked] = useState(false);
+
+  useEffect(() => {
+    setIsChecked(false);
+  }, [rowData]);
 
   const setRowData = (data) => {
     let checkData = props.data.find(
@@ -46,6 +48,7 @@ const CustomerTableRow: React.FC<IProps> = (
     } else {
       getRowData([...props.data, data]);
     }
+    setIsChecked((prevChecked) => !prevChecked);
   };
 
   const onRequestAccount = useCallback((): void => {
@@ -56,6 +59,7 @@ const CustomerTableRow: React.FC<IProps> = (
         ModalSizeEnum.Tiny
       )
     );
+    getRowData([]);
   }, [dispatch, rowData]);
 
   const onReleaseAccount = useCallback((): void => {
@@ -95,6 +99,7 @@ const CustomerTableRow: React.FC<IProps> = (
                 <input
                   type="checkbox"
                   onClick={() => setRowData(rowData)}
+                  checked={isChecked}
                 ></input>
               </label>
             </div>

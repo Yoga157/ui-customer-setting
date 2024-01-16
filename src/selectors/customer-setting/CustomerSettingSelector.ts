@@ -12,7 +12,7 @@ export default interface ICustomerSettingOptions {
 //Selector No Name Account
 const _selectCustomerSetting = (models: any): any => {
   return {
-    totalRow: models.totalRows,
+    totalRowNoName: models.totalRows,
     rows: _createTableRows(models.rows),
   };
 };
