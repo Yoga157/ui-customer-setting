@@ -1,5 +1,5 @@
-import React, { Fragment, useState, useCallback, useEffect,} from "react";
-import "./ViewCustomerSetting.scss";
+import React, { Fragment, useState, useCallback, useEffect, useRef} from "react";
+import "./ViewEditCustomer.scss";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLevelActions";
@@ -7,15 +7,15 @@ import ModalSizeEnum from "constants/ModalSizeEnum";
 import { Form as FinalForm, Field } from "react-final-form";
 import { Link, useParams } from "react-router-dom";
 import { Divider, Dropdown, Form, Label, Icon, Table, Button, Checkbox, Input } from "semantic-ui-react";
-import { SearchInput, DropdownClearInput, CheckBox as CheckboxInvoicing, RichTextEditor, Pagination } from "views/components/UI";
+import { DropdownClearInput, CheckBox as CheckboxInvoicing, RichTextEditor, Pagination } from "views/components/UI";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
-import * as data from "./data"
+import * as data from "../../data"
 
-import ModalNewInvoicingCondition from "./components/modal/modal-new-invoicing-condition/ModalNewInvoicingCondition";
-import ModalNewRelatedCondition from "./components/modal/modal-new-related-customer/ModalNewRelatedCustomer";
-import ModalNewRelatedFile from "./components/modal/modal-new-related-file/ModalNewRelatedFile";
-import TableNewCustomerSetting from "./components/table/table-new-customer-setting/TableNewCustomerSetting";
-import { DeletePopUp } from "./components/delete";
+import ModalNewInvoicingCondition from "../modal/modal-new-invoicing-condition/ModalNewInvoicingCondition";
+import ModalNewRelatedCondition from "../modal/modal-new-related-customer/ModalNewRelatedCustomer";
+import ModalNewRelatedFile from "../modal/modal-new-related-file/ModalNewRelatedFile";
+import TableNewCustomerSetting from "../table/table-new-customer-setting/TableNewCustomerSetting";
+import { DeletePopUp } from "../delete";
 
 import { selectCustomerById, selectCustomerSearchOptions } from "selectors/select-options/CustomerNameSelector";
 import IStore from "models/IStore";
@@ -50,23 +50,39 @@ import { selectCollectionHistory } from "selectors/collection-history/Collection
 import { selectInvoicingSchedule } from "selectors/invoicing-schedule/InvoicingScheduleSelector";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import { selectProjectHistory } from "selectors/project-history/ProjectHistorySelector";
-import TableProjectHistory from "./components/table/table-project-history/TableProjectHistory";
-import TableCollectionHistory from "./components/table/table-collection-history/TableCollectionHistory";
+import TableProjectHistory from "../table/table-project-history/TableProjectHistory";
+import TableCollectionHistory from "../table/table-collection-history/TableCollectionHistory";
 
 interface IProps {
-    history: any;
+    customer: {
+        customerSettingID: number,
+        customerID: number,
+        shareable: boolean,
+        named: boolean,
+        pmoCustomer: boolean,
+        customerCategory: string,
+        customerName: string,
+        customerAddress: string,
+        blacklist: boolean,
+        holdshipment: boolean,
+        avgAR: number,
+        shareableApprovalStatus: any
+    },
+    role: string
 }
 
 interface routeParams {
     id: string;
 }
 
-const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
+const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
     const dispatch: Dispatch = useDispatch();
-    const { id } = useParams<routeParams>();
+    const { customer, role } = props;
     
     /** Customer data */
-    const customerData = useSelector((state: IStore) => selectCustomerById(state));
+    const accountStatus = (customer.named == null && customer.shareable == null) ? "No Name Account" : (customer.named ? "Named Account" : "Shareable Account");
+    
+    // const customerData = useSelector((state: IStore) => selectCustomerById(state));
     const customerSettingData = useSelector((state: IStore) => selectCustomerSettingByCustomerId(state))
 
     const onSubmitCustCategory = async (e) => {
@@ -109,7 +125,6 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
     const [cancelBtn, setCancelBtn] = useState(false);
 
     const onChangeSearch = (event: any, data: any) => {
-        // console.log(data)
         setSearchText(data.value);
         if(data.value == "") {
             setCancelBtn(false);
@@ -156,51 +171,9 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
     /** Search Sales */
     const salesHistoryData = useSelector((state: IStore) => selectSalesHistory(state));
 
-    const deleteSalesAssign = useCallback((idToDel: number): void => {
-        dispatch(
-          ModalFirstLevelActions.OPEN(
-            <DeletePopUp deleteFunc={SalesAssign.deleteSalesAssign} refreshFunc={SalesAssign.requestSalesHistory} id={idToDel} customerSettingID={Number(id)} content="sales" />,
-            ModalSizeEnum.Tiny
-          )
-        );
-    }, [dispatch]);
-
-    const [salesName, setSalesName] = useState('');    
-    const [salesAssign, setSalesAssign] = useState([]);
-    const salesStoreSearch = useSelector((state: IStore) => selectSalesSearchOptions(state));
-
-    const handleSearchChangeSales = useCallback((data) => {
-        setSalesName(data);
-        if(data.length >= 2) {
-            dispatch(SalesAssign.requestSalesByName(data));
-        }
-    }, [dispatch])
-
-    const onResultSelectSales = (data: any) => {
-        setSalesName("");
-        let checkSales = salesAssign.find((obj) => obj.salesID === data.result.salesID);
-
-        if (checkSales === undefined) {
-            setSalesAssign([...salesAssign, {
-                salesName: data.result.title,
-                salesID: data.result.salesID
-            }])
-        }
-    };
-
-    const onSubmitSalesHandler = async (e) => {
-        console.log(e);
-        console.log(salesName);
-    }
-
-    const onDeleteSalesAssign = (salesID) => {
-        const arrayFiltered = salesAssign.filter(sales => sales.salesID !== salesID);
-        setSalesAssign(arrayFiltered);
-    }
-
     /** Add setting */
     const [shareable, setShareable] = useState(customerSettingData.shareable ? "TRUE" : "FALSE");
-    const [pmoCustomer, setPmoCustomer] = useState(customerSettingData.pmoCustomer ? "TRUE" : "FALSE");
+    const [pmoCustomer, setPmoCustomer] = useState(customer.pmoCustomer ? "TRUE" : "FALSE");
 
     const handleShareable = () => {
         if(shareable == "FALSE") {
@@ -257,44 +230,31 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
         console.log(values)
         console.log(daysArray)
 
-        const NewCustomerSettingData = new CustomerSettingById({})
-        NewCustomerSettingData.customerSettingID = Number(id);
-        NewCustomerSettingData.customerID = customerSettingData.customerID;
-        NewCustomerSettingData.customerCategoryID = customerSettingData.customerCategoryID;
-        NewCustomerSettingData.shareable = shareable == "TRUE" ? true : false;
-        NewCustomerSettingData.pmoCustomer = pmoCustomer == "TRUE" ? true : false;
-        NewCustomerSettingData.createUserID = customerSettingData.createUserID;
-        NewCustomerSettingData.modifyUserID = userLogin?.employeeID != null ? userLogin.employeeID : 0;
+        // const NewCustomerSettingData = new CustomerSettingById({})
+        // NewCustomerSettingData.customerSettingID = Number(id);
+        // NewCustomerSettingData.customerID = customerSettingData.customerID;
+        // NewCustomerSettingData.customerCategoryID = customerSettingData.customerCategoryID;
+        // NewCustomerSettingData.shareable = shareable == "TRUE" ? true : false;
+        // NewCustomerSettingData.pmoCustomer = pmoCustomer == "TRUE" ? true : false;
+        // NewCustomerSettingData.createUserID = customerSettingData.createUserID;
+        // NewCustomerSettingData.modifyUserID = userLogin?.employeeID != null ? userLogin.employeeID : 0;
         
-        await dispatch(CustomerSetting.putCustomerSetting(NewCustomerSettingData, Number(id)));
+        // await dispatch(CustomerSetting.putCustomerSetting(NewCustomerSettingData, Number(id)));
 
         /** post invoicing schedule */
         let remark = values.remark;
 
-        const NewInvoicingSchedule = new InvoicingScheduleModel({});
-        NewInvoicingSchedule.scheduleID = invoicingSchedule.scheduleID;
-        NewInvoicingSchedule.customerSettingID = Number(id);
-        NewInvoicingSchedule.scheduleDays = daysArray.join(", ");
-        NewInvoicingSchedule.remark = remark;
-        NewInvoicingSchedule.minDate = minDate;
-        NewInvoicingSchedule.maxDate = maxDate;
-        NewInvoicingSchedule.createUserID = invoicingSchedule.createUserID;
-        NewInvoicingSchedule.modifyUserID = userLogin?.employeeID;
+        // const NewInvoicingSchedule = new InvoicingScheduleModel({});
+        // NewInvoicingSchedule.scheduleID = invoicingSchedule.scheduleID;
+        // NewInvoicingSchedule.customerSettingID = Number(id);
+        // NewInvoicingSchedule.scheduleDays = daysArray.join(", ");
+        // NewInvoicingSchedule.remark = remark;
+        // NewInvoicingSchedule.minDate = minDate;
+        // NewInvoicingSchedule.maxDate = maxDate;
+        // NewInvoicingSchedule.createUserID = invoicingSchedule.createUserID;
+        // NewInvoicingSchedule.modifyUserID = userLogin?.employeeID;
 
-        dispatch(InvoicingSchedule.putInvoicingSchedule(NewInvoicingSchedule, invoicingSchedule.scheduleID))
-
-        salesAssign.map((data) => {
-            const NewAssignSales = new SalesAssignPostModel({});
-            NewAssignSales.assignID = 0;
-            NewAssignSales.SalesID = data.salesID;
-            NewAssignSales.CustomerSettingID = Number(id);
-            NewAssignSales.AssignedBy = userLogin?.employeeID;
-            NewAssignSales.createDate = new Date();
-            NewAssignSales.createUserID = userLogin?.employeeID;
-            NewAssignSales.modifyUserID = userLogin?.employeeID;
-
-            dispatch(SalesAssign.postAssignedSales(NewAssignSales));
-        })
+        // dispatch(InvoicingSchedule.putInvoicingSchedule(NewInvoicingSchedule, invoicingSchedule.scheduleID))
 
         // dispatch(CustomerSetting.postCustomerSetting(NewCustomerSettingData));
         dispatch(ToastsAction.add('Edit customer setting data success!', ToastStatusEnum.Success));
@@ -331,7 +291,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
     const onAddInvoicingCondition = useCallback((): void => {
         dispatch(
           ModalFirstLevelActions.OPEN(
-            <ModalNewInvoicingCondition customerSettingID={Number(id)} />,
+            <ModalNewInvoicingCondition customerSettingID={customer.customerID} />,
             ModalSizeEnum.Small
           )
         );
@@ -342,7 +302,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
     const deleteInvoicingCondition = useCallback((idToDel: number): void => {
         dispatch(
           ModalFirstLevelActions.OPEN(
-            <DeletePopUp deleteFunc={InvoicingCondition.deleteInvoicingCondition} refreshFunc={InvoicingCondition.requestInvoicingCondition} id={idToDel} customerSettingID={Number(id)} content="invoicing condition" />,
+            <DeletePopUp deleteFunc={InvoicingCondition.deleteInvoicingCondition} refreshFunc={InvoicingCondition.requestInvoicingCondition} id={idToDel} customerSettingID={customer.customerID} content="invoicing condition" />,
             ModalSizeEnum.Tiny
           )
         );
@@ -352,7 +312,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
     const onAddRelatedCustomer = useCallback((): void => {
         dispatch(
           ModalFirstLevelActions.OPEN(
-            <ModalNewRelatedCondition customerSettingID={Number(id)} />,
+            <ModalNewRelatedCondition customerSettingID={customer.customerID} />,
             ModalSizeEnum.Tiny
           )
         );
@@ -363,7 +323,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
     const deleteRelatedCustomer = useCallback((idToDel: number): void => {
         dispatch(
           ModalFirstLevelActions.OPEN(
-            <DeletePopUp deleteFunc={RelatedCustomer.deleteRelatedCustomer} refreshFunc={RelatedCustomer.requestRelatedCustomer} id={idToDel} customerSettingID={Number(id)} content="related customer" />,
+            <DeletePopUp deleteFunc={RelatedCustomer.deleteRelatedCustomer} refreshFunc={RelatedCustomer.requestRelatedCustomer} id={idToDel} customerSettingID={customer.customerID} content="related customer" />,
             ModalSizeEnum.Tiny
           )
         );
@@ -373,7 +333,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
     const onAddRelatedFile = useCallback((): void => {
         dispatch(
           ModalFirstLevelActions.OPEN(
-            <ModalNewRelatedFile customerSettingID={Number(id)} />,
+            <ModalNewRelatedFile customerSettingID={customer.customerID} />,
             ModalSizeEnum.Small
           )
         );
@@ -384,7 +344,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
     const deleteRelatedFile = useCallback((idToDel: number): void => {
         dispatch(
         ModalFirstLevelActions.OPEN(
-            <DeletePopUp deleteFunc={RelatedFile.deleteRelatedFile} refreshFunc={RelatedFile.requestRelatedFile} id={idToDel} customerSettingID={Number(id)} content="related file" />,
+            <DeletePopUp deleteFunc={RelatedFile.deleteRelatedFile} refreshFunc={RelatedFile.requestRelatedFile} id={idToDel} customerSettingID={customer.customerID} content="related file" />,
             ModalSizeEnum.Tiny
         )
         );
@@ -392,12 +352,12 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
     
     /** data yang perlu di get */
     useEffect(() => {
-            dispatch(InvoicingCondition.requestInvoicingCondition(Number(id)))
-            dispatch(RelatedCustomer.requestRelatedCustomer(Number(id)))
-            dispatch(RelatedFile.requestRelatedFile(Number(id)))
-            dispatch(SalesAssign.requestSalesHistory(Number(id)))
-            dispatch(InvoicingSchedule.requestInvoicingSchedule(Number(id)))
-            dispatch(CustomerSetting.requestCustomerSettingById(Number(id)))
+            // dispatch(InvoicingCondition.requestInvoicingCondition(Number(id)))
+            // dispatch(RelatedCustomer.requestRelatedCustomer(Number(id)))
+            // dispatch(RelatedFile.requestRelatedFile(Number(id)))
+            // dispatch(SalesAssign.requestSalesHistory(Number(id)))
+            // dispatch(InvoicingSchedule.requestInvoicingSchedule(Number(id)))
+            // dispatch(CustomerSetting.requestCustomerSettingById(Number(id)))
 
             // setSettingData(customerSettingData)
     }, [dispatch])
@@ -414,8 +374,6 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
             dispatch(ProjectHistory.requestServiceSummary(customerSettingData.customerID))
             setShareable(customerSettingData.shareable ? "TRUE": "FALSE")
             setPmoCustomer(customerSettingData.pmoCustomer ? "TRUE": "FALSE")
-            
-            console.log(customerData)
         }
         
         if(!Number.isNaN(invoicingSchedule.scheduleID)) {
@@ -450,9 +408,88 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
         ])
     );
 
+    /** mengatur style dan fungsionalitas status approval */
+    const firstDivRef = useRef(null);
+    const secondDivRef = useRef(null);
+    const hrRef = useRef(null);
+
+    const statusDivRef = useRef(null);
+    const linkRef = useRef(null);
+
+    // state untuk membuka dan menutup status approval
+    const [showStatus, setShowStatus] = useState(false);
+    const [navbarHeight, setNavbarHeight] = useState(0);
+
+    useEffect(() => {
+        const firstDivElement = firstDivRef.current;
+        const secondDivElement = secondDivRef.current;
+        
+        if (firstDivElement && secondDivElement) {
+            const firstElementWidth = firstDivElement.offsetWidth;
+            const secondElementWidth = secondDivElement.offsetWidth;
+            
+            hrRef.current.style.paddingLeft = `calc(${firstElementWidth/2}px + 5.5em)`;
+            hrRef.current.style.paddingRight = `calc(${secondElementWidth/2}px + 5.5em)`;
+        }
+        
+        const statusDivElement = statusDivRef.current;
+
+        if (statusDivElement) {
+            const statusElementHeight = statusDivElement.offsetHeight;
+            linkRef.current.style.marginTop = `calc(${statusElementHeight}px + 1em)`;
+        }
+
+        const navbarElement = document.querySelector('.DisInlineBlock') as HTMLElement;
+
+        if (navbarElement) {
+            const navbarHeight = navbarElement.offsetHeight;
+            setNavbarHeight(navbarHeight)
+        }
+      }, [setNavbarHeight, showStatus]);
+
     return (
         <Fragment>
-            <Link to="/customer-setting" className="link">{"< Back to Customer Setting List"}</Link>
+            {customer?.shareableApprovalStatus?.approvalStatus &&
+                <div ref={statusDivRef} style={{ zIndex: 4, position: "fixed", top: 0, left: 0, width: "100vw", color: "#55637A"}}> 
+                    <div style={{ paddingTop: "6em", paddingInline: "5.5em", paddingBottom: "1.5em", backgroundColor: "#DADCDB", transition: "opacity 0.5s ease-in-out, transform 0.5s ease-in-out", opacity: showStatus ? 1 : 0, transform: `translateY(${({showStatus}) => (showStatus ? '0' : '-50px')})`, display: showStatus ? 'block' : 'none' }}>
+                        <h4>Shareable Account Approval</h4>
+                        <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                            <div ref={firstDivRef} style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", fontSize: "small", zIndex: 1 }}>
+                                <div style={{ height: "1rem", width: "1rem", borderRadius: "100%", backgroundColor: "#589DDB"}}></div>
+                                <p className="margin-0">Request By</p>
+                                <p className="margin-0" style={{ fontWeight: "bold" }}>{customer?.shareableApprovalStatus?.requestedBy}</p>
+                                <span style={{ color: "grey" }}><Icon name="check circle" style={{ color: "#27D4A5" }}/>{customer?.shareableApprovalStatus?.requestedDate}</span>
+                            </div>
+
+                            <div ref={secondDivRef} style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", fontSize: "small", zIndex: 1 }}>
+                                <div style={{ height: "1rem", width: "1rem", borderRadius: "100%", backgroundColor: "#589DDB"}}></div>
+                                <p className="margin-0">{customer?.shareableApprovalStatus?.approvalStatus.toUpperCase() == "WAITING" ? "Waiting Approval By" : (customer?.shareableApprovalStatus?.approvalStatus.toUpperCase() == "APPROVED" ? "Approved By" : "Rejected By")}</p>
+                                <p className="margin-0" style={{ fontWeight: "bold" }}>{customer?.shareableApprovalStatus?.approvalBy}</p>
+                                <span style={{ color: "grey" }}>
+                                    {customer?.shareableApprovalStatus?.approvalStatus.toUpperCase() == "WAITING" ? 
+                                        <><Icon name="exclamation circle" style={{ color: "#FFA800" }}/> Waiting Approval </> : 
+                                    (customer?.shareableApprovalStatus?.approvalStatus.toUpperCase() == "APPROVED" ?
+                                        <><Icon name="check circle" style={{ color: "#27D4A5" }}/> {customer?.shareableApprovalStatus?.approvalDate}</> : 
+                                        <><Icon name="remove circle" style={{ color: "red" }}/> Rejected</>
+                                    )}
+                                </span>
+                            </div>
+
+                            <div ref={hrRef} style={{ position: "absolute", zIndex: 0, width: "100%", left: "50%", transform: "translate(-50%)" }}>
+                                <hr style={{ backgroundColor: "#BCC0C5", height: "2px", borderStyle: "none", width: "100%" }}/>
+                            </div>
+                        </div>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: !showStatus ? `${navbarHeight}px` : `0`, cursor: "pointer" }} onClick={() => setShowStatus(!showStatus)}>
+                        <div style={{ backgroundColor: "#656DD1", borderRadius: "0 0 10rem 10rem", padding: "0.1rem 2.5rem"}}>
+                            <span style={{ color: "white", fontSize: "small" }}>{!showStatus ? "Approval Status" : ""}<Icon name="angle down" style={{ color: "white" }}/></span>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div ref={linkRef}>
+                <Link to="/customer-setting" className="link">{"< Back to Customer Setting List"}</Link>
 
                 <div className="form-container">
                     {/* judul add new customer setting */}
@@ -478,8 +515,8 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
                         <div className="padding-horizontal customer-search-container">
                             <div className="customer-data-container">
                                 <label className="address-font-label" style={{ textAlign: "left"}}>Account Status</label>
-                                <Label color="green" className="boolean-container">
-                                    <p>Shareable Account</p>
+                                <Label style={{ backgroundColor: accountStatus == "Named Account" ? "#959EAC" : (accountStatus == "No Name Account" ? "#949AA1" : "#27D4A5"), color: "white" }} className="boolean-container">
+                                    <p>{accountStatus}</p>
                                 </Label>
                             </div>
 
@@ -490,37 +527,37 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
 
                             <div className="customer-data-container">
                                 <label className="customer-data-label">CustomerID</label>
-                                <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">{customerData.customerID}</p>
+                                <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">{customer.customerID}</p>
                             </div>
 
                             <div className="customer-data-container">
                                 <label className="customer-data-label">Blacklist</label>
-                                <Label color={customerData.blacklist ? "red" : "teal"} className="boolean-container">
-                                    <Icon name='address book'/>{customerData.blacklist ? "Yes" : "No"}
+                                <Label color={customer.blacklist ? "red" : "teal"} className="boolean-container">
+                                    <Icon name='address book'/>{customer.blacklist ? "Yes" : "No"}
                                 </Label>
                             </div>
 
                             <div className="customer-data-container">
                                 <label className="customer-data-label">Holdshipment</label>
-                                <Label color={customerData.holdshipment ? "red" : "blue"} className="boolean-container">
-                                    <Icon name='truck'/>{customerData.holdshipment ? "Yes" : "No"}
+                                <Label color={customer.holdshipment ? "red" : "blue"} className="boolean-container">
+                                    <Icon name='truck'/>{customer.holdshipment ? "Yes" : "No"}
                                 </Label>
                             </div>
 
                             <div className="customer-data-container">
                                 <label className="customer-data-label">Avg. AR (days)</label>
-                                <p className="grey avgar-font">{customerData.avgAR}</p>
+                                <p className="grey avgar-font">{customer.avgAR}</p>
                             </div>
                         </div>
 
                         <div style={{ margin: "14px 0" }} className="padding-horizontal">
                             <label className="address-font-label" style={{ textAlign: "left"}}>Customer Name</label>
-                            <p style={{ fontSize: "20px", fontWeight: "bold"}} className="grey">Customer Name</p>
+                            <p style={{ fontSize: "20px", fontWeight: "bold"}} className="grey">{customer.customerName}</p>
                         </div>
 
                         <div style={{ margin: "14px 0" }} className="padding-horizontal">
                             <label className="address-font-label">Address</label>
-                            <p style={{ fontSize: "20px"}} className="grey">Alamat</p>
+                            <p style={{ fontSize: "20px"}} className="grey">{customer.customerAddress}</p>
                         </div>
 
                         </>
@@ -530,7 +567,12 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
 
                     <div className="padding-horizontal title-button-row">
                         <p className="grey margin-0 bold text-align-left">ACCOUNT OWNER SETTING</p>
-                        <Button color="yellow" size="small" type="button" onClick={() => {}}><Icon name="check circle"/>Claim Account</Button>
+                        {accountStatus == "Named Account" ? 
+                            <Button color="yellow" size="small" type="button" onClick={() => {}}><Icon name="check circle"/>Request Shareable Account</Button> : 
+                        (accountStatus == "No Name Account" ? 
+                            <Button color="yellow" size="small" type="button" onClick={() => {}}><Icon name="check circle"/>Claim Account</Button> : 
+                            <></>                       
+                        )}
                     </div>
 
                     <Divider></Divider>
@@ -541,7 +583,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
                     <Divider></Divider>
 
                     
-                    {/* {(customerData.customerID != 0 && !Number.isNaN(customerSettingData.customerID)) ? */}
+                    {/* {(customer.customerID != 0 && !Number.isNaN(customerSettingData.customerID)) ? */}
                         <>                        
                             {/* data get mengenai customer */}
                             <div className="padding-horizontal">
@@ -919,7 +961,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
                                     <Divider style={{ marginBottom: "0px"}}></Divider>
                                     <div className="button-container">
                                         <div className="button-inner-container">
-                                            <Button color="grey" style={{ marginRight: "1rem" }} type="button">Cancel</Button>
+                                            <Button style={{ marginRight: "1rem" }} type="button">Cancel</Button>
                                             <Button color="blue" type="submit">Submit</Button>
                                         </div>
                                     </div>
@@ -939,9 +981,10 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
                         </>
                     } */}
                     </LoadingIndicator>
+                </div>
             </div>
         </Fragment>
     )
 }
 
-export default ViewCustomerSettingPage;
+export default ViewEditCustomer;
