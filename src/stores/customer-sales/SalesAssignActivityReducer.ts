@@ -19,10 +19,22 @@ export const initialState: ISalesAssignState = {
   resultActions: new ResultActions({}),
   salesExstingModel: new SalesNameModel({}),
   SalesAssignPostModel: new SalesAssignPostModel({}),
-  salesHistory: []
+  salesHistory: [],
 };
 
 const SalesAssignReducer: Reducer = baseReducer(initialState, {
+  [SalesActions.POST_CLAIM_ACCOUNT_FISNISHED](
+    state: ISalesAssignState,
+    action: IAction<ResultActions>
+  ): any {
+    return {
+      ...state,
+      error: action.error!,
+      refreshPage: action.error ? false : true,
+      resultActions: action.payload!,
+    };
+  },
+
   [SalesActions.REQUEST_SALES_BY_NAME_FINISHED](
     state: ISalesAssignState,
     action: IAction<ResultActions>
@@ -78,17 +90,17 @@ const SalesAssignReducer: Reducer = baseReducer(initialState, {
   ): ISalesAssignState {
     return {
       ...state,
-      salesHistory: action.payload!
+      salesHistory: action.payload!,
     };
   },
 
   [SalesActions.DEL_SALES_ASSIGN_FINISHED](
-  state: ISalesAssignState,
+    state: ISalesAssignState,
     action: IAction<ResultActions>
   ): ISalesAssignState {
     return {
       ...state,
-      resultActions: action.payload!
+      resultActions: action.payload!,
     };
   },
 

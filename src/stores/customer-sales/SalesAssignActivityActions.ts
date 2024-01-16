@@ -18,6 +18,22 @@ type ActionUnion =
   | SalesNameMode
   | ResultActions;
 
+// Claim Account
+export const POST_CLAIM_ACCOUNT: string = "SalesActions.POST_CLAIM_ACCOUNT";
+export const POST_CLAIM_ACCOUNT_FISNISHED: string =
+  "SalesActions.POST_CLAIM_ACCOUNT_FISNISHED";
+
+export const postClaimAccount = (data: SalesAssignPostModel): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      POST_CLAIM_ACCOUNT,
+      SalesAssignEffect.postClaimAccount,
+      data
+    );
+  };
+};
+
 //Get sales by Name
 export const REQUEST_SALES_BY_NAME: string = "SalesAction.EQUEST_SALES_BY_NAME";
 export const REQUEST_SALES_BY_NAME_FINISHED: string =
@@ -85,7 +101,8 @@ export const clearResult = (): any => {
   };
 };
 
-export const REQUEST_SALES_HISTORY: string = "SalesAction.REQUEST_SALES_HISTORY";
+export const REQUEST_SALES_HISTORY: string =
+  "SalesAction.REQUEST_SALES_HISTORY";
 export const REQUEST_SALES_HISTORY_FINISHED: string =
   "SalesAction.REQUEST_SALES_HISTORY_FINISHED";
 
@@ -103,19 +120,21 @@ export const requestSalesHistory = (customerSettingId: number): any => {
   };
 };
 
-export const DEL_SALES_ASSIGN: string = "InvoicingConditionActions.DEL_SALES_ASSIGN";
-export const DEL_SALES_ASSIGN_FINISHED: string = "InvoicingConditionActions.DEL_SALES_ASSIGN_FINISHED";
+export const DEL_SALES_ASSIGN: string =
+  "InvoicingConditionActions.DEL_SALES_ASSIGN";
+export const DEL_SALES_ASSIGN_FINISHED: string =
+  "InvoicingConditionActions.DEL_SALES_ASSIGN_FINISHED";
 
 export const deleteSalesAssign = (id: number): any => {
-    return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
-      await ActionUtility.createThunkEffect<ResultActions>(
-        dispatch,
-        DEL_SALES_ASSIGN,
-        SalesAssignEffect.deleteSalesAssign,
-        id
-      );
-    };
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      DEL_SALES_ASSIGN,
+      SalesAssignEffect.deleteSalesAssign,
+      id
+    );
   };
+};
 
 export const REMOVE_SUBMIT_RESULT_SEARCH: string =
   "SalesActions.REMOVE_SUBMIT_RESULT_SEARCH";
