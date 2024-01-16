@@ -294,7 +294,7 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChild
             dispatch(ServiceSummary.requestServiceSummary(customerData.customerID))
             dispatch(ConfigItem.requestConfigItem(customerData.customerID))
             dispatch(CollectionHistory.requestCollectionHistory(customerData.customerID))
-            dispatch(ProjectHistory.requestServiceSummary(customerData.customerID))
+            dispatch(ProjectHistory.requestProjectHistory(customerData.customerID))
         }
     }, [dispatch])
 

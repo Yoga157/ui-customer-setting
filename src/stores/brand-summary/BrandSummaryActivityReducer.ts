@@ -7,11 +7,11 @@ import BrandSummaryModel from "./models/BrandSummaryModel";
 import ResultActions from "models/ResultActions";
 
 export const initialState: IBrandSummaryState = {
-    data: [],
+    data: new ResultActions({}),
 };
 
 const BrandSummaryReducer: Reducer = baseReducer(initialState, {
-    [BrandSummaryAction.REQUEST_GET_BRAND_SUMMARY_FINISHED](state: IBrandSummaryState, action: IAction<BrandSummaryModel[]>): IBrandSummaryState {
+    [BrandSummaryAction.REQUEST_GET_BRAND_SUMMARY_FINISHED](state: IBrandSummaryState, action: IAction<ResultActions>): IBrandSummaryState {
         return {
             ...state,
             data: action.payload!

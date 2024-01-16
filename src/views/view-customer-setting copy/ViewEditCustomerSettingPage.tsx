@@ -345,7 +345,7 @@ const ViewCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildre
             dispatch(CustomerPIC.requestGetCustomerPIC(customerSettingData.customerID))
             dispatch(BrandSummary.requestBrandSummary(customerSettingData.customerID))
             dispatch(ServiceSummary.requestServiceSummary(customerSettingData.customerID))
-            dispatch(ProjectHistory.requestServiceSummary(customerSettingData.customerID))
+            dispatch(ProjectHistory.requestProjectHistory(customerSettingData.customerID))
             setShareable(customerSettingData.shareable ? "TRUE": "FALSE")
             setPmoCustomer(customerSettingData.pmoCustomer ? "TRUE": "FALSE")
             

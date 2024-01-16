@@ -17,7 +17,7 @@ export const REQUEST_GET_SERVICE_SUMMARY_FINISHED: string = "CustomerNameAction.
 
 export const requestServiceSummary = (customerID: number): any => {
     return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
-        await ActionUtility.createThunkEffect<ServiceSummaryModel>(
+        await ActionUtility.createThunkEffect<ResultActions>(
             dispatch,
             REQUEST_GET_SERVICE_SUMMARY,
             ServiceSummaryEffect.requestServiceSummary,
