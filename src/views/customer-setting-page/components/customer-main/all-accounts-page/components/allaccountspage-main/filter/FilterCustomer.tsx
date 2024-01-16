@@ -205,12 +205,7 @@ const FilterCustomer: React.FC<{
                           <Divider></Divider>
                       </div>
                       <div ref={contentFilterRef} style={{ overflowY: "auto"}}>
-          <Divider></Divider>
-          <LoadingIndicator isActive={isRequesting}>
-            <FinalForm
-              onSubmit={() => onSubmitHandler()}
-              render={({ handleSubmit }) => (
-                <Form onSubmit={handleSubmit}>
+
                   <Grid.Row>
                     <p>Account Status</p>
                     <Grid.Row>
@@ -756,9 +751,8 @@ const FilterCustomer: React.FC<{
                           </Button>
                         </Grid.Row>
                       </div>
-                {/* </LoadingIndicator> */}
               
-            </div>
+                </div>
                 </Form>
               )}
             />

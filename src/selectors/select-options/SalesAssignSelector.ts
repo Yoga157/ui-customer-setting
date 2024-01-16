@@ -4,14 +4,15 @@ import IOptionsData from "./models/IOptionsData";
 import SalesNameModel from "stores/customer-sales/models/SalesNameModel";
 import ISalesResultFilter from "./models/ISalesResultFilter";
 import SalesAssignHistoryModel from "stores/customer-sales/models/SalesAssignHistoryModel";
+import ResultActions from "models/ResultActions";
 
 export default interface ISearchResultSales {
   readonly title: string;
   readonly salesID: number;
 }
 
-const _selectSalesSearch = (models: SalesNameModel[]): ISearchResultSales[] => {
-  return models.map(
+const _selectSalesSearch = (models: ResultActions): ISearchResultSales[] => {
+  return models.resultObj.map(
     (model: SalesNameModel): ISearchResultSales => ({
       title: model.salesName,
       salesID: model.salesID,
@@ -27,14 +28,22 @@ export const selectSalesSearchOptions: Selector<
   _selectSalesSearch
 );
 
-const _selectSales = (models: SalesNameModel[]): ISalesResultFilter[] => {
-  return models.map(
-    (model: SalesNameModel): ISalesResultFilter => ({
-      value: { salesName: model.salesName, salesID: model.salesID },
-      text: model.salesName,
-    })
-  );
+const _selectSales = (models: ResultActions): ISalesResultFilter[] => {
+  // console.log(models.resultObj)
+    if (Array.isArray(models.resultObj)) {
+    return models.resultObj.map(
+      (model: any): ISalesResultFilter => ({
+        value: { salesName: model.salesName, salesID: model.salesID },
+        text: model.salesName,
+      })
+    );
+  } else {
+    return [];
+  }
 };
+// const _selectSales = (models: ResultActions): any => {
+//   console.log(models.resultObj)
+// };
 
 export const selectSalesOptions: Selector<
   IStore,
