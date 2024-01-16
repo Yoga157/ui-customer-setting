@@ -7,6 +7,7 @@ import { Dispatch } from "redux";
 import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLevelActions";
 import "./ShareableAccountsPage.scss";
 import IStore from "models/IStore";
+import { format } from "date-fns";
 import * as CustomerActions from "stores/customer-setting/CustomerActivityActions";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
@@ -97,7 +98,7 @@ const ShareableAccountsPage: React.FC<IProps> = (
           firstCol.remove();
         }
         TableToExcel.convert(tableSelect, {
-          name: "CustomerSetting" + ".xlsx",
+          name: "ShareableAccounts" + currDate + ".xlsx",
           sheet: {
             name: "Sheet 1",
           },
@@ -109,6 +110,8 @@ const ShareableAccountsPage: React.FC<IProps> = (
       }, 4000);
     }
   };
+
+  const currDate: string = format(new Date(), "cccc LLLL d, yyyy");
 
   useEffect(() => {
     dispatch(
@@ -127,27 +130,27 @@ const ShareableAccountsPage: React.FC<IProps> = (
       "#search-input-customer"
     )! as HTMLInputElement;
 
-    if (window.location.pathname === "customer-setting-page") {
-      if (search.value.length > 0) {
-        dispatch(
-          CustomerActions.requestSearchShareabelAcc(
-            data.activePage,
-            pageSize,
-            null,
-            search.value
-          )
-        );
-      } else {
-        dispatch(
-          CustomerActions.requestShareabledAcc(
-            data.activePage,
-            pageSize,
-            "customerID",
-            "ascending"
-          )
-        );
-      }
+    // if (window.location.pathname === "/data-quality/customer-setting") {
+    if (search.value.length > 0) {
+      dispatch(
+        CustomerActions.requestSearchShareabelAcc(
+          data.activePage,
+          pageSize,
+          null,
+          search.value
+        )
+      );
+    } else {
+      dispatch(
+        CustomerActions.requestShareabledAcc(
+          data.activePage,
+          pageSize,
+          "customerID",
+          "ascending"
+        )
+      );
     }
+    // }
   };
 
   const isRequesting: boolean = useSelector((state: IStore) =>

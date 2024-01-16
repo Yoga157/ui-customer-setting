@@ -1,5 +1,5 @@
-import React, { Fragment, useEffect, useState, useCallback } from "react";
-import { Table, Dropdown, List, Icon } from "semantic-ui-react";
+import React, { Fragment, useState, useCallback, useEffect } from "react";
+import { Table, Dropdown, Icon } from "semantic-ui-react";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLevelActions";
@@ -8,9 +8,6 @@ import { selectUserResult } from "selectors/user/UserSelector";
 import IUserResult from "selectors/user/models/IUserResult";
 import IStore from "models/IStore";
 import "./CustomerTableRowStyle.scss";
-import AddSalesAssign from "../../form/form-create/FormAdd";
-import RouteEnum from "constants/RouteEnum";
-import * as CustomerSettActions from "stores/customer-setting/CustomerActivityActions";
 import ClaimForm from "../../form/form-claim/FormClaim";
 
 interface IProps {
@@ -28,8 +25,13 @@ const CustomerTableRow: React.FC<IProps> = (
   const currentUser: IUserResult = useSelector((state: IStore) =>
     selectUserResult(state)
   );
+  const [isChecked, setIsChecked] = useState(false);
 
   const { rowData, getRowData } = props;
+
+  useEffect(() => {
+    setIsChecked(false);
+  }, [rowData]);
 
   const setRowData = (data) => {
     let checkData = props.data.find(
@@ -45,16 +47,17 @@ const CustomerTableRow: React.FC<IProps> = (
     } else {
       getRowData([...props.data, data]);
     }
+    setIsChecked((prevChecked) => !prevChecked);
   };
 
   const onClaimAccount = useCallback((): void => {
-    // console.log(rowData);
     dispatch(
       ModalFirstLevelActions.OPEN(
         <ClaimForm rowData={[rowData]} />,
         ModalSizeEnum.Tiny
       )
     );
+    getRowData([]);
   }, [dispatch, rowData]);
 
   const onEdit = (id: number) => {
@@ -79,7 +82,8 @@ const CustomerTableRow: React.FC<IProps> = (
               <label style={{ margin: "0.8rem", verticalAlign: "middle" }}>
                 <input
                   type="checkbox"
-                  onClick={() => setRowData(rowData)}
+                  onChange={() => setRowData(rowData)}
+                  checked={isChecked}
                 ></input>
               </label>
             </div>
