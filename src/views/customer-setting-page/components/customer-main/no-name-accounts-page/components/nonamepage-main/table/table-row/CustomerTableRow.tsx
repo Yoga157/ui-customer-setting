@@ -9,6 +9,7 @@ import IUserResult from "selectors/user/models/IUserResult";
 import IStore from "models/IStore";
 import "./CustomerTableRowStyle.scss";
 import ClaimForm from "../../form/form-claim/FormClaim";
+import { useHistory } from "react-router-dom";
 
 interface IProps {
   readonly rowData: any;
@@ -20,6 +21,7 @@ interface IProps {
 const CustomerTableRow: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
+  const history = useHistory();
   const dispatch: Dispatch = useDispatch();
   // const [openConfirm, setOpenConfirm] = useState(false);
   // const currentUser: IUserResult = useSelector((state: IStore) =>
@@ -60,8 +62,8 @@ const CustomerTableRow: React.FC<IProps> = (
   }, [dispatch, rowData]);
 
   const onEdit = (id: number) => {
-    props.history.push({
-      pathname: "customer-setting-page/" + id,
+    history.push({
+      pathname: "customer-setting/" + id,
       state: { rowData },
     });
   };

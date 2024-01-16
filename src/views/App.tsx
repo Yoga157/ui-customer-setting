@@ -74,10 +74,6 @@ const App: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => (
                 />
                 <Route
                   path={RouteEnum.CustomerSetting}
-                  component={CustomerSetting}
-                />
-                <Route
-                  path={RouteEnum.CustomerSettingPage}
                   component={CustomerSettingPage}
                 />
                 <Route path={RouteEnum.Dashboard} component={DashboardPage} />
