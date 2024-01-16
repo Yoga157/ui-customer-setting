@@ -115,9 +115,9 @@ const AllAccountsPage: React.FC<IProps> = (
   };
 
   useEffect(() => {
-    dispatch(
-      CustomerActions.requestCustomerSett(1, pageSize, "CustomerSettingID")
-    );
+    // dispatch(
+    //   CustomerActions.requestCustomerSett(1, pageSize, "CustomerSettingID")
+    // );
   }, [dispatch]);
 
   const handlePaginationChange = (e: any, data: any) => {

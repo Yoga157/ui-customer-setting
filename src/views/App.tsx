@@ -27,7 +27,7 @@ const AddNewCustomerSetting = lazy(() =>
   import("./add-customer-setting/AddNewCustomerSettingPage")
 );
 const ViewCustomerSetting = lazy(() =>
-  import("./view-customer-setting/ViewCustomerSettingPage")
+  import("./view-customer-setting/ViewEditCustomerSettingPage")
 );
 
 const CustomerSettingPage = lazy(() =>
