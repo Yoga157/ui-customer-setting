@@ -106,10 +106,11 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     const projectHistoryData = useSelector((state: IStore) => selectProjectHistory(state));
     
     /** Project History */
-    const [allHistoryData, setAllHistoryData] = useState(data.projectHistoryData)
-    const [historyPageSize, setHistoryPageSize] = useState(3)
+    const [allHistoryData, setAllHistoryData] = useState(projectHistoryData)
+    const [historyPageSize, setHistoryPageSize] = useState(5)
     const [historyActivePage, setHistoryActivePage] = useState(1)
     const [historyData, setHistoryData] = useState(allHistoryData.slice(0, historyPageSize))
+    console.log(allHistoryData)
 
     // fungsi mengatur perubahan halaman
     const historyChangePage = (e, page) => {
@@ -136,7 +137,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     // fungsi untuk mengatur pencarian
     const onSearch = () => {
         if (searchText.length === 0) {
-            setAllHistoryData(data.projectHistoryData)
+            setAllHistoryData(projectHistoryData)
             setSearchText("");
             setCancelBtn(false);
 
@@ -145,7 +146,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                 setCancelBtn(true);
                 const lowerKeyword = searchText.toLowerCase();
 
-                const filteredArray = data.projectHistoryData.filter((item) =>
+                const filteredArray = projectHistoryData.filter((item) =>
                     Object.values(item).some((value) =>
                         typeof value === 'string' && value.toLowerCase().includes(lowerKeyword)
                     )
@@ -157,12 +158,14 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     };
 
     useEffect(() => {
+        // console.log(projectHistoryData)
         setHistoryData(allHistoryData.slice(0, historyPageSize));
         setHistoryActivePage(1);
+        // console.log(allHistoryData)
     }, [allHistoryData])
 
     const onClickedCancelButton = () => {
-        setAllHistoryData(data.projectHistoryData)
+        setAllHistoryData(projectHistoryData)
         setSearchText("");
         setCancelBtn(false);
     }
@@ -172,7 +175,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     const salesHistoryData = useSelector((state: IStore) => selectSalesHistory(state));
 
     /** Add setting */
-    const [shareable, setShareable] = useState(customerSettingData.shareable ? "TRUE" : "FALSE");
+    const [shareable, setShareable] = useState(customer.shareable ? "TRUE" : "FALSE");
     const [pmoCustomer, setPmoCustomer] = useState(customer.pmoCustomer ? "TRUE" : "FALSE");
 
     const handleShareable = () => {
@@ -193,7 +196,6 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
     /** Invoicing schedule */
     const invoicingSchedule = useSelector((state: IStore) => selectInvoicingSchedule(state));
-    console.log(invoicingSchedule)
 
     const days = ["All days", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     const [daysArray, setDaysArray] = useState(invoicingSchedule.scheduleDays?.split(", ") || []);
@@ -363,17 +365,22 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     }, [dispatch])
 
     useEffect(() => {
-        console.log(customerSettingData)
-        if(!Number.isNaN(customerSettingData.customerID)) {
-            dispatch(CustomerName.requestCustomerById(customerSettingData.customerID))
-            dispatch(ConfigItem.requestConfigItem(customerSettingData.customerID))
-            dispatch(CollectionHistory.requestCollectionHistory(customerSettingData.customerID))
-            dispatch(CustomerPIC.requestGetCustomerPIC(customerSettingData.customerID))
-            dispatch(BrandSummary.requestBrandSummary(customerSettingData.customerID))
-            dispatch(ServiceSummary.requestServiceSummary(customerSettingData.customerID))
-            dispatch(ProjectHistory.requestServiceSummary(customerSettingData.customerID))
-            setShareable(customerSettingData.shareable ? "TRUE": "FALSE")
-            setPmoCustomer(customerSettingData.pmoCustomer ? "TRUE": "FALSE")
+        // console.log(customerSettingData)
+        // if(!Number.isNaN(customer.customerID)) {
+        if(projectHistoryData.length == 0) {
+            // dispatch(CustomerName.requestCustomerById(customerSettingData.customerID))
+            // dispatch(ConfigItem.requestConfigItem(customerSettingData.customerID))
+            // dispatch(CollectionHistory.requestCollectionHistory(customerSettingData.customerID))
+            dispatch(CustomerPIC.requestGetCustomerPIC(customer.customerID))
+            dispatch(BrandSummary.requestBrandSummary(customer.customerID))
+            dispatch(ServiceSummary.requestServiceSummary(customer.customerID))
+            dispatch(ProjectHistory.requestProjectHistory(customer.customerID))
+            setShareable(customer.shareable ? "TRUE": "FALSE")
+            setPmoCustomer(customer.pmoCustomer ? "TRUE": "FALSE")
+        }
+
+        if(projectHistoryData.length != 0) {
+            setAllHistoryData(projectHistoryData)
         }
         
         if(!Number.isNaN(invoicingSchedule.scheduleID)) {
@@ -389,24 +396,25 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
             setRemark(invoicingSchedule.remark)
 
         }
-    }, [dispatch, customerSettingData, invoicingSchedule])
+    }, [dispatch, invoicingSchedule, projectHistoryData])
 
-    const isRequesting: boolean = useSelector((state: IStore) =>
-        selectRequesting(state, [
-            InvoicingCondition.REQUEST_GET_INVOICING_CONDITION,
-            RelatedFile.REQUEST_GET_RELATED_FILE,
-            SalesAssign.REQUEST_SALES_HISTORY,
-            InvoicingSchedule.REQUEST_GET_INVOICING_SCHEDULE,
-            CustomerSetting.REQUEST_CUSTOMER_SETTING_BY_ID,
-            CustomerName.REQUEST_CUSTOMER_BY_ID,
-            ConfigItem.REQUEST_GET_CONFIG_ITEM,
-            CollectionHistory.REQUEST_GET_COLLECTION_HISTORY,
-            CustomerPIC.REQUEST_GET_CUSTOMER_PIC,
-            BrandSummary.REQUEST_GET_BRAND_SUMMARY,
-            ServiceSummary.REQUEST_GET_SERVICE_SUMMARY,
-            ProjectHistory.REQUEST_GET_PROJECT_HISTORY
-        ])
-    );
+    const isRequesting: boolean = false;
+    // const isRequesting: boolean = useSelector((state: IStore) =>
+    //     selectRequesting(state, [
+    //         InvoicingCondition.REQUEST_GET_INVOICING_CONDITION,
+    //         RelatedFile.REQUEST_GET_RELATED_FILE,
+    //         SalesAssign.REQUEST_SALES_HISTORY,
+    //         InvoicingSchedule.REQUEST_GET_INVOICING_SCHEDULE,
+    //         CustomerSetting.REQUEST_CUSTOMER_SETTING_BY_ID,
+    //         CustomerName.REQUEST_CUSTOMER_BY_ID,
+    //         ConfigItem.REQUEST_GET_CONFIG_ITEM,
+    //         CollectionHistory.REQUEST_GET_COLLECTION_HISTORY,
+    //         CustomerPIC.REQUEST_GET_CUSTOMER_PIC,
+    //         BrandSummary.REQUEST_GET_BRAND_SUMMARY,
+    //         ServiceSummary.REQUEST_GET_SERVICE_SUMMARY,
+    //         ProjectHistory.REQUEST_GET_PROJECT_HISTORY
+    //     ])
+    // );
 
     /** mengatur style dan fungsionalitas status approval */
     const firstDivRef = useRef(null);

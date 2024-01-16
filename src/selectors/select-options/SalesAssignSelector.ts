@@ -29,21 +29,17 @@ export const selectSalesSearchOptions: Selector<
 );
 
 const _selectSales = (models: ResultActions): ISalesResultFilter[] => {
-  // console.log(models.resultObj)
     if (Array.isArray(models.resultObj)) {
-    return models.resultObj.map(
-      (model: any): ISalesResultFilter => ({
-        value: { salesName: model.salesName, salesID: model.salesID },
-        text: model.salesName,
-      })
-    );
+      return models.resultObj.map(
+        (model: any): ISalesResultFilter => ({
+          value: { salesName: model.salesName, salesID: model.salesID },
+          text: model.salesName,
+        })
+      );
   } else {
     return [];
   }
 };
-// const _selectSales = (models: ResultActions): any => {
-//   console.log(models.resultObj)
-// };
 
 export const selectSalesOptions: Selector<
   IStore,

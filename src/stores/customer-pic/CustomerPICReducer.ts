@@ -7,11 +7,11 @@ import CustomerPICModel from "./models/CustomerPICModel";
 import ResultActions from "models/ResultActions";
 
 export const initialState: ICustomerPICState = {
-    data: [],
+    data: new ResultActions({}),
 };
 
 const CustomerPICReducer: Reducer = baseReducer(initialState, {
-    [CustomerPICAction.REQUEST_GET_CUSTOMER_PIC_FINISHED](state: ICustomerPICState, action: IAction<CustomerPICModel[]>): ICustomerPICState {
+    [CustomerPICAction.REQUEST_GET_CUSTOMER_PIC_FINISHED](state: ICustomerPICState, action: IAction<ResultActions>): ICustomerPICState {
         return {
             ...state,
             data: action.payload!

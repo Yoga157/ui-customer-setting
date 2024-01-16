@@ -40,23 +40,28 @@ export const accOwnerData = [
 export const picHeader = [
     {
         key: "picName",
-        header: "PIC Name"
+        header: "PIC Name",
+        textCenter: true
     },
     {
         key: "picTitle",
-        header: "PIC Title"
+        header: "PIC Title",
+        textCenter: true
     },
     {
         key: "phone",
-        header: "Phone"
+        header: "Phone",
+        textCenter: true
     },
     {
         key: "email",
-        header: "Email"
+        header: "Email",
+        textCenter: true
     },
     {
         key: "latestProject",
-        header: "Latest Project"
+        header: "Latest Project",
+        textCenter: true
     },
 ]
 
@@ -91,11 +96,13 @@ export const brandHeader = [
     },
     {
         key: "years",
-        header: "Years"
+        header: "Years",
+        textCenter: true
     },
     {
         key: "purchase",
-        header: "% Purchase"
+        header: "% Purchase",
+        textCenter: true
     },
 ]
 
@@ -124,11 +131,13 @@ export const serviceHeader = [
     },
     {
         key: "years",
-        header: "Years"
+        header: "Years",
+        textCenter: true
     },
     {
         key: "purchase",
-        header: "% Purchase"
+        header: "% Purchase",
+        textCenter: true
     },
 ]
 

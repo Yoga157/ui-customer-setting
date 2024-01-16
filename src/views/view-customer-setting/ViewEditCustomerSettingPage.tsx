@@ -19,7 +19,7 @@ const ViewEditCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChi
 
     const customer = {
         customerSettingID: 1,
-        customerID: 57758,
+        customerID: 984,
         shareable: true,
         named: false,
         pmoCustomer: true,
