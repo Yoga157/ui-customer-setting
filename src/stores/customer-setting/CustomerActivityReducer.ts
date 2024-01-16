@@ -10,6 +10,10 @@ import CustomerSettingById from "./models/CustomerSettingById";
 
 export const initialState: ICustomerState = {
   data: new CustomerSettingModel({}),
+  dataNoName: new CustomerSettingModel({}),
+  dataNamed: new CustomerSettingModel({}),
+  dataShareable: new CustomerSettingModel({}),
+  dataAll: new CustomerSettingModel({}),
   dataByCustomerId: new CustomerSettingById({}),
   error: false,
   refreshPage: false,
@@ -18,6 +22,54 @@ export const initialState: ICustomerState = {
 };
 
 const customerSettingReducer: Reducer = baseReducer(initialState, {
+  [CustomerActions.REQUEST_NO_NAME_ACCOUNTS_FINISHED](
+    state: ICustomerState,
+    action: IAction<CustomerSettingModel>
+  ): ICustomerState {
+    return {
+      ...state,
+      dataNoName: action.payload!,
+      error: false,
+      refreshPage: false,
+    };
+  },
+
+  [CustomerActions.REQUEST_NAMED_ACCOUNTS_FINISHED](
+    state: ICustomerState,
+    action: IAction<CustomerSettingModel>
+  ): ICustomerState {
+    return {
+      ...state,
+      dataNamed: action.payload!,
+      error: false,
+      refreshPage: false,
+    };
+  },
+
+  [CustomerActions.REQUEST_SHAREABLE_ACCOUNTS_FINISHED](
+    state: ICustomerState,
+    action: IAction<CustomerSettingModel>
+  ): ICustomerState {
+    return {
+      ...state,
+      dataShareable: action.payload!,
+      error: false,
+      refreshPage: false,
+    };
+  },
+
+  [CustomerActions.REQUEST_ALL_ACCOUNTS_FINISHED](
+    state: ICustomerState,
+    action: IAction<CustomerSettingModel>
+  ): ICustomerState {
+    return {
+      ...state,
+      dataAll: action.payload!,
+      error: false,
+      refreshPage: false,
+    };
+  },
+
   [CustomerActions.REQUEST_CUSTOMERS_SETTING_FINISHED](
     state: ICustomerState,
     action: IAction<CustomerSettingModel>
@@ -26,6 +78,54 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     return {
       ...state,
       data: action.payload!,
+      error: false,
+      refreshPage: false,
+    };
+  },
+
+  [CustomerActions.REQUEST_NO_NAME_SEARCH_FINISHED](
+    state: ICustomerState,
+    action: IAction<CustomerSettingModel>
+  ): ICustomerState {
+    return {
+      ...state,
+      dataNoName: action.payload!,
+      error: false,
+      refreshPage: false,
+    };
+  },
+
+  [CustomerActions.REQUEST_NAMED_SEARCH_FINISHED](
+    state: ICustomerState,
+    action: IAction<CustomerSettingModel>
+  ): ICustomerState {
+    return {
+      ...state,
+      dataNamed: action.payload!,
+      error: false,
+      refreshPage: false,
+    };
+  },
+
+  [CustomerActions.REQUEST_SHAREABLE_SEARCH_FINISHED](
+    state: ICustomerState,
+    action: IAction<CustomerSettingModel>
+  ): ICustomerState {
+    return {
+      ...state,
+      dataShareable: action.payload!,
+      error: false,
+      refreshPage: false,
+    };
+  },
+
+  [CustomerActions.REQUEST_ALL_SEARCH_FINISHED](
+    state: ICustomerState,
+    action: IAction<CustomerSettingModel>
+  ): ICustomerState {
+    return {
+      ...state,
+      dataAll: action.payload!,
       error: false,
       refreshPage: false,
     };
@@ -78,11 +178,11 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     state: ICustomerState,
     action: IAction<CustomerSettingById>
   ): ICustomerState {
-    console.log(action)
+    console.log(action);
     return {
       ...state,
-      dataByCustomerId: action.payload!
-    }
+      dataByCustomerId: action.payload!,
+    };
   },
 
   [CustomerActions.REQUEST_RESET_FILTER](
@@ -96,7 +196,7 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     state: ICustomerState,
     action: IAction<ResultActions>
   ): ICustomerState {
-    console.log(action)
+    console.log(action);
     return {
       ...state,
       resultActions: action.payload!,

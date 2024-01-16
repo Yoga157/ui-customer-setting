@@ -16,13 +16,8 @@ import IUserResult from "selectors/user/models/IUserResult";
 import TableToExcel from "@linways/table-to-excel";
 import ModalSizeEnum from "constants/ModalSizeEnum";
 import ClaimForm from "./components/nonamepage-main/form/form-claim/FormClaim";
-import CreateForm from "./components/nonamepage-main/form/form-create/FormAdd";
-import AdjustSettingForm from "./components/nonamepage-main/form/form-setting/FormSetting";
-import DeleteCustomer from "./components/nonamepage-main/delete/delete-customer";
 import { selectCustomerSetting } from "selectors/customer-setting/CustomerSettingSelector";
-import RouteEnum from "constants/RouteEnum";
 import FilterCustomer from "./components/nonamepage-main/filter/FilterCustomer";
-import { noNameData } from "./Nodataname";
 
 interface IProps {
   history: any;
@@ -46,7 +41,6 @@ const NoNameAccountsPage: React.FC<IProps> = (
   };
 
   const onClaimAccount = useCallback((): void => {
-    // console.log(rowData);
     dispatch(
       ModalFirstLevelActions.OPEN(
         <ClaimForm rowData={rowData} />,
@@ -55,11 +49,11 @@ const NoNameAccountsPage: React.FC<IProps> = (
     );
   }, [dispatch, rowData]);
 
-  const moveToAddCustomer = () => {
-    props.history.push({
-      pathname: RouteEnum.AddNewCustomerSetting,
-    });
-  };
+  useEffect(() => {
+    dispatch(
+      CustomerActions.requestNoNameAcc(1, pageSize, "CustomerID", "ascending")
+    );
+  }, [dispatch]);
 
   const exportTableToExcel = (tableID: string, filename: string): void => {
     const search = document.querySelector(
@@ -67,19 +61,19 @@ const NoNameAccountsPage: React.FC<IProps> = (
     )! as HTMLInputElement;
     if (search.value.length > 0) {
       dispatch(
-        CustomerActions.requestSearchCustomerSett(
+        CustomerActions.requestSearchNoNameAcc(
           1,
           tableData.totalRow,
-          "CustomerSettingID",
+          "CustomerID",
           search.value
         )
       );
     } else {
       dispatch(
-        CustomerActions.requestCustomerSett(
+        CustomerActions.requestNoNameAcc(
           1,
           tableData.totalRow,
-          "CustomerSettingID",
+          "CustomerID",
           "ascending"
         )
       );
@@ -89,7 +83,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
         let tableSelect: any;
         let tableHead: any;
 
-        if (window.location.pathname === "/data-quality/customer-setting") {
+        if (window.location.pathname === "/customer-setting-page") {
           tableSelect = document.getElementById(
             "exporttosetting"
           ) as HTMLTableElement;
@@ -124,35 +118,28 @@ const NoNameAccountsPage: React.FC<IProps> = (
     }
   };
 
-  useEffect(() => {
-    dispatch(
-      CustomerActions.requestCustomerSett(1, pageSize, "CustomerSettingID")
-    );
-  }, [dispatch]);
-
   const handlePaginationChange = (e: any, data: any) => {
     dispatch(CustomerActions.setActivePage(data.activePage));
     const search = document.querySelector(
       "#search-input-customer"
     )! as HTMLInputElement;
 
-    if (window.location.pathname === "/data-quality/customer-setting") {
+    if (window.location.pathname === "/customer-setting-page") {
       if (search.value.length > 0) {
-        // console.log("search");
         dispatch(
-          CustomerActions.requestSearchCustomerSett(
+          CustomerActions.requestSearchNoNameAcc(
             data.activePage,
             pageSize,
-            "CustomerSettingID",
+            "CustomerID",
             search.value
           )
         );
       } else {
         dispatch(
-          CustomerActions.requestCustomerSett(
+          CustomerActions.requestNoNameAcc(
             data.activePage,
             pageSize,
-            "CustomerSettingID",
+            "CustomerID",
             "ascending"
           )
         );
@@ -162,8 +149,8 @@ const NoNameAccountsPage: React.FC<IProps> = (
 
   const isRequesting: boolean = useSelector((state: IStore) =>
     selectRequesting(state, [
-      CustomerActions.REQUEST_CUSTOMERS_SETTING,
-      CustomerActions.REQUEST_CUSTOMERS_SETTING_SEARCH,
+      CustomerActions.REQUEST_NO_NAME_ACCOUNTS,
+      CustomerActions.REQUEST_NO_NAME_SEARCH,
     ])
   );
 
@@ -176,99 +163,97 @@ const NoNameAccountsPage: React.FC<IProps> = (
 
   return (
     <Fragment>
-      {/* <LoadingIndicator isActive={isRequesting}> */}
-      <div className="search-container">
-        <Button
-          className="m-05r"
-          icon="sliders horizontal"
-          color="yellow"
-          size="big"
-          disabled={false}
-          onClick={() => setOpenFilter(!openFilter)}
-        />
-        <InputSearch />
-      </div>
-
-      <div className="fitur-container">
-        <div className=" center-fitur-container">
-          <h2 className="h2-container">Customer List</h2>
-        </div>
-        <div className="posision-container">
-          <Tooltips
-            content="Claim Account"
-            trigger={
-              <Button
-                style={{
-                  height: "fit-content",
-                  marginLeft: "1rem",
-                  color: "#656dd1",
-                  background: "white",
-                  fontSize: "0.8rem",
-                  alignItems: "center",
-                }}
-                color="yellow"
-                icon="check circle"
-                disabled={rowData.length == 0 ? true : false}
-                size="mini"
-                content="Claim Account"
-                onClick={onClaimAccount}
-              />
-            }
+      <LoadingIndicator isActive={isRequesting}>
+        <div className="search-container">
+          <Button
+            className="m-05r"
+            icon="sliders horizontal"
+            color="yellow"
+            size="big"
+            disabled={false}
+            onClick={() => setOpenFilter(!openFilter)}
           />
+          <InputSearch />
         </div>
 
-        <div className="posision-container">
-          <div className="posision-container">
-            {rowData.length === 0 ? (
-              <p></p>
-            ) : (
-              <p className="p-account">
-                {rowData.length} of 5 accounts has been pick.
-              </p>
-            )}
+        <div className="fitur-container">
+          <div className=" center-fitur-container">
+            <h2 className="h2-container">Customer List</h2>
           </div>
-        </div>
-
-        <div className="posision-container-right">
-          <Tooltips
-            content="Export Excel"
-            trigger={
-              <Button
-                className="m-05r"
-                icon="file excel"
-                color="blue"
-                disabled={false}
-                floated="right"
-                size="small"
-                content="Export Excel"
-                onClick={exportTableToExcel}
-              />
-            }
-          />
-        </div>
-      </div>
-
-      <Grid columns="equal">
-        <Grid.Column>
-          <div className="wrapper-table">
-            <CustomerTable
-              history={props.history}
-              // tableData={tableData}
-              tableData={noNameData}
-              getRowData={setNewRowData}
-              data={rowData}
+          <div className="posision-container">
+            <Tooltips
+              content="Claim Account"
+              trigger={
+                <Button
+                  style={{
+                    height: "fit-content",
+                    marginLeft: "1rem",
+                    color: "#656dd1",
+                    background: "white",
+                    fontSize: "0.8rem",
+                    alignItems: "center",
+                  }}
+                  color="yellow"
+                  icon="check circle"
+                  disabled={rowData.length == 0 ? true : false}
+                  size="mini"
+                  content="Claim Account"
+                  onClick={onClaimAccount}
+                />
+              }
             />
           </div>
-          <Pagination
-            activePage={activePage}
-            onPageChange={(e, data) => handlePaginationChange(e, data)}
-            // totalPage={tableData.totalRow}
-            totalPage={tableData.totalRow}
-            pageSize={pageSize}
-          />
-        </Grid.Column>
-      </Grid>
-      {/* </LoadingIndicator> */}
+
+          <div className="posision-container">
+            <div className="posision-container">
+              {rowData.length === 0 ? (
+                <p></p>
+              ) : (
+                <p className="p-account">
+                  {rowData.length} of 5 accounts has been pick.
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="posision-container-right">
+            <Tooltips
+              content="Export Excel"
+              trigger={
+                <Button
+                  className="m-05r"
+                  icon="file excel"
+                  color="blue"
+                  disabled={false}
+                  floated="right"
+                  size="small"
+                  content="Export Excel"
+                  onClick={exportTableToExcel}
+                />
+              }
+            />
+          </div>
+        </div>
+
+        <Grid columns="equal">
+          <Grid.Column>
+            <div className="wrapper-table">
+              <CustomerTable
+                history={props.history}
+                tableData={tableData}
+                getRowData={setNewRowData}
+                data={rowData}
+              />
+            </div>
+            <Pagination
+              activePage={activePage}
+              onPageChange={(e, data) => handlePaginationChange(e, data)}
+              totalPage={tableData.totalRow}
+              pageSize={pageSize}
+            />
+          </Grid.Column>
+        </Grid>
+      </LoadingIndicator>
 
       {openFilter && (
         <FilterCustomer

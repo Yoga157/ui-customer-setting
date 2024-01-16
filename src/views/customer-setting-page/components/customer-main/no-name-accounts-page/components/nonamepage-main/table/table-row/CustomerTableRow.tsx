@@ -59,18 +59,14 @@ const CustomerTableRow: React.FC<IProps> = (
 
   const onEdit = (id: number) => {
     props.history.push({
-      pathname: "customer-setting/" + id,
+      pathname: "customer-setting-page/" + id,
       state: { rowData },
     });
   };
 
-  useEffect(() => {
-    console.log("Efect");
-  }, []);
-
   return (
     <Fragment>
-      <Table.Row key={rowData.CustomerSettingID}>
+      <Table.Row key={rowData.CustomerID}>
         <Table.Cell width="1">
           <div
             style={{
@@ -92,7 +88,7 @@ const CustomerTableRow: React.FC<IProps> = (
                 <Dropdown.Item
                   text="View/Edit"
                   icon="edit outline"
-                  onClick={() => onEdit(rowData.customerSettingID)}
+                  onClick={() => onEdit(rowData.customerID)}
                 />
 
                 <Dropdown.Item
@@ -101,10 +97,9 @@ const CustomerTableRow: React.FC<IProps> = (
                   onClick={onClaimAccount}
                 />
 
-                {rowData.status != "CANCEL" &&
-                  rowData.CustomerSettingID == "" && (
-                    <Dropdown.Item text="Cancel" icon="remove circle" />
-                  )}
+                {rowData.status != "CANCEL" && rowData.CustomerID == "" && (
+                  <Dropdown.Item text="Cancel" icon="remove circle" />
+                )}
               </Dropdown.Menu>
             </Dropdown>
           </div>
@@ -115,7 +110,7 @@ const CustomerTableRow: React.FC<IProps> = (
               backgroundColor: "#949aa1",
               color: "white",
               borderRadius: "1rem",
-              width: "100%",
+              width: "10rem",
               margin: "auto",
               height: "2rem",
               display: "flex",
@@ -125,13 +120,36 @@ const CustomerTableRow: React.FC<IProps> = (
           >
             <p style={{ fontSize: "1rem", textAlign: "center" }}>
               {" "}
-              {rowData.Status}
+              No Name Accounts{" "}
             </p>{" "}
           </div>
         </Table.Cell>
         <Table.Cell textAlign="center">{rowData.customerID}</Table.Cell>
-        <Table.Cell>{rowData.customerName}</Table.Cell>
-        <Table.Cell>{rowData.CustomerAddress}</Table.Cell>
+        <Table.Cell>
+          <div
+            style={{
+              borderRadius: "1rem",
+              width: "15rem",
+              margin: "auto",
+              display: "flex",
+            }}
+          >
+            <p style={{ fontSize: "1rem" }}> {rowData.customerName}</p>{" "}
+          </div>
+        </Table.Cell>
+        <Table.Cell>
+          {" "}
+          <div
+            style={{
+              borderRadius: "1rem",
+              width: "40rem",
+              margin: "auto",
+              display: "flex",
+            }}
+          >
+            <p style={{ fontSize: "1rem" }}> {rowData.customerAddress}</p>{" "}
+          </div>
+        </Table.Cell>
         <Table.Cell textAlign="center">
           {rowData.blacklist === true ? (
             <div
@@ -190,10 +208,27 @@ const CustomerTableRow: React.FC<IProps> = (
             </div>
           )}
         </Table.Cell>
-        <Table.Cell textAlign="center">{rowData.createUserID}</Table.Cell>
-        <Table.Cell>{rowData.createDate}</Table.Cell>
-        <Table.Cell>{rowData.modifyUserID}</Table.Cell>
-        <Table.Cell>{rowData.modifyDate}</Table.Cell>
+        <Table.Cell textAlign="center">
+          {" "}
+          <div
+            style={{
+              borderRadius: "1rem",
+              width: "10rem",
+              margin: "auto",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <p style={{ fontSize: "1rem", textAlign: "center" }}>
+              {" "}
+              {rowData.createdBy}
+            </p>{" "}
+          </div>
+        </Table.Cell>
+        <Table.Cell>{rowData.createdDate}</Table.Cell>
+        <Table.Cell>{rowData.modifiedBy}</Table.Cell>
+        <Table.Cell>{rowData.modifiedDate}</Table.Cell>
       </Table.Row>
     </Fragment>
   );

@@ -155,7 +155,7 @@ const CustomerTable: React.FC<IProps> = (
             sorted={columns === "modifyDate" ? direction : null}
             onClick={() => reloads("modifyDate")}
           >
-            M odified Date
+            Modified Date
           </Table.HeaderCell>
         </Table.Row>
       </Table.Header>

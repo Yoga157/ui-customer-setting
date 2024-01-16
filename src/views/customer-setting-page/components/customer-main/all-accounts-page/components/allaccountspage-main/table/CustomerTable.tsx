@@ -32,12 +32,7 @@ const CustomerTable: React.FC<IProps> = (
     setColumns(columns);
     setDirection(direction === "ascending" ? "descending" : "ascending");
     dispatch(
-      CustomerActions.requestCustomerSett(
-        activePage,
-        pageSize,
-        columns,
-        direction
-      )
+      CustomerActions.requestAllAcc(activePage, pageSize, columns, direction)
     );
   };
 
@@ -46,12 +41,12 @@ const CustomerTable: React.FC<IProps> = (
       sortable
       striped
       id={
-        window.location.pathname === "/data-quality/customer-setting"
+        window.location.pathname === "/data-quality/customer-setting-page"
           ? "exporttosetting"
           : "exportosett"
       }
       data-cols-width={
-        window.location.pathname === "/data-quality/customer-setting"
+        window.location.pathname === "/data-quality/customer-setting-page"
           ? "10,10,10,20,40,30,30,15,15,15"
           : "10,20,40,30,30,15,15,15,15,15"
       }
@@ -141,34 +136,34 @@ const CustomerTable: React.FC<IProps> = (
           </Table.HeaderCell>
           <Table.HeaderCell
             textAlign="center"
-            sorted={columns === "CreateUserID" ? direction : null}
-            onClick={() => reloads("CreateUserID")}
+            sorted={columns === "CreatedBy" ? direction : null}
+            onClick={() => reloads("CreatedBy")}
           >
             Create By
           </Table.HeaderCell>
           <Table.HeaderCell
-            sorted={columns === "CreateDate" ? direction : null}
-            onClick={() => reloads("CreateDate")}
+            sorted={columns === "CreatedDate" ? direction : null}
+            onClick={() => reloads("CreatedDate")}
           >
             Created Date
           </Table.HeaderCell>
 
           <Table.HeaderCell
-            sorted={columns === "modifyUserID" ? direction : null}
-            onClick={() => reloads("modifyUserID")}
+            sorted={columns === "ModifiedUserID" ? direction : null}
+            onClick={() => reloads("ModifiedUserID")}
           >
             Modified By
           </Table.HeaderCell>
           <Table.HeaderCell
-            sorted={columns === "modifyDate" ? direction : null}
-            onClick={() => reloads("modifyDate")}
+            sorted={columns === "ModifiedDate" ? direction : null}
+            onClick={() => reloads("ModifiedDate")}
           >
             Modified Date
           </Table.HeaderCell>
         </Table.Row>
       </Table.Header>
 
-      {props.tableData.length === 0 ? (
+      {props.tableData.rows.length === 0 ? (
         <Table.Body>
           <Table.Row>
             <Table.Cell
@@ -181,7 +176,7 @@ const CustomerTable: React.FC<IProps> = (
           </Table.Row>
         </Table.Body>
       ) : (
-        props.tableData.map((item) => (
+        props.tableData.rows.map((item) => (
           <CustomerTableRow
             history={props.history}
             key={item.customerSettingID}
