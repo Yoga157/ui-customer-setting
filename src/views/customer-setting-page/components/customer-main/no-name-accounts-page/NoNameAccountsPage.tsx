@@ -124,7 +124,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
       "#search-input-customer"
     )! as HTMLInputElement;
 
-    if (window.location.pathname === "/customer-setting-page") {
+    if (window.location.pathname === "/customer-setting") {
       if (search.value.length > 0) {
         dispatch(
           CustomerActions.requestSearchNoNameAcc(

@@ -52,6 +52,7 @@ import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import { selectProjectHistory } from "selectors/project-history/ProjectHistorySelector";
 import TableProjectHistory from "../table/table-project-history/TableProjectHistory";
 import TableCollectionHistory from "../table/table-collection-history/TableCollectionHistory";
+import ClaimReleaseButton from "../button/ClaimReleaseButton";
 
 interface IProps {
     customer: {
@@ -65,6 +66,7 @@ interface IProps {
         customerAddress: string,
         blacklist: boolean,
         holdshipment: boolean,
+        sales: string,
         avgAR: number,
         shareableApprovalStatus: any
     },
@@ -81,14 +83,13 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     
     /** Customer data */
     const accountStatus = (customer.named == null && customer.shareable == null) ? "No Name Account" : (customer.named ? "Named Account" : "Shareable Account");
+    // get employeeName dari local storage
+    const employeeName = "Anjar Wahyudi";
+    // cek apakah employeeName memiliki customer ini
+    const salesArray: string[] = customer.sales.split(", ");
+    const isEmployeeOwnCustomer: boolean = salesArray.includes(employeeName);
+    console.log(salesArray, isEmployeeOwnCustomer)
     
-    // const customerData = useSelector((state: IStore) => selectCustomerById(state));
-    const customerSettingData = useSelector((state: IStore) => selectCustomerSettingByCustomerId(state))
-
-    const onSubmitCustCategory = async (e) => {
-        console.log(e);
-    }
-
     /** Handle dropdown data yang di-get */
     const [openPicList, setOpenPicList] = useState(false);
     const [openBrandSummary, setOpenBrandSummary] = useState(false);
@@ -101,6 +102,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     const picData = useSelector((state: IStore) => selectCustomerPIC(state));
     const brandSummaryData = useSelector((state: IStore) => selectBrandSummary(state));
     const serviceSummaryData = useSelector((state: IStore) => selectServiceSummary(state));
+    const salesHistoryData = useSelector((state: IStore) => selectSalesHistory(state));
     const configItemData = useSelector((state: IStore) => selectConfigItem(state));
     const collectionHistoryData = useSelector((state: IStore) => selectCollectionHistory(state));
     const projectHistoryData = useSelector((state: IStore) => selectProjectHistory(state));
@@ -158,10 +160,8 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     };
 
     useEffect(() => {
-        // console.log(projectHistoryData)
         setHistoryData(allHistoryData.slice(0, historyPageSize));
         setHistoryActivePage(1);
-        // console.log(allHistoryData)
     }, [allHistoryData])
 
     const onClickedCancelButton = () => {
@@ -170,21 +170,8 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
         setCancelBtn(false);
     }
 
-    
-    /** Search Sales */
-    const salesHistoryData = useSelector((state: IStore) => selectSalesHistory(state));
-
     /** Add setting */
-    const [shareable, setShareable] = useState(customer.shareable ? "TRUE" : "FALSE");
     const [pmoCustomer, setPmoCustomer] = useState(customer.pmoCustomer ? "TRUE" : "FALSE");
-
-    const handleShareable = () => {
-        if(shareable == "FALSE") {
-            setShareable("TRUE")
-        } else {
-            setShareable("FALSE")
-        }
-    }
 
     const handlePmoCustomer = () => {
         if(pmoCustomer == "FALSE") {
@@ -354,17 +341,6 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     
     /** data yang perlu di get */
     useEffect(() => {
-            // dispatch(InvoicingCondition.requestInvoicingCondition(Number(id)))
-            // dispatch(RelatedCustomer.requestRelatedCustomer(Number(id)))
-            // dispatch(RelatedFile.requestRelatedFile(Number(id)))
-            // dispatch(SalesAssign.requestSalesHistory(Number(id)))
-            // dispatch(InvoicingSchedule.requestInvoicingSchedule(Number(id)))
-            // dispatch(CustomerSetting.requestCustomerSettingById(Number(id)))
-
-            // setSettingData(customerSettingData)
-    }, [dispatch])
-
-    useEffect(() => {
         // console.log(customerSettingData)
         // if(!Number.isNaN(customer.customerID)) {
         if(projectHistoryData.length == 0) {
@@ -375,7 +351,6 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
             dispatch(BrandSummary.requestBrandSummary(customer.customerID))
             dispatch(ServiceSummary.requestServiceSummary(customer.customerID))
             dispatch(ProjectHistory.requestProjectHistory(customer.customerID))
-            setShareable(customer.shareable ? "TRUE": "FALSE")
             setPmoCustomer(customer.pmoCustomer ? "TRUE": "FALSE")
         }
 
@@ -575,12 +550,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
                     <div className="padding-horizontal title-button-row">
                         <p className="grey margin-0 bold text-align-left">ACCOUNT OWNER SETTING</p>
-                        {accountStatus == "Named Account" ? 
-                            <Button color="yellow" size="small" type="button" onClick={() => {}}><Icon name="check circle"/>Request Shareable Account</Button> : 
-                        (accountStatus == "No Name Account" ? 
-                            <Button color="yellow" size="small" type="button" onClick={() => {}}><Icon name="check circle"/>Claim Account</Button> : 
-                            <></>                       
-                        )}
+                        <ClaimReleaseButton accountStatus={accountStatus} isEmployeeOwnCustomer={isEmployeeOwnCustomer} />
                     </div>
 
                     <Divider></Divider>

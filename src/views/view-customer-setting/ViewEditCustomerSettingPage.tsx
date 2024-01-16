@@ -28,6 +28,7 @@ const ViewEditCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChi
         customerAddress: "GD.SONA TOPAS TOWER LT.9 JL.JEND.SUDIRMAN KAV.26 KARET SETIABUDI JAKARTA SELATAN DKI JAKARTA  JAKARTA SELATAN",
         blacklist: false,
         holdshipment: false,
+        sales: "Rosa Amalia, Anjar Wahyudi",
         avgAR: 0,
         shareableApprovalStatus: {
             requestedBy: "Rosa Amalia",
