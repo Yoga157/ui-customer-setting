@@ -16,6 +16,7 @@ import IUserResult from "selectors/user/models/IUserResult";
 import TableToExcel from "@linways/table-to-excel";
 import ModalSizeEnum from "constants/ModalSizeEnum";
 import ModReleaseForm from "./components/namepage-main/form/form-releasemodal/FormRealeseMod";
+import { format } from "date-fns";
 
 import { selectNameAccount } from "selectors/customer-setting/CustomerSettingSelector";
 import RouteEnum from "constants/RouteEnum";
@@ -79,7 +80,9 @@ const NamedAccountsPage: React.FC<IProps> = (
         let tableSelect: any;
         let tableHead: any;
 
-        if (window.location.pathname === "/customer-setting-page") {
+        if (
+          window.location.pathname === "/data-quality/customer-setting-page"
+        ) {
           tableSelect = document.getElementById(
             "exporttosetting"
           ) as HTMLTableElement;
@@ -101,7 +104,7 @@ const NamedAccountsPage: React.FC<IProps> = (
           firstCol.remove();
         }
         TableToExcel.convert(tableSelect, {
-          name: "CustomerSetting" + ".xlsx",
+          name: "NamedAccounts_" + currDate + ".xlsx",
           sheet: {
             name: "Sheet 1",
           },
@@ -113,6 +116,8 @@ const NamedAccountsPage: React.FC<IProps> = (
       }, 4000);
     }
   };
+
+  const currDate: string = format(new Date(), "cccc LLLL d, yyyy");
 
   useEffect(() => {
     dispatch(
@@ -126,27 +131,27 @@ const NamedAccountsPage: React.FC<IProps> = (
       "#search-input-customer"
     )! as HTMLInputElement;
 
-    if (window.location.pathname === "/customer-setting-page") {
-      if (search.value.length > 0) {
-        dispatch(
-          CustomerActions.requestSearchNamedAcc(
-            data.activePage,
-            pageSize,
-            "CustomerID",
-            search.value
-          )
-        );
-      } else {
-        dispatch(
-          CustomerActions.requestNamedAcc(
-            data.activePage,
-            pageSize,
-            "CustomerID",
-            "ascending"
-          )
-        );
-      }
+    // if (window.location.pathname === "/data-quality/customer-setting") {
+    if (search.value.length > 0) {
+      dispatch(
+        CustomerActions.requestSearchNamedAcc(
+          data.activePage,
+          pageSize,
+          "CustomerID",
+          search.value
+        )
+      );
+    } else {
+      dispatch(
+        CustomerActions.requestNamedAcc(
+          data.activePage,
+          pageSize,
+          "CustomerID",
+          "ascending"
+        )
+      );
     }
+    // }
   };
 
   const isRequesting: boolean = useSelector((state: IStore) =>
