@@ -17,7 +17,7 @@ export const REQUEST_GET_CUSTOMER_PIC_FINISHED: string = "CustomerNameAction.REQ
 
 export const requestGetCustomerPIC = (customerID: number): any => {
     return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
-        await ActionUtility.createThunkEffect<CustomerPICModel>(
+        await ActionUtility.createThunkEffect<ResultActions>(
             dispatch,
             REQUEST_GET_CUSTOMER_PIC,
             CustomerPICEffects.requestGetCustomerPIC,

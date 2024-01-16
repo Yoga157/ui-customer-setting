@@ -15,9 +15,9 @@ type ActionUnion =
 export const REQUEST_GET_PROJECT_HISTORY: string = "ProjectHistoryActions.REQUEST_GET_PROJECT_HISTORY";
 export const REQUEST_GET_PROJECT_HISTORY_FINISHED: string = "ProjectHistoryActions.REQUEST_GET_PROJECT_HISTORY_FINISHED";
 
-export const requestServiceSummary = (customerID: number): any => {
+export const requestProjectHistory = (customerID: number): any => {
     return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
-        await ActionUtility.createThunkEffect<ProjectHistoryModel>(
+        await ActionUtility.createThunkEffect<ResultActions>(
             dispatch,
             REQUEST_GET_PROJECT_HISTORY,
             ProjectHistoryEffect.requestProjectHistory,

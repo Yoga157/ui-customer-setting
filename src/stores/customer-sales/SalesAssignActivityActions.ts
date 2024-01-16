@@ -63,7 +63,7 @@ export const requestSalesDropdown = (): any => {
     dispatch: ReduxDispatch<ActionUnion>,
     getState: () => IStore
   ): Promise<void> => {
-    await ActionUtility.createThunkEffect<SalesNameMode>(
+    await ActionUtility.createThunkEffect<ResultActions>(
       dispatch,
       REQUEST_SALES_LIST,
       SalesAssignEffect.requestSalesDropdown

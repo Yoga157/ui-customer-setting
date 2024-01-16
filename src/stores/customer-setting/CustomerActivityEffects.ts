@@ -98,11 +98,7 @@ export const requestCustomerSett = async (
   column?: string,
   sorting?: string
 ): Promise<CustomerSettingModel | HttpErrorResponseModel> => {
-  const controllerName = `CustomerSetting/GetListCustomerSetting?
-  ${page ? `page=${page}` : ``}
-  ${pageSize ? `&pageSize=${pageSize}` : ``}
-  ${column ? `&column=${column}` : ``}
-  ${sorting ? `&sorting=${sorting}` : ``}`;
+  const controllerName = `CustomerSetting/GetListCustomerSetting?${page ? `page=${page}` : ``}${pageSize ? `&pageSize=${pageSize}` : ``}${column ? `&column=${column}` : ``}${sorting ? `&sorting=${sorting}` : ``}`;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName

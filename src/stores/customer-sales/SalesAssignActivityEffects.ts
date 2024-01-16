@@ -37,15 +37,15 @@ export const postClaimAccount = async (
 };
 
 export const requestSalesDropdown = async (): Promise<
-  SalesNameMode | HttpErrorResponseModel
+  ResultActions | HttpErrorResponseModel
 > => {
-  const controllerName = "CustomerSetting/ListSalesName";
+  const controllerName = "CustomerSetting/GetSalesData";
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName
   );
 
-  return EffectUtility.getToModel<SalesNameMode>(SalesNameMode, endpoint);
+  return EffectUtility.getToModel<ResultActions>(ResultActions, endpoint);
 };
 
 //Assign sales

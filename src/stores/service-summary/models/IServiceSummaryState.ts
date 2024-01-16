@@ -1,5 +1,6 @@
+import ResultActions from "models/ResultActions";
 import ServiceSummaryModel from "./ServiceSummaryModel";
 
 export default interface IServiceSummaryState {
-    readonly data: ServiceSummaryModel[];
+    readonly data: ResultActions;
 }

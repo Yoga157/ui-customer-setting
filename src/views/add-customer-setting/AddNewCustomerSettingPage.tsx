@@ -372,24 +372,20 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (
           />,
           ModalSizeEnum.Tiny
         )
-      );
-    },
-    [dispatch, relatedFileData]
-  );
-
-  /** data yang perlu di get */
-  useEffect(() => {
-    if (customerData != undefined) {
-      dispatch(CustomerPIC.requestGetCustomerPIC(customerData.customerID));
-      dispatch(BrandSummary.requestBrandSummary(customerData.customerID));
-      dispatch(ServiceSummary.requestServiceSummary(customerData.customerID));
-      dispatch(ConfigItem.requestConfigItem(customerData.customerID));
-      dispatch(
-        CollectionHistory.requestCollectionHistory(customerData.customerID)
-      );
-      dispatch(ProjectHistory.requestServiceSummary(customerData.customerID));
-    }
-  }, [dispatch]);
+        );
+    }, [dispatch, relatedFileData]);
+    
+    /** data yang perlu di get */
+    useEffect(() => {
+        if(customerData != undefined) {
+            dispatch(CustomerPIC.requestGetCustomerPIC(customerData.customerID))
+            dispatch(BrandSummary.requestBrandSummary(customerData.customerID))
+            dispatch(ServiceSummary.requestServiceSummary(customerData.customerID))
+            dispatch(ConfigItem.requestConfigItem(customerData.customerID))
+            dispatch(CollectionHistory.requestCollectionHistory(customerData.customerID))
+            dispatch(ProjectHistory.requestProjectHistory(customerData.customerID))
+        }
+    }, [dispatch])
 
   /** submit data baru */
   const postResponse = useSelector((state: IStore) =>

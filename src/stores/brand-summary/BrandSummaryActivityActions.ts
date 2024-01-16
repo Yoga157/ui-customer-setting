@@ -17,7 +17,7 @@ export const REQUEST_GET_BRAND_SUMMARY_FINISHED: string = "CustomerNameAction.RE
 
 export const requestBrandSummary = (customerID: number): any => {
     return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
-        await ActionUtility.createThunkEffect<BrandSummaryModel>(
+        await ActionUtility.createThunkEffect<ResultActions>(
             dispatch,
             REQUEST_GET_BRAND_SUMMARY,
             BrandSummaryEffect.requestBrandSummary,

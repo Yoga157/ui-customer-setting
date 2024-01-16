@@ -7,11 +7,11 @@ import ServiceSummaryModel from "./models/ServiceSummaryModel";
 import ResultActions from "models/ResultActions";
 
 export const initialState: IServiceSummaryState = {
-    data: [],
+    data: new ResultActions({}),
 };
 
 const ServiceSummaryReducer: Reducer = baseReducer(initialState, {
-    [ServiceSummaryAction.REQUEST_GET_SERVICE_SUMMARY_FINISHED](state: IServiceSummaryState, action: IAction<ServiceSummaryModel[]>): IServiceSummaryState {
+    [ServiceSummaryAction.REQUEST_GET_SERVICE_SUMMARY_FINISHED](state: IServiceSummaryState, action: IAction<ResultActions>): IServiceSummaryState {
         return {
             ...state,
             data: action.payload!
