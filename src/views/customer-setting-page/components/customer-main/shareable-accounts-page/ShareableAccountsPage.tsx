@@ -14,14 +14,9 @@ import { Pagination, Tooltips, Button } from "views/components/UI";
 import { selectUserResult } from "selectors/user/UserSelector";
 import IUserResult from "selectors/user/models/IUserResult";
 import TableToExcel from "@linways/table-to-excel";
-import ModalSizeEnum from "constants/ModalSizeEnum";
-import CreateForm from "./components/shareablepage-main/form/form-create/FormAdd";
-import AdjustSettingForm from "./components/shareablepage-main/form/form-setting/FormSetting";
-import DeleteCustomer from "./components/shareablepage-main/delete/delete-customer";
-import { selectCustomerSetting } from "selectors/customer-setting/CustomerSettingSelector";
+import { selectShareableAccount } from "selectors/customer-setting/CustomerSettingSelector";
 import RouteEnum from "constants/RouteEnum";
 import FilterCustomer from "./components/shareablepage-main/filter/FilterCustomer";
-import { ShareableData } from "./shareabledata";
 
 interface IProps {
   history: any;
@@ -42,7 +37,6 @@ const ShareableAccountsPage: React.FC<IProps> = (
 
   const setNewRowData = (data) => {
     setRowData(data);
-    // console.log(data);
   };
 
   const moveToAddCustomer = () => {
@@ -57,19 +51,19 @@ const ShareableAccountsPage: React.FC<IProps> = (
     )! as HTMLInputElement;
     if (search.value.length > 0) {
       dispatch(
-        CustomerActions.requestSearchCustomerSett(
+        CustomerActions.requestSearchShareabelAcc(
           1,
           tableData.totalRow,
-          "CustomerSettingID",
+          null,
           search.value
         )
       );
     } else {
       dispatch(
-        CustomerActions.requestCustomerSett(
+        CustomerActions.requestShareabledAcc(
           1,
           tableData.totalRow,
-          "CustomerSettingID",
+          null,
           "ascending"
         )
       );
@@ -79,7 +73,9 @@ const ShareableAccountsPage: React.FC<IProps> = (
         let tableSelect: any;
         let tableHead: any;
 
-        if (window.location.pathname === "/data-quality/customer-setting") {
+        if (
+          window.location.pathname === "/data-quality/customer-setting-page"
+        ) {
           tableSelect = document.getElementById(
             "exporttosetting"
           ) as HTMLTableElement;
@@ -116,7 +112,12 @@ const ShareableAccountsPage: React.FC<IProps> = (
 
   useEffect(() => {
     dispatch(
-      CustomerActions.requestCustomerSett(1, pageSize, "CustomerSettingID")
+      CustomerActions.requestShareabledAcc(
+        1,
+        pageSize,
+        "CustomerID",
+        "ascending"
+      )
     );
   }, [dispatch]);
 
@@ -126,23 +127,22 @@ const ShareableAccountsPage: React.FC<IProps> = (
       "#search-input-customer"
     )! as HTMLInputElement;
 
-    if (window.location.pathname === "/data-quality/customer-setting") {
+    if (window.location.pathname === "customer-setting-page") {
       if (search.value.length > 0) {
-        // console.log("search");
         dispatch(
-          CustomerActions.requestSearchCustomerSett(
+          CustomerActions.requestSearchShareabelAcc(
             data.activePage,
             pageSize,
-            "CustomerSettingID",
+            null,
             search.value
           )
         );
       } else {
         dispatch(
-          CustomerActions.requestCustomerSett(
+          CustomerActions.requestShareabledAcc(
             data.activePage,
             pageSize,
-            "CustomerSettingID",
+            "customerID",
             "ascending"
           )
         );
@@ -152,13 +152,13 @@ const ShareableAccountsPage: React.FC<IProps> = (
 
   const isRequesting: boolean = useSelector((state: IStore) =>
     selectRequesting(state, [
-      CustomerActions.REQUEST_CUSTOMERS_SETTING,
-      CustomerActions.REQUEST_CUSTOMERS_SETTING_SEARCH,
+      CustomerActions.REQUEST_SHAREABLE_ACCOUNTS,
+      CustomerActions.REQUEST_SHAREABLE_SEARCH,
     ])
   );
 
   const tableData = useSelector((state: IStore) =>
-    selectCustomerSetting(state)
+    selectShareableAccount(state)
   );
 
   /** Advanced filter */
@@ -166,86 +166,85 @@ const ShareableAccountsPage: React.FC<IProps> = (
 
   return (
     <Fragment>
-      {/* <LoadingIndicator isActive={isRequesting}> */}
-      <div className="search-container">
-        <Button
-          className="m-05r"
-          icon="sliders horizontal"
-          size="big"
-          color="yellow"
-          disabled={false}
-          onClick={() => setOpenFilter(!openFilter)}
-        />
-        <InputSearch />
-      </div>
-
-      <div className="fitur-container">
-        <div className=" center-fitur-container">
-          <h2 className="h2-container">Customer List</h2>
-        </div>
-        <div className="posision-container">
-          <Tooltips
-            content="Shareable Accounts"
-            trigger={
-              <Button
-                style={{
-                  height: "fit-content",
-                  marginLeft: "1rem",
-                  color: "white",
-                  background: "#f97452",
-                  fontSize: "0.8rem",
-                  alignItems: "center",
-                }}
-                // color="red"
-                icon="times circle"
-                // disabled={rowData.length == 0 ? true : false}
-                size="mini"
-                content="Release Account"
-                onClick={moveToAddCustomer}
-              />
-            }
+      <LoadingIndicator isActive={isRequesting}>
+        <div className="search-container">
+          <Button
+            className="m-05r"
+            icon="sliders horizontal"
+            size="big"
+            color="yellow"
+            disabled={false}
+            onClick={() => setOpenFilter(!openFilter)}
           />
+          <InputSearch />
         </div>
 
-        <div className="posision-container-right">
-          <Tooltips
-            content="Export Excel"
-            trigger={
-              <Button
-                className="m-05r"
-                icon="file excel"
-                color="blue"
-                disabled={false}
-                floated="right"
-                size="small"
-                content="Export Excel"
-                onClick={exportTableToExcel}
-              />
-            }
-          />
-        </div>
-      </div>
-
-      <Grid columns="equal">
-        <Grid.Column>
-          <div className="wrapper-table">
-            <CustomerTable
-              history={props.history}
-              tableData={ShareableData}
-              // tableData={NameData}
-              getRowData={setNewRowData}
-              data={rowData}
+        <div className="fitur-container">
+          <div className=" center-fitur-container">
+            <h2 className="h2-container">Customer List</h2>
+          </div>
+          <div className="posision-container">
+            <Tooltips
+              content="Shareable Accounts"
+              trigger={
+                <Button
+                  style={{
+                    height: "fit-content",
+                    marginLeft: "1rem",
+                    color: "white",
+                    background: "#f97452",
+                    fontSize: "0.8rem",
+                    alignItems: "center",
+                  }}
+                  // color="red"
+                  icon="times circle"
+                  disabled={rowData.length == 0 ? true : false}
+                  size="mini"
+                  content="Release Account"
+                  onClick={moveToAddCustomer}
+                />
+              }
             />
           </div>
-          <Pagination
-            activePage={activePage}
-            onPageChange={(e, data) => handlePaginationChange(e, data)}
-            totalPage={tableData.totalRow}
-            pageSize={pageSize}
-          />
-        </Grid.Column>
-      </Grid>
-      {/* </LoadingIndicator> */}
+
+          <div className="posision-container-right">
+            <Tooltips
+              content="Export Excel"
+              trigger={
+                <Button
+                  className="m-05r"
+                  icon="file excel"
+                  color="blue"
+                  disabled={false}
+                  floated="right"
+                  size="small"
+                  content="Export Excel"
+                  onClick={exportTableToExcel}
+                />
+              }
+            />
+          </div>
+        </div>
+
+        <Grid columns="equal">
+          <Grid.Column>
+            <div className="wrapper-table">
+              <CustomerTable
+                history={props.history}
+                tableData={tableData}
+                getRowData={setNewRowData}
+                data={rowData}
+              />
+            </div>
+            <Pagination
+              activePage={activePage}
+              onPageChange={(e, data) => handlePaginationChange(e, data)}
+              totalPage={tableData.totalRow}
+              pageSize={pageSize}
+            />
+          </Grid.Column>
+        </Grid>
+      </LoadingIndicator>
 
       {openFilter && (
         <FilterCustomer

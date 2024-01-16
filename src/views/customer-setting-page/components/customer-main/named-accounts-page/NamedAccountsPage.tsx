@@ -16,12 +16,10 @@ import IUserResult from "selectors/user/models/IUserResult";
 import TableToExcel from "@linways/table-to-excel";
 import ModalSizeEnum from "constants/ModalSizeEnum";
 import ModReleaseForm from "./components/namepage-main/form/form-releasemodal/FormRealeseMod";
-import AdjustSettingForm from "./components/namepage-main/form/form-setting/FormSetting";
-import DeleteCustomer from "./components/namepage-main/delete/delete-customer";
-import { selectCustomerSetting } from "selectors/customer-setting/CustomerSettingSelector";
+
+import { selectNameAccount } from "selectors/customer-setting/CustomerSettingSelector";
 import RouteEnum from "constants/RouteEnum";
 import FilterCustomer from "./components/namepage-main/filter/FilterCustomer";
-import { NameData } from "./dataname";
 
 interface IProps {
   history: any;
@@ -42,7 +40,6 @@ const NamedAccountsPage: React.FC<IProps> = (
 
   const setNewRowData = (data) => {
     setRowData(data);
-    // console.log(data);
   };
 
   const onReleaseAccount = useCallback((): void => {
@@ -60,19 +57,19 @@ const NamedAccountsPage: React.FC<IProps> = (
     )! as HTMLInputElement;
     if (search.value.length > 0) {
       dispatch(
-        CustomerActions.requestSearchCustomerSett(
+        CustomerActions.requestSearchNamedAcc(
           1,
           tableData.totalRow,
-          "CustomerSettingID",
+          "CustomerID",
           search.value
         )
       );
     } else {
       dispatch(
-        CustomerActions.requestCustomerSett(
+        CustomerActions.requestNamedAcc(
           1,
           tableData.totalRow,
-          "CustomerSettingID",
+          "CustomerID",
           "ascending"
         )
       );
@@ -82,7 +79,7 @@ const NamedAccountsPage: React.FC<IProps> = (
         let tableSelect: any;
         let tableHead: any;
 
-        if (window.location.pathname === "/data-quality/customer-setting") {
+        if (window.location.pathname === "/customer-setting-page") {
           tableSelect = document.getElementById(
             "exporttosetting"
           ) as HTMLTableElement;
@@ -119,7 +116,7 @@ const NamedAccountsPage: React.FC<IProps> = (
 
   useEffect(() => {
     dispatch(
-      CustomerActions.requestCustomerSett(1, pageSize, "CustomerSettingID")
+      CustomerActions.requestNamedAcc(1, pageSize, "CustomerID", "ascending")
     );
   }, [dispatch]);
 
@@ -129,23 +126,22 @@ const NamedAccountsPage: React.FC<IProps> = (
       "#search-input-customer"
     )! as HTMLInputElement;
 
-    if (window.location.pathname === "/data-quality/customer-setting") {
+    if (window.location.pathname === "/customer-setting-page") {
       if (search.value.length > 0) {
-        // console.log("search");
         dispatch(
-          CustomerActions.requestSearchCustomerSett(
+          CustomerActions.requestSearchNamedAcc(
             data.activePage,
             pageSize,
-            "CustomerSettingID",
+            "CustomerID",
             search.value
           )
         );
       } else {
         dispatch(
-          CustomerActions.requestCustomerSett(
+          CustomerActions.requestNamedAcc(
             data.activePage,
             pageSize,
-            "CustomerSettingID",
+            "CustomerID",
             "ascending"
           )
         );
@@ -155,113 +151,109 @@ const NamedAccountsPage: React.FC<IProps> = (
 
   const isRequesting: boolean = useSelector((state: IStore) =>
     selectRequesting(state, [
-      CustomerActions.REQUEST_CUSTOMERS_SETTING,
-      CustomerActions.REQUEST_CUSTOMERS_SETTING_SEARCH,
+      CustomerActions.REQUEST_NAMED_ACCOUNTS,
+      CustomerActions.REQUEST_NAMED_SEARCH_FINISHED,
     ])
   );
 
-  const tableData = useSelector((state: IStore) =>
-    selectCustomerSetting(state)
-  );
+  const tableData = useSelector((state: IStore) => selectNameAccount(state));
 
   /** Advanced filter */
   const [openFilter, setOpenFilter] = useState(false);
 
   return (
     <Fragment>
-      {/* <LoadingIndicator isActive={isRequesting}> */}
-
-      <div className="search-container">
-        <Button
-          className="m-05r"
-          icon="sliders horizontal"
-          size="big"
-          color="yellow"
-          disabled={false}
-          onClick={() => setOpenFilter(!openFilter)}
-        />
-        <InputSearch />
-      </div>
-
-      <div className="fitur-container">
-        <div className=" center-fitur-container">
-          <h2 className="h2-container">Customer List</h2>
-        </div>
-        <div className="posision-container">
-          <Tooltips
-            content="Release Account"
-            trigger={
-              <Button
-                style={{
-                  height: "fit-content",
-                  marginLeft: "1rem",
-                  color: "white",
-                  background: "#f97452",
-                  fontSize: "0.8rem",
-                  alignItems: "center",
-                }}
-                // color="red"
-                icon="times circle"
-                disabled={rowData.length == 0 ? true : false}
-                size="mini"
-                content="Release Account"
-                onClick={onReleaseAccount}
-              />
-            }
+      <LoadingIndicator isActive={isRequesting}>
+        <div className="search-container">
+          <Button
+            className="m-05r"
+            icon="sliders horizontal"
+            size="big"
+            color="yellow"
+            disabled={false}
+            onClick={() => setOpenFilter(!openFilter)}
           />
+          <InputSearch />
         </div>
 
-        <div className="posision-container">
-          <div className="posision-container">
-            {rowData.length === 0 ? (
-              <p></p>
-            ) : (
-              <p className="p-account">
-                {rowData.length} of 5 accounts has been pick.
-              </p>
-            )}
+        <div className="fitur-container">
+          <div className=" center-fitur-container">
+            <h2 className="h2-container">Customer List</h2>
           </div>
-        </div>
-
-        <div className="posision-container-right">
-          <Tooltips
-            content="Export Excel"
-            trigger={
-              <Button
-                className="m-05r"
-                icon="file excel"
-                color="blue"
-                disabled={false}
-                floated="right"
-                size="small"
-                content="Export Excel"
-                onClick={exportTableToExcel}
-              />
-            }
-          />
-        </div>
-      </div>
-
-      <Grid columns="equal">
-        <Grid.Column>
-          <div className="wrapper-table">
-            <CustomerTable
-              history={props.history}
-              tableData={NameData}
-              // tableData={NameData}
-              getRowData={setNewRowData}
-              data={rowData}
+          <div className="posision-container">
+            <Tooltips
+              content="Release Account"
+              trigger={
+                <Button
+                  style={{
+                    height: "fit-content",
+                    marginLeft: "1rem",
+                    color: "white",
+                    background: "#f97452",
+                    fontSize: "0.8rem",
+                    alignItems: "center",
+                  }}
+                  // color="red"
+                  icon="times circle"
+                  disabled={rowData.length == 0 ? true : false}
+                  size="mini"
+                  content="Release Account"
+                  onClick={onReleaseAccount}
+                />
+              }
             />
           </div>
-          <Pagination
-            activePage={activePage}
-            onPageChange={(e, data) => handlePaginationChange(e, data)}
-            totalPage={tableData.totalRow}
-            pageSize={pageSize}
-          />
-        </Grid.Column>
-      </Grid>
-      {/* </LoadingIndicator> */}
+
+          <div className="posision-container">
+            <div className="posision-container">
+              {rowData.length === 0 ? (
+                <p></p>
+              ) : (
+                <p className="p-account">
+                  {rowData.length} of 5 accounts has been pick.
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="posision-container-right">
+            <Tooltips
+              content="Export Excel"
+              trigger={
+                <Button
+                  className="m-05r"
+                  icon="file excel"
+                  color="blue"
+                  disabled={false}
+                  floated="right"
+                  size="small"
+                  content="Export Excel"
+                  onClick={exportTableToExcel}
+                />
+              }
+            />
+          </div>
+        </div>
+
+        <Grid columns="equal">
+          <Grid.Column>
+            <div className="wrapper-table">
+              <CustomerTable
+                history={props.history}
+                tableData={tableData}
+                getRowData={setNewRowData}
+                data={rowData}
+              />
+            </div>
+            <Pagination
+              activePage={activePage}
+              onPageChange={(e, data) => handlePaginationChange(e, data)}
+              totalPage={tableData.totalRow}
+              pageSize={pageSize}
+            />
+          </Grid.Column>
+        </Grid>
+      </LoadingIndicator>
 
       {openFilter && (
         <FilterCustomer

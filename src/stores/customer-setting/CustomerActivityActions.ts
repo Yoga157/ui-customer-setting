@@ -41,6 +41,102 @@ export const requestCustomerSett = (
   };
 };
 
+export const REQUEST_NO_NAME_ACCOUNTS: string =
+  "CustomerActions.REQUEST_NO_NAME_ACCOUNTS";
+export const REQUEST_NO_NAME_ACCOUNTS_FINISHED: string =
+  "CustomerActions.REQUEST_NO_NAME_ACCOUNTS_FINISHED";
+
+export const requestNoNameAcc = (
+  page?: number,
+  pageSize?: number,
+  column?: string,
+  sorting?: string
+): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<CustomerSettingModel>(
+      dispatch,
+      REQUEST_NO_NAME_ACCOUNTS,
+      CustomerEffect.requestNoNameAcc,
+      page,
+      pageSize,
+      column,
+      sorting
+    );
+  };
+};
+
+export const REQUEST_NAMED_ACCOUNTS: string =
+  "CustomerActions.REQUEST_NAMED_ACCOUNTS";
+export const REQUEST_NAMED_ACCOUNTS_FINISHED: string =
+  "CustomerActions.REQUEST_NAMED_ACCOUNTS_FINISHED";
+
+export const requestNamedAcc = (
+  page?: number,
+  pageSize?: number,
+  column?: string,
+  sorting?: string
+): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<CustomerSettingModel>(
+      dispatch,
+      REQUEST_NAMED_ACCOUNTS,
+      CustomerEffect.requestNamedAcc,
+      page,
+      pageSize,
+      column,
+      sorting
+    );
+  };
+};
+
+export const REQUEST_SHAREABLE_ACCOUNTS: string =
+  "CustomerActions.REQUEST_SHAREABLE_ACCOUNTS";
+export const REQUEST_SHAREABLE_ACCOUNTS_FINISHED: string =
+  "CustomerActions.REQUEST_SHAREABLE_ACCOUNTS_FINISHED";
+
+export const requestShareabledAcc = (
+  page?: number,
+  pageSize?: number,
+  column?: string,
+  sorting?: string
+): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<CustomerSettingModel>(
+      dispatch,
+      REQUEST_SHAREABLE_ACCOUNTS,
+      CustomerEffect.requestShareabledAcc,
+      page,
+      pageSize,
+      column,
+      sorting
+    );
+  };
+};
+
+export const REQUEST_ALL_ACCOUNTS: string =
+  "CustomerActions.REQUEST_ALL_ACCOUNTS";
+export const REQUEST_ALL_ACCOUNTS_FINISHED: string =
+  "CustomerActions.REQUEST_ALL_ACCOUNTS_FINISHED";
+
+export const requestAllAcc = (
+  page?: number,
+  pageSize?: number,
+  column?: string,
+  sorting?: string
+): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<CustomerSettingModel>(
+      dispatch,
+      REQUEST_ALL_ACCOUNTS,
+      CustomerEffect.requestAllAcc,
+      page,
+      pageSize,
+      column,
+      sorting
+    );
+  };
+};
+
 export const REQUEST_CUSTOMERS_SETTING_SEARCH: string =
   "CustomerActions.REQUEST_CUSTOMERS_SETTING_SEARCH";
 export const REQUEST_CUSTOMERS_SETTING_SEARCH_FINISHED: string =
@@ -69,6 +165,141 @@ export const requestSearchCustomerSett = (
       search,
       sorting,
       salesAssign,
+      shareable,
+      pmo_customer,
+      holdshipment,
+      blacklist
+    );
+  };
+};
+
+export const REQUEST_NO_NAME_SEARCH: string =
+  "CustomerActions.REQUEST_NO_NAME_SEARCH";
+export const REQUEST_NO_NAME_SEARCH_FINISHED: string =
+  "CustomerActions.REQUEST_NO_NAME_SEARCH_FINISHED";
+
+export const requestSearchNoNameAcc = (
+  page: number,
+  pageSize: number,
+  column: string,
+  search: string,
+  sorting?: string,
+  shareable?: boolean,
+  pmo_customer?: boolean,
+  holdshipment?: boolean,
+  blacklist?: boolean
+): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<CustomerSettingModel>(
+      dispatch,
+      REQUEST_NO_NAME_SEARCH,
+      CustomerEffect.requestSearchNoNameAcc,
+      page,
+      pageSize,
+      column,
+      search,
+      sorting,
+      shareable,
+      pmo_customer,
+      holdshipment,
+      blacklist
+    );
+  };
+};
+
+export const REQUEST_NAMED_SEARCH: string =
+  "CustomerActions.REQUEST_NAMED_SEARCH";
+export const REQUEST_NAMED_SEARCH_FINISHED: string =
+  "CustomerActions.REQUEST_NAMED_SEARCH_FINISHED";
+
+export const requestSearchNamedAcc = (
+  page: number,
+  pageSize: number,
+  column: string,
+  search: string,
+  sorting?: string,
+  shareable?: boolean,
+  pmo_customer?: boolean,
+  holdshipment?: boolean,
+  blacklist?: boolean
+): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<CustomerSettingModel>(
+      dispatch,
+      REQUEST_NAMED_SEARCH,
+      CustomerEffect.requestSearchNamedAcc,
+      page,
+      pageSize,
+      column,
+      search,
+      sorting,
+      shareable,
+      pmo_customer,
+      holdshipment,
+      blacklist
+    );
+  };
+};
+
+export const REQUEST_SHAREABLE_SEARCH: string =
+  "CustomerActions.REQUEST_SHAREABLE_SEARCH";
+export const REQUEST_SHAREABLE_SEARCH_FINISHED: string =
+  "CustomerActions.REQUEST_SHAREABLE_SEARCH_FINISHED";
+
+export const requestSearchShareabelAcc = (
+  page: number,
+  pageSize: number,
+  column: string,
+  search: string,
+  sorting?: string,
+  shareable?: boolean,
+  pmo_customer?: boolean,
+  holdshipment?: boolean,
+  blacklist?: boolean
+): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<CustomerSettingModel>(
+      dispatch,
+      REQUEST_SHAREABLE_SEARCH,
+      CustomerEffect.requestSearchShareabelAcc,
+      page,
+      pageSize,
+      column,
+      search,
+      sorting,
+      shareable,
+      pmo_customer,
+      holdshipment,
+      blacklist
+    );
+  };
+};
+
+export const REQUEST_ALL_SEARCH: string = "CustomerActions.REQUEST_ALL_SEARCH";
+export const REQUEST_ALL_SEARCH_FINISHED: string =
+  "CustomerActions.REQUEST_ALL_SEARCH_FINISHED";
+
+export const requestSearchAllAcc = (
+  page: number,
+  pageSize: number,
+  column: string,
+  search: string,
+  sorting?: string,
+  shareable?: boolean,
+  pmo_customer?: boolean,
+  holdshipment?: boolean,
+  blacklist?: boolean
+): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<CustomerSettingModel>(
+      dispatch,
+      REQUEST_ALL_SEARCH,
+      CustomerEffect.requestSearchAllAcc,
+      page,
+      pageSize,
+      column,
+      search,
+      sorting,
       shareable,
       pmo_customer,
       holdshipment,

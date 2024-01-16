@@ -205,6 +205,206 @@ const FilterCustomer: React.FC<{
                           <Divider></Divider>
                       </div>
                       <div ref={contentFilterRef} style={{ overflowY: "auto"}}>
+          <Divider></Divider>
+          <LoadingIndicator isActive={isRequesting}>
+            <FinalForm
+              onSubmit={() => onSubmitHandler()}
+              render={({ handleSubmit }) => (
+                <Form onSubmit={handleSubmit}>
+                  <Grid.Row>
+                    <p>Account Status</p>
+                    <Grid.Row>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          width: "fit-content",
+                          marginTop: "1rem",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            backgroundColor: "#949AA1",
+                            width: "11rem",
+                            borderRadius: "2rem",
+                          }}
+                        >
+                          <label
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <input
+                              name="shareable"
+                              type="checkbox"
+                              style={{
+                                transform: "scale(1)",
+                                margin: "0.5rem",
+                              }}
+                              checked={shareableYesChecked}
+                              onChange={() =>
+                                setShareableYesChecked(!shareableYesChecked)
+                              }
+                            ></input>
+                            <span style={{ color: "white" }}>
+                              No Name Account
+                            </span>
+                          </label>
+                        </div>
+
+                        <div style={{ margin: "0.3rem" }}></div>
+
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            backgroundColor: "#27D4A5",
+                            width: "11rem",
+                            borderRadius: "2rem",
+                          }}
+                        >
+                          <label
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              style={{
+                                marginRight: "0.5rem",
+                                transform: "scale(1)",
+                                margin: "0.5rem",
+                              }}
+                              checked={shareableNoChecked}
+                              onChange={() =>
+                                setShareableNoChecked(!shareableNoChecked)
+                              }
+                            ></input>
+                            <span style={{ color: "white" }}>
+                              Shareable Account
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                    </Grid.Row>
+                  </Grid.Row>
+                  <Grid.Row>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        width: "fit-content",
+                        marginTop: "1rem",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          backgroundColor: "#656DD1",
+                          width: "11rem",
+                          borderRadius: "2rem",
+                        }}
+                      >
+                        <label
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <input
+                            name="shareable"
+                            type="checkbox"
+                            style={{
+                              transform: "scale(1)",
+                              margin: "0.5rem",
+                            }}
+                            checked={shareableYesChecked}
+                            onChange={() =>
+                              setShareableYesChecked(!shareableYesChecked)
+                            }
+                          ></input>
+                          <span style={{ color: "white" }}>Named Account</span>
+                        </label>
+                      </div>
+                    </div>
+                  </Grid.Row>
+                  <Divider></Divider>
+                  <Grid.Row>
+                    <p>PMO Customer</p>
+                    <Grid.Row>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          width: "fit-content",
+                          marginTop: "1rem",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <label
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <input
+                              name="pmo_customer"
+                              type="checkbox"
+                              checked={pmo_customerYesChecked}
+                              style={{
+                                marginRight: "0.5rem",
+                                transform: "scale(1)",
+                              }}
+                              onChange={() =>
+                                setPmo_customerYesChecked(
+                                  !pmo_customerYesChecked
+                                )
+                              }
+                            ></input>
+                            <span>Yes</span>
+                          </label>
+                        </div>
+                        <div style={{ margin: "0 1rem" }}></div>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <label
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              style={{
+                                marginRight: "0.5rem",
+                                transform: "scale(1)",
+                              }}
+                              checked={pmo_customerNoChecked}
+                              onChange={() =>
+                                setPmo_customerNoChecked(!pmo_customerNoChecked)
+                              }
+                            ></input>
+                            <span>No</span>
+                          </label>
+                        </div>
+                      </div>
+                    </Grid.Row>
+                  </Grid.Row>
+                  <Divider></Divider>
 
                           <Grid.Row>
                             <p>Shareable</p>

@@ -89,7 +89,7 @@ const CustomerTableRow: React.FC<IProps> = (
             </div>
             <Dropdown pointing="left" icon="ellipsis vertical">
               <Dropdown.Menu>
-                {rowData.Status == "Shareable Accounts" &&
+                {rowData.shareable == true && (
                   <>
                     <Dropdown.Item
                       text="View/Edit"
@@ -97,25 +97,25 @@ const CustomerTableRow: React.FC<IProps> = (
                       onClick={() => onEdit(rowData.customerSettingID)}
                     />
                   </>
-                }
+                )}
 
-                {rowData.Status == "No Name Accounts" &&
+                {rowData.named == false && (
                   <>
                     <Dropdown.Item
                       text="View/Edit"
                       icon="edit outline"
                       onClick={() => onEdit(rowData.customerSettingID)}
                     />
-    
+
                     <Dropdown.Item
                       text="Claim Account"
                       icon="circle check"
                       onClick={onClaimAccount}
                     />
                   </>
-                }
+                )}
 
-                {rowData.Status == "Name Accounts" &&
+                {rowData.named == true && (
                   <>
                     <Dropdown.Item
                       text="View/Edit"
@@ -123,17 +123,14 @@ const CustomerTableRow: React.FC<IProps> = (
                       onClick={() => onEdit(rowData.customerSettingID)}
                     />
 
-                    <Dropdown.Item
-                      text="Request Share Account"
-                      icon="share"
-                    />
-    
+                    <Dropdown.Item text="Request Share Account" icon="share" />
+
                     <Dropdown.Item
                       text="Release Account"
                       icon="remove circle"
                     />
                   </>
-                }
+                )}
 
                 {rowData.status != "CANCEL" &&
                   rowData.CustomerSettingID == "" && (
@@ -144,24 +141,66 @@ const CustomerTableRow: React.FC<IProps> = (
           </div>
         </Table.Cell>
         <Table.Cell>
-          <div
-            style={{
-              backgroundColor: "#28d4a5",
-              color: "white",
-              borderRadius: "1rem",
-              width: "10rem",
-              margin: "auto",
-              height: "2rem",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <p style={{ fontSize: "1rem", textAlign: "center" }}>
-              {" "}
-              {rowData.Status}
-            </p>{" "}
-          </div>
+          {rowData.named === false && (
+            <div
+              style={{
+                backgroundColor: "#949aa1",
+                color: "white",
+                borderRadius: "1rem",
+                width: "10rem",
+                margin: "auto",
+                height: "2rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <p style={{ fontSize: "1rem", textAlign: "center" }}>
+                No Name Accounts
+              </p>
+            </div>
+          )}
+
+          {rowData.named === true && (
+            <div
+              style={{
+                backgroundColor: "#656dd1",
+                color: "white",
+                borderRadius: "1rem",
+                width: "10rem",
+                margin: "auto",
+                height: "2rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <p style={{ fontSize: "1rem", textAlign: "center" }}>
+                Named Accounts
+              </p>
+            </div>
+          )}
+
+          {rowData.shareable === true && (
+            // Menambahkan logika atau elemen JSX sesuai kebutuhan
+            <div
+              style={{
+                backgroundColor: "#28d4a5",
+                color: "white",
+                borderRadius: "1rem",
+                width: "10rem",
+                margin: "auto",
+                height: "2rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <p style={{ fontSize: "1rem", textAlign: "center" }}>
+                Shareable Accounts
+              </p>
+            </div>
+          )}
         </Table.Cell>
         <Table.Cell textAlign="center">{rowData.customerID}</Table.Cell>
         <Table.Cell>{rowData.customerCategory}</Table.Cell>
@@ -190,7 +229,19 @@ const CustomerTableRow: React.FC<IProps> = (
             </p>{" "}
           </div>
         </Table.Cell>
-        <Table.Cell>{rowData.CustomerAddress}</Table.Cell>
+        <Table.Cell>
+          {" "}
+          <div
+            style={{
+              borderRadius: "1rem",
+              width: "40rem",
+              margin: "auto",
+              display: "flex",
+            }}
+          >
+            <p style={{ fontSize: "1rem" }}> {rowData.customerAddress}</p>{" "}
+          </div>
+        </Table.Cell>
         <Table.Cell>
           <div
             style={{
@@ -236,7 +287,7 @@ const CustomerTableRow: React.FC<IProps> = (
               }}
             >
               {" "}
-              {rowData.salesAssign}{" "}
+              {rowData.salesName}{" "}
             </p>{" "}
           </div>
         </Table.Cell>
@@ -354,13 +405,13 @@ const CustomerTableRow: React.FC<IProps> = (
               }}
             >
               {" "}
-              {rowData.createUserID}
+              {rowData.createdBy}
             </p>{" "}
           </div>
         </Table.Cell>
-        <Table.Cell>{rowData.createDate}</Table.Cell>
-        <Table.Cell>{rowData.modifyUserID}</Table.Cell>
-        <Table.Cell>{rowData.modifyDate}</Table.Cell>
+        <Table.Cell>{rowData.createdDate}</Table.Cell>
+        <Table.Cell>{rowData.modifiedBy}</Table.Cell>
+        <Table.Cell>{rowData.modifiedDate}</Table.Cell>
       </Table.Row>
     </Fragment>
   );

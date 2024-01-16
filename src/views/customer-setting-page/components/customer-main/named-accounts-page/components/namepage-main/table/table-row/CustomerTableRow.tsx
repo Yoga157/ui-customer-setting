@@ -70,18 +70,18 @@ const CustomerTableRow: React.FC<IProps> = (
 
   const onEdit = (id: number) => {
     props.history.push({
-      pathname: "customer-setting/" + id,
+      pathname: "customer-setting-page/" + id,
       state: { rowData },
     });
   };
 
-  useEffect(() => {
-    console.log("Efect");
-  }, []);
+  // useEffect(() => {
+  //   console.log("Efect");
+  // }, []);
 
   return (
     <Fragment>
-      <Table.Row key={rowData.CustomerSettingID}>
+      <Table.Row key={rowData.CustomerID}>
         <Table.Cell width="4">
           <div
             style={{
@@ -103,7 +103,7 @@ const CustomerTableRow: React.FC<IProps> = (
                 <Dropdown.Item
                   text="View/Edit"
                   icon="edit outline"
-                  onClick={() => onEdit(rowData.customerSettingID)}
+                  onClick={() => onEdit(rowData.customerID)}
                 />
 
                 <Dropdown.Item
@@ -118,10 +118,9 @@ const CustomerTableRow: React.FC<IProps> = (
                   onClick={onReleaseAccount}
                 />
 
-                {rowData.status != "CANCEL" &&
-                  rowData.CustomerSettingID == "" && (
-                    <Dropdown.Item text="Cancel" icon="remove circle" />
-                  )}
+                {rowData.status != "CANCEL" && rowData.CustomerID == "" && (
+                  <Dropdown.Item text="Cancel" icon="remove circle" />
+                )}
               </Dropdown.Menu>
             </Dropdown>
           </div>
@@ -132,7 +131,7 @@ const CustomerTableRow: React.FC<IProps> = (
               backgroundColor: "#656dd1",
               color: "white",
               borderRadius: "1rem",
-              width: "8rem",
+              width: "9rem",
               margin: "auto",
               height: "2rem",
               display: "flex",
@@ -142,7 +141,7 @@ const CustomerTableRow: React.FC<IProps> = (
           >
             <p style={{ fontSize: "1rem", textAlign: "center" }}>
               {" "}
-              {rowData.Status}
+              Named Accounts
             </p>{" "}
           </div>
         </Table.Cell>
@@ -173,14 +172,26 @@ const CustomerTableRow: React.FC<IProps> = (
             </p>{" "}
           </div>
         </Table.Cell>
-        <Table.Cell>{rowData.CustomerAddress}</Table.Cell>
+        <Table.Cell>
+          {" "}
+          <div
+            style={{
+              borderRadius: "1rem",
+              width: "40rem",
+              margin: "auto",
+              display: "flex",
+            }}
+          >
+            <p style={{ fontSize: "1rem" }}> {rowData.customerAddress}</p>{" "}
+          </div>
+        </Table.Cell>
         <Table.Cell>
           <div
             style={{
               color: "white",
               borderRadius: "1rem",
-              maxWidth: "25rem",
-              width: "20rem",
+              maxWidth: "20rem",
+              width: "15rem",
               margin: "auto",
               height: "2rem",
               display: "flex",
@@ -337,13 +348,13 @@ const CustomerTableRow: React.FC<IProps> = (
               }}
             >
               {" "}
-              {rowData.createUserID}
+              {rowData.createdBy}
             </p>{" "}
           </div>
         </Table.Cell>
-        <Table.Cell>{rowData.createDate}</Table.Cell>
-        <Table.Cell>{rowData.modifyUserID}</Table.Cell>
-        <Table.Cell>{rowData.modifyDate}</Table.Cell>
+        <Table.Cell>{rowData.createdDate}</Table.Cell>
+        <Table.Cell>{rowData.modifiedBy}</Table.Cell>
+        <Table.Cell>{rowData.modifiedDate}</Table.Cell>
       </Table.Row>
     </Fragment>
   );

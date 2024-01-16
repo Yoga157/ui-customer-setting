@@ -1,8 +1,4 @@
-import {
-  BaseModel,
-  ConversionTypeEnum,
-  IConversionOption,
-} from "sjs-base-model";
+import { BaseModel } from "sjs-base-model";
 import CustomerSettingRow from "./CustomerSettingRow";
 
 export default class CustomerSetting extends BaseModel {
