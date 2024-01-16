@@ -23,12 +23,11 @@ const CustomerTableRow: React.FC<IProps> = (
 ) => {
   const history = useHistory();
   const dispatch: Dispatch = useDispatch();
-  const [openConfirm, setOpenConfirm] = useState(false);
-  const currentUser: IUserResult = useSelector((state: IStore) =>
-    selectUserResult(state)
-  );
+  // const [openConfirm, setOpenConfirm] = useState(false);
+  // const currentUser: IUserResult = useSelector((state: IStore) =>
+  //   selectUserResult(state)
+  // );
   const [isChecked, setIsChecked] = useState(false);
-
   const { rowData, getRowData } = props;
 
   useEffect(() => {

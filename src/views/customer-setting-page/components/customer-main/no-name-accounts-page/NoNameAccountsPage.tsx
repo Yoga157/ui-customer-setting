@@ -12,8 +12,6 @@ import * as CustomerActions from "stores/customer-setting/CustomerActivityAction
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { Pagination, Tooltips, Button } from "views/components/UI";
-import { selectUserResult } from "selectors/user/UserSelector";
-import IUserResult from "selectors/user/models/IUserResult";
 import TableToExcel from "@linways/table-to-excel";
 import ModalSizeEnum from "constants/ModalSizeEnum";
 import ClaimForm from "./components/nonamepage-main/form/form-claim/FormClaim";
@@ -32,9 +30,9 @@ const NoNameAccountsPage: React.FC<IProps> = (
   const activePage = useSelector(
     (state: IStore) => state.customerSetting.activePage
   );
-  const currentUser: IUserResult = useSelector((state: IStore) =>
-    selectUserResult(state)
-  );
+  // const currentUser: IUserResult = useSelector((state: IStore) =>
+  //   selectUserResult(state)
+  // );
   const [rowData, setRowData] = useState([]);
 
   const setNewRowData = (data) => {
@@ -65,7 +63,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
       dispatch(
         CustomerActions.requestSearchNoNameAcc(
           1,
-          tableData.totalRow,
+          tableData.totalRowNoName,
           null,
           search.value
         )
@@ -74,7 +72,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
       dispatch(
         CustomerActions.requestNoNameAcc(
           1,
-          tableData.totalRow,
+          tableData.totalRowNoName,
           null,
           "ascending"
         )
@@ -103,7 +101,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
           ) as HTMLTableElement;
         }
 
-        tableHead.style.display = "none";
+        tableHead.style.backgroundColor = "#9D9AEF";
         for (let i = 0; i < tableSelect.rows.length; i++) {
           const firstCol = tableSelect.rows[i].cells[0];
           firstCol.remove();
@@ -255,7 +253,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
             <Pagination
               activePage={activePage}
               onPageChange={(e, data) => handlePaginationChange(e, data)}
-              totalPage={tableData.totalRow}
+              totalPage={tableData.totalRowNoName}
               pageSize={pageSize}
             />
           </Grid.Column>
