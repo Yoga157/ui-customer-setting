@@ -38,6 +38,7 @@ const NamedAccountsPage: React.FC<IProps> = (
     selectUserResult(state)
   );
   const [rowData, setRowData] = useState([]);
+  const [isChecked, setIsChecked] = useState(false);
 
   const setNewRowData = (data) => {
     setRowData(data);
@@ -200,7 +201,7 @@ const NamedAccountsPage: React.FC<IProps> = (
                   }}
                   // color="red"
                   icon="times circle"
-                  disabled={rowData.length == 0 ? true : false}
+                  disabled={rowData.length === 0 || rowData.length > 5}
                   size="mini"
                   content="Release Account"
                   onClick={onReleaseAccount}
