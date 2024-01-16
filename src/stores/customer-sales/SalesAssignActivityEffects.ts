@@ -20,6 +20,22 @@ export const requestSalesByName = async (
   return EffectUtility.getToModel<SalesNameMode>(SalesNameMode, endpoint);
 };
 
+//Claim Account
+export const postClaimAccount = async (
+  data: SalesAssignPostModel
+): Promise<ResultActions | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting";
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+  return EffectUtility.postToModel<ResultActions>(
+    ResultActions,
+    endpoint,
+    data
+  );
+};
+
 export const requestSalesDropdown = async (): Promise<
   SalesNameMode | HttpErrorResponseModel
 > => {
@@ -60,24 +76,30 @@ export const clearResult = async (): Promise<any> => {
   return clear;
 };
 
-export const requestSalesHistory = async (customerSettingId: number): Promise<SalesAssignHistoryModel | HttpErrorResponseModel> => {
-  const controllerName = "CustomerSetting/CustomerSalesAssign?customerSettingID=" + customerSettingId;
+export const requestSalesHistory = async (
+  customerSettingId: number
+): Promise<SalesAssignHistoryModel | HttpErrorResponseModel> => {
+  const controllerName =
+    "CustomerSetting/CustomerSalesAssign?customerSettingID=" +
+    customerSettingId;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName
   );
 
-  return EffectUtility.getToModel<SalesAssignHistoryModel>(SalesAssignHistoryModel, endpoint);
+  return EffectUtility.getToModel<SalesAssignHistoryModel>(
+    SalesAssignHistoryModel,
+    endpoint
+  );
 };
 
-export const deleteSalesAssign = async (id: number): Promise<ResultActions | HttpErrorResponseModel> => {
+export const deleteSalesAssign = async (
+  id: number
+): Promise<ResultActions | HttpErrorResponseModel> => {
   const controllerName = "CustomerSetting/CustomerSalesAssign?AssignID=" + id;
-const endpoint: string = environment.api.customer.replace(
-  ":controller",
-  controllerName
-);
-return EffectUtility.delToModel<ResultActions>(
-  ResultActions,
-  endpoint
-);
-}
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+  return EffectUtility.delToModel<ResultActions>(ResultActions, endpoint);
+};

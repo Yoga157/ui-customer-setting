@@ -38,12 +38,6 @@ const AllAccountsPage: React.FC<IProps> = (
     setRowData(data);
   };
 
-  const moveToAddCustomer = () => {
-    props.history.push({
-      pathname: RouteEnum.AddNewCustomerSetting,
-    });
-  };
-
   const exportTableToExcel = (tableID: string, filename: string): void => {
     const search = document.querySelector(
       "#search-input-customer"
@@ -53,18 +47,13 @@ const AllAccountsPage: React.FC<IProps> = (
         CustomerActions.requestSearchAllAcc(
           1,
           tableData.totalRow,
-          "CustomerID",
+          null,
           search.value
         )
       );
     } else {
       dispatch(
-        CustomerActions.requestAllAcc(
-          1,
-          tableData.totalRow,
-          "CustomerID",
-          "ascending"
-        )
+        CustomerActions.requestAllAcc(1, tableData.totalRow, null, "ascending")
       );
     }
     if (isRequesting == false) {
@@ -72,7 +61,9 @@ const AllAccountsPage: React.FC<IProps> = (
         let tableSelect: any;
         let tableHead: any;
 
-        if (window.location.pathname === "/customer-setting-page") {
+        if (
+          window.location.pathname === "/data-quality/customer-setting-page"
+        ) {
           tableSelect = document.getElementById(
             "exporttosetting"
           ) as HTMLTableElement;
@@ -94,7 +85,7 @@ const AllAccountsPage: React.FC<IProps> = (
           firstCol.remove();
         }
         TableToExcel.convert(tableSelect, {
-          name: "CustomerSetting" + ".xlsx",
+          name: "AllAccounts" + ".xlsx",
           sheet: {
             name: "Sheet 1",
           },
@@ -119,7 +110,7 @@ const AllAccountsPage: React.FC<IProps> = (
       "#search-input-customer"
     )! as HTMLInputElement;
 
-    if (window.location.pathname === "/customer-setting-page") {
+    if (window.location.pathname === "/data-quality/customer-setting") {
       if (search.value.length > 0) {
         // console.log("search");
         dispatch(

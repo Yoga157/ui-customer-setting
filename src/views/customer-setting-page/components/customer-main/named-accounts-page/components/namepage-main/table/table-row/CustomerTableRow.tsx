@@ -193,7 +193,6 @@ const CustomerTableRow: React.FC<IProps> = (
               maxWidth: "20rem",
               width: "15rem",
               margin: "auto",
-              height: "2rem",
               display: "flex",
             }}
           >
@@ -214,10 +213,9 @@ const CustomerTableRow: React.FC<IProps> = (
             style={{
               color: "white",
               borderRadius: "1rem",
-              maxWidth: "15rem",
-              width: "10rem",
+              maxWidth: "20rem",
+              width: "15rem",
               margin: "auto",
-              height: "2rem",
               display: "flex",
               justifyContent: "center",
               textAlign: "center",

@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
 import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLevelActions";
 import "./NoNameAccountsPage.scss";
+import { format } from "date-fns";
 import IStore from "models/IStore";
 import * as CustomerActions from "stores/customer-setting/CustomerActivityActions";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
@@ -64,7 +65,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
         CustomerActions.requestSearchNoNameAcc(
           1,
           tableData.totalRow,
-          "CustomerID",
+          null,
           search.value
         )
       );
@@ -73,7 +74,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
         CustomerActions.requestNoNameAcc(
           1,
           tableData.totalRow,
-          "CustomerID",
+          null,
           "ascending"
         )
       );
@@ -83,7 +84,9 @@ const NoNameAccountsPage: React.FC<IProps> = (
         let tableSelect: any;
         let tableHead: any;
 
-        if (window.location.pathname === "/customer-setting-page") {
+        if (
+          window.location.pathname === "/data-quality/customer-setting-page"
+        ) {
           tableSelect = document.getElementById(
             "exporttosetting"
           ) as HTMLTableElement;
@@ -105,7 +108,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
           firstCol.remove();
         }
         TableToExcel.convert(tableSelect, {
-          name: "CustomerSetting" + ".xlsx",
+          name: "NoNameAccounts_" + currDate + ".xlsx",
           sheet: {
             name: "Sheet 1",
           },
@@ -114,9 +117,11 @@ const NoNameAccountsPage: React.FC<IProps> = (
       setTimeout(() => {
         window.location.href =
           window.location.origin + window.location.pathname;
-      }, 4000);
+      }, 3000);
     }
   };
+
+  const currDate: string = format(new Date(), "cccc LLLL d, yyyy");
 
   const handlePaginationChange = (e: any, data: any) => {
     dispatch(CustomerActions.setActivePage(data.activePage));
@@ -124,7 +129,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
       "#search-input-customer"
     )! as HTMLInputElement;
 
-    if (window.location.pathname === "/customer-setting-page") {
+    if (window.location.pathname === "/data-quality/customer-setting") {
       if (search.value.length > 0) {
         dispatch(
           CustomerActions.requestSearchNoNameAcc(
@@ -195,7 +200,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
                   }}
                   color="yellow"
                   icon="check circle"
-                  disabled={rowData.length == 0 ? true : false}
+                  disabled={rowData.length === 0 || rowData.length > 5}
                   size="mini"
                   content="Claim Account"
                   onClick={onClaimAccount}

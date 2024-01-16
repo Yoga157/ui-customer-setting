@@ -59,21 +59,20 @@ const ClaimAccount: React.FC<IProps> = (
     for (let j = 0; j < rowData.length; j++) {
       for (let i = 0; i < salesAssignArray.length; i++) {
         const NewAssignSales = new SalesAssignPostModel(e);
-        NewAssignSales.assignID = JSON.parse(userId)?.employeeID;
-        NewAssignSales.SalesID = salesAssignArray[i].salesID;
-        NewAssignSales.CustomerSettingID = rowData[j].customerSettingID;
-        NewAssignSales.AssignedBy = JSON.parse(userId)?.employeeID;
+        // NewAssignSales.assignID = JSON.parse(userId)?.employeeID;
+        // NewAssignSales.customerSettingID = rowData[j].customerSettingID;
+        NewAssignSales.customerID = rowData[j].CustomerID;
+        NewAssignSales.salesID = JSON.parse(userId)?.employeeID;
+        // NewAssignSales.AssignedBy = JSON.parse(userId)?.employeeID;
         NewAssignSales.createDate = new Date(props.rowData[j].createDate);
         NewAssignSales.createUserID = JSON.parse(userId)?.employeeID;
         NewAssignSales.modifyUserID = JSON.parse(userId)?.employeeID;
 
-        await dispatch(SalesAssign.postAssignedSales(NewAssignSales));
+        await dispatch(SalesAssign.postClaimAccount(NewAssignSales));
       }
     }
     dispatch(ModalAction.CLOSE());
-    dispatch(
-      CustomerSettingAct.requestCustomerSett(1, 10, "CustomerSettingID")
-    );
+    dispatch(CustomerSettingAct.requestNoNameAcc(1, 10, "CustomerID"));
   };
 
   const onHandlerSearch = () => {};
@@ -110,88 +109,94 @@ const ClaimAccount: React.FC<IProps> = (
     "Invalid Sales Name"
   );
 
-  const validate = combineValidators({
-    salesName: composeValidators(isValidsalesName, isRequired("Sales Name"))(),
-  });
+  // const validate = combineValidators({
+  //   salesName: composeValidators(isValidsalesName, isRequired("Sales Name"))(),
+  // });
 
   return (
     <Fragment>
+      <Card.Header>
+        <h4>Claim Accounts</h4>
+      </Card.Header>
+      <Divider></Divider>
       <LoadingIndicator isActive={isRequesting}>
         <FinalForm
-          onSubmit={deleteClick}
+          // validate={validate}
+          onSubmit={() => onHandlerSearch()}
           render={({ handleSubmit }) => (
             <Form onSubmit={handleSubmit}>
-              <Grid.Row>
-                {rowData.length == 1}
+              <div>
                 <div
                   style={{
+                    backgroundColor: "#FFFB9A",
+                    textAlign: "center",
+                    borderRadius: "5rem",
+                    height: "3.5rem",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    margin: "1rem",
                   }}
                 >
-                  <div style={{ padding: "0px" }}>
-                    <img
-                      className="ui centered medium"
-                      src="/assets/info.png"
-                      sizes="small"
-                      style={{ width: "150px", height: "150px" }}
-                    />
-                  </div>
+                  <p
+                    style={{
+                      textAlign: "center",
+                      fontFamily: "Arial, sans-serif",
+                      fontSize: "1rem",
+                      lineHeight: "1.3",
+                      // color: "#A5AA89",
+                    }}
+                  >
+                    Please pay more attention to customer accounts that you
+                    choose ?
+                  </p>
                 </div>
-              </Grid.Row>
-              <Grid.Row
-                centered
-                style={{
-                  textAlign: "center",
-                  marginTop: "1.5rem",
-                }}
-              >
-                <span style={{ padding: "10px" }}>
-                  Are you sure want to claim this account ?
-                </span>
-              </Grid.Row>
-              <Grid.Row>
+                <Divider></Divider>
                 {rowData.map((data) => {
                   return (
-                    <div>
+                    <>
                       <Grid.Row
-                        centered
                         width={1}
-                        style={{ padding: "0px" }}
-                        key={data.customerGenID}
+                        className="padding-0"
+                        key={data.customerID}
                       >
-                        <Grid.Column style={{ marginBottom: "3rem" }}>
-                          <p
-                            style={{
-                              textAlign: "center",
-                              fontWeight: "bold",
-                              fontSize: "1rem",
-                              marginTop: "0.5rem",
-                            }}
-                          >
+                        <Grid.Column>
+                          <h2 style={{ color: "#55637a" }}>
                             {data.customerName}
-                          </p>
+                          </h2>
                         </Grid.Column>
                       </Grid.Row>
-                    </div>
+
+                      <Divider></Divider>
+                    </>
                   );
                 })}
-              </Grid.Row>
-
-              <Divider></Divider>
-              <div style={{ textAlign: "center", marginTop: "2rem" }}>
-                <Button type="button" onClick={cancelClick}>
-                  Cancel
-                </Button>
-                <Button type="submit" color="blue">
-                  Yes, Claim it
-                </Button>
               </div>
             </Form>
           )}
         />
+
+        <div style={{ textAlign: "center", marginBottom: "20px" }}>
+          <Button
+            type="button"
+            onClick={cancelClick}
+            style={{
+              marginRight: "10px",
+              padding: "12px 20px",
+              fontSize: "15px",
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            className="MarBot10"
+            type="submit"
+            color="blue"
+            onClick={onSubmitHandler}
+            style={{ padding: "12px 20px", fontSize: "15px" }}
+          >
+            Submit
+          </Button>
+        </div>
       </LoadingIndicator>
     </Fragment>
   );

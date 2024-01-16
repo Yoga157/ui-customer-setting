@@ -6,10 +6,14 @@ import {
 
 export default class SalesAssignPostModel extends BaseModel {
   assignID: number = 0;
-  SalesID: number = 0;
-  CustomerSettingID: number = 0;
+  salesID: number = 0;
+  customerID: number = 0;
+  customerSettingID: number = 0;
   AssignStartDate?: Date = undefined;
   AssignedBy: string = "";
+  named: boolean = false;
+  shareable: boolean = false;
+  pmoCustomer: boolean = false;
   createDate?: Date = new Date();
   createUserID: number = 0;
   modifyDate?: Date = undefined;
@@ -22,9 +26,11 @@ export default class SalesAssignPostModel extends BaseModel {
   public update(data: Partial<SalesAssignPostModel>): void {
     const conversionOptions: IConversionOption = {
       assignID: ConversionTypeEnum.Number,
-      SalesID: ConversionTypeEnum.Number,
-      CustomerSettingID: ConversionTypeEnum.Number,
+      salesID: ConversionTypeEnum.Number,
+      customerID: ConversionTypeEnum.Number,
+      customerSettingID: ConversionTypeEnum.Number,
       AssignedBy: ConversionTypeEnum.String,
+      named: ConversionTypeEnum.Boolean,
       createUserID: ConversionTypeEnum.Number,
       createDate: ConversionTypeEnum.String,
       modifyUserID: ConversionTypeEnum.Number,
