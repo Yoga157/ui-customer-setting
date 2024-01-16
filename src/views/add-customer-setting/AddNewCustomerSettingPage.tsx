@@ -424,10 +424,10 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (
       /** post sales assign */
       salesAssign.map((data) => {
         const NewAssignSales = new SalesAssignPostModel({});
-        NewAssignSales.assignID = 0;
+        // NewAssignSales.assignID = 0;
         NewAssignSales.salesID = data.salesID;
         NewAssignSales.customerSettingID = postResponse.customerSettingID;
-        NewAssignSales.AssignedBy = userLogin?.employeeID;
+        // NewAssignSales.AssignedBy = userLogin?.employeeID;
         NewAssignSales.createDate = new Date();
         NewAssignSales.createUserID = userLogin?.employeeID;
         NewAssignSales.modifyUserID = userLogin?.employeeID;

@@ -130,27 +130,27 @@ const ShareableAccountsPage: React.FC<IProps> = (
       "#search-input-customer"
     )! as HTMLInputElement;
 
-    if (window.location.pathname === "/data-quality/customer-setting") {
-      if (search.value.length > 0) {
-        dispatch(
-          CustomerActions.requestSearchShareabelAcc(
-            data.activePage,
-            pageSize,
-            null,
-            search.value
-          )
-        );
-      } else {
-        dispatch(
-          CustomerActions.requestShareabledAcc(
-            data.activePage,
-            pageSize,
-            "customerID",
-            "ascending"
-          )
-        );
-      }
+    // if (window.location.pathname === "/data-quality/customer-setting") {
+    if (search.value.length > 0) {
+      dispatch(
+        CustomerActions.requestSearchShareabelAcc(
+          data.activePage,
+          pageSize,
+          null,
+          search.value
+        )
+      );
+    } else {
+      dispatch(
+        CustomerActions.requestShareabledAcc(
+          data.activePage,
+          pageSize,
+          "customerID",
+          "ascending"
+        )
+      );
     }
+    // }
   };
 
   const isRequesting: boolean = useSelector((state: IStore) =>

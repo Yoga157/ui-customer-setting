@@ -110,28 +110,28 @@ const AllAccountsPage: React.FC<IProps> = (
       "#search-input-customer"
     )! as HTMLInputElement;
 
-    if (window.location.pathname === "/data-quality/customer-setting") {
-      if (search.value.length > 0) {
-        // console.log("search");
-        dispatch(
-          CustomerActions.requestSearchAllAcc(
-            data.activePage,
-            pageSize,
-            "CustomerID",
-            search.value
-          )
-        );
-      } else {
-        dispatch(
-          CustomerActions.requestAllAcc(
-            data.activePage,
-            pageSize,
-            "CustomerID",
-            "ascending"
-          )
-        );
-      }
+    // if (window.location.pathname === "/data-quality/customer-setting") {
+    if (search.value.length > 0) {
+      // console.log("search");
+      dispatch(
+        CustomerActions.requestSearchAllAcc(
+          data.activePage,
+          pageSize,
+          "CustomerID",
+          search.value
+        )
+      );
+    } else {
+      dispatch(
+        CustomerActions.requestAllAcc(
+          data.activePage,
+          pageSize,
+          "CustomerID",
+          "ascending"
+        )
+      );
     }
+    // }
   };
 
   const isRequesting: boolean = useSelector((state: IStore) =>
