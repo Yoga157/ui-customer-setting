@@ -66,9 +66,9 @@ interface IProps {
         customerAddress: string,
         blacklist: boolean,
         holdshipment: boolean,
-        sales: string,
+        salesName: any,
         avgAR: number,
-        shareableApprovalStatus: any
+        shareableApprovalStatus?: any
     },
     role: string
 }
@@ -82,13 +82,12 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     const { customer, role } = props;
     
     /** Customer data */
-    const accountStatus = (customer.named == null && customer.shareable == null) ? "No Name Account" : (customer.named ? "Named Account" : "Shareable Account");
+    const accountStatus = (!customer.named && !customer.shareable) ? "No Name Account" : (customer.named ? "Named Account" : "Shareable Account");
     // get employeeName dari local storage
     const employeeName = "Anjar Wahyudi";
     // cek apakah employeeName memiliki customer ini
-    const salesArray: string[] = customer.sales.split(", ");
-    const isEmployeeOwnCustomer: boolean = salesArray.includes(employeeName);
-    console.log(salesArray, isEmployeeOwnCustomer)
+    const salesArray: string[] = customer.salesName?.split(", ");
+    const isEmployeeOwnCustomer: boolean = salesArray?.includes(employeeName);
     
     /** Handle dropdown data yang di-get */
     const [openPicList, setOpenPicList] = useState(false);
@@ -112,9 +111,8 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     const [historyPageSize, setHistoryPageSize] = useState(5)
     const [historyActivePage, setHistoryActivePage] = useState(1)
     const [historyData, setHistoryData] = useState(allHistoryData.slice(0, historyPageSize))
-    console.log(allHistoryData)
 
-    // fungsi mengatur perubahan halaman
+    // fungsi mengatur perubahan halaman project history
     const historyChangePage = (e, page) => {
         const startIndex = (page.activePage - 1) * historyPageSize;
         const endIndex = startIndex + historyPageSize;
@@ -169,6 +167,27 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
         setSearchText("");
         setCancelBtn(false);
     }
+
+    /** Config Item */
+    const [allConfigData, setAllConfigData] = useState(data.configItemData)
+    const [configPageSize, setConfigPageSize] = useState(5)
+    const [configActivePage, setConfigActivePage] = useState(1)
+    const [configData, setConfigData] = useState(allConfigData.slice(0, configPageSize))
+
+    // fungsi mengatur perubahan halaman config item
+    const configChangePage = (e, page) => {
+        const startIndex = (page.activePage - 1) * historyPageSize;
+        const endIndex = startIndex + historyPageSize;
+        const paginatedData = allConfigData.slice(startIndex, endIndex);
+
+        setConfigData(paginatedData)
+        setConfigActivePage(page.activePage)
+    }
+
+    useEffect(() => {
+        setConfigData(allConfigData.slice(0, configPageSize));
+        setConfigActivePage(1);
+    }, [allConfigData])
 
     /** Add setting */
     const [pmoCustomer, setPmoCustomer] = useState(customer.pmoCustomer ? "TRUE" : "FALSE");
@@ -550,7 +569,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
                     <div className="padding-horizontal title-button-row">
                         <p className="grey margin-0 bold text-align-left">ACCOUNT OWNER SETTING</p>
-                        <ClaimReleaseButton accountStatus={accountStatus} isEmployeeOwnCustomer={isEmployeeOwnCustomer} />
+                        <ClaimReleaseButton customer={customer} accountStatus={accountStatus} isEmployeeOwnCustomer={isEmployeeOwnCustomer} />
                     </div>
 
                     <Divider></Divider>
@@ -699,13 +718,13 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                         <>
                                         <Divider className="margin-0"></Divider>
                                         <div className="table-container">
-                                            <TableNewCustomerSetting data={configItemData} header={data.configItemHeader} sequenceNum={false}/>
+                                            <TableNewCustomerSetting data={data.configItemData} header={data.configItemHeader} sequenceNum={false}/>
                                             <div style={{ marginTop: "1rem" }}>
                                                 <Pagination
-                                                    activePage={1}
-                                                    onPageChange={() => {}}
-                                                    totalPage={2}
-                                                    pageSize={1}
+                                                    activePage={configActivePage}
+                                                    onPageChange={(e, data) => configChangePage(e, data)}
+                                                    totalPage={allConfigData.length}
+                                                    pageSize={configPageSize}
                                                 />
                                             </div>
                                         </div>

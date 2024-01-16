@@ -506,5 +506,31 @@ export const configItemData = [
         brand: "LENOVO",
         quantity: 1,
         warrantyStartDate: "11/06/2022"
-    }
+    },
+    {
+        productNumber: "XYZ-00456",
+        soNumber: 1234,
+        poNumber: 128821,
+        poDate: "20/03/2022",
+        etaByPurchasing: "10/05/2022",
+        etaByPMO: "10/05/2022",
+        doDate: "10/06/2022",
+        descriptionItem: "Lorem Ipsun",
+        brand: "LENOVO",
+        quantity: 1,
+        warrantyStartDate: "11/06/2022"
+    },
+    {
+        productNumber: "XYZ-00456",
+        soNumber: 1234,
+        poNumber: 128821,
+        poDate: "20/03/2022",
+        etaByPurchasing: "10/05/2022",
+        etaByPMO: "10/05/2022",
+        doDate: "10/06/2022",
+        descriptionItem: "Lorem Ipsun",
+        brand: "LENOVO",
+        quantity: 1,
+        warrantyStartDate: "11/06/2022"
+    },
 ]

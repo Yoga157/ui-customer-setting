@@ -20,23 +20,23 @@ const ViewEditCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChi
     const customer = {
         customerSettingID: 1,
         customerID: 984,
-        shareable: true,
+        shareable: false,
         named: false,
         pmoCustomer: true,
         customerCategory: "Enterprise",
-        customerName: "CAPITAL LIFE INDONESIA, PT",
-        customerAddress: "GD.SONA TOPAS TOWER LT.9 JL.JEND.SUDIRMAN KAV.26 KARET SETIABUDI JAKARTA SELATAN DKI JAKARTA  JAKARTA SELATAN",
+        customerName: "ANTILOPE MADJU PURI INDAH PT",
+        customerAddress: "MAL PURI INDAH JL.PURI AGUNG PURI INDAH, KEMBANGAN SELATAN KEMBANGAN JAKARTA BARAT  DKI JAKARTA RAYA - 00000   Jakarta Barat",
         blacklist: false,
         holdshipment: false,
-        sales: "Rosa Amalia, Anjar Wahyudi",
+        salesName: null,
         avgAR: 0,
-        shareableApprovalStatus: {
-            requestedBy: "Rosa Amalia",
-            requestedDate: "01 January 2023 14:38",
-            approvalBy: "Rima Wulansari",
-            approvalDate: "15 January 2023 14:38",
-            approvalStatus: "rejected"
-        }
+        // shareableApprovalStatus: {
+        //     requestedBy: "Rosa Amalia",
+        //     requestedDate: "01 January 2023 14:38",
+        //     approvalBy: "Rima Wulansari",
+        //     approvalDate: "15 January 2023 14:38",
+        //     approvalStatus: "rejected"
+        // }
     }
     
     /** Customer data */
