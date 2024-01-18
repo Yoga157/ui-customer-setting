@@ -20,7 +20,7 @@ const ViewEditCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChi
     const customer = {
         customerSettingID: 1,
         customerID: 984,
-        shareable: false,
+        shareable: true,
         named: false,
         pmoCustomer: true,
         customerCategory: "Enterprise",
@@ -28,21 +28,21 @@ const ViewEditCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChi
         customerAddress: "MAL PURI INDAH JL.PURI AGUNG PURI INDAH, KEMBANGAN SELATAN KEMBANGAN JAKARTA BARAT  DKI JAKARTA RAYA - 00000   Jakarta Barat",
         blacklist: false,
         holdshipment: false,
-        salesName: null,
+        salesName: "Rosa Amalia",
         avgAR: 0,
-        // shareableApprovalStatus: {
-        //     requestedBy: "Rosa Amalia",
-        //     requestedDate: "01 January 2023 14:38",
-        //     approvalBy: "Rima Wulansari",
-        //     approvalDate: "15 January 2023 14:38",
-        //     approvalStatus: "rejected"
-        // }
+        shareableApprovalStatus: {
+            requestedBy: "Rosa Amalia",
+            requestedDate: "01 January 2023 14:38",
+            approvalBy: "Rima Wulansari",
+            approvalDate: "15 January 2023 14:38",
+            approvalStatus: "rejected"
+        }
     }
     
     /** Customer data */
     
     return (
-      <ViewEditCustomer customer={customer} role={"Sales"}/>  
+      <ViewEditCustomer customer={customer} role={"Admin"}/>  
     )
 }
 

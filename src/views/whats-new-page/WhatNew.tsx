@@ -23,7 +23,7 @@ const WhatsNew = (props: any) => {
   const [activeButtonIndex, setButtonIndex] = useState(0);
 
   useEffect(() => {
-    dispatch(WhatsNewActions.requestWhatsNew(year));
+    // dispatch(WhatsNewActions.requestWhatsNew(year));
     getButtonList();
   }, [year]);
 

@@ -17,7 +17,7 @@ export const REQUEST_GET_COLLECTION_HISTORY_FINISHED: string = "CollectionHistor
 
 export const requestCollectionHistory = (customerID: number): any => {
     return async (dispatch: ReduxDispatch<ActionUnion>): Promise <void> => {
-        await ActionUtility.createThunkEffect<CollectionHistoryModel>(
+        await ActionUtility.createThunkEffect<ResultActions>(
             dispatch,
             REQUEST_GET_COLLECTION_HISTORY,
             CollectionHistoryEffect.requestCollectionHistory,

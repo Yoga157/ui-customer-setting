@@ -7,6 +7,7 @@ import CustomerSettingRow from "./models/CustomerSettingRow";
 import ResultActions from "models/ResultActions";
 import IAction from "models/IAction";
 import CustomerSettingById from "./models/CustomerSettingById";
+import CustomerClaimAccount from "./models/CustomerClaimAccount";
 
 type ActionUnion =
   | undefined
@@ -410,6 +411,21 @@ export const clearResult = (): any => {
       dispatch,
       CLEAR_CUSTOMER_SETTING,
       CustomerEffect.clearResult
+    );
+  };
+};
+
+export const POST_CLAIM_ACCOUNT: string =
+  "CustomerActions.POST_CLAIM_ACCOUNT";
+export const POST_CLAIM_ACCOUNT_FINISHED =
+  "CustomerActions.POST_CLAIM_ACCOUNT_FINISHED";
+export const claimAccount = (data: CustomerClaimAccount): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      POST_CUSTOMER_SETTING,
+      CustomerEffect.claimAccount,
+      data
     );
   };
 };

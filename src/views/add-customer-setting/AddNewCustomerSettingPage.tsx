@@ -445,20 +445,20 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (
       dispatch(InvoicingSchedule.postInvoicingSchedule(NewInvoicingSchedule));
 
       /** post invoicing condition */
-      invoicingConditionData.map((data) => {
-        const NewInvoicingCondition = new InvoicingConditionModel({});
-        NewInvoicingCondition.conditionID = 0;
-        NewInvoicingCondition.customerSettingID =
-          postResponse.customerSettingID;
-        NewInvoicingCondition.projectType = data.projectType;
-        NewInvoicingCondition.conditionName = data.conditionName;
-        NewInvoicingCondition.createUserID = data.createUserID;
-        NewInvoicingCondition.modifyUserID = data.modifyUserID;
+      // invoicingConditionData.map((data) => {
+      //   const NewInvoicingCondition = new InvoicingConditionModel({});
+      //   NewInvoicingCondition.conditionID = 0;
+      //   NewInvoicingCondition.customerSettingID =
+      //     postResponse.customerSettingID;
+      //   NewInvoicingCondition.projectType = data.projectType;
+      //   NewInvoicingCondition.conditionName = data.conditionName;
+      //   NewInvoicingCondition.createUserID = data.createUserID;
+      //   NewInvoicingCondition.modifyUserID = data.modifyUserID;
 
-        dispatch(
-          InvoicingCondition.postInvoicingCondition(NewInvoicingCondition)
-        );
-      });
+      //   dispatch(
+      //     InvoicingCondition.postInvoicingCondition(NewInvoicingCondition)
+      //   );
+      // });
 
       /** post related customer */
       relatedCustomerData.map((data) => {

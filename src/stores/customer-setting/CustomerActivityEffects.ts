@@ -7,6 +7,7 @@ import CustomerSettingById from "./models/CustomerSettingById";
 import ResultActions from "models/ResultActions";
 import { NumberFormatState } from "react-number-format";
 import { data } from "jquery";
+import CustomerClaimAccount from "./models/CustomerClaimAccount";
 
 export const requestNoNameAcc = async (
   page?: number,
@@ -328,4 +329,20 @@ export const putCustomerSetting = async (
 export const clearResult = async (): Promise<any> => {
   const clear = new ResultActions({});
   return clear;
+};
+
+export const claimAccount = async (
+  data: CustomerClaimAccount
+): Promise<ResultActions | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting";
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+
+  return EffectUtility.postToModel<ResultActions>(
+    ResultActions,
+    endpoint,
+    data
+  );
 };

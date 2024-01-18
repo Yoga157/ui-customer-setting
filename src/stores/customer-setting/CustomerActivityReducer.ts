@@ -228,6 +228,19 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
       refreshPage: false,
     };
   },
+
+  [CustomerActions.POST_CLAIM_ACCOUNT_FINISHED](
+    state: ICustomerState,
+    action: IAction<ResultActions>
+  ): ICustomerState {
+    console.log(action);
+    return {
+      ...state,
+      resultActions: action.payload!,
+      error: false,
+      refreshPage: false,
+    };
+  },
 });
 
 export default customerSettingReducer;

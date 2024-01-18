@@ -50,15 +50,15 @@ const ModalNewInvoicingCondition: React.FC<IProps> = (props: React.PropsWithChil
     const onSubmitHandler = async (data: any) => {
         let userLogin = JSON.parse(localStorage.getItem('userLogin'));
         
-        const NewInvoicingCondition = new InvoicingConditionModel({});
-        NewInvoicingCondition.conditionID = 0;
-        NewInvoicingCondition.customerSettingID = props.customerSettingID;
-        NewInvoicingCondition.projectType = data.projectType;
-        NewInvoicingCondition.conditionName = data.documentInvoicing;
-        NewInvoicingCondition.createUserID = userLogin?.employeeID;
-        NewInvoicingCondition.modifyUserID = 0;
+        // const NewInvoicingCondition = new InvoicingConditionModel({});
+        // NewInvoicingCondition.conditionID = 0;
+        // NewInvoicingCondition.customerSettingID = props.customerSettingID;
+        // NewInvoicingCondition.projectType = data.projectType;
+        // NewInvoicingCondition.conditionName = data.documentInvoicing;
+        // NewInvoicingCondition.createUserID = userLogin?.employeeID;
+        // NewInvoicingCondition.modifyUserID = 0;
 
-        await dispatch(InvoicingCondition.postInvoicingCondition(NewInvoicingCondition))
+        // await dispatch(InvoicingCondition.postInvoicingCondition(NewInvoicingCondition))
         await dispatch(InvoicingCondition.requestInvoicingCondition(props.customerSettingID))
         dispatch(ModalAction.CLOSE());
     }

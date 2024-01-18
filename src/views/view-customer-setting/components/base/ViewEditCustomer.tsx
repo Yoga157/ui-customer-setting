@@ -17,7 +17,7 @@ import ModalNewRelatedFile from "../modal/modal-new-related-file/ModalNewRelated
 import TableNewCustomerSetting from "../table/table-new-customer-setting/TableNewCustomerSetting";
 import { DeletePopUp } from "../delete";
 
-import { selectCustomerById, selectCustomerSearchOptions } from "selectors/select-options/CustomerNameSelector";
+import { selectCustomerById, selectCustomerCategories, selectCustomerSearchOptions } from "selectors/select-options/CustomerNameSelector";
 import IStore from "models/IStore";
 import * as CustomerName from "stores/customer-name/CustomerNameActivityActions"
 import * as CustomerSetting from "stores/customer-setting/CustomerActivityActions"
@@ -83,12 +83,26 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     
     /** Customer data */
     const accountStatus = (!customer.named && !customer.shareable) ? "No Name Account" : (customer.named ? "Named Account" : "Shareable Account");
+    
     // get employeeName dari local storage
-    const employeeName = "Anjar Wahyudi";
     // cek apakah employeeName memiliki customer ini
+    const employeeName = "Anjar Wahyudi";
     const salesArray: string[] = customer.salesName?.split(", ");
     const isEmployeeOwnCustomer: boolean = salesArray?.includes(employeeName);
     
+    // customer category
+    const [customerCategory, setCustomerCategory] = useState("");
+    const customerCategoryOptions = useSelector((state: IStore) => selectCustomerCategories(state));
+    
+    const onSubmitCustCategory = async (e) => {
+        console.log(e);
+    };
+
+    const onChangeCustomerCategory = (data : any) => {
+        setCustomerCategory(data)
+        console.log(data)
+    }
+
     /** Handle dropdown data yang di-get */
     const [openPicList, setOpenPicList] = useState(false);
     const [openBrandSummary, setOpenBrandSummary] = useState(false);
@@ -169,7 +183,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     }
 
     /** Config Item */
-    const [allConfigData, setAllConfigData] = useState(data.configItemData)
+    const [allConfigData, setAllConfigData] = useState(configItemData)
     const [configPageSize, setConfigPageSize] = useState(5)
     const [configActivePage, setConfigActivePage] = useState(1)
     const [configData, setConfigData] = useState(allConfigData.slice(0, configPageSize))
@@ -326,7 +340,18 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
         );
       }, [dispatch]);
 
-    const relatedCustomerData = useSelector((state: IStore) => selectRelatedCustomer(state));
+    // const relatedCustomerData = useSelector((state: IStore) => selectRelatedCustomer(state));
+    const relatedCustomerData = [
+        {
+            relatedID: 1,
+            customerName: "Example",
+            customerAddress: "Jalan jalan",
+            category: "Enterprise",
+            avgAR: 0,
+            blacklist: false,
+            holdshipment: false
+        }
+    ]
     
     const deleteRelatedCustomer = useCallback((idToDel: number): void => {
         dispatch(
@@ -363,13 +388,18 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
         // console.log(customerSettingData)
         // if(!Number.isNaN(customer.customerID)) {
         if(projectHistoryData.length == 0) {
+            dispatch(CustomerName.requestCustomerCategory());
+
             // dispatch(CustomerName.requestCustomerById(customerSettingData.customerID))
-            // dispatch(ConfigItem.requestConfigItem(customerSettingData.customerID))
-            // dispatch(CollectionHistory.requestCollectionHistory(customerSettingData.customerID))
+            dispatch(ConfigItem.requestConfigItem(customer.customerID))
+            dispatch(CollectionHistory.requestCollectionHistory(customer.customerID))
             dispatch(CustomerPIC.requestGetCustomerPIC(customer.customerID))
             dispatch(BrandSummary.requestBrandSummary(customer.customerID))
             dispatch(ServiceSummary.requestServiceSummary(customer.customerID))
             dispatch(ProjectHistory.requestProjectHistory(customer.customerID))
+
+            dispatch(InvoicingSchedule.requestInvoicingSchedule(customer.customerID))
+            dispatch(InvoicingCondition.requestInvoicingCondition(customer.customerID))
             setPmoCustomer(customer.pmoCustomer ? "TRUE": "FALSE")
         }
 
@@ -377,12 +407,14 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
             setAllHistoryData(projectHistoryData)
         }
         
-        if(!Number.isNaN(invoicingSchedule.scheduleID)) {
+        if(Object.keys(invoicingSchedule).length != 0) {
+            console.log(invoicingSchedule)
             if(invoicingSchedule.scheduleDays === "Monday, Tuesday, Wednesday, Thursday, Friday") {
                 setIsAllDaysChecked(true)
             } else {
                 setIsAllDaysChecked(false)
             }
+            console.log(invoicingSchedule.scheduleDays)
 
             setDaysArray(invoicingSchedule.scheduleDays.split(", "))
             setMinDate(invoicingSchedule.minDate)
@@ -501,7 +533,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                             <p style={{ margin: "0 1rem 0 0"}}>PMO customer</p>
                             <div style={{ display: "flex", justifyContent: "center"}}>
                                 <p className="margin-0">OFF</p>
-                                <Checkbox toggle  checked={pmoCustomer=="TRUE" ? true : false} onChange={() => handlePmoCustomer()} className="toggle-margin"></Checkbox>
+                                <Checkbox toggle checked={pmoCustomer=="TRUE" ? true : false} onChange={() => handlePmoCustomer()} className="toggle-margin" disabled={role.toUpperCase() == "SALES"}></Checkbox>
                                 <p className="margin-0">ON</p>
                             </div>
                         </div>
@@ -517,14 +549,36 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                         <div className="padding-horizontal customer-search-container">
                             <div className="customer-data-container">
                                 <label className="address-font-label" style={{ textAlign: "left"}}>Account Status</label>
-                                <Label style={{ backgroundColor: accountStatus == "Named Account" ? "#959EAC" : (accountStatus == "No Name Account" ? "#949AA1" : "#27D4A5"), color: "white" }} className="boolean-container">
+                                <Label style={{ backgroundColor: accountStatus == "Named Account" ? "#656DD1" : (accountStatus == "No Name Account" ? "#949AA1" : "#27D4A5"), color: "white" }} className="boolean-container">
                                     <p>{accountStatus}</p>
                                 </Label>
                             </div>
 
                             <div className="customer-data-container">
-                                <label className="customer-data-label">Cust. Category</label>
-                                <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">Enterprise</p>
+                                {
+                                    role.toUpperCase() == "SALES" ? 
+                                    <>
+                                        <label className="customer-data-label">Cust. Category</label>
+                                        <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">{customer.customerCategory}</p>
+                                    </>
+                                    :
+                                    <FinalForm
+                                    onSubmit={(values: any) => onSubmitCustCategory(values)}
+                                    render={({ handleSubmit, pristine, invalid }) => (
+                                        <Form onSubmit={handleSubmit}>
+                                        <Field
+                                            labelName="Cust. Category Name"
+                                            name="customerCategoryName"
+                                            component={DropdownClearInput}
+                                            placeholder="Choose category"
+                                            options={customerCategoryOptions}
+                                            onChanged={onChangeCustomerCategory}
+                                            values={customerCategory}
+                                            mandatory={true}
+                                        />
+                                        </Form>
+                                    )}/>
+                                }
                             </div>
 
                             <div className="customer-data-container">
@@ -702,7 +756,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                     {openCollectionHistory &&
                                         <>
                                         <div className="table-container">
-                                            <TableCollectionHistory data={data.collectionHistoryData}/>
+                                            <TableCollectionHistory data={collectionHistoryData}/>
                                         {/* <TableNewCustomerSetting data={data.collectionHistoryData} header={data.collectionHistoryHeader} sequenceNum={false} /> */}
                                         </div>
                                         <Divider className="margin-0"></Divider>
@@ -718,7 +772,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                         <>
                                         <Divider className="margin-0"></Divider>
                                         <div className="table-container">
-                                            <TableNewCustomerSetting data={data.configItemData} header={data.configItemHeader} sequenceNum={false}/>
+                                            <TableNewCustomerSetting data={configData} header={data.configItemHeader} sequenceNum={false}/>
                                             <div style={{ marginTop: "1rem" }}>
                                                 <Pagination
                                                     activePage={configActivePage}
@@ -755,7 +809,15 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                     </label>
                                                 </label>
                                             </div>
-                                            <p style={{ fontSize: "20px", fontWeight: "bold"}}>Monday, Tuesday</p>
+                                            {/* <p style={{ fontSize: "20px", fontWeight: "bold"}}>Monday, Tuesday</p> */}
+                                            <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
+                                                {days.map((day) => {
+                                                    console.log(daysArray.includes(day))
+                                                    return (
+                                                        <CheckboxInvoicing label={day} value={day} defaultChecked={isAllDaysChecked && day=="All days" ? isAllDaysChecked : (isAllDaysChecked ? !daysArray.includes(day) : daysArray.includes(day))} disabled={isAllDaysChecked && day !== "All days"} style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
+                                                    )
+                                                })}
+                                            </div>
                                         </div>
                                         
                                         <div className="invoicing-schedule-position">
@@ -775,7 +837,8 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
                                             <div style={{ width: "100%" }}>
                                                 <label className="customer-data-label">Remark</label>
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                                <p>{invoicingSchedule?.remark}</p>
+                                                {/* <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p> */}
                                             </div>
                                         </div>
                                     </div>
@@ -801,7 +864,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                 />
                                             </div>
 
-                                            <Button  color="yellow" size="small" type="button" onClick={onAddInvoicingCondition}><Icon name="add"/>Add Invoicing Condition</Button>
+                                            <Button color="yellow" size="small" type="button" onClick={onAddInvoicingCondition} disabled={role.toUpperCase() == "SALES"}><Icon name="add"/>Add Invoicing Condition</Button>
                                         </div>
 
                                         <Table
@@ -828,12 +891,12 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                 <Table.Row key={index}>
                                                         <Table.Cell>{index + 1}</Table.Cell>
                                                         <Table.Cell>
-                                                            <div className="trash-container" onClick={() => deleteInvoicingCondition(data.conditionID)}>
+                                                            <div className="trash-container" onClick={() => (role.toUpperCase() == "SALES" ? {} : deleteInvoicingCondition(data.conditionID))} style={{ backgroundColor: role.toUpperCase() == "SALES" ? "#EDAB9A" : "#F97452" }}>
                                                                 <Icon className="trash-icon" name="trash alternate"/>
                                                             </div>
                                                         </Table.Cell>
                                                         <Table.Cell>{data.projectType}</Table.Cell>
-                                                        <Table.Cell>{data.conditionName}</Table.Cell>
+                                                        <Table.Cell>{data.documentName}</Table.Cell>
                                                 </Table.Row>
                                                 )))
                                             }
@@ -845,7 +908,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
                                     <div className="padding-horizontal title-button-row">
                                         <p className="grey margin-0 bold text-align-left">RELATED CUSTOMER</p>
-                                        <Button color="yellow" size="small" type="button" onClick={onAddRelatedCustomer}><Icon name="add"/>Add Related Customer</Button>
+                                        <Button color="yellow" size="small" type="button" onClick={onAddRelatedCustomer} disabled={role.toUpperCase() == "SALES"}><Icon name="add"/>Add Related Customer</Button>
                                     </div>
 
                                     <Divider></Divider>
@@ -879,7 +942,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                 <Table.Row key={index}>
                                                         <Table.Cell>{index + 1}</Table.Cell>
                                                         <Table.Cell>
-                                                            <div className="trash-container" onClick={() => deleteRelatedCustomer(data.relatedID)}>
+                                                            <div className="trash-container" onClick={() => ( role.toUpperCase() == "SALES" ? {} : deleteRelatedCustomer(data.relatedID))} style={{ backgroundColor: role.toUpperCase() == "SALES" ? "#EDAB9A" : "#F97452" }}>
                                                                 <Icon className="trash-icon" name="trash alternate"/>
                                                             </div>
                                                         </Table.Cell>
@@ -908,7 +971,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
                                     <div className="padding-horizontal title-button-row">
                                         <p className="grey margin-0 bold text-align-left">UPLOAD RELATED FILE</p>
-                                        <Button color="yellow" size="small" type="button" onClick={onAddRelatedFile}><Icon name="add"/>Add Related File</Button>
+                                        <Button color="yellow" size="small" type="button" onClick={onAddRelatedFile} disabled={role.toUpperCase() == "SALES"}><Icon name="add"/>Add Related File</Button>
                                     </div>
 
                                     <Divider></Divider>
@@ -940,7 +1003,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                 <Table.Row key={index}>
                                                         <Table.Cell>{index + 1}</Table.Cell>
                                                         <Table.Cell>
-                                                            <div className="trash-container" onClick={() => deleteRelatedFile(data.relatedFileID)}>
+                                                            <div className="trash-container" onClick={() => (role.toUpperCase() == "SALES" ? {} : deleteRelatedFile(data.relatedFileID))} style={{ backgroundColor: role.toUpperCase() == "SALES" ? "#EDAB9A" : "#F97452" }}>
                                                                 <Icon className="trash-icon" name="trash alternate"/>
                                                             </div>
                                                         </Table.Cell>
