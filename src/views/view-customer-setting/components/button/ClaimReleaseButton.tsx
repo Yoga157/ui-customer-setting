@@ -14,12 +14,13 @@ import ModalRequestShareableAccount from "../modal/modal-request-shareable/Modal
 interface IProps {
     customer: any,
     accountStatus: string,
-    isEmployeeOwnCustomer: boolean
+    isEmployeeOwnCustomer: boolean,
+    role: string
 }
 
 const ClaimReleaseButton: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {   
     const dispatch: Dispatch = useDispatch();
-    const { customer, accountStatus, isEmployeeOwnCustomer } = props;
+    const { customer, accountStatus, isEmployeeOwnCustomer, role } = props;
     
     /** Claim Account */
     const onClaimAccount = useCallback((): void => {
@@ -54,29 +55,38 @@ const ClaimReleaseButton: React.FC<IProps> = (props: React.PropsWithChildren<IPr
 
     return (
       <Fragment>
+        
         {/* claim no name account */}
-        {accountStatus == "No Name Account" &&
+        {(accountStatus == "No Name Account" && role.toUpperCase() == "SALES") &&
             <Button color="yellow" size="small" type="button" onClick={() => onClaimAccount()}><Icon name="check circle"/>Claim Account</Button>
         }
 
         {/* release named account */}
-        {(accountStatus == "Named Account" && isEmployeeOwnCustomer) &&
+        {(accountStatus == "Named Account" && isEmployeeOwnCustomer && role.toUpperCase() == "SALES") &&
             <Button color="red" size="small" type="button" onClick={() => onReleaseAccount()}><Icon name="remove circle"/>Release Account</Button>
         }
 
         {/* request shareable account */}
-        {(accountStatus == "Named Account" && !isEmployeeOwnCustomer) &&
+        {(accountStatus == "Named Account" && !isEmployeeOwnCustomer && role.toUpperCase() == "SALES") &&
             <Button color="yellow" size="small" type="button" onClick={() => onRequestShareableAccount()}><Icon name="share"/>Request Shareable Account</Button>
         }
 
         {/* release shareable account */}
-        {(accountStatus == "Shareable Account" && isEmployeeOwnCustomer) &&
+        {(accountStatus == "Shareable Account" && isEmployeeOwnCustomer && role.toUpperCase() == "SALES") &&
             <Button color="red" size="small" type="button" onClick={() => onReleaseAccount()}><Icon name="remove circle"/>Release Account</Button>
         }
 
         {/* claim shareable account */}
-        {(accountStatus == "Shareable Account" && !isEmployeeOwnCustomer) &&
+        {(accountStatus == "Shareable Account" && !isEmployeeOwnCustomer && role.toUpperCase() == "SALES") &&
             <Button color="yellow" size="small" type="button" onClick={() => {}}><Icon name="check circle"/>Claim Account</Button>
+        }
+
+        {/* accept shareable request */}
+        {(accountStatus == "Shareable Account" && role.toUpperCase() == "ADMIN") &&
+          <div style={{ display: "flex", flexDirection: "row", alignContent: "center"}}>
+            <p style={{ color: "red", fontStyle: "italic", marginBottom: 0, marginRight: "1rem", padding: 0, alignSelf: "center" }}>Request by {customer.shareableApprovalStatus?.requestedBy}</p>
+            <Button color="red" size="small" type="button" onClick={() => {}}><Icon name="share"/>Accept Shareable Request</Button>
+          </div>
         }
 
       </Fragment>

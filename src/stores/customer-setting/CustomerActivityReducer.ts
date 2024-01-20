@@ -7,6 +7,7 @@ import CustomerSettingModel from "./models/CustomerSettingModel";
 import CustomerSettingRow from "./models/CustomerSettingRow";
 import ResultActions from "models/ResultActions";
 import CustomerSettingById from "./models/CustomerSettingById";
+import CustomerData from "./models/CustomerData";
 
 export const initialState: ICustomerState = {
   data: new CustomerSettingModel({}),
@@ -15,6 +16,7 @@ export const initialState: ICustomerState = {
   dataShareable: new CustomerSettingModel({}),
   dataAll: new CustomerSettingModel({}),
   dataByCustomerId: new CustomerSettingById({}),
+  customerDataById: new ResultActions({}),
   error: false,
   refreshPage: false,
   resultActions: new ResultActions({}),
@@ -239,6 +241,17 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
       resultActions: action.payload!,
       error: false,
       refreshPage: false,
+    };
+  },
+
+  [CustomerActions.REQUEST_CUSTOMER_DATA_BY_CUSTOMER_ID_FINISHED](
+    state: ICustomerState,
+    action: IAction<ResultActions>
+  ): ICustomerState {
+    console.log(action);
+    return {
+      ...state,
+      customerDataById: action.payload!,
     };
   },
 });

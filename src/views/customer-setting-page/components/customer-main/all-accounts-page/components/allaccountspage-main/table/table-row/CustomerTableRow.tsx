@@ -12,6 +12,7 @@ import ClaimForm from "../../form/form-claim/FormClaim";
 import AddSalesAssign from "../../form/form-create/FormAdd";
 import RouteEnum from "constants/RouteEnum";
 import * as CustomerSettActions from "stores/customer-setting/CustomerActivityActions";
+import { useHistory } from "react-router-dom";
 
 interface IProps {
   readonly rowData: any;
@@ -24,6 +25,7 @@ const CustomerTableRow: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
+  const history = useHistory();
   const [openConfirm, setOpenConfirm] = useState(false);
   const currentUser: IUserResult = useSelector((state: IStore) =>
     selectUserResult(state)
@@ -58,7 +60,7 @@ const CustomerTableRow: React.FC<IProps> = (
   }, [dispatch, rowData]);
 
   const onEdit = (id: number) => {
-    props.history.push({
+    history.push({
       pathname: "customer-setting/" + id,
       state: { rowData },
     });

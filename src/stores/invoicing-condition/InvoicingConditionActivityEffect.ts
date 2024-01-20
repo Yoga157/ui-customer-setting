@@ -15,7 +15,7 @@ export const requestInvoicingCondition = async (customerId: number): Promise<Res
 }
 
 export const postInvoicingCondition = async (data: InvoicingConditionModel): Promise<ResultActions | HttpErrorResponseModel> => {
-    const controllerName = "CustomerSetting/InvoicingCondition";
+    const controllerName = "InvoicingCondition";
     const endpoint: string = environment.api.customer.replace(
         ":controller",
         controllerName

@@ -246,3 +246,27 @@ export const selectPostResponseCustomerSetting: Selector<
   (state: IStore) => state.customerSetting.resultActions,
   _selectPostResponseCustomerSetting
 );
+
+export const _selectCustomerDataById = (model: ResultActions): any => {
+  return {
+    accountStatus : model.resultObj.accountStatus,
+    customerID : model.resultObj.customerID,
+    customerCategory : model.resultObj.customerCategory,
+    customerName : model.resultObj.customerName,
+    customerAddress : model.resultObj.customerAddress,
+    pmoCustomer : model.resultObj.pmoCustomer,
+    blacklist : model.resultObj.blacklist,
+    holdshipment : model.resultObj.holdshipment,
+    avgAR : model.resultObj.avgAR,
+    salesName : model.resultObj.salesName,
+    shareableApprovalStatus : model.resultObj.shareableApprovalStatus,
+  }
+}
+
+export const selectCustomerDataById: Selector<
+  IStore,
+  any
+> = createSelector(
+  (state: IStore) => state.customerSetting.customerDataById,
+  _selectCustomerDataById
+);

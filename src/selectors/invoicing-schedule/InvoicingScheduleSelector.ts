@@ -4,7 +4,7 @@ import InvoicingScheduleModel from "stores/invoicing-schedule/models/InvoicingSc
 import ResultActions from "models/ResultActions";
 
 const _selectInvoicingSchedule = (model: ResultActions): any => {
-    if (Array.isArray(model.resultObj)) {
+    if (Array.isArray(model.resultObj) && model.resultObj.length != 0) {
         return ({
             scheduleID: model.resultObj[0].iScheduleID,
             customerID: model.resultObj[0].customerID,

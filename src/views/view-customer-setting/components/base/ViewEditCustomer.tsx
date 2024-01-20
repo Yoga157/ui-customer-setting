@@ -56,6 +56,7 @@ import ClaimReleaseButton from "../button/ClaimReleaseButton";
 
 interface IProps {
     customer: {
+        accountStatus: string,
         customerSettingID: number,
         customerID: number,
         shareable: boolean,
@@ -82,14 +83,14 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     const { customer, role } = props;
     
     /** Customer data */
-    const accountStatus = (!customer.named && !customer.shareable) ? "No Name Account" : (customer.named ? "Named Account" : "Shareable Account");
-    
+    const accountStatus = customer.accountStatus;
     // get employeeName dari local storage
     // cek apakah employeeName memiliki customer ini
     const employeeName = "Anjar Wahyudi";
     const salesArray: string[] = customer.salesName?.split(", ");
-    const isEmployeeOwnCustomer: boolean = salesArray?.includes(employeeName);
-    
+    const isEmployeeOwnCustomer: boolean = salesArray?.includes(employeeName) || !(customer.salesName?.length == 0);
+    console.log(isEmployeeOwnCustomer)
+
     // customer category
     const [customerCategory, setCustomerCategory] = useState("");
     const customerCategoryOptions = useSelector((state: IStore) => selectCustomerCategories(state));
@@ -385,12 +386,9 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     
     /** data yang perlu di get */
     useEffect(() => {
-        // console.log(customerSettingData)
-        // if(!Number.isNaN(customer.customerID)) {
-        if(projectHistoryData.length == 0) {
+        if(customer.customerID != undefined) {
             dispatch(CustomerName.requestCustomerCategory());
 
-            // dispatch(CustomerName.requestCustomerById(customerSettingData.customerID))
             dispatch(ConfigItem.requestConfigItem(customer.customerID))
             dispatch(CollectionHistory.requestCollectionHistory(customer.customerID))
             dispatch(CustomerPIC.requestGetCustomerPIC(customer.customerID))
@@ -402,7 +400,9 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
             dispatch(InvoicingCondition.requestInvoicingCondition(customer.customerID))
             setPmoCustomer(customer.pmoCustomer ? "TRUE": "FALSE")
         }
+    }, [dispatch, customer])
 
+    useEffect(() => {
         if(projectHistoryData.length != 0) {
             setAllHistoryData(projectHistoryData)
         }
@@ -424,23 +424,23 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
         }
     }, [dispatch, invoicingSchedule, projectHistoryData])
 
-    const isRequesting: boolean = false;
-    // const isRequesting: boolean = useSelector((state: IStore) =>
-    //     selectRequesting(state, [
-    //         InvoicingCondition.REQUEST_GET_INVOICING_CONDITION,
-    //         RelatedFile.REQUEST_GET_RELATED_FILE,
-    //         SalesAssign.REQUEST_SALES_HISTORY,
-    //         InvoicingSchedule.REQUEST_GET_INVOICING_SCHEDULE,
-    //         CustomerSetting.REQUEST_CUSTOMER_SETTING_BY_ID,
-    //         CustomerName.REQUEST_CUSTOMER_BY_ID,
-    //         ConfigItem.REQUEST_GET_CONFIG_ITEM,
-    //         CollectionHistory.REQUEST_GET_COLLECTION_HISTORY,
-    //         CustomerPIC.REQUEST_GET_CUSTOMER_PIC,
-    //         BrandSummary.REQUEST_GET_BRAND_SUMMARY,
-    //         ServiceSummary.REQUEST_GET_SERVICE_SUMMARY,
-    //         ProjectHistory.REQUEST_GET_PROJECT_HISTORY
-    //     ])
-    // );
+    // const isRequesting: boolean = false;
+    const isRequesting: boolean = useSelector((state: IStore) =>
+        selectRequesting(state, [
+            InvoicingCondition.REQUEST_GET_INVOICING_CONDITION,
+            // RelatedFile.REQUEST_GET_RELATED_FILE,
+            SalesAssign.REQUEST_SALES_HISTORY,
+            InvoicingSchedule.REQUEST_GET_INVOICING_SCHEDULE,
+            CustomerSetting.REQUEST_CUSTOMER_DATA_BY_CUSTOMER_ID,
+            // CustomerName.REQUEST_CUSTOMER_BY_ID,
+            ConfigItem.REQUEST_GET_CONFIG_ITEM,
+            CollectionHistory.REQUEST_GET_COLLECTION_HISTORY,
+            CustomerPIC.REQUEST_GET_CUSTOMER_PIC,
+            BrandSummary.REQUEST_GET_BRAND_SUMMARY,
+            ServiceSummary.REQUEST_GET_SERVICE_SUMMARY,
+            ProjectHistory.REQUEST_GET_PROJECT_HISTORY
+        ])
+    );
 
     /** mengatur style dan fungsionalitas status approval */
     const firstDivRef = useRef(null);
@@ -623,7 +623,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
                     <div className="padding-horizontal title-button-row">
                         <p className="grey margin-0 bold text-align-left">ACCOUNT OWNER SETTING</p>
-                        <ClaimReleaseButton customer={customer} accountStatus={accountStatus} isEmployeeOwnCustomer={isEmployeeOwnCustomer} />
+                        <ClaimReleaseButton customer={customer} accountStatus={accountStatus} isEmployeeOwnCustomer={isEmployeeOwnCustomer} role={role} />
                     </div>
 
                     <Divider></Divider>
@@ -811,8 +811,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                             </div>
                                             {/* <p style={{ fontSize: "20px", fontWeight: "bold"}}>Monday, Tuesday</p> */}
                                             <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
-                                                {days.map((day) => {
-                                                    console.log(daysArray.includes(day))
+                                                {invoicingSchedule.scheduleDays && days.map((day) => {
                                                     return (
                                                         <CheckboxInvoicing label={day} value={day} defaultChecked={isAllDaysChecked && day=="All days" ? isAllDaysChecked : (isAllDaysChecked ? !daysArray.includes(day) : daysArray.includes(day))} disabled={isAllDaysChecked && day !== "All days"} style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
                                                     )
@@ -826,19 +825,54 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                 <div className="date-range-container-input">
                                                     <div className="date-range-input" style={{ marginRight: "1rem"}}>
                                                         <label htmlFor="minDate">Min. Date(Day)</label>
-                                                        <p style={{ textAlign: "right", fontSize: "18px", fontWeight: "bold"}}>1</p>
+                                                        {role.toUpperCase() == "SALES" ?
+                                                            <p style={{ textAlign: "right", fontSize: "18px", fontWeight: "bold"}}>{minDate}</p>
+                                                            :
+                                                            <input
+                                                                name="minDate"
+                                                                type="number"
+                                                                value={minDate}
+                                                                onChange={(e) =>
+                                                                    setMinDate(parseInt(e.target.value, 10))
+                                                                }
+                                                            />
+                                                        }
+
                                                     </div>
                                                     <div className="date-range-input">
                                                         <label htmlFor="maxDate">Max. Date(Day)</label>
-                                                        <p style={{ textAlign: "right", fontSize: "18px", fontWeight: "bold"}}>20</p>
+                                                        {role.toUpperCase() == "SALES" ?
+                                                            <p style={{ textAlign: "right", fontSize: "18px", fontWeight: "bold"}}>{maxDate}</p>
+                                                            :
+                                                            <input
+                                                                name="maxDate"
+                                                                type="number"
+                                                                value={maxDate}
+                                                                onChange={(e) =>
+                                                                    setMaxDate(parseInt(e.target.value, 10))
+                                                                }
+                                                            />
+                                                        }
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div style={{ width: "100%" }}>
-                                                <label className="customer-data-label">Remark</label>
-                                                <p>{invoicingSchedule?.remark}</p>
-                                                {/* <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p> */}
+                                                {role.toUpperCase() == "SALES" ?
+                                                    <>
+                                                        <label className="customer-data-label">Remark</label>
+                                                        <p>{remark}</p>
+                                                    </>
+                                                    :
+                                                    <Field
+                                                        name="remark"
+                                                        component={RichTextEditor}
+                                                        placeholder="e.g. Remark"
+                                                        labelName="Remark"
+                                                        value={remark}
+                                                        defaultValue={remark}
+                                                    />
+                                                }
                                             </div>
                                         </div>
                                     </div>

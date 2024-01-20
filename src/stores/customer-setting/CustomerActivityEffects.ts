@@ -346,3 +346,19 @@ export const claimAccount = async (
     data
   );
 };
+
+// get customer data by customer id
+export const requestCustomerDataById = async (
+  customerID: number
+): Promise<ResultActions | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting/GetCustomerData?customerID=" + customerID;
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+
+  return EffectUtility.getToModel<ResultActions>(
+    ResultActions,
+    endpoint
+  );
+};

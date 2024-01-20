@@ -429,3 +429,18 @@ export const claimAccount = (data: CustomerClaimAccount): any => {
     );
   };
 };
+
+export const REQUEST_CUSTOMER_DATA_BY_CUSTOMER_ID: string =
+  "CustomerActions.REQUEST_CUSTOMER_DATA_BY_CUSTOMER_ID";
+export const REQUEST_CUSTOMER_DATA_BY_CUSTOMER_ID_FINISHED =
+  "CustomerActions.REQUEST_CUSTOMER_DATA_BY_CUSTOMER_ID_FINISHED";
+export const requestCustomerDataById = (customerId: number): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      REQUEST_CUSTOMER_DATA_BY_CUSTOMER_ID,
+      CustomerEffect.requestCustomerDataById,
+      customerId
+    );
+  };
+};
