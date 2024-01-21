@@ -7,23 +7,23 @@ import { Form as FinalForm, Field } from "react-final-form";
 import { DropdownClearInput, Button } from "views/components/UI";
 
 import * as CustomerSetting from "stores/customer-setting/CustomerActivityActions"
-import { selectCustomerSetting, selectCustomerSettingOptions } from "selectors/customer-setting/CustomerSettingSelector";
+import { selectAllAccount, selectCustomerSetting, selectCustomerSettingOptions } from "selectors/customer-setting/CustomerSettingSelector";
 import RelatedCustomerPostModel from "stores/related-customer/models/RelatedCustomerPostModel";
 import * as RelatedCustomer from "stores/related-customer/RelatedCustomerActivityActions"
 
 import IStore from "models/IStore";
 
 interface IProps {
-    customerSettingID: number
+    customerID: number
 }
 
 interface customerData {
     customerName: string;
     customerID: number;
-    customerAddress: string;
     blacklist: boolean;
     holdshipment: boolean;
     avgAR: number;
+    customerAddress: string;
 }
 
 const ModalNewRelatedCondition: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
@@ -32,7 +32,7 @@ const ModalNewRelatedCondition: React.FC<IProps> = (props: React.PropsWithChildr
     const [customerData, setCustomerData] = useState<customerData | undefined>(undefined);
 
     const customerSettingData = useSelector((state: IStore) => selectCustomerSettingOptions(state));
-    
+
     const customerOnChange = (data) => {
         if(data) {
             // console.log(data)
@@ -49,23 +49,23 @@ const ModalNewRelatedCondition: React.FC<IProps> = (props: React.PropsWithChildr
         let userLogin = JSON.parse(localStorage.getItem('userLogin'));
         
         let newRelatedCustomer = new RelatedCustomerPostModel({})
-        newRelatedCustomer.relatedID = 0;
-        newRelatedCustomer.customerSettingID = props.customerSettingID;
+        newRelatedCustomer.rCustomerID = 0;
+        newRelatedCustomer.customerID = props.customerID;
         newRelatedCustomer.relatedCustomerID = customerData.customerID;
         newRelatedCustomer.createUserID = userLogin?.employeeID;
         newRelatedCustomer.modifyUserID = userLogin?.employeeID;
 
         await dispatch(RelatedCustomer.postRelatedCustomer(newRelatedCustomer));
-        await dispatch(RelatedCustomer.requestRelatedCustomer(props.customerSettingID));
+        await dispatch(RelatedCustomer.requestRelatedCustomer(props.customerID));
         await dispatch(ModalAction.CLOSE());
     }
 
     const cancelClick = () => {
         dispatch(ModalAction.CLOSE());
-      };
+        };
 
     useEffect(() => {
-        dispatch(CustomerSetting.requestCustomerSett());
+        dispatch(CustomerSetting.requestAllAcc(1, 5));
     }, [dispatch]);
 
     return (
@@ -119,7 +119,7 @@ const ModalNewRelatedCondition: React.FC<IProps> = (props: React.PropsWithChildr
 
                     <div style={{ display: "flex", flexDirection: "column", textAlign: "center"}}>
                         <label style={{ marginRight: '10px', marginBottom: "5px", color: "#A0A8B3" }}>Avg. AR (days)</label>
-                        <p style={{ color: "#55637A", fontSize: "24px", fontWeight: "bold"}}>{customerData.avgAR}</p>
+                        <p style={{ color: "#55637A", fontSize: "24px", fontWeight: "bold"}}>0</p>
                     </div>
                 </div>
 

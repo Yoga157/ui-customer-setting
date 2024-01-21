@@ -5,9 +5,10 @@ import baseReducer from "../../utilities/BaseReducer";
 import { Reducer } from "redux";
 import RelatedCustomerPostModel from "./models/RelatedCustomerPostModel"
 import RelatedCustomerModel from "./models/RelatedCustomerModel";
+import ResultActions from "models/ResultActions";
 
 export const initialState: IRelatedCustomerState = {
-    data: []
+    data: new ResultActions({})
 }
 
 const RelatedCustomerReducer: Reducer = baseReducer(initialState, {
@@ -17,7 +18,7 @@ const RelatedCustomerReducer: Reducer = baseReducer(initialState, {
         }
     },
 
-    [RelatedCustomerActions.REQUEST_GET_RELATED_CUSTOMER_FINISHED](state: IRelatedCustomerState, action: IAction<RelatedCustomerModel[]>): IRelatedCustomerState {
+    [RelatedCustomerActions.REQUEST_GET_RELATED_CUSTOMER_FINISHED](state: IRelatedCustomerState, action: IAction<ResultActions>): IRelatedCustomerState {
         return {
             ...state,
             data: action.payload!

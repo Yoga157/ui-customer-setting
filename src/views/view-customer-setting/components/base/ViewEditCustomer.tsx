@@ -81,15 +81,17 @@ interface routeParams {
 const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
     const dispatch: Dispatch = useDispatch();
     const { customer, role } = props;
-    
+
     /** Customer data */
     const accountStatus = customer.accountStatus;
     // get employeeName dari local storage
     // cek apakah employeeName memiliki customer ini
-    const employeeName = "Anjar Wahyudi";
+    const employeeName = "Anindita D Soelistyo";
     const salesArray: string[] = customer.salesName?.split(", ");
-    const isEmployeeOwnCustomer: boolean = salesArray?.includes(employeeName) || !(customer.salesName?.length == 0);
-    console.log(isEmployeeOwnCustomer)
+    const isEmployeeOwnCustomer: boolean = salesArray?.includes(employeeName);
+    
+    // shareable request status
+    const shareableRequestStatus = customer?.shareableApprovalStatus?.approvalBy == "0" ? "WAITING" : "APPROVED";
 
     // customer category
     const [customerCategory, setCustomerCategory] = useState("");
@@ -335,24 +337,24 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     const onAddRelatedCustomer = useCallback((): void => {
         dispatch(
           ModalFirstLevelActions.OPEN(
-            <ModalNewRelatedCondition customerSettingID={customer.customerID} />,
+            <ModalNewRelatedCondition customerID={customer.customerID} />,
             ModalSizeEnum.Tiny
           )
         );
       }, [dispatch]);
 
-    // const relatedCustomerData = useSelector((state: IStore) => selectRelatedCustomer(state));
-    const relatedCustomerData = [
-        {
-            relatedID: 1,
-            customerName: "Example",
-            customerAddress: "Jalan jalan",
-            category: "Enterprise",
-            avgAR: 0,
-            blacklist: false,
-            holdshipment: false
-        }
-    ]
+    const relatedCustomerData = useSelector((state: IStore) => selectRelatedCustomer(state));
+    // const relatedCustomerData = [
+    //     {
+    //         relatedID: 1,
+    //         customerName: "Example",
+    //         customerAddress: "Jalan jalan",
+    //         category: "Enterprise",
+    //         avgAR: 0,
+    //         blacklist: false,
+    //         holdshipment: false
+    //     }
+    // ]
     
     const deleteRelatedCustomer = useCallback((idToDel: number): void => {
         dispatch(
@@ -403,28 +405,22 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     }, [dispatch, customer])
 
     useEffect(() => {
-        if(projectHistoryData.length != 0) {
+        if(projectHistoryData.length != 0 && Object.keys(invoicingSchedule).length != 0) {
             setAllHistoryData(projectHistoryData)
-        }
-        
-        if(Object.keys(invoicingSchedule).length != 0) {
             console.log(invoicingSchedule)
             if(invoicingSchedule.scheduleDays === "Monday, Tuesday, Wednesday, Thursday, Friday") {
                 setIsAllDaysChecked(true)
             } else {
                 setIsAllDaysChecked(false)
             }
-            console.log(invoicingSchedule.scheduleDays)
-
+    
             setDaysArray(invoicingSchedule.scheduleDays.split(", "))
             setMinDate(invoicingSchedule.minDate)
             setMaxDate(invoicingSchedule.maxDate)
             setRemark(invoicingSchedule.remark)
-
         }
-    }, [dispatch, invoicingSchedule, projectHistoryData])
+    }, [invoicingSchedule, projectHistoryData])
 
-    // const isRequesting: boolean = false;
     const isRequesting: boolean = useSelector((state: IStore) =>
         selectRequesting(state, [
             InvoicingCondition.REQUEST_GET_INVOICING_CONDITION,
@@ -483,7 +479,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
     return (
         <Fragment>
-            {customer?.shareableApprovalStatus?.approvalStatus &&
+            {customer?.shareableApprovalStatus?.requestedBy &&
                 <div ref={statusDivRef} style={{ zIndex: 4, position: "fixed", top: 0, left: 0, width: "100vw", color: "#55637A"}}> 
                     <div style={{ paddingTop: "6em", paddingInline: "5.5em", paddingBottom: "1.5em", backgroundColor: "#DADCDB", transition: "opacity 0.5s ease-in-out, transform 0.5s ease-in-out", opacity: showStatus ? 1 : 0, transform: `translateY(${({showStatus}) => (showStatus ? '0' : '-50px')})`, display: showStatus ? 'block' : 'none' }}>
                         <h4>Shareable Account Approval</h4>
@@ -497,12 +493,12 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
                             <div ref={secondDivRef} style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", fontSize: "small", zIndex: 1 }}>
                                 <div style={{ height: "1rem", width: "1rem", borderRadius: "100%", backgroundColor: "#589DDB"}}></div>
-                                <p className="margin-0">{customer?.shareableApprovalStatus?.approvalStatus.toUpperCase() == "WAITING" ? "Waiting Approval By" : (customer?.shareableApprovalStatus?.approvalStatus.toUpperCase() == "APPROVED" ? "Approved By" : "Rejected By")}</p>
+                                <p className="margin-0">{shareableRequestStatus == "WAITING" ? "Waiting Approval By" : (shareableRequestStatus == "APPROVED" ? "Approved By" : "Rejected By")}</p>
                                 <p className="margin-0" style={{ fontWeight: "bold" }}>{customer?.shareableApprovalStatus?.approvalBy}</p>
                                 <span style={{ color: "grey" }}>
-                                    {customer?.shareableApprovalStatus?.approvalStatus.toUpperCase() == "WAITING" ? 
+                                    {shareableRequestStatus == "WAITING" ? 
                                         <><Icon name="exclamation circle" style={{ color: "#FFA800" }}/> Waiting Approval </> : 
-                                    (customer?.shareableApprovalStatus?.approvalStatus.toUpperCase() == "APPROVED" ?
+                                    (shareableRequestStatus == "APPROVED" ?
                                         <><Icon name="check circle" style={{ color: "#27D4A5" }}/> {customer?.shareableApprovalStatus?.approvalDate}</> : 
                                         <><Icon name="remove circle" style={{ color: "red" }}/> Rejected</>
                                     )}
@@ -526,7 +522,6 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                 <Link to="/customer-setting" className="link">{"< Back to Customer Setting List"}</Link>
 
                 <div className="form-container">
-                    {/* judul add new customer setting */}
                     <div style={{ display: "flex", justifyContent: "space-between"}}>
                         <p className="page-title grey">VIEW/EDIT CUSTOMER SETTING</p>
                         <div className="pmo-toggle">
@@ -623,6 +618,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
                     <div className="padding-horizontal title-button-row">
                         <p className="grey margin-0 bold text-align-left">ACCOUNT OWNER SETTING</p>
+                        {console.log("customer awal", customer)}
                         <ClaimReleaseButton customer={customer} accountStatus={accountStatus} isEmployeeOwnCustomer={isEmployeeOwnCustomer} role={role} />
                     </div>
 
@@ -809,14 +805,15 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                     </label>
                                                 </label>
                                             </div>
-                                            {/* <p style={{ fontSize: "20px", fontWeight: "bold"}}>Monday, Tuesday</p> */}
-                                            <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
-                                                {invoicingSchedule.scheduleDays && days.map((day) => {
-                                                    return (
+                                            {role.toUpperCase() == "SALES" ?
+                                                <p style={{ fontSize: "20px", fontWeight: "bold"}}>{invoicingSchedule?.scheduleDays}</p>
+                                            :
+                                                <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
+                                                    {days.map((day) => 
                                                         <CheckboxInvoicing label={day} value={day} defaultChecked={isAllDaysChecked && day=="All days" ? isAllDaysChecked : (isAllDaysChecked ? !daysArray.includes(day) : daysArray.includes(day))} disabled={isAllDaysChecked && day !== "All days"} style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
-                                                    )
-                                                })}
-                                            </div>
+                                                    )}
+                                                </div>
+                                            }
                                         </div>
                                         
                                         <div className="invoicing-schedule-position">
@@ -861,7 +858,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                 {role.toUpperCase() == "SALES" ?
                                                     <>
                                                         <label className="customer-data-label">Remark</label>
-                                                        <p>{remark}</p>
+                                                        <p>{remark ? remark : "No data"}</p>
                                                     </>
                                                     :
                                                     <Field

@@ -29,7 +29,7 @@ export const postInvoicingCondition = async (data: InvoicingConditionModel): Pro
 }
 
 export const deleteInvoicingCondition = async (id: number): Promise<InvoicingConditionModel | HttpErrorResponseModel> => {
-    const controllerName = "CustomerSetting/InvoicingCondition/" + id;
+    const controllerName = "InvoicingCondition/" + id;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName

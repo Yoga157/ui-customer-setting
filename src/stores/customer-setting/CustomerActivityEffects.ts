@@ -347,6 +347,37 @@ export const claimAccount = async (
   );
 };
 
+export const releaseAccount = async (
+  customerID: number, salesID: number, modifyUserID: number
+): Promise<ResultActions | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting/ReleaseAccount?customerID=" + customerID + "&salesID=" + salesID + "&modifyUserID=" + modifyUserID;
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+
+  return EffectUtility.putToModel<ResultActions>(
+    ResultActions,
+    endpoint
+  );
+};
+
+export const acceptRequestShareableAccount = async (
+  customerID: number, salesID: number, modifyUserID: number
+): Promise<ResultActions | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting/ApproveCustomerSetting?customerID=" + customerID + "&salesID=" + salesID + "&modifyUserID=" + modifyUserID;
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+
+  return EffectUtility.putToModel<ResultActions>(
+    ResultActions,
+    endpoint
+  );
+};
+
+
 // get customer data by customer id
 export const requestCustomerDataById = async (
   customerID: number

@@ -19,24 +19,16 @@ const ModalClaimAccount: React.FC<IProps> = (props: React.PropsWithChildren<IPro
 
     const onSubmitHandler = async (data: any) => {
         let userLogin = JSON.parse(localStorage.getItem('userLogin'));
-    // createDate?: string = null;
-    // modifyUserID: number = 0;
-    // modifyDate?: Date = undefined;
-        const PostCustomerSetting = new CustomerClaimAccount({});
-        PostCustomerSetting.customerSettingID = 0;
-        PostCustomerSetting.customerID = customer.customerID;
-        PostCustomerSetting.customerCategory = customer.customerCategory;
-        PostCustomerSetting.salesID = 850;
-        PostCustomerSetting.shareable = false;
-        PostCustomerSetting.named = true;
-        PostCustomerSetting.pmoCustomer = customer.pmoCustomer;
-        PostCustomerSetting.status = "approve";
-        PostCustomerSetting.requestedBy = 850;
-        PostCustomerSetting.createUserID = userLogin?.employeeID || 850;
-        PostCustomerSetting.modifyUserID =  userLogin?.employeeID || 850;
 
-        dispatch(CustomerSetting.claimAccount(PostCustomerSetting));
-        dispatch(ModalAction.CLOSE());
+        const PostCustomerSetting = new CustomerClaimAccount({});
+        PostCustomerSetting.customerID = customer.customerID;
+        PostCustomerSetting.salesID = userLogin?.employeeID || 11959;
+        PostCustomerSetting.requestedBy = userLogin?.employeeID || 11959;
+
+        dispatch(CustomerSetting.claimAccount(PostCustomerSetting)).then(() => {
+            dispatch(CustomerSetting.requestCustomerDataById(customer.customerID));
+            dispatch(ModalAction.CLOSE());
+        });
     }
 
     const cancelClick = () => {
@@ -69,7 +61,7 @@ const ModalClaimAccount: React.FC<IProps> = (props: React.PropsWithChildren<IPro
                     </Grid.Row>
                     <Grid.Row centered style={{ textAlign: "center" }}>
                         <span style={{ padding: "10px" }}>
-                        Are you sure you want to claim this account?
+                        {customer.accountStatus == "Shareable Account" ? "Do you want to request this account to be shareable account?" : "Are you sure you want to claim this account?" }
                         </span>
                         <p style={{  fontWeight: "bold" }}>{customer.customerName}</p>
                     </Grid.Row>

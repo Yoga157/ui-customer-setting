@@ -6,17 +6,23 @@ import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
 import { Divider, Form, Grid } from "semantic-ui-react";
 import { Form as FinalForm, Field } from "react-final-form";
 import { DropdownClearInput, Button } from "views/components/UI";
+import * as CustomerSetting from "stores/customer-setting/CustomerActivityActions";
 
 interface IProps {
     customer: any;
 }
 
-const ModalRequestShareableAccount: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
+const ModalAcceptRequestShareableAccount: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
     const dispatch: Dispatch = useDispatch();
     const { customer } = props;
 
     const onSubmitHandler = async (data: any) => {
-        dispatch(ModalAction.CLOSE());
+        let userLogin = JSON.parse(localStorage.getItem('userLogin'));
+
+        dispatch(CustomerSetting.acceptRequestShareableAccount(customer.customerID, userLogin?.employeeID || 850, userLogin?.employeeID || 850)).then(() => {
+            dispatch(CustomerSetting.requestCustomerDataById(customer.customerID))
+            dispatch(ModalAction.CLOSE());
+        });
     }
 
     const cancelClick = () => {
@@ -49,7 +55,7 @@ const ModalRequestShareableAccount: React.FC<IProps> = (props: React.PropsWithCh
                     </Grid.Row>
                     <Grid.Row centered style={{ textAlign: "center" }}>
                         <span style={{ padding: "10px" }}>
-                        Do you want to request this account to be shareable account?
+                        Do you want to approve this request?
                         </span>
                         <p style={{  fontWeight: "bold" }}>{customer.customerName}</p>
                     </Grid.Row>
@@ -69,4 +75,4 @@ const ModalRequestShareableAccount: React.FC<IProps> = (props: React.PropsWithCh
     )
 }
 
-export default ModalRequestShareableAccount;
+export default ModalAcceptRequestShareableAccount;

@@ -9,6 +9,7 @@ import ModalSizeEnum from "constants/ModalSizeEnum";
 import ModalClaimAccount from "../modal/modal-claim-account/ModalClaimAccount";
 import ModalReleaseAccount from "../modal/modal-release-account/ModalReleaseAccount";
 import ModalRequestShareableAccount from "../modal/modal-request-shareable/ModalRequestShareable";
+import ModalAcceptRequestShareableAccount from "../modal/modal-request-shareable/ModalRequestShareable";
 
 
 interface IProps {
@@ -23,34 +24,34 @@ const ClaimReleaseButton: React.FC<IProps> = (props: React.PropsWithChildren<IPr
     const { customer, accountStatus, isEmployeeOwnCustomer, role } = props;
     
     /** Claim Account */
-    const onClaimAccount = useCallback((): void => {
+    const onClaimAccount = async () => {
         dispatch(
           ModalFirstLevelActions.OPEN(
             <ModalClaimAccount customer={customer} />,
             ModalSizeEnum.Tiny
           )
         );
-    }, [dispatch]);
+    };
 
     /** Release Account */
-    const onReleaseAccount = useCallback((): void => {
+    const onReleaseAccount = async () => {
       dispatch(
         ModalFirstLevelActions.OPEN(
           <ModalReleaseAccount customer={customer} accountStatus={accountStatus} />,
           ModalSizeEnum.Tiny
         )
       );
-    }, [dispatch]);
+    };
 
     /** Request Shareable Account */
-    const onRequestShareableAccount = useCallback((): void => {
+    const onAcceptRequestShareableAccount = async () => {
       dispatch(
         ModalFirstLevelActions.OPEN(
-          <ModalRequestShareableAccount customer={customer} />,
+          <ModalAcceptRequestShareableAccount customer={customer} />,
           ModalSizeEnum.Tiny
         )
       );
-    }, [dispatch]);
+    };
     
 
     return (
@@ -68,7 +69,7 @@ const ClaimReleaseButton: React.FC<IProps> = (props: React.PropsWithChildren<IPr
 
         {/* request shareable account */}
         {(accountStatus == "Named Account" && !isEmployeeOwnCustomer && role.toUpperCase() == "SALES") &&
-            <Button color="yellow" size="small" type="button" onClick={() => onRequestShareableAccount()}><Icon name="share"/>Request Shareable Account</Button>
+            <Button color="yellow" size="small" type="button" onClick={() => onClaimAccount()}><Icon name="share"/>Request Shareable Account</Button>
         }
 
         {/* release shareable account */}
@@ -78,14 +79,14 @@ const ClaimReleaseButton: React.FC<IProps> = (props: React.PropsWithChildren<IPr
 
         {/* claim shareable account */}
         {(accountStatus == "Shareable Account" && !isEmployeeOwnCustomer && role.toUpperCase() == "SALES") &&
-            <Button color="yellow" size="small" type="button" onClick={() => {}}><Icon name="check circle"/>Claim Account</Button>
+            <Button color="yellow" size="small" type="button" onClick={() => onClaimAccount()}><Icon name="check circle"/>Claim Account</Button>
         }
 
         {/* accept shareable request */}
-        {(accountStatus == "Shareable Account" && role.toUpperCase() == "ADMIN") &&
+        {(accountStatus == "Named Account" && customer.shareableApprovalStatus != null && role.toUpperCase() == "ADMIN") &&
           <div style={{ display: "flex", flexDirection: "row", alignContent: "center"}}>
             <p style={{ color: "red", fontStyle: "italic", marginBottom: 0, marginRight: "1rem", padding: 0, alignSelf: "center" }}>Request by {customer.shareableApprovalStatus?.requestedBy}</p>
-            <Button color="red" size="small" type="button" onClick={() => {}}><Icon name="share"/>Accept Shareable Request</Button>
+            <Button color="red" size="small" type="button" onClick={() => onAcceptRequestShareableAccount()}><Icon name="share"/>Accept Shareable Request</Button>
           </div>
         }
 

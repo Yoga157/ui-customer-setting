@@ -444,3 +444,37 @@ export const requestCustomerDataById = (customerId: number): any => {
     );
   };
 };
+
+export const PUT_RELEASE_ACCOUNT: string =
+  "CustomerActions.PUT_RELEASE_ACCOUNT";
+export const PUT_RELEASE_ACCOUNT_FINISHED =
+  "CustomerActions.PUT_RELEASE_ACCOUNT_FINISHED";
+export const releaseAccount = (customerID: number, salesID: number, modifyUserID: number): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      POST_CUSTOMER_SETTING,
+      CustomerEffect.releaseAccount,
+      customerID,
+      salesID,
+      modifyUserID
+    );
+  };
+};
+
+export const PUT_ACCEPT_REQUEST_SHAREABLE: string =
+  "CustomerActions.PUT_ACCEPT_REQUEST_SHAREABLE";
+export const PUT_ACCEPT_REQUEST_SHAREABLE_FINISHED =
+  "CustomerActions.PUT_ACCEPT_REQUEST_SHAREABLE_FINISHED";
+export const acceptRequestShareableAccount = (customerID: number, salesID: number, modifyUserID: number): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      POST_CUSTOMER_SETTING,
+      CustomerEffect.acceptRequestShareableAccount,
+      customerID,
+      salesID,
+      modifyUserID
+    );
+  };
+};

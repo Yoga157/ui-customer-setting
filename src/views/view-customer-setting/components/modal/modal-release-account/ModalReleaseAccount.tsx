@@ -6,6 +6,7 @@ import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
 import { Divider, Form, Grid } from "semantic-ui-react";
 import { Form as FinalForm, Field } from "react-final-form";
 import { DropdownClearInput, Button } from "views/components/UI";
+import * as CustomerSetting from "stores/customer-setting/CustomerActivityActions";
 
 interface IProps {
     customer: any;
@@ -17,13 +18,12 @@ const ModalReleaseAccount: React.FC<IProps> = (props: React.PropsWithChildren<IP
     const { customer, accountStatus } = props;
 
     const onSubmitHandler = async (data: any) => {
-        if(accountStatus.toUpperCase() == "NAMED ACCOUNT") {
-            console.log("submit named account")
-        } else if(accountStatus.toUpperCase() == "SHAREABLE ACCOUNT") {
-            console.log("submit shareable account")
-        }
+        let userLogin = JSON.parse(localStorage.getItem('userLogin'));
 
-        dispatch(ModalAction.CLOSE());
+        dispatch(CustomerSetting.releaseAccount(customer.customerID, userLogin?.employeeID || 11959, userLogin?.employeeID || 11959)).then(() => {
+            dispatch(CustomerSetting.requestCustomerDataById(customer.customerID))
+            dispatch(ModalAction.CLOSE());
+        });
     }
 
     const cancelClick = () => {

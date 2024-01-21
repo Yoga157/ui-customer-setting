@@ -206,12 +206,11 @@ const _selectCustomerSettingOptions = (
       text: model.customerName,
       value: {
         customerName: model.customerName,
-        customerSettingID: model.customerSettingID,
         customerID: model.customerID,
         blacklist: model.blacklist,
         holdshipment: model.holdshipment,
         avgAR: 0,
-        address: "Jalan-jalan ke Bandung, cakep!",
+        customerAddress: model.customerAddress
       },
     })
   );
@@ -221,7 +220,7 @@ export const selectCustomerSettingOptions: Selector<
   IStore,
   ICustomerSettingOptions[]
 > = createSelector(
-  (state: IStore) => state.customerSetting.data.rows,
+  (state: IStore) => state.customerSetting.dataAll.rows,
   _selectCustomerSettingOptions
 );
 
@@ -248,18 +247,22 @@ export const selectPostResponseCustomerSetting: Selector<
 );
 
 export const _selectCustomerDataById = (model: ResultActions): any => {
-  return {
-    accountStatus : model.resultObj.accountStatus,
-    customerID : model.resultObj.customerID,
-    customerCategory : model.resultObj.customerCategory,
-    customerName : model.resultObj.customerName,
-    customerAddress : model.resultObj.customerAddress,
-    pmoCustomer : model.resultObj.pmoCustomer,
-    blacklist : model.resultObj.blacklist,
-    holdshipment : model.resultObj.holdshipment,
-    avgAR : model.resultObj.avgAR,
-    salesName : model.resultObj.salesName,
-    shareableApprovalStatus : model.resultObj.shareableApprovalStatus,
+  if(Object.keys(model.resultObj).length != 0) {
+    return {
+      accountStatus : model.resultObj.accountStatus,
+      customerID : model.resultObj.customerID,
+      customerCategory : model.resultObj.customerCategory,
+      customerName : model.resultObj.customerName,
+      customerAddress : model.resultObj.customerAddress,
+      pmoCustomer : model.resultObj.pmoCustomer?.toUpperCase() == "TRUE" ? true : false,
+      blacklist : model.resultObj.blacklist,
+      holdshipment : model.resultObj.holdshipment,
+      avgAR : model.resultObj.avgAR,
+      salesName : model.resultObj.salesName,
+      shareableApprovalStatus : model.resultObj.shareableApprovalStatus,
+    }
+  } else {
+    return {}
   }
 }
 

@@ -461,16 +461,16 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (
       // });
 
       /** post related customer */
-      relatedCustomerData.map((data) => {
-        let NewRelatedCustomer = new RelatedCustomerPostModel({});
-        NewRelatedCustomer.relatedID = 0;
-        NewRelatedCustomer.customerSettingID = postResponse.customerSettingID;
-        NewRelatedCustomer.relatedCustomerID = data.customerID;
-        NewRelatedCustomer.createUserID = userLogin?.employeeID;
-        NewRelatedCustomer.modifyUserID = userLogin?.employeeID;
+      // relatedCustomerData.map((data) => {
+      //   let NewRelatedCustomer = new RelatedCustomerPostModel({});
+      //   NewRelatedCustomer.relatedID = 0;
+      //   NewRelatedCustomer.customerSettingID = postResponse.customerSettingID;
+      //   NewRelatedCustomer.relatedCustomerID = data.customerID;
+      //   NewRelatedCustomer.createUserID = userLogin?.employeeID;
+      //   NewRelatedCustomer.modifyUserID = userLogin?.employeeID;
 
-        dispatch(RelatedCustomer.postRelatedCustomer(NewRelatedCustomer));
-      });
+      //   dispatch(RelatedCustomer.postRelatedCustomer(NewRelatedCustomer));
+      // });
 
       /** post related file */
       relatedFileData.map((data) => {

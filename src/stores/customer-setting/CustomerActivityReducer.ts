@@ -235,7 +235,30 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     state: ICustomerState,
     action: IAction<ResultActions>
   ): ICustomerState {
-    console.log(action);
+    return {
+      ...state,
+      resultActions: action.payload!,
+      error: false,
+      refreshPage: false,
+    };
+  },
+
+  [CustomerActions.PUT_RELEASE_ACCOUNT_FINISHED](
+    state: ICustomerState,
+    action: IAction<ResultActions>
+  ): ICustomerState {
+    return {
+      ...state,
+      resultActions: action.payload!,
+      error: false,
+      refreshPage: false,
+    };
+  },
+
+  [CustomerActions.PUT_ACCEPT_REQUEST_SHAREABLE_FINISHED](
+    state: ICustomerState,
+    action: IAction<ResultActions>
+  ): ICustomerState {
     return {
       ...state,
       resultActions: action.payload!,
