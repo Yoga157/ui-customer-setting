@@ -34,6 +34,22 @@ export const postClaimAccount = (data: SalesAssignPostModel): any => {
   };
 };
 
+// Request Share Account
+export const POST_REQUEST_ACCOUNT: string = "SalesActions.POST_CLAIM_ACCOUNT";
+export const POST_REQUEST_ACCOUNT_FISNISHED: string =
+  "SalesActions.POST_CLAIM_ACCOUNT_FISNISHED";
+
+export const postaRequestAccount = (data: SalesAssignPostModel): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      POST_REQUEST_ACCOUNT,
+      SalesAssignEffect.postaRequestAccount,
+      data
+    );
+  };
+};
+
 //Get sales by Name
 export const REQUEST_SALES_BY_NAME: string = "SalesAction.EQUEST_SALES_BY_NAME";
 export const REQUEST_SALES_BY_NAME_FINISHED: string =

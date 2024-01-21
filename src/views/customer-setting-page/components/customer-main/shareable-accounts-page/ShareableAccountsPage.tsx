@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState, useCallback } from "react";
-import { Grid } from "semantic-ui-react";
+import { Grid, Checkbox } from "semantic-ui-react";
 import CustomerTable from "./components/shareablepage-main/table/CustomerTable";
 import InputSearch from "./components/shareablepage-main/search/InputSearch";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,12 +12,11 @@ import * as CustomerActions from "stores/customer-setting/CustomerActivityAction
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { Pagination, Tooltips, Button } from "views/components/UI";
-import { selectUserResult } from "selectors/user/UserSelector";
-import IUserResult from "selectors/user/models/IUserResult";
 import TableToExcel from "@linways/table-to-excel";
 import { selectShareableAccount } from "selectors/customer-setting/CustomerSettingSelector";
-import RouteEnum from "constants/RouteEnum";
+import ModalSizeEnum from "constants/ModalSizeEnum";
 import FilterCustomer from "./components/shareablepage-main/filter/FilterCustomer";
+import ModReleaseForm from "./components/shareablepage-main/form/form-releasemodal/FormRealeseMod";
 
 interface IProps {
   history: any;
@@ -31,19 +30,49 @@ const ShareableAccountsPage: React.FC<IProps> = (
   const activePage = useSelector(
     (state: IStore) => state.customerSetting.activePage
   );
-  const currentUser: IUserResult = useSelector((state: IStore) =>
-    selectUserResult(state)
-  );
+  // const currentUser: IUserResult = useSelector((state: IStore) =>
+  //   selectUserResult(state)
+  // );
   const [rowData, setRowData] = useState([]);
+  const [myAccount, setMyAccount] = useState(false);
 
   const setNewRowData = (data) => {
     setRowData(data);
   };
 
-  const moveToAddCustomer = () => {
-    props.history.push({
-      pathname: RouteEnum.AddNewCustomerSetting,
-    });
+  const onReleaseAccount = useCallback((): void => {
+    dispatch(
+      ModalFirstLevelActions.OPEN(
+        <ModReleaseForm rowData={rowData} />,
+        ModalSizeEnum.Small
+      )
+    );
+    setRowData([]);
+  }, [dispatch, rowData, setRowData]);
+
+  const handleMyAccount = () => {
+    const userId: any = localStorage.getItem("userLogin");
+
+    if (!myAccount) {
+      setMyAccount(true);
+      const salesID = JSON.parse(userId)?.employeeID || 830;
+      dispatch(
+        CustomerActions.requestSearchShareabelAcc(
+          1,
+          10,
+          "CustomerID",
+          null,
+          "ascending",
+          salesID
+        )
+      );
+      // console.log(salesID);
+    } else {
+      setMyAccount(false);
+      dispatch(
+        CustomerActions.requestShareabledAcc(1, 10, "CustomerID", "ascending")
+      );
+    }
   };
 
   const exportTableToExcel = (tableID: string, filename: string): void => {
@@ -74,9 +103,7 @@ const ShareableAccountsPage: React.FC<IProps> = (
         let tableSelect: any;
         let tableHead: any;
 
-        if (
-          window.location.pathname === "/data-quality/customer-setting-page"
-        ) {
+        if (window.location.pathname === "/data-quality/customer-setting") {
           tableSelect = document.getElementById(
             "exporttosetting"
           ) as HTMLTableElement;
@@ -201,13 +228,45 @@ const ShareableAccountsPage: React.FC<IProps> = (
                   }}
                   // color="red"
                   icon="times circle"
-                  disabled={rowData.length == 0 ? true : false}
+                  disabled={rowData.length === 0 || rowData.length > 5}
                   size="mini"
                   content="Release Account"
-                  onClick={moveToAddCustomer}
+                  onClick={onReleaseAccount}
                 />
               }
             />
+          </div>
+
+          <div className="posision-container">
+            {rowData.length === 0 ? (
+              <p></p>
+            ) : (
+              <p className="p-account">
+                {rowData.length} of 5 accounts has been pick.
+              </p>
+            )}
+          </div>
+
+          <div className="posision-container">
+            <div
+              className="myAccount-toggle"
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <Checkbox
+                  style={{ margin: "0.5rem", transform: "scale(0.9)" }}
+                  toggle
+                  checked={myAccount}
+                  onChange={() => handleMyAccount()}
+                ></Checkbox>
+              </div>
+              <p style={{ fontSize: "0.8rem", margin: "0.5rem" }}>My Account</p>
+            </div>
           </div>
 
           <div className="posision-container-right">

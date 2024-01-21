@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState, useCallback } from "react";
-import { Grid } from "semantic-ui-react";
+import { Grid, Checkbox } from "semantic-ui-react";
 import CustomerTable from "./components/namepage-main/table/CustomerTable";
 import InputSearch from "./components/namepage-main/search/InputSearch";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,10 +17,9 @@ import TableToExcel from "@linways/table-to-excel";
 import ModalSizeEnum from "constants/ModalSizeEnum";
 import ModReleaseForm from "./components/namepage-main/form/form-releasemodal/FormRealeseMod";
 import { format } from "date-fns";
-
 import { selectNameAccount } from "selectors/customer-setting/CustomerSettingSelector";
-import RouteEnum from "constants/RouteEnum";
 import FilterCustomer from "./components/namepage-main/filter/FilterCustomer";
+import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 
 interface IProps {
   history: any;
@@ -39,6 +38,7 @@ const NamedAccountsPage: React.FC<IProps> = (
   );
   const [rowData, setRowData] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
+  const [myAccount, setMyAccount] = useState(false);
 
   const setNewRowData = (data) => {
     setRowData(data);
@@ -51,7 +51,33 @@ const NamedAccountsPage: React.FC<IProps> = (
         ModalSizeEnum.Small
       )
     );
-  }, [dispatch, rowData]);
+    setRowData([]);
+  }, [dispatch, rowData, setRowData]);
+
+  const handleMyAccount = () => {
+    const userId: any = localStorage.getItem("userLogin");
+
+    if (!myAccount) {
+      setMyAccount(true);
+      const salesID = JSON.parse(userId)?.employeeID || 830;
+      dispatch(
+        CustomerSettingAct.requestSearchNamedAcc(
+          1,
+          10,
+          "CustomerID",
+          null,
+          "ascending",
+          salesID
+        )
+      );
+      // console.log(salesID);
+    } else {
+      setMyAccount(false);
+      dispatch(
+        CustomerSettingAct.requestNamedAcc(1, 10, "CustomerID", "ascending")
+      );
+    }
+  };
 
   const exportTableToExcel = (tableID: string, filename: string): void => {
     const search = document.querySelector(
@@ -81,9 +107,7 @@ const NamedAccountsPage: React.FC<IProps> = (
         let tableSelect: any;
         let tableHead: any;
 
-        if (
-          window.location.pathname === "/data-quality/customer-setting-page"
-        ) {
+        if (window.location.pathname === "/data-quality/customer-setting") {
           tableSelect = document.getElementById(
             "exporttosetting"
           ) as HTMLTableElement;
@@ -211,14 +235,34 @@ const NamedAccountsPage: React.FC<IProps> = (
           </div>
 
           <div className="posision-container">
-            <div className="posision-container">
-              {rowData.length === 0 ? (
-                <p></p>
-              ) : (
-                <p className="p-account">
-                  {rowData.length} of 5 accounts has been pick.
-                </p>
-              )}
+            {rowData.length === 0 ? (
+              <p></p>
+            ) : (
+              <p className="p-account">
+                {rowData.length} of 5 accounts has been pick.
+              </p>
+            )}
+          </div>
+
+          <div className="posision-container">
+            <div
+              className="myAccount-toggle"
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <Checkbox
+                  style={{ margin: "0.5rem", transform: "scale(0.9)" }}
+                  toggle
+                  checked={myAccount}
+                  onChange={() => handleMyAccount()}
+                ></Checkbox>
+              </div>
+              <p style={{ fontSize: "0.8rem", margin: "0.5rem" }}>My Account</p>
             </div>
           </div>
 

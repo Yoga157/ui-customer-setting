@@ -55,14 +55,10 @@ const CustomerTableRow: React.FC<IProps> = (
 
   const onEdit = (id: number) => {
     props.history.push({
-      pathname: "customer-setting-page/" + id,
+      pathname: "customer-setting/" + id,
       state: { rowData },
     });
   };
-
-  useEffect(() => {
-    console.log("Efect");
-  }, []);
 
   return (
     <Fragment>

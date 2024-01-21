@@ -182,11 +182,14 @@ export const selectAllAccount: Selector<IStore, any> = createSelector(
 
 const _selectCustomerSettingById = (model: CustomerSettingById): any => {
   return {
-    customerSettingID: model.customerSettingID,
+    // customerSettingID: model.customerSettingID,
     customerID: model.customerID,
-    customerCategoryID: model.customerCategoryID,
-    shareable: model.shareable,
-    pmoCustomer: model.pmoCustomer,
+    salesID: model.salesID,
+    modifyUserID: model.salesID,
+
+    // customerCategoryID: model.customerCategoryID,
+    // shareable: model.shareable,
+    // pmoCustomer: model.pmoCustomer,
   };
 };
 

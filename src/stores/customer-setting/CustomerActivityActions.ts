@@ -4,16 +4,20 @@ import * as ActionUtility from "../../utilities/ActionUtility";
 import { ReduxDispatch } from "../../models/ReduxProps";
 import CustomerSettingModel from "./models/CustomerSettingModel";
 import CustomerSettingRow from "./models/CustomerSettingRow";
+import CustomerSettingPostModel from "./models/CustomerSettingPostModel";
 import ResultActions from "models/ResultActions";
 import IAction from "models/IAction";
 import CustomerSettingById from "./models/CustomerSettingById";
+import CustomerID from "./models/ReleaseAccounts";
 
 type ActionUnion =
   | undefined
   | HttpErrorResponseModel
   | CustomerSettingModel
   | CustomerSettingRow
+  | CustomerSettingPostModel
   | CustomerSettingById
+  | CustomerID
   | boolean
   | ResultActions;
 
@@ -218,7 +222,7 @@ export const requestSearchNamedAcc = (
   column: string,
   search: string,
   sorting?: string,
-  shareable?: boolean,
+  salesID?: number,
   pmo_customer?: boolean,
   holdshipment?: boolean,
   blacklist?: boolean
@@ -233,7 +237,7 @@ export const requestSearchNamedAcc = (
       column,
       search,
       sorting,
-      shareable,
+      salesID,
       pmo_customer,
       holdshipment,
       blacklist
@@ -285,10 +289,13 @@ export const requestSearchAllAcc = (
   column: string,
   search: string,
   sorting?: string,
-  shareable?: boolean,
+  salesID?: number,
   pmo_customer?: boolean,
+  blacklist?: boolean,
   holdshipment?: boolean,
-  blacklist?: boolean
+  showNoName?: boolean,
+  showNamed?: boolean,
+  showShareable?: boolean
 ): any => {
   return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
     await ActionUtility.createThunkEffect<CustomerSettingModel>(
@@ -300,10 +307,46 @@ export const requestSearchAllAcc = (
       column,
       search,
       sorting,
-      shareable,
+      salesID,
       pmo_customer,
+      blacklist,
       holdshipment,
-      blacklist
+      showNoName,
+      showNamed,
+      showShareable
+    );
+  };
+};
+
+// Claim Account
+export const POST_CLAIM_ACCOUNT: string = "CustomerActions.POST_CLAIM_ACCOUNT";
+export const POST_CLAIM_ACCOUNT_FINISHED: string =
+  "CustomerActions.POST_CLAIM_ACCOUNT_FINISHED";
+
+export const postClaimAccount = (data: CustomerSettingPostModel): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      POST_CLAIM_ACCOUNT,
+      CustomerEffect.postClaimAccount,
+      data
+    );
+  };
+};
+
+// Request Share Account
+export const POST_REQUEST_ACCOUNT: string =
+  "CustomerActions.POST_REQUEST_ACCOUNT";
+export const POST_REQUEST_ACCOUNT_FINISHED: string =
+  "CustomerActions.POST_REQUEST_ACCOUNT_FINISHED";
+
+export const postRequestAccount = (data: CustomerSettingPostModel): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      POST_REQUEST_ACCOUNT,
+      CustomerEffect.postRequestAccount,
+      data
     );
   };
 };
@@ -376,6 +419,30 @@ export const postCustomerSetting = (data: CustomerSettingById): any => {
       POST_CUSTOMER_SETTING,
       CustomerEffect.postCustomerSetting,
       data
+    );
+  };
+};
+
+//PUT RELEASE ACCOUNTS
+export const PUT_RELEASES_ACCOUNTS: string =
+  "CustomerActions.PUT_RELEASES_ACCOUNTS";
+export const PUT_RELEASES_ACCOUNTS_FINISHED =
+  "CustomerActions.PUT_RELEASES_ACCOUNTS_FINISHED";
+export const putReleaseAccount = (
+  data: CustomerID,
+  customerID: number,
+  salesID: number,
+  modifyUserID: number
+): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      PUT_RELEASES_ACCOUNTS,
+      CustomerEffect.putReleaseAccount,
+      data,
+      customerID,
+      salesID,
+      modifyUserID
     );
   };
 };

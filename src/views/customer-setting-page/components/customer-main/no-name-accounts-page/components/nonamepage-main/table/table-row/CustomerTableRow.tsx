@@ -8,7 +8,7 @@ import { selectUserResult } from "selectors/user/UserSelector";
 import IUserResult from "selectors/user/models/IUserResult";
 import IStore from "models/IStore";
 import "./CustomerTableRowStyle.scss";
-import ClaimForm from "../../form/form-claim/FormClaim";
+import ClaimFormEdit from "../../form/form-claim-edit/FormClaim";
 import { useHistory } from "react-router-dom";
 
 interface IProps {
@@ -54,7 +54,7 @@ const CustomerTableRow: React.FC<IProps> = (
   const onClaimAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ClaimForm rowData={[rowData]} />,
+        <ClaimFormEdit rowData={[rowData]} />,
         ModalSizeEnum.Tiny
       )
     );

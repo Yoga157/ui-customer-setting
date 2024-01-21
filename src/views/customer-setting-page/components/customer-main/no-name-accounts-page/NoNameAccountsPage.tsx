@@ -83,9 +83,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
         let tableSelect: any;
         let tableHead: any;
 
-        if (
-          window.location.pathname === "/data-quality/customer-setting-page"
-        ) {
+        if (window.location.pathname === "/data-quality/customer-setting") {
           tableSelect = document.getElementById(
             "exporttosetting"
           ) as HTMLTableElement;
@@ -128,26 +126,25 @@ const NoNameAccountsPage: React.FC<IProps> = (
       "#search-input-customer"
     )! as HTMLInputElement;
 
-    if (window.location.pathname === "/customer-setting") {
-      if (search.value.length > 0) {
-        dispatch(
-          CustomerActions.requestSearchNoNameAcc(
-            data.activePage,
-            pageSize,
-            "CustomerID",
-            search.value
-          )
-        );
-      } else {
-        dispatch(
-          CustomerActions.requestNoNameAcc(
-            data.activePage,
-            pageSize,
-            "CustomerID",
-            "ascending"
-          )
-        );
-      }
+    // if (window.location.pathname === "/data-quality/customer-setting") {
+    if (search.value.length > 0) {
+      dispatch(
+        CustomerActions.requestSearchNoNameAcc(
+          data.activePage,
+          pageSize,
+          "CustomerID",
+          search.value
+        )
+      );
+    } else {
+      dispatch(
+        CustomerActions.requestNoNameAcc(
+          data.activePage,
+          pageSize,
+          "CustomerID",
+          "ascending"
+        )
+      );
     }
     // }
   };

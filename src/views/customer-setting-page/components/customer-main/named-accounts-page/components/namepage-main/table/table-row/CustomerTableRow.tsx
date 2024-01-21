@@ -1,12 +1,9 @@
 import React, { Fragment, useEffect, useState, useCallback } from "react";
-import { Table, Dropdown, List, Icon } from "semantic-ui-react";
+import { Table, Dropdown, Icon } from "semantic-ui-react";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLevelActions";
 import ModalSizeEnum from "constants/ModalSizeEnum";
-import { selectUserResult } from "selectors/user/UserSelector";
-import IUserResult from "selectors/user/models/IUserResult";
-import IStore from "models/IStore";
 import "./CustomerTableRowStyle.scss";
 import RequestForm from "../../form/form-reqshareaccount/FormReqShare";
 import ReleaseForm from "../../form/form-release/FormRelease";
@@ -22,11 +19,10 @@ const CustomerTableRow: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
-  const [openConfirm, setOpenConfirm] = useState(false);
-  const currentUser: IUserResult = useSelector((state: IStore) =>
-    selectUserResult(state)
-  );
-
+  // const [openConfirm, setOpenConfirm] = useState(false);
+  // const currentUser: IUserResult = useSelector((state: IStore) =>
+  //   selectUserResult(state)
+  // );
   const { rowData, getRowData } = props;
   const [isChecked, setIsChecked] = useState(false);
 
@@ -52,7 +48,6 @@ const CustomerTableRow: React.FC<IProps> = (
   };
 
   const onRequestAccount = useCallback((): void => {
-    // console.log(rowData);
     dispatch(
       ModalFirstLevelActions.OPEN(
         <RequestForm rowData={[rowData]} />,
@@ -63,25 +58,21 @@ const CustomerTableRow: React.FC<IProps> = (
   }, [dispatch, rowData]);
 
   const onReleaseAccount = useCallback((): void => {
-    // console.log(rowData);
     dispatch(
       ModalFirstLevelActions.OPEN(
         <ReleaseForm rowData={[rowData]} />,
         ModalSizeEnum.Tiny
       )
     );
+    getRowData([]);
   }, [dispatch, rowData]);
 
   const onEdit = (id: number) => {
     props.history.push({
-      pathname: "customer-setting-page/" + id,
+      pathname: "customer-setting/" + id,
       state: { rowData },
     });
   };
-
-  // useEffect(() => {
-  //   console.log("Efect");
-  // }, []);
 
   return (
     <Fragment>

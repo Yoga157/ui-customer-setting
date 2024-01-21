@@ -9,9 +9,8 @@ import IUserResult from "selectors/user/models/IUserResult";
 import IStore from "models/IStore";
 import "./CustomerTableRowStyle.scss";
 import ClaimForm from "../../form/form-claim/FormClaim";
-import AddSalesAssign from "../../form/form-create/FormAdd";
-import RouteEnum from "constants/RouteEnum";
-import * as CustomerSettActions from "stores/customer-setting/CustomerActivityActions";
+import RequestForm from "../../form/form-reqshareaccount/FormReqShare";
+import ReleaseForm from "../../form/form-release/FormRelease";
 
 interface IProps {
   readonly rowData: any;
@@ -47,12 +46,31 @@ const CustomerTableRow: React.FC<IProps> = (
     }
   };
 
+  const onRequestAccount = useCallback((): void => {
+    dispatch(
+      ModalFirstLevelActions.OPEN(
+        <RequestForm rowData={[rowData]} />,
+        ModalSizeEnum.Tiny
+      )
+    );
+    getRowData([]);
+  }, [dispatch, rowData]);
+
+  const onReleaseAccount = useCallback((): void => {
+    dispatch(
+      ModalFirstLevelActions.OPEN(
+        <ReleaseForm rowData={[rowData]} />,
+        ModalSizeEnum.Tiny
+      )
+    );
+    getRowData([]);
+  }, [dispatch, rowData]);
+
   const onClaimAccount = useCallback((): void => {
-    // console.log(rowData);
     dispatch(
       ModalFirstLevelActions.OPEN(
         <ClaimForm rowData={[rowData]} />,
-        ModalSizeEnum.Small
+        ModalSizeEnum.Tiny
       )
     );
   }, [dispatch, rowData]);
@@ -64,13 +82,9 @@ const CustomerTableRow: React.FC<IProps> = (
     });
   };
 
-  useEffect(() => {
-    console.log("Efect");
-  }, []);
-
   return (
     <Fragment>
-      <Table.Row key={rowData.CustomerSettingID}>
+      <Table.Row key={rowData.CustomerID}>
         <Table.Cell width="4">
           <div
             style={{
@@ -79,14 +93,14 @@ const CustomerTableRow: React.FC<IProps> = (
               textAlign: "center",
             }}
           >
-            <div>
+            {/* <div>
               <label style={{ margin: "0.8rem", verticalAlign: "middle" }}>
                 <input
                   type="checkbox"
                   onClick={() => setRowData(rowData)}
                 ></input>
               </label>
-            </div>
+            </div> */}
             <Dropdown pointing="left" icon="ellipsis vertical">
               <Dropdown.Menu>
                 {rowData.shareable == true && (
@@ -94,7 +108,12 @@ const CustomerTableRow: React.FC<IProps> = (
                     <Dropdown.Item
                       text="View/Edit"
                       icon="edit outline"
-                      onClick={() => onEdit(rowData.customerSettingID)}
+                      onClick={() => onEdit(rowData.CustomerID)}
+                    />
+                    <Dropdown.Item
+                      text="Claim Account"
+                      icon="circle check"
+                      onClick={onClaimAccount}
                     />
                   </>
                 )}
@@ -104,7 +123,7 @@ const CustomerTableRow: React.FC<IProps> = (
                     <Dropdown.Item
                       text="View/Edit"
                       icon="edit outline"
-                      onClick={() => onEdit(rowData.customerSettingID)}
+                      onClick={() => onEdit(rowData.CustomerID)}
                     />
 
                     <Dropdown.Item
@@ -120,22 +139,26 @@ const CustomerTableRow: React.FC<IProps> = (
                     <Dropdown.Item
                       text="View/Edit"
                       icon="edit outline"
-                      onClick={() => onEdit(rowData.customerSettingID)}
+                      onClick={() => onEdit(rowData.CustomerID)}
                     />
 
-                    <Dropdown.Item text="Request Share Account" icon="share" />
+                    <Dropdown.Item
+                      text="Request Share Account"
+                      icon="share"
+                      onClick={onRequestAccount}
+                    />
 
                     <Dropdown.Item
                       text="Release Account"
                       icon="remove circle"
+                      onClick={onReleaseAccount}
                     />
                   </>
                 )}
 
-                {rowData.status != "CANCEL" &&
-                  rowData.CustomerSettingID == "" && (
-                    <Dropdown.Item text="Cancel" icon="remove circle" />
-                  )}
+                {rowData.status != "CANCEL" && rowData.customerID == "" && (
+                  <Dropdown.Item text="Cancel" icon="remove circle" />
+                )}
               </Dropdown.Menu>
             </Dropdown>
           </div>
@@ -182,7 +205,6 @@ const CustomerTableRow: React.FC<IProps> = (
           )}
 
           {rowData.shareable === true && (
-            // Menambahkan logika atau elemen JSX sesuai kebutuhan
             <div
               style={{
                 backgroundColor: "#28d4a5",
