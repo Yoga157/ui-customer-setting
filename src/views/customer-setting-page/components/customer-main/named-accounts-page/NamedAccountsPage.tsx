@@ -23,11 +23,13 @@ import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityAct
 
 interface IProps {
   history: any;
+  role: string;
 }
 
 const NamedAccountsPage: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
+  // const { role } = props;
   const dispatch: Dispatch = useDispatch();
   const [pageSize, setPage] = useState(10);
   const activePage = useSelector(
@@ -107,7 +109,9 @@ const NamedAccountsPage: React.FC<IProps> = (
         let tableSelect: any;
         let tableHead: any;
 
-        if (window.location.pathname === "/data-quality/customer-setting") {
+        if (
+          window.location.pathname === "/data-quality/customer-setting-page"
+        ) {
           tableSelect = document.getElementById(
             "exporttosetting"
           ) as HTMLTableElement;
@@ -156,7 +160,7 @@ const NamedAccountsPage: React.FC<IProps> = (
       "#search-input-customer"
     )! as HTMLInputElement;
 
-    // if (window.location.pathname === "/data-quality/customer-setting") {
+    // if (window.location.pathname === "/data-quality/customer-setting-page") {
     if (search.value.length > 0) {
       dispatch(
         CustomerActions.requestSearchNamedAcc(
@@ -182,7 +186,7 @@ const NamedAccountsPage: React.FC<IProps> = (
   const isRequesting: boolean = useSelector((state: IStore) =>
     selectRequesting(state, [
       CustomerActions.REQUEST_NAMED_ACCOUNTS,
-      CustomerActions.REQUEST_NAMED_SEARCH_FINISHED,
+      CustomerActions.REQUEST_NAMED_SEARCH,
     ])
   );
 
@@ -290,6 +294,7 @@ const NamedAccountsPage: React.FC<IProps> = (
             <div className="wrapper-table">
               <CustomerTable
                 history={props.history}
+                role={props.role}
                 tableData={tableData}
                 getRowData={setNewRowData}
                 data={rowData}

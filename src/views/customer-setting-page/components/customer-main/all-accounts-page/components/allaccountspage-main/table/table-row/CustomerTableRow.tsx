@@ -11,10 +11,12 @@ import "./CustomerTableRowStyle.scss";
 import ClaimForm from "../../form/form-claim/FormClaim";
 import RequestForm from "../../form/form-reqshareaccount/FormReqShare";
 import ReleaseForm from "../../form/form-release/FormRelease";
+import ShareableReq from "../../form/form-approverequest/FormApproveShareable";
 
 interface IProps {
   readonly rowData: any;
   readonly history: any;
+  readonly role: string;
   getRowData: (data: any) => void;
   data: any;
 }
@@ -29,6 +31,7 @@ const CustomerTableRow: React.FC<IProps> = (
   );
 
   const { rowData, getRowData } = props;
+  const { role } = props;
 
   const setRowData = (data) => {
     let checkData = props.data.find(
@@ -50,6 +53,16 @@ const CustomerTableRow: React.FC<IProps> = (
     dispatch(
       ModalFirstLevelActions.OPEN(
         <RequestForm rowData={[rowData]} />,
+        ModalSizeEnum.Tiny
+      )
+    );
+    getRowData([]);
+  }, [dispatch, rowData]);
+
+  const onShareableRequest = useCallback((): void => {
+    dispatch(
+      ModalFirstLevelActions.OPEN(
+        <ShareableReq rowData={[rowData]} />,
         ModalSizeEnum.Tiny
       )
     );
@@ -93,17 +106,65 @@ const CustomerTableRow: React.FC<IProps> = (
               textAlign: "center",
             }}
           >
-            {/* <div>
-              <label style={{ margin: "0.8rem", verticalAlign: "middle" }}>
-                <input
-                  type="checkbox"
-                  onClick={() => setRowData(rowData)}
-                ></input>
-              </label>
-            </div> */}
             <Dropdown pointing="left" icon="ellipsis vertical">
               <Dropdown.Menu>
-                {rowData.shareable == true && (
+                <Dropdown.Item
+                  text="View/Edit"
+                  icon="edit outline"
+                  onClick={() => onEdit(rowData.CustomerID)}
+                />
+
+                {(rowData.named === false || rowData.shareable === false) &&
+                  role === "SALES" && (
+                    <Dropdown.Item
+                      text="Claim Account"
+                      icon="circle check"
+                      onClick={onClaimAccount}
+                    />
+                  )}
+
+                {rowData.named === true && role === "ADMIN" && (
+                  <>
+                    <Dropdown.Item
+                      text="Approve Shareable Request"
+                      icon="circle check"
+                      onClick={onShareableRequest}
+                    />
+                  </>
+                )}
+
+                {rowData.named === true && role === "SALES" && (
+                  <>
+                    <Dropdown.Item
+                      text="Request Share Account"
+                      icon="share"
+                      onClick={onRequestAccount}
+                    />
+
+                    <Dropdown.Item
+                      text="Release Account"
+                      icon="remove circle"
+                      onClick={onReleaseAccount}
+                    />
+                  </>
+                )}
+
+                {rowData.status != "CANCEL" && rowData.customerID == "" && (
+                  <Dropdown.Item text="Cancel" icon="remove circle" />
+                )}
+              </Dropdown.Menu>
+              {/* <Dropdown.Menu>
+                {rowData.shareable == true &&
+                rowData.named == false &&
+                role === "ADMIN" ? (
+                  <>
+                    <Dropdown.Item
+                      text="View/Edit"
+                      icon="edit outline"
+                      onClick={() => onEdit(rowData.CustomerID)}
+                    />
+                  </>
+                ) : (
                   <>
                     <Dropdown.Item
                       text="View/Edit"
@@ -118,14 +179,23 @@ const CustomerTableRow: React.FC<IProps> = (
                   </>
                 )}
 
-                {rowData.named == false && (
+                {rowData.named == false &&
+                rowData.shareable == false &&
+                role === "ADMIN" && (
                   <>
                     <Dropdown.Item
                       text="View/Edit"
                       icon="edit outline"
                       onClick={() => onEdit(rowData.CustomerID)}
                     />
-
+                  </>
+                ) : (
+                  <>
+                    <Dropdown.Item
+                      text="View/Edit"
+                      icon="edit outline"
+                      onClick={() => onEdit(rowData.CustomerID)}
+                    />
                     <Dropdown.Item
                       text="Claim Account"
                       icon="circle check"
@@ -134,7 +204,23 @@ const CustomerTableRow: React.FC<IProps> = (
                   </>
                 )}
 
-                {rowData.named == true && (
+                {rowData.named == true &&
+                rowData.shareable == false &&
+                role === "ADMIN" ? (
+                  <>
+                    <Dropdown.Item
+                      text="View/Edit"
+                      icon="edit outline"
+                      onClick={() => onEdit(rowData.CustomerID)}
+                    />
+
+                    <Dropdown.Item
+                      text="Approve Shareable Request"
+                      icon="circle check"
+                      onClick={onShareableRequest}
+                    />
+                  </>
+                ) &&  (
                   <>
                     <Dropdown.Item
                       text="View/Edit"
@@ -159,12 +245,12 @@ const CustomerTableRow: React.FC<IProps> = (
                 {rowData.status != "CANCEL" && rowData.customerID == "" && (
                   <Dropdown.Item text="Cancel" icon="remove circle" />
                 )}
-              </Dropdown.Menu>
+              </Dropdown.Menu> */}
             </Dropdown>
           </div>
         </Table.Cell>
         <Table.Cell>
-          {rowData.named === false && (
+          {rowData.named === false && rowData.shareable === false && (
             <div
               style={{
                 backgroundColor: "#949aa1",
@@ -204,7 +290,7 @@ const CustomerTableRow: React.FC<IProps> = (
             </div>
           )}
 
-          {rowData.shareable === true && (
+          {rowData.shareable === true && rowData.named === false && (
             <div
               style={{
                 backgroundColor: "#28d4a5",
@@ -234,10 +320,7 @@ const CustomerTableRow: React.FC<IProps> = (
               maxWidth: "20rem",
               width: "15rem",
               margin: "auto",
-              height: "2rem",
               display: "flex",
-              // justifyContent: "center",
-              // textAlign: "center",
             }}
           >
             <p
@@ -272,8 +355,9 @@ const CustomerTableRow: React.FC<IProps> = (
               maxWidth: "25rem",
               width: "20rem",
               margin: "auto",
-              height: "2rem",
               display: "flex",
+              justifyContent: "center",
+              textAlign: "center",
             }}
           >
             <p
@@ -296,10 +380,7 @@ const CustomerTableRow: React.FC<IProps> = (
               maxWidth: "15rem",
               width: "10rem",
               margin: "auto",
-              height: "2rem",
               display: "flex",
-              justifyContent: "center",
-              textAlign: "center",
             }}
           >
             <p
@@ -333,7 +414,6 @@ const CustomerTableRow: React.FC<IProps> = (
               maxWidth: "20rem",
               width: "15rem",
               margin: "auto",
-              height: "2rem",
               display: "flex",
             }}
           >
@@ -414,7 +494,6 @@ const CustomerTableRow: React.FC<IProps> = (
               maxWidth: "15rem",
               width: "10rem",
               margin: "auto",
-              height: "2rem",
               display: "flex",
               justifyContent: "center",
               textAlign: "center",
@@ -431,9 +510,80 @@ const CustomerTableRow: React.FC<IProps> = (
             </p>{" "}
           </div>
         </Table.Cell>
-        <Table.Cell>{rowData.createdDate}</Table.Cell>
-        <Table.Cell>{rowData.modifiedBy}</Table.Cell>
-        <Table.Cell>{rowData.modifiedDate}</Table.Cell>
+        <Table.Cell>
+          {" "}
+          <div
+            style={{
+              color: "white",
+              borderRadius: "1rem",
+              maxWidth: "15rem",
+              width: "10rem",
+              margin: "auto",
+              display: "flex",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            <p
+              style={{
+                fontSize: "1rem",
+                color: "#46494c",
+              }}
+            >
+              {" "}
+              {rowData.createdDate}
+            </p>{" "}
+          </div>
+        </Table.Cell>
+        <Table.Cell>
+          {" "}
+          <div
+            style={{
+              color: "white",
+              borderRadius: "1rem",
+              maxWidth: "15rem",
+              width: "10rem",
+              margin: "auto",
+              display: "flex",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            <p
+              style={{
+                fontSize: "1rem",
+                color: "#46494c",
+              }}
+            >
+              {" "}
+              {rowData.modifiedBy}
+            </p>{" "}
+          </div>{" "}
+        </Table.Cell>
+        <Table.Cell>
+          <div
+            style={{
+              color: "white",
+              borderRadius: "1rem",
+              maxWidth: "15rem",
+              width: "10rem",
+              margin: "auto",
+              display: "flex",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            <p
+              style={{
+                fontSize: "1rem",
+                color: "#46494c",
+              }}
+            >
+              {" "}
+              {rowData.modifiedDate}
+            </p>{" "}
+          </div>
+        </Table.Cell>
       </Table.Row>
     </Fragment>
   );

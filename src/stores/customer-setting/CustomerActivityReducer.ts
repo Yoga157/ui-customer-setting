@@ -255,6 +255,19 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     };
   },
 
+  //APPROVE SHARABALE ACCOUNTS
+  [CustomerActions.PUT_APPROVE_CUSTOMER_SETTING_FINISHED](
+    state: ICustomerState,
+    action: IAction<ResultActions>
+  ): any {
+    return {
+      ...state,
+      error: action.error!,
+      refreshPage: action.error ? false : true,
+      resultActions: action.payload!,
+    };
+  },
+
   [CustomerActions.CLEAR_CUSTOMER_SETTING_FINISHED](
     state: ICustomerState,
     action: IAction<any>

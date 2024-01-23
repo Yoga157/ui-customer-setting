@@ -46,7 +46,7 @@ const FilterCustomer: React.FC<{
         },
       ]);
 
-      setSalesFilter([...salesFilter, data.salesName]);
+      setSalesFilter([...salesFilter, data.salesID.toString()]);
     }
   };
 
@@ -61,7 +61,7 @@ const FilterCustomer: React.FC<{
         : null;
 
     const newsalesAssign =
-      salesFilter.length == 0 ? null : salesFilter.join(" ");
+      salesFilter.length == 0 ? null : salesFilter.join(",");
 
     const holdshipment =
       holdshipmentYesChecked && holdshipmentNoChecked
@@ -88,7 +88,7 @@ const FilterCustomer: React.FC<{
         "CustomerID",
         null,
         "ascending",
-        null,
+        newsalesAssign,
         pmo_customer,
         holdshipment,
         blacklist

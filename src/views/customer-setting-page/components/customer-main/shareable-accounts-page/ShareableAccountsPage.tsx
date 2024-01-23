@@ -20,12 +20,14 @@ import ModReleaseForm from "./components/shareablepage-main/form/form-releasemod
 
 interface IProps {
   history: any;
+  role: string;
 }
 
 const ShareableAccountsPage: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
+  const { role } = props;
   const [pageSize, setPage] = useState(10);
   const activePage = useSelector(
     (state: IStore) => state.customerSetting.activePage
@@ -84,7 +86,7 @@ const ShareableAccountsPage: React.FC<IProps> = (
         CustomerActions.requestSearchShareabelAcc(
           1,
           tableData.totalRow,
-          null,
+          "CustomerID",
           search.value
         )
       );
@@ -93,7 +95,7 @@ const ShareableAccountsPage: React.FC<IProps> = (
         CustomerActions.requestShareabledAcc(
           1,
           tableData.totalRow,
-          null,
+          "CustomerID",
           "ascending"
         )
       );
@@ -103,7 +105,9 @@ const ShareableAccountsPage: React.FC<IProps> = (
         let tableSelect: any;
         let tableHead: any;
 
-        if (window.location.pathname === "/data-quality/customer-setting") {
+        if (
+          window.location.pathname === "/data-quality/customer-setting-page"
+        ) {
           tableSelect = document.getElementById(
             "exporttosetting"
           ) as HTMLTableElement;
@@ -293,6 +297,7 @@ const ShareableAccountsPage: React.FC<IProps> = (
             <div className="wrapper-table">
               <CustomerTable
                 history={props.history}
+                role={props.role}
                 tableData={tableData}
                 getRowData={setNewRowData}
                 data={rowData}

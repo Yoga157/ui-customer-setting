@@ -9,6 +9,8 @@ import ResultActions from "models/ResultActions";
 import IAction from "models/IAction";
 import CustomerSettingById from "./models/CustomerSettingById";
 import CustomerID from "./models/ReleaseAccounts";
+import ReleaseAccounts from "./models/ApproveShareableccounts";
+import ApproveShareableAccounts from "./models/ApproveShareableccounts";
 
 type ActionUnion =
   | undefined
@@ -18,6 +20,7 @@ type ActionUnion =
   | CustomerSettingPostModel
   | CustomerSettingById
   | CustomerID
+  | ApproveShareableAccounts
   | boolean
   | ResultActions;
 
@@ -188,7 +191,6 @@ export const requestSearchNoNameAcc = (
   column: string,
   search: string,
   sorting?: string,
-  shareable?: boolean,
   pmo_customer?: boolean,
   holdshipment?: boolean,
   blacklist?: boolean
@@ -203,7 +205,6 @@ export const requestSearchNoNameAcc = (
       column,
       search,
       sorting,
-      shareable,
       pmo_customer,
       holdshipment,
       blacklist
@@ -222,7 +223,7 @@ export const requestSearchNamedAcc = (
   column: string,
   search: string,
   sorting?: string,
-  salesID?: number,
+  salesID?: string,
   pmo_customer?: boolean,
   holdshipment?: boolean,
   blacklist?: boolean
@@ -256,10 +257,10 @@ export const requestSearchShareabelAcc = (
   column: string,
   search: string,
   sorting?: string,
-  shareable?: boolean,
+  salesID?: string,
   pmo_customer?: boolean,
-  holdshipment?: boolean,
-  blacklist?: boolean
+  blacklist?: boolean,
+  holdshipment?: boolean
 ): any => {
   return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
     await ActionUtility.createThunkEffect<CustomerSettingModel>(
@@ -271,10 +272,10 @@ export const requestSearchShareabelAcc = (
       column,
       search,
       sorting,
-      shareable,
+      salesID,
       pmo_customer,
-      holdshipment,
-      blacklist
+      blacklist,
+      holdshipment
     );
   };
 };
@@ -289,7 +290,7 @@ export const requestSearchAllAcc = (
   column: string,
   search: string,
   sorting?: string,
-  salesID?: number,
+  salesID?: string,
   pmo_customer?: boolean,
   blacklist?: boolean,
   holdshipment?: boolean,
@@ -442,6 +443,32 @@ export const putReleaseAccount = (
       data,
       customerID,
       salesID,
+      modifyUserID
+    );
+  };
+};
+
+//PUT APPROVE ACCOUNTS
+export const PUT_APPROVE_CUSTOMER_SETTING: string =
+  "CustomerActions.PUT_APPROVE_CUSTOMER_SETTING";
+export const PUT_APPROVE_CUSTOMER_SETTING_FINISHED =
+  "CustomerActions.PUT_APPROVE_CUSTOMER_SETTING_FINISHED";
+export const putApproveCustomerSetting = (
+  data: ApproveShareableAccounts,
+  customerID: number,
+  salesID: number,
+  isApprove: boolean,
+  modifyUserID: number
+): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      PUT_APPROVE_CUSTOMER_SETTING,
+      CustomerEffect.putApproveCustomerSetting,
+      data,
+      customerID,
+      salesID,
+      isApprove,
       modifyUserID
     );
   };

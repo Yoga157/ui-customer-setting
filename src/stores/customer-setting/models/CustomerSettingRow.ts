@@ -34,7 +34,7 @@ export default class CustomerSettingRow extends BaseModel {
     const conversionOptions: IConversionOption = {
       customerSettingID: ConversionTypeEnum.Number,
       customerID: ConversionTypeEnum.Number,
-      salesID: ConversionTypeEnum.Number,
+      salesID: ConversionTypeEnum.String,
       customerCategory: ConversionTypeEnum.String,
       customerName: ConversionTypeEnum.String,
       customerAddress: ConversionTypeEnum.String,

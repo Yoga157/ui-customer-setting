@@ -21,8 +21,6 @@ const FilterCustomer: React.FC<{
   const [salesName, setSalesName] = useState("");
   const [salesAssignArray, setSalesAssignArray] = useState([]);
   const [salesFilter, setSalesFilter] = useState([]);
-  const [shareableYesChecked, setShareableYesChecked] = useState(false);
-  const [shareableNoChecked, setShareableNoChecked] = useState(false);
   const [pmo_customerYesChecked, setPmo_customerYesChecked] = useState(false);
   const [pmo_customerNoChecked, setPmo_customerNoChecked] = useState(false);
   const [holdshipmentYesChecked, setHoldshipmentYesChecked] = useState(false);
@@ -33,7 +31,10 @@ const FilterCustomer: React.FC<{
   const dispatch: Dispatch = useDispatch();
 
   const isRequesting: boolean = useSelector((state: IStore) =>
-    selectRequesting(state, [])
+    selectRequesting(state, [
+      CustomerSettingAct.REQUEST_SHAREABLE_ACCOUNTS,
+      CustomerSettingAct.REQUEST_SHAREABLE_SEARCH,
+    ])
   );
 
   const onResultSelectSales = (data: any): any => {
@@ -48,7 +49,7 @@ const FilterCustomer: React.FC<{
         },
       ]);
 
-      setSalesFilter([...salesFilter, data.salesName]);
+      setSalesFilter([...salesFilter, data.salesID.toString()]);
     }
   };
 
@@ -63,7 +64,7 @@ const FilterCustomer: React.FC<{
         : null;
 
     const newsalesAssign =
-      salesFilter.length == 0 ? null : salesFilter.join(" ");
+      salesFilter.length == 0 ? null : salesFilter.join(",");
 
     const holdshipment =
       holdshipmentYesChecked && holdshipmentNoChecked
@@ -84,18 +85,19 @@ const FilterCustomer: React.FC<{
         : null;
 
     dispatch(
-      CustomerSettingAct.requestSearchNamedAcc(
+      CustomerSettingAct.requestSearchShareabelAcc(
         1,
         10,
         "CustomerID",
         null,
         "ascending",
-        null,
+        newsalesAssign,
         pmo_customer,
-        holdshipment,
-        blacklist
+        blacklist,
+        holdshipment
       )
     );
+    // console.log(pmo_customer);
   };
 
   const salesStoreDropdown = useSelector((state: IStore) =>

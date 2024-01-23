@@ -15,14 +15,18 @@ import IUserResult from "selectors/user/models/IUserResult";
 import TableToExcel from "@linways/table-to-excel";
 import { selectAllAccount } from "selectors/customer-setting/CustomerSettingSelector";
 import FilterCustomer from "./components/allaccountspage-main/filter/FilterCustomer";
+import { format } from "date-fns";
 
 interface IProps {
   history: any;
+  role: string;
 }
 
 const AllAccountsPage: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
+  const { role } = props;
+  console.log("Role received in AllAccountsPage:", role);
   const dispatch: Dispatch = useDispatch();
   const [pageSize, setPage] = useState(10);
   const activePage = useSelector(
@@ -33,7 +37,6 @@ const AllAccountsPage: React.FC<IProps> = (
   );
   const [rowData, setRowData] = useState([]);
   const [myAccount, setMyAccount] = useState(false);
-
   const setNewRowData = (data) => {
     setRowData(data);
   };
@@ -70,13 +73,18 @@ const AllAccountsPage: React.FC<IProps> = (
         CustomerActions.requestSearchAllAcc(
           1,
           tableData.totalRow,
-          null,
+          "CustomerID",
           search.value
         )
       );
     } else {
       dispatch(
-        CustomerActions.requestAllAcc(1, tableData.totalRow, null, "ascending")
+        CustomerActions.requestAllAcc(
+          1,
+          tableData.totalRow,
+          "CustomerID",
+          "ascending"
+        )
       );
     }
     if (isRequesting == false) {
@@ -84,7 +92,9 @@ const AllAccountsPage: React.FC<IProps> = (
         let tableSelect: any;
         let tableHead: any;
 
-        if (window.location.pathname === "/data-quality/customer-setting") {
+        if (
+          window.location.pathname === "/data-quality/customer-setting-page"
+        ) {
           tableSelect = document.getElementById(
             "exporttosetting"
           ) as HTMLTableElement;
@@ -106,7 +116,7 @@ const AllAccountsPage: React.FC<IProps> = (
           firstCol.remove();
         }
         TableToExcel.convert(tableSelect, {
-          name: "AllAccounts" + ".xlsx",
+          name: "AllAccounts" + currDate + ".xlsx",
           sheet: {
             name: "Sheet 1",
           },
@@ -118,6 +128,8 @@ const AllAccountsPage: React.FC<IProps> = (
       }, 4000);
     }
   };
+
+  const currDate: string = format(new Date(), "cccc LLLL d, yyyy");
 
   useEffect(() => {
     dispatch(
@@ -187,25 +199,53 @@ const AllAccountsPage: React.FC<IProps> = (
           </div>
 
           <div className="posision-container">
-            <div
-              className="myAccount-toggle"
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "center" }}>
-                <Checkbox
-                  style={{ margin: "0.5rem", transform: "scale(0.9)" }}
-                  toggle
-                  checked={myAccount}
-                  onChange={() => handleMyAccount()}
-                ></Checkbox>
+            {role === "ADMIN" ? (
+              <>
+                <div
+                  className="myAccount-toggle"
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    <Checkbox
+                      style={{ margin: "0.5rem", transform: "scale(0.9)" }}
+                      toggle
+                      checked={myAccount}
+                      onChange={() => handleMyAccount()}
+                    ></Checkbox>
+                  </div>
+                  <p style={{ fontSize: "0.8rem", margin: "0.5rem" }}>
+                    MY APPROVAL FILTER
+                  </p>
+                </div>
+              </>
+            ) : (
+              <div
+                className="myAccount-toggle"
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <Checkbox
+                    style={{ margin: "0.5rem", transform: "scale(0.9)" }}
+                    toggle
+                    checked={myAccount}
+                    onChange={() => handleMyAccount()}
+                  ></Checkbox>
+                </div>
+                <p style={{ fontSize: "0.8rem", margin: "0.5rem" }}>
+                  My Account
+                </p>
               </div>
-              <p style={{ fontSize: "0.8rem", margin: "0.5rem" }}>My Account</p>
-            </div>
+            )}
           </div>
 
           <div className="posision-container-right">
@@ -232,6 +272,7 @@ const AllAccountsPage: React.FC<IProps> = (
             <div className="wrapper-table">
               <CustomerTable
                 history={props.history}
+                role={props.role}
                 tableData={tableData}
                 getRowData={setNewRowData}
                 data={rowData}

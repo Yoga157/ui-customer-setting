@@ -13,6 +13,7 @@ import ClaimForm from "../../form/form-claim/FormClaim";
 interface IProps {
   readonly rowData: any;
   readonly history: any;
+  readonly role: any;
   getRowData: (data: any) => void;
   data: any;
 }
@@ -25,7 +26,7 @@ const CustomerTableRow: React.FC<IProps> = (
   const currentUser: IUserResult = useSelector((state: IStore) =>
     selectUserResult(state)
   );
-
+  const { role } = props;
   const { rowData, getRowData } = props;
 
   const setRowData = (data) => {
@@ -81,20 +82,33 @@ const CustomerTableRow: React.FC<IProps> = (
             </div>
             <Dropdown pointing="left" icon="ellipsis vertical">
               <Dropdown.Menu>
-                <Dropdown.Item
-                  text="View/Edit"
-                  icon="edit outline"
-                  onClick={() => onEdit(rowData.customerID)}
-                />
+                {role === "SALES" && (
+                  <>
+                    <Dropdown.Item
+                      text="View/Edit"
+                      icon="edit outline"
+                      onClick={() => onEdit(rowData.customerID)}
+                    />
 
-                <Dropdown.Item
-                  text="Claim Account"
-                  icon="circle check"
-                  onClick={onClaimAccount}
-                />
+                    <Dropdown.Item
+                      text="Claim Account"
+                      icon="circle check"
+                      onClick={onClaimAccount}
+                    />
 
-                {rowData.status != "CANCEL" && rowData.customerID == "" && (
-                  <Dropdown.Item text="Cancel" icon="remove circle" />
+                    {rowData.status !== "CANCEL" &&
+                      rowData.CustomerID === "" && (
+                        <Dropdown.Item text="Cancel" icon="remove circle" />
+                      )}
+                  </>
+                )}
+
+                {role === "ADMIN" && (
+                  <Dropdown.Item
+                    text="View/Edit"
+                    icon="edit outline"
+                    onClick={() => onEdit(rowData.customerID)}
+                  />
                 )}
               </Dropdown.Menu>
             </Dropdown>
@@ -167,7 +181,9 @@ const CustomerTableRow: React.FC<IProps> = (
               maxWidth: "20rem",
               width: "15rem",
               margin: "auto",
-              height: "2rem",
+              height: "auto",
+              justifyContent: "center",
+              textAlign: "center",
               display: "flex",
             }}
           >
@@ -191,10 +207,10 @@ const CustomerTableRow: React.FC<IProps> = (
               maxWidth: "15rem",
               width: "10rem",
               margin: "auto",
-              height: "2rem",
+              height: "auto",
               display: "flex",
-              justifyContent: "center",
-              textAlign: "center",
+              // justifyContent: "center",
+              // textAlign: "center",
             }}
           >
             <p
@@ -204,8 +220,8 @@ const CustomerTableRow: React.FC<IProps> = (
               }}
             >
               {" "}
-              {rowData.salesAssign}{" "}
-            </p>{" "}
+              {rowData.salesName}
+            </p>
           </div>
         </Table.Cell>
         <Table.Cell textAlign="center">
@@ -228,7 +244,7 @@ const CustomerTableRow: React.FC<IProps> = (
               maxWidth: "20rem",
               width: "15rem",
               margin: "auto",
-              height: "2rem",
+              height: "auto",
               display: "flex",
             }}
           >
@@ -309,7 +325,6 @@ const CustomerTableRow: React.FC<IProps> = (
               maxWidth: "15rem",
               width: "10rem",
               margin: "auto",
-              height: "2rem",
               display: "flex",
               justifyContent: "center",
               textAlign: "center",
@@ -326,9 +341,80 @@ const CustomerTableRow: React.FC<IProps> = (
             </p>{" "}
           </div>
         </Table.Cell>
-        <Table.Cell>{rowData.createdDate}</Table.Cell>
-        <Table.Cell>{rowData.modifiedBy}</Table.Cell>
-        <Table.Cell>{rowData.modifiedDate}</Table.Cell>
+        <Table.Cell>
+          {" "}
+          <div
+            style={{
+              color: "white",
+              borderRadius: "1rem",
+              maxWidth: "15rem",
+              width: "10rem",
+              margin: "auto",
+              display: "flex",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            <p
+              style={{
+                fontSize: "1rem",
+                color: "#46494c",
+              }}
+            >
+              {" "}
+              {rowData.createdDate}
+            </p>{" "}
+          </div>
+        </Table.Cell>
+        <Table.Cell>
+          {" "}
+          <div
+            style={{
+              color: "white",
+              borderRadius: "1rem",
+              maxWidth: "15rem",
+              width: "10rem",
+              margin: "auto",
+              display: "flex",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            <p
+              style={{
+                fontSize: "1rem",
+                color: "#46494c",
+              }}
+            >
+              {" "}
+              {rowData.modifiedBy}
+            </p>{" "}
+          </div>{" "}
+        </Table.Cell>
+        <Table.Cell>
+          <div
+            style={{
+              color: "white",
+              borderRadius: "1rem",
+              maxWidth: "15rem",
+              width: "10rem",
+              margin: "auto",
+              display: "flex",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            <p
+              style={{
+                fontSize: "1rem",
+                color: "#46494c",
+              }}
+            >
+              {" "}
+              {rowData.modifiedDate}
+            </p>{" "}
+          </div>
+        </Table.Cell>
       </Table.Row>
     </Fragment>
   );
