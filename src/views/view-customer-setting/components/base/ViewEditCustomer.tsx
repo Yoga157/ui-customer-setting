@@ -40,7 +40,7 @@ import { selectServiceSummary } from "selectors/service-summary/ServiceSummarySe
 import { selectInvoicingCondition } from "selectors/invoicing-condition/InvoicingConditionSelector";
 import { selectRelatedCustomer } from "selectors/related-customer/RelatedCustomerSelector";
 import { selectRelatedFile } from "selectors/related-file/RelatedFileSelector";
-import { selectSalesHistory, selectSalesSearchOptions } from "selectors/select-options/SalesAssignSelector";
+import { selectAccountOwner, selectSalesHistory, selectSalesSearchOptions } from "selectors/select-options/SalesAssignSelector";
 import InvoicingScheduleModel from "stores/invoicing-schedule/models/InvoicingScheduleModel";
 import SalesAssignPostModel from "stores/customer-sales/models/SalesAssignPostModel";
 import CustomerSettingById from "stores/customer-setting/models/CustomerSettingById";
@@ -84,14 +84,17 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
     /** Customer data */
     const accountStatus = customer.accountStatus;
+    const shareableApprovalStatus = customer?.shareableApprovalStatus;
+    const shareableRequestStatus = shareableApprovalStatus?.status?.toUpperCase();
     // get employeeName dari local storage
     // cek apakah employeeName memiliki customer ini
-    const employeeName = "Anindita D Soelistyo";
+    let userLogin = JSON.parse(localStorage.getItem('userLogin'));
+    const employeeName =userLogin?.fullName ||  "Terang Laksana";
     const salesArray: string[] = customer.salesName?.split(", ");
     const isEmployeeOwnCustomer: boolean = salesArray?.includes(employeeName);
+    const isEmployeeRequestShareable: boolean = shareableApprovalStatus?.requestedBy == employeeName && shareableRequestStatus == "PENDING";
     
     // shareable request status
-    const shareableRequestStatus = customer?.shareableApprovalStatus?.approvalBy == "0" ? "WAITING" : "APPROVED";
 
     // customer category
     const [customerCategory, setCustomerCategory] = useState("");
@@ -122,6 +125,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     const configItemData = useSelector((state: IStore) => selectConfigItem(state));
     const collectionHistoryData = useSelector((state: IStore) => selectCollectionHistory(state));
     const projectHistoryData = useSelector((state: IStore) => selectProjectHistory(state));
+    const accountOwnerData = useSelector((state: IStore) => selectAccountOwner(state));
     
     /** Project History */
     const [allHistoryData, setAllHistoryData] = useState(projectHistoryData)
@@ -397,6 +401,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
             dispatch(BrandSummary.requestBrandSummary(customer.customerID))
             dispatch(ServiceSummary.requestServiceSummary(customer.customerID))
             dispatch(ProjectHistory.requestProjectHistory(customer.customerID))
+            dispatch(SalesAssign.requestAccountOwner(customer.customerID))
 
             dispatch(InvoicingSchedule.requestInvoicingSchedule(customer.customerID))
             dispatch(InvoicingCondition.requestInvoicingCondition(customer.customerID))
@@ -479,7 +484,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
     return (
         <Fragment>
-            {customer?.shareableApprovalStatus?.requestedBy &&
+            {shareableApprovalStatus.length != 0 &&
                 <div ref={statusDivRef} style={{ zIndex: 4, position: "fixed", top: 0, left: 0, width: "100vw", color: "#55637A"}}> 
                     <div style={{ paddingTop: "6em", paddingInline: "5.5em", paddingBottom: "1.5em", backgroundColor: "#DADCDB", transition: "opacity 0.5s ease-in-out, transform 0.5s ease-in-out", opacity: showStatus ? 1 : 0, transform: `translateY(${({showStatus}) => (showStatus ? '0' : '-50px')})`, display: showStatus ? 'block' : 'none' }}>
                         <h4>Shareable Account Approval</h4>
@@ -487,19 +492,19 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                             <div ref={firstDivRef} style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", fontSize: "small", zIndex: 1 }}>
                                 <div style={{ height: "1rem", width: "1rem", borderRadius: "100%", backgroundColor: "#589DDB"}}></div>
                                 <p className="margin-0">Request By</p>
-                                <p className="margin-0" style={{ fontWeight: "bold" }}>{customer?.shareableApprovalStatus?.requestedBy}</p>
-                                <span style={{ color: "grey" }}><Icon name="check circle" style={{ color: "#27D4A5" }}/>{customer?.shareableApprovalStatus?.requestedDate}</span>
+                                <p className="margin-0" style={{ fontWeight: "bold" }}>{shareableApprovalStatus?.requestedBy}</p>
+                                <span style={{ color: "grey" }}><Icon name="check circle" style={{ color: "#27D4A5" }}/>{shareableApprovalStatus?.requestedDate}</span>
                             </div>
 
                             <div ref={secondDivRef} style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", fontSize: "small", zIndex: 1 }}>
                                 <div style={{ height: "1rem", width: "1rem", borderRadius: "100%", backgroundColor: "#589DDB"}}></div>
-                                <p className="margin-0">{shareableRequestStatus == "WAITING" ? "Waiting Approval By" : (shareableRequestStatus == "APPROVED" ? "Approved By" : "Rejected By")}</p>
-                                <p className="margin-0" style={{ fontWeight: "bold" }}>{customer?.shareableApprovalStatus?.approvalBy}</p>
+                                <p className="margin-0">{shareableRequestStatus == "PENDING" ? "Waiting Approval By" : (shareableRequestStatus == "APPROVED" ? "Approved By" : "Rejected By")}</p>
+                                <p className="margin-0" style={{ fontWeight: "bold" }}>{shareableApprovalStatus?.approvalBy != null ? shareableApprovalStatus?.approvalBy : "Rima Wulansari"}</p>
                                 <span style={{ color: "grey" }}>
-                                    {shareableRequestStatus == "WAITING" ? 
+                                    {shareableRequestStatus == "PENDING" ? 
                                         <><Icon name="exclamation circle" style={{ color: "#FFA800" }}/> Waiting Approval </> : 
                                     (shareableRequestStatus == "APPROVED" ?
-                                        <><Icon name="check circle" style={{ color: "#27D4A5" }}/> {customer?.shareableApprovalStatus?.approvalDate}</> : 
+                                        <><Icon name="check circle" style={{ color: "#27D4A5" }}/> {shareableApprovalStatus?.approvalDate}</> : 
                                         <><Icon name="remove circle" style={{ color: "red" }}/> Rejected</>
                                     )}
                                 </span>
@@ -618,14 +623,13 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
                     <div className="padding-horizontal title-button-row">
                         <p className="grey margin-0 bold text-align-left">ACCOUNT OWNER SETTING</p>
-                        {console.log("customer awal", customer)}
-                        <ClaimReleaseButton customer={customer} accountStatus={accountStatus} isEmployeeOwnCustomer={isEmployeeOwnCustomer} role={role} />
+                        <ClaimReleaseButton customer={customer} accountStatus={accountStatus} isEmployeeOwnCustomer={isEmployeeOwnCustomer} isEmployeeRequestShareable={isEmployeeRequestShareable} role={role} />
                     </div>
 
                     <Divider></Divider>
 
                     <div style={{ }} className="padding-horizontal">
-                        <TableNewCustomerSetting data={data.accOwnerData} header={data.accOwnerHeader} sequenceNum={true} />
+                        <TableNewCustomerSetting data={accountOwnerData} header={data.accOwnerHeader} sequenceNum={true} />
                     </div>
                     <Divider></Divider>
 
@@ -806,7 +810,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                 </label>
                                             </div>
                                             {role.toUpperCase() == "SALES" ?
-                                                <p style={{ fontSize: "20px", fontWeight: "bold"}}>{invoicingSchedule?.scheduleDays}</p>
+                                                <p style={{ fontSize: "20px", fontWeight: "bold"}}>{invoicingSchedule?.scheduleDays != null ? invoicingSchedule?.scheduleDays : "No data" }</p>
                                             :
                                                 <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
                                                     {days.map((day) => 

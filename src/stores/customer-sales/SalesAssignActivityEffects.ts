@@ -103,3 +103,20 @@ export const deleteSalesAssign = async (
   );
   return EffectUtility.delToModel<ResultActions>(ResultActions, endpoint);
 };
+
+export const requestAccountOwner = async (
+  customerId: number
+): Promise<ResultActions | HttpErrorResponseModel> => {
+  const controllerName =
+    "SalesHistory/GetAccountOwner?customerID=" +
+    customerId;
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+
+  return EffectUtility.getToModel<ResultActions>(
+    ResultActions,
+    endpoint
+  );
+};

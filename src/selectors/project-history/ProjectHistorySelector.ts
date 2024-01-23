@@ -18,7 +18,9 @@ const _selectProjectHistory = (models: ResultActions): any[] => {
           salesName: model.salesName,
           salesDept: model.salesDept,
           soCloseDate: model.soCloseDate,
-          soAmount: model.soAmount
+          soAmount: model.soAmount,
+          successStory: model.successStory,
+          modifiedStoryBy: model.modifiedStoryBy
         })
       );
     } else {

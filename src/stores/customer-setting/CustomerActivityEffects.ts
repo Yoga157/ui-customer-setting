@@ -363,9 +363,9 @@ export const releaseAccount = async (
 };
 
 export const acceptRequestShareableAccount = async (
-  customerID: number, salesID: number, modifyUserID: number
+  customerID: number, salesID: number, isApprove: boolean, modifyUserID: number
 ): Promise<ResultActions | HttpErrorResponseModel> => {
-  const controllerName = "CustomerSetting/ApproveCustomerSetting?customerID=" + customerID + "&salesID=" + salesID + "&modifyUserID=" + modifyUserID;
+  const controllerName = "CustomerSetting/ApproveCustomerSetting?customerID=" + customerID + "&salesID=" + salesID + "&isApprove=" + isApprove + "&modifyUserID=" + modifyUserID;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName

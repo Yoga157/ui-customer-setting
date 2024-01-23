@@ -466,7 +466,7 @@ export const PUT_ACCEPT_REQUEST_SHAREABLE: string =
   "CustomerActions.PUT_ACCEPT_REQUEST_SHAREABLE";
 export const PUT_ACCEPT_REQUEST_SHAREABLE_FINISHED =
   "CustomerActions.PUT_ACCEPT_REQUEST_SHAREABLE_FINISHED";
-export const acceptRequestShareableAccount = (customerID: number, salesID: number, modifyUserID: number): any => {
+export const acceptRequestShareableAccount = (customerID: number, salesID: number, isApprove: boolean, modifyUserID: number): any => {
   return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
     await ActionUtility.createThunkEffect<ResultActions>(
       dispatch,
@@ -474,6 +474,7 @@ export const acceptRequestShareableAccount = (customerID: number, salesID: numbe
       CustomerEffect.acceptRequestShareableAccount,
       customerID,
       salesID,
+      isApprove,
       modifyUserID
     );
   };

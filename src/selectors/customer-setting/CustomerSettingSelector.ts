@@ -9,6 +9,16 @@ export default interface ICustomerSettingOptions {
   readonly value: {};
 }
 
+const formatDate = (date: any): any => {
+  const [day, month, year] = date.split('-');
+  const parsedDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+
+  const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'long', year: 'numeric' };
+  const formattedDate = new Intl.DateTimeFormat('en-US', options).format(parsedDate);
+  
+  return formattedDate;
+}
+
 //Selector No Name Account
 const _selectCustomerSetting = (models: any): any => {
   return {
@@ -248,6 +258,7 @@ export const selectPostResponseCustomerSetting: Selector<
 
 export const _selectCustomerDataById = (model: ResultActions): any => {
   if(Object.keys(model.resultObj).length != 0) {
+    let lastIndex = model.resultObj.shareableApprovalStatus.length != 0 ? model.resultObj.shareableApprovalStatus.length - 1 : 0;
     return {
       accountStatus : model.resultObj.accountStatus,
       customerID : model.resultObj.customerID,
@@ -259,7 +270,13 @@ export const _selectCustomerDataById = (model: ResultActions): any => {
       holdshipment : model.resultObj.holdshipment,
       avgAR : model.resultObj.avgAR,
       salesName : model.resultObj.salesName,
-      shareableApprovalStatus : model.resultObj.shareableApprovalStatus,
+      shareableApprovalStatus : lastIndex != 0 ? {
+        status: model.resultObj.shareableApprovalStatus[lastIndex].status,
+        requestedBy: model.resultObj.shareableApprovalStatus[lastIndex].requestedBy,
+        requestedDate: formatDate(model.resultObj.shareableApprovalStatus[lastIndex].requestedDate),
+        approvalBy: model.resultObj.shareableApprovalStatus[lastIndex].approvalBy,
+        approvalDate: formatDate(model.resultObj.shareableApprovalStatus[lastIndex].approvalDate)
+      } : [],
     }
   } else {
     return {}

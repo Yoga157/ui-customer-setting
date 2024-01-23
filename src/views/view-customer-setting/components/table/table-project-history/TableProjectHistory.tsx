@@ -16,10 +16,10 @@ const TableProjectHistory: React.FC<IProps> = (props: React.PropsWithChildren<IP
     const { data, setOpenCollectionHistory } = props;
 
     /** success stories */
-    const onViewEditCustomerStory = useCallback((id): void => {
+    const onViewEditCustomerStory = useCallback((id, successStory, modifiedStoryBy): void => {
         dispatch(
           ModalFirstLevelActions.OPEN(
-            <ModalUserStories id={Number(id)} />,
+            <ModalUserStories id={Number(id)} successStory={successStory} modifiedStoryBy={modifiedStoryBy} />,
             ModalSizeEnum.Small
           )
         );
@@ -56,11 +56,11 @@ const TableProjectHistory: React.FC<IProps> = (props: React.PropsWithChildren<IP
                     <Table.HeaderCell>Action</Table.HeaderCell>
                     <Table.HeaderCell>Funnel ID</Table.HeaderCell>
                     <Table.HeaderCell>SO ID</Table.HeaderCell>
-                    <Table.HeaderCell>Project Name</Table.HeaderCell>
-                    <Table.HeaderCell>Customer Name</Table.HeaderCell>
-                    <Table.HeaderCell>Sales Name</Table.HeaderCell>
+                    <Table.HeaderCell style={{ width: "30rem" }}>Project Name</Table.HeaderCell>
+                    <Table.HeaderCell style={{ width: "15rem" }}>Customer Name</Table.HeaderCell>
+                    <Table.HeaderCell style={{ width: "15rem" }}>Sales Name</Table.HeaderCell>
                     <Table.HeaderCell>Sales Dept.</Table.HeaderCell>
-                    <Table.HeaderCell>SO Close Date</Table.HeaderCell>
+                    <Table.HeaderCell style={{ width: "15rem" }}>SO Close Date</Table.HeaderCell>
                     <Table.HeaderCell>SO Amount (IDR)</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
@@ -80,7 +80,7 @@ const TableProjectHistory: React.FC<IProps> = (props: React.PropsWithChildren<IP
                                     <div onClick={() => scrollToTarget(data.so) } style={{ display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "#656DD1", padding: "0.5rem", borderRadius: "100%", width: "fit-content"}}>
                                         <Icon style={{ margin: "0", padding: "0", display: "flex", justifyContent: "center", alignItems: "center", color:"white"}} name="eye"/>
                                     </div>
-                                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "#656DD1", padding: "0.5rem", borderRadius: "100%", width: "fit-content", cursor: "pointer"}} onClick={() => onViewEditCustomerStory(index)}>
+                                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "#656DD1", padding: "0.5rem", borderRadius: "100%", width: "fit-content", cursor: "pointer"}} onClick={() => onViewEditCustomerStory(data.funnelID, data.successStory, data.modifiedStoryBy)}>
                                         <Icon style={{ margin: "0", padding: "0", display: "flex", justifyContent: "center", alignItems: "center", color:"white"}} name="user"/>
                                     </div>
                                 </div>

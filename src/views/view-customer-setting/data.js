@@ -7,7 +7,7 @@ const onClickPayment = (data) => {
 
 export const accOwnerHeader = [
     {
-        key: "assignRelease",
+        key: "status",
         header: "Assign/Release",
         textCenter: true
     },
@@ -17,12 +17,12 @@ export const accOwnerHeader = [
         textCenter: true
     },
     {
-        key: "requestBy",
+        key: "requestedBy",
         header: "Request By",
         textCenter: true
     },
     {
-        key: "date",
+        key: "requestedDate",
         header: "Date",
         textCenter: true
     },

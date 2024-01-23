@@ -22,8 +22,8 @@ const ModalClaimAccount: React.FC<IProps> = (props: React.PropsWithChildren<IPro
 
         const PostCustomerSetting = new CustomerClaimAccount({});
         PostCustomerSetting.customerID = customer.customerID;
-        PostCustomerSetting.salesID = userLogin?.employeeID || 11959;
-        PostCustomerSetting.requestedBy = userLogin?.employeeID || 11959;
+        PostCustomerSetting.salesID = userLogin?.employeeID || 812;
+        PostCustomerSetting.requestedBy = userLogin?.employeeID || 812;
 
         dispatch(CustomerSetting.claimAccount(PostCustomerSetting)).then(() => {
             dispatch(CustomerSetting.requestCustomerDataById(customer.customerID));

@@ -16,13 +16,19 @@ const ModalAcceptRequestShareableAccount: React.FC<IProps> = (props: React.Props
     const dispatch: Dispatch = useDispatch();
     const { customer } = props;
 
-    const onSubmitHandler = async (data: any) => {
+    const onSubmitHandler = async (type: string) => {
+        // console.log(data)
         let userLogin = JSON.parse(localStorage.getItem('userLogin'));
 
-        dispatch(CustomerSetting.acceptRequestShareableAccount(customer.customerID, userLogin?.employeeID || 850, userLogin?.employeeID || 850)).then(() => {
+        dispatch(CustomerSetting.acceptRequestShareableAccount(customer.customerID, userLogin?.employeeID || 812, type.toUpperCase() == "APPROVE" ? true : false, userLogin?.employeeID || 812)).then(() => {
             dispatch(CustomerSetting.requestCustomerDataById(customer.customerID))
             dispatch(ModalAction.CLOSE());
         });
+
+        // dispatch(CustomerSetting.acceptRequestShareableAccount(customer.customerID, 812, type.toUpperCase() == "APPROVE" ? true : false, 812)).then(() => {
+        //     dispatch(CustomerSetting.requestCustomerDataById(customer.customerID))
+        //     dispatch(ModalAction.CLOSE());
+        // });
     }
 
     const cancelClick = () => {
@@ -55,17 +61,18 @@ const ModalAcceptRequestShareableAccount: React.FC<IProps> = (props: React.Props
                     </Grid.Row>
                     <Grid.Row centered style={{ textAlign: "center" }}>
                         <span style={{ padding: "10px" }}>
-                        Do you want to approve this request?
+                        Are you sure want to approve this shareable account request?
                         </span>
-                        <p style={{  fontWeight: "bold" }}>{customer.customerName}</p>
+                        <p style={{  fontWeight: "bold", margin: 0 }}>{customer.customerName}</p>
+                        <span>Request By <span style={{  fontWeight: "bold" }}>{customer.shareableApprovalStatus.requestedBy}</span></span>
                     </Grid.Row>
                     <Divider></Divider>
                     <div style={{ textAlign: "center" }}>
-                        <Button type="button" onClick={cancelClick}>
-                        Cancel
+                        <Button className="MarBot10" type="button" color="red" onClick={() => onSubmitHandler("reject")}>
+                        Reject
                         </Button>
-                        <Button className="MarBot10" type="submit" color="blue">
-                        Submit
+                        <Button className="MarBot10" type="button" color="blue" onClick={() => onSubmitHandler("approve")}>
+                        Approve
                         </Button>
                     </div>
                     </Form>
