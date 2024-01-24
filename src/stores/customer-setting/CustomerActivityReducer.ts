@@ -6,6 +6,7 @@ import { Reducer } from "redux";
 import CustomerSettingModel from "./models/CustomerSettingModel";
 import ResultActions from "models/ResultActions";
 import CustomerSettingById from "./models/CustomerSettingById";
+import CustomerData from "./models/CustomerData";
 import CustomerSettingPostModel from "./models/CustomerSettingPostModel";
 
 export const initialState: ICustomerState = {
@@ -16,6 +17,7 @@ export const initialState: ICustomerState = {
   dataAll: new CustomerSettingModel({}),
   CustomerSettingPostModel: new CustomerSettingPostModel({}),
   dataByCustomerId: new CustomerSettingById({}),
+  customerDataById: new ResultActions({}),
   error: false,
   refreshPage: false,
   resultActions: new ResultActions({}),
@@ -277,6 +279,53 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
       resultActions: action.payload!,
       error: false,
       refreshPage: false,
+    };
+  },
+
+  [CustomerActions.POST_CLAIM_ACCOUNT_FINISHED](
+    state: ICustomerState,
+    action: IAction<ResultActions>
+  ): ICustomerState {
+    return {
+      ...state,
+      resultActions: action.payload!,
+      error: false,
+      refreshPage: false,
+    };
+  },
+
+  [CustomerActions.PUT_RELEASE_ACCOUNT_FINISHED](
+    state: ICustomerState,
+    action: IAction<ResultActions>
+  ): ICustomerState {
+    return {
+      ...state,
+      resultActions: action.payload!,
+      error: false,
+      refreshPage: false,
+    };
+  },
+
+  [CustomerActions.PUT_ACCEPT_REQUEST_SHAREABLE_FINISHED](
+    state: ICustomerState,
+    action: IAction<ResultActions>
+  ): ICustomerState {
+    return {
+      ...state,
+      resultActions: action.payload!,
+      error: false,
+      refreshPage: false,
+    };
+  },
+
+  [CustomerActions.REQUEST_CUSTOMER_DATA_BY_CUSTOMER_ID_FINISHED](
+    state: ICustomerState,
+    action: IAction<ResultActions>
+  ): ICustomerState {
+    console.log(action);
+    return {
+      ...state,
+      customerDataById: action.payload!,
     };
   },
 });

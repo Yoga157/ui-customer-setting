@@ -17,7 +17,7 @@ export const REQUEST_GET_CONFIG_ITEM_FINISHED: string = "ConfigItemActions.REQUE
 
 export const requestConfigItem = (customerID: number): any => {
     return async (dispatch: ReduxDispatch<ActionUnion>): Promise <void> => {
-        await ActionUtility.createThunkEffect<ConfigItemModel>(
+        await ActionUtility.createThunkEffect<ResultActions>(
             dispatch,
             REQUEST_GET_CONFIG_ITEM,
             ConfigItemEffect.requestConfigItem,

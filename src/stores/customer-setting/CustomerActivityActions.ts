@@ -8,6 +8,7 @@ import CustomerSettingPostModel from "./models/CustomerSettingPostModel";
 import ResultActions from "models/ResultActions";
 import IAction from "models/IAction";
 import CustomerSettingById from "./models/CustomerSettingById";
+import CustomerClaimAccount from "./models/CustomerClaimAccount";
 import CustomerID from "./models/ReleaseAccounts";
 import ReleaseAccounts from "./models/ApproveShareableccounts";
 import ApproveShareableAccounts from "./models/ApproveShareableccounts";
@@ -504,6 +505,71 @@ export const clearResult = (): any => {
       dispatch,
       CLEAR_CUSTOMER_SETTING,
       CustomerEffect.clearResult
+    );
+  };
+};
+
+export const POST_CLAIM_ACCOUNT: string =
+  "CustomerActions.POST_CLAIM_ACCOUNT";
+export const POST_CLAIM_ACCOUNT_FINISHED =
+  "CustomerActions.POST_CLAIM_ACCOUNT_FINISHED";
+export const claimAccount = (data: CustomerClaimAccount): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      POST_CUSTOMER_SETTING,
+      CustomerEffect.claimAccount,
+      data
+    );
+  };
+};
+
+export const REQUEST_CUSTOMER_DATA_BY_CUSTOMER_ID: string =
+  "CustomerActions.REQUEST_CUSTOMER_DATA_BY_CUSTOMER_ID";
+export const REQUEST_CUSTOMER_DATA_BY_CUSTOMER_ID_FINISHED =
+  "CustomerActions.REQUEST_CUSTOMER_DATA_BY_CUSTOMER_ID_FINISHED";
+export const requestCustomerDataById = (customerId: number): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      REQUEST_CUSTOMER_DATA_BY_CUSTOMER_ID,
+      CustomerEffect.requestCustomerDataById,
+      customerId
+    );
+  };
+};
+
+export const PUT_RELEASE_ACCOUNT: string =
+  "CustomerActions.PUT_RELEASE_ACCOUNT";
+export const PUT_RELEASE_ACCOUNT_FINISHED =
+  "CustomerActions.PUT_RELEASE_ACCOUNT_FINISHED";
+export const releaseAccount = (customerID: number, salesID: number, modifyUserID: number): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      POST_CUSTOMER_SETTING,
+      CustomerEffect.releaseAccount,
+      customerID,
+      salesID,
+      modifyUserID
+    );
+  };
+};
+
+export const PUT_ACCEPT_REQUEST_SHAREABLE: string =
+  "CustomerActions.PUT_ACCEPT_REQUEST_SHAREABLE";
+export const PUT_ACCEPT_REQUEST_SHAREABLE_FINISHED =
+  "CustomerActions.PUT_ACCEPT_REQUEST_SHAREABLE_FINISHED";
+export const acceptRequestShareableAccount = (customerID: number, salesID: number, isApprove: boolean, modifyUserID: number): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      POST_CUSTOMER_SETTING,
+      CustomerEffect.acceptRequestShareableAccount,
+      customerID,
+      salesID,
+      isApprove,
+      modifyUserID
     );
   };
 };

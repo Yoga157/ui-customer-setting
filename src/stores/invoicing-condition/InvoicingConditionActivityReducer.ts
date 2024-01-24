@@ -4,9 +4,10 @@ import IAction from "models/IAction";
 import baseReducer from "../../utilities/BaseReducer";
 import { Reducer } from "redux";
 import InvoicingConditionModel from "./models/InvoicingConditionModel";
+import ResultActions from "models/ResultActions";
 
 export const initialState: IInvoicingConditionState = {
-    data: []
+    data: new ResultActions({})
 }
 
 const InvoicingConditionReducer: Reducer = baseReducer(initialState, {
@@ -16,7 +17,7 @@ const InvoicingConditionReducer: Reducer = baseReducer(initialState, {
         }
     },
 
-    [InvoicingConditionActions.REQUEST_GET_INVOICING_CONDITION_FINISHED](state: IInvoicingConditionState, action: IAction<InvoicingConditionModel[]>): IInvoicingConditionState {
+    [InvoicingConditionActions.REQUEST_GET_INVOICING_CONDITION_FINISHED](state: IInvoicingConditionState, action: IAction<ResultActions>): IInvoicingConditionState {
         return {
             ...state,
             data: action.payload!

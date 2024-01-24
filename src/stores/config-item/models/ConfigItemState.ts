@@ -1,5 +1,6 @@
+import ResultActions from "models/ResultActions";
 import ConfigItemModel from "./ConfigItemModel";
 
 export default interface IConfigItemState {
-    readonly data: ConfigItemModel[];
+    readonly data: ResultActions;
 }

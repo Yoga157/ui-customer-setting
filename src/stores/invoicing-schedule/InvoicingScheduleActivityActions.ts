@@ -29,13 +29,13 @@ export const postInvoicingSchedule = (data: InvoicingScheduleModel): any => {
 export const REQUEST_GET_INVOICING_SCHEDULE: string = "InvoicingScheduleActions.REQUEST_GET_INVOICING_SCHEDULE";
 export const REQUEST_GET_INVOICING_SCHEDULE_FINISHED: string = "InvoicingScheduleActions.REQUEST_GET_INVOICING_SCHEDULE_FINISHED";
 
-export const requestInvoicingSchedule = (customerSettingID: number): any => {
+export const requestInvoicingSchedule = (customerID: number): any => {
     return async (dispatch: ReduxDispatch<ActionUnion>): Promise <void> => {
-        await ActionUtility.createThunkEffect<InvoicingScheduleModel>(
+        await ActionUtility.createThunkEffect<ResultActions>(
             dispatch,
             REQUEST_GET_INVOICING_SCHEDULE,
             InvoicingScheduleEffect.requestInvoicingSchedule,
-            customerSettingID
+            customerID
         )
     }
 }

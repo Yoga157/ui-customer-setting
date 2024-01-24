@@ -449,32 +449,32 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (
       dispatch(InvoicingSchedule.postInvoicingSchedule(NewInvoicingSchedule));
 
       /** post invoicing condition */
-      invoicingConditionData.map((data) => {
-        const NewInvoicingCondition = new InvoicingConditionModel({});
-        NewInvoicingCondition.conditionID = 0;
-        NewInvoicingCondition.customerSettingID =
-          postResponse.customerSettingID;
-        NewInvoicingCondition.projectType = data.projectType;
-        NewInvoicingCondition.conditionName = data.conditionName;
-        NewInvoicingCondition.createUserID = data.createUserID;
-        NewInvoicingCondition.modifyUserID = data.modifyUserID;
+      // invoicingConditionData.map((data) => {
+      //   const NewInvoicingCondition = new InvoicingConditionModel({});
+      //   NewInvoicingCondition.conditionID = 0;
+      //   NewInvoicingCondition.customerSettingID =
+      //     postResponse.customerSettingID;
+      //   NewInvoicingCondition.projectType = data.projectType;
+      //   NewInvoicingCondition.conditionName = data.conditionName;
+      //   NewInvoicingCondition.createUserID = data.createUserID;
+      //   NewInvoicingCondition.modifyUserID = data.modifyUserID;
 
-        dispatch(
-          InvoicingCondition.postInvoicingCondition(NewInvoicingCondition)
-        );
-      });
+      //   dispatch(
+      //     InvoicingCondition.postInvoicingCondition(NewInvoicingCondition)
+      //   );
+      // });
 
       /** post related customer */
-      relatedCustomerData.map((data) => {
-        let NewRelatedCustomer = new RelatedCustomerPostModel({});
-        NewRelatedCustomer.relatedID = 0;
-        NewRelatedCustomer.customerSettingID = postResponse.customerSettingID;
-        NewRelatedCustomer.relatedCustomerID = data.customerID;
-        NewRelatedCustomer.createUserID = userLogin?.employeeID;
-        NewRelatedCustomer.modifyUserID = userLogin?.employeeID;
+      // relatedCustomerData.map((data) => {
+      //   let NewRelatedCustomer = new RelatedCustomerPostModel({});
+      //   NewRelatedCustomer.relatedID = 0;
+      //   NewRelatedCustomer.customerSettingID = postResponse.customerSettingID;
+      //   NewRelatedCustomer.relatedCustomerID = data.customerID;
+      //   NewRelatedCustomer.createUserID = userLogin?.employeeID;
+      //   NewRelatedCustomer.modifyUserID = userLogin?.employeeID;
 
-        dispatch(RelatedCustomer.postRelatedCustomer(NewRelatedCustomer));
-      });
+      //   dispatch(RelatedCustomer.postRelatedCustomer(NewRelatedCustomer));
+      // });
 
       /** post related file */
       relatedFileData.map((data) => {

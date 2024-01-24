@@ -9,6 +9,10 @@ import IUserResult from "selectors/user/models/IUserResult";
 import IStore from "models/IStore";
 import "./CustomerTableRowStyle.scss";
 import ClaimForm from "../../form/form-claim/FormClaim";
+import AddSalesAssign from "../../form/form-create/FormAdd";
+import RouteEnum from "constants/RouteEnum";
+import * as CustomerSettActions from "stores/customer-setting/CustomerActivityActions";
+import { useHistory } from "react-router-dom";
 import RequestForm from "../../form/form-reqshareaccount/FormReqShare";
 import ReleaseForm from "../../form/form-release/FormRelease";
 import ShareableReq from "../../form/form-approverequest/FormApproveShareable";
@@ -25,6 +29,7 @@ const CustomerTableRow: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
+  const history = useHistory();
   const [openConfirm, setOpenConfirm] = useState(false);
   const currentUser: IUserResult = useSelector((state: IStore) =>
     selectUserResult(state)
@@ -89,7 +94,7 @@ const CustomerTableRow: React.FC<IProps> = (
   }, [dispatch, rowData]);
 
   const onEdit = (id: number) => {
-    props.history.push({
+    history.push({
       pathname: "customer-setting/" + id,
       state: { rowData },
     });

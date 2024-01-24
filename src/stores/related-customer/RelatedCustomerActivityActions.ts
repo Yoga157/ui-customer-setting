@@ -19,7 +19,7 @@ export const REQUEST_GET_RELATED_CUSTOMER_FINISHED: string = "RelatedCustomerAct
 
 export const requestRelatedCustomer = (customerSettingID: number): any => {
     return async (dispatch: ReduxDispatch<ActionUnion>): Promise <void> => {
-        await ActionUtility.createThunkEffect<RelatedCustomerModel>(
+        await ActionUtility.createThunkEffect<ResultActions>(
             dispatch,
             REQUEST_GET_RELATED_CUSTOMER,
             RelatedCustomerEffect.requestRelatedCustomer,

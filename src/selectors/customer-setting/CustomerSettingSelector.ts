@@ -9,6 +9,16 @@ export default interface ICustomerSettingOptions {
   readonly value: {};
 }
 
+const formatDate = (date: any): any => {
+  const [day, month, year] = date.split('-');
+  const parsedDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+
+  const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'long', year: 'numeric' };
+  const formattedDate = new Intl.DateTimeFormat('en-US', options).format(parsedDate);
+  
+  return formattedDate;
+}
+
 //Selector No Name Account
 const _selectCustomerSetting = (models: any): any => {
   return {
@@ -206,12 +216,11 @@ const _selectCustomerSettingOptions = (
       text: model.customerName,
       value: {
         customerName: model.customerName,
-        customerSettingID: model.customerSettingID,
         customerID: model.customerID,
         blacklist: model.blacklist,
         holdshipment: model.holdshipment,
         avgAR: 0,
-        address: "Jalan-jalan ke Bandung, cakep!",
+        customerAddress: model.customerAddress
       },
     })
   );
@@ -221,7 +230,7 @@ export const selectCustomerSettingOptions: Selector<
   IStore,
   ICustomerSettingOptions[]
 > = createSelector(
-  (state: IStore) => state.customerSetting.data.rows,
+  (state: IStore) => state.customerSetting.dataAll.rows,
   _selectCustomerSettingOptions
 );
 
@@ -245,4 +254,39 @@ export const selectPostResponseCustomerSetting: Selector<
 > = createSelector(
   (state: IStore) => state.customerSetting.resultActions,
   _selectPostResponseCustomerSetting
+);
+
+export const _selectCustomerDataById = (model: ResultActions): any => {
+  if(Object.keys(model.resultObj).length != 0) {
+    let lastIndex = model.resultObj.shareableApprovalStatus.length != 0 ? model.resultObj.shareableApprovalStatus.length - 1 : 0;
+    return {
+      accountStatus : model.resultObj.accountStatus,
+      customerID : model.resultObj.customerID,
+      customerCategory : model.resultObj.customerCategory,
+      customerName : model.resultObj.customerName,
+      customerAddress : model.resultObj.customerAddress,
+      pmoCustomer : model.resultObj.pmoCustomer?.toUpperCase() == "TRUE" ? true : false,
+      blacklist : model.resultObj.blacklist,
+      holdshipment : model.resultObj.holdshipment,
+      avgAR : model.resultObj.avgAR,
+      salesName : model.resultObj.salesName,
+      shareableApprovalStatus : lastIndex != 0 ? {
+        status: model.resultObj.shareableApprovalStatus[lastIndex].status,
+        requestedBy: model.resultObj.shareableApprovalStatus[lastIndex].requestedBy,
+        requestedDate: formatDate(model.resultObj.shareableApprovalStatus[lastIndex].requestedDate),
+        approvalBy: model.resultObj.shareableApprovalStatus[lastIndex].approvalBy,
+        approvalDate: formatDate(model.resultObj.shareableApprovalStatus[lastIndex].approvalDate)
+      } : [],
+    }
+  } else {
+    return {}
+  }
+}
+
+export const selectCustomerDataById: Selector<
+  IStore,
+  any
+> = createSelector(
+  (state: IStore) => state.customerSetting.customerDataById,
+  _selectCustomerDataById
 );

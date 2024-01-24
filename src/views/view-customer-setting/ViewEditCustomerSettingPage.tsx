@@ -3,7 +3,11 @@ import React, { Fragment, useState, useCallback, useEffect, useRef} from "react"
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
+import IStore from "models/IStore";
+
 import ViewEditCustomer from "./components/base/ViewEditCustomer";
+import * as CustomerSetting from "stores/customer-setting/CustomerActivityActions"
+import { selectCustomerDataById } from "selectors/customer-setting/CustomerSettingSelector";
 
 interface IProps {
     history: any;
@@ -17,32 +21,20 @@ const ViewEditCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChi
     const dispatch: Dispatch = useDispatch();
     const { id } = useParams<routeParams>();
 
-    const customer = {
-        customerSettingID: 1,
-        customerID: 984,
-        shareable: true,
-        named: false,
-        pmoCustomer: true,
-        customerCategory: "Enterprise",
-        customerName: "CAPITAL LIFE INDONESIA, PT",
-        customerAddress: "GD.SONA TOPAS TOWER LT.9 JL.JEND.SUDIRMAN KAV.26 KARET SETIABUDI JAKARTA SELATAN DKI JAKARTA  JAKARTA SELATAN",
-        blacklist: false,
-        holdshipment: false,
-        sales: "Rosa Amalia, Anjar Wahyudi",
-        avgAR: 0,
-        shareableApprovalStatus: {
-            requestedBy: "Rosa Amalia",
-            requestedDate: "01 January 2023 14:38",
-            approvalBy: "Rima Wulansari",
-            approvalDate: "15 January 2023 14:38",
-            approvalStatus: "rejected"
+    const customer = useSelector((state: IStore) => selectCustomerDataById(state));
+
+    useEffect(() => {
+        if(id != undefined) {
+            dispatch(CustomerSetting.requestCustomerDataById(Number(id)));
         }
-    }
-    
-    /** Customer data */
+    }, [dispatch, id])
     
     return (
-      <ViewEditCustomer customer={customer} role={"Sales"}/>  
+        <Fragment>
+            {customer.customerID != undefined &&
+                <ViewEditCustomer customer={customer} role={"Sales"}/>  
+            }
+        </Fragment>
     )
 }
 

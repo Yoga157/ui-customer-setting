@@ -4,18 +4,18 @@ import * as EffectUtility from "../../utilities/EffectUtility";
 import InvoicingConditionModel from "./models/InvoicingConditionModel";
 import ResultActions from "models/ResultActions";
 
-export const requestInvoicingCondition = async (customerSettingId: number): Promise<InvoicingConditionModel | HttpErrorResponseModel> => {
-    const controllerName = "CustomerSetting/InvoicingCondition?customerSettingID=" + customerSettingId;
+export const requestInvoicingCondition = async (customerId: number): Promise<ResultActions | HttpErrorResponseModel> => {
+    const controllerName = "InvoicingCondition/GetInvoicingConditionByCustomerID?customerID=" + customerId;
     const endpoint: string = environment.api.customer.replace(
         ":controller",
         controllerName
     );
 
-    return EffectUtility.getToModel<InvoicingConditionModel>(InvoicingConditionModel, endpoint);
+    return EffectUtility.getToModel<ResultActions>(ResultActions, endpoint);
 }
 
 export const postInvoicingCondition = async (data: InvoicingConditionModel): Promise<ResultActions | HttpErrorResponseModel> => {
-    const controllerName = "CustomerSetting/InvoicingCondition";
+    const controllerName = "InvoicingCondition";
     const endpoint: string = environment.api.customer.replace(
         ":controller",
         controllerName
@@ -29,7 +29,7 @@ export const postInvoicingCondition = async (data: InvoicingConditionModel): Pro
 }
 
 export const deleteInvoicingCondition = async (id: number): Promise<InvoicingConditionModel | HttpErrorResponseModel> => {
-    const controllerName = "CustomerSetting/InvoicingCondition/" + id;
+    const controllerName = "InvoicingCondition/" + id;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName

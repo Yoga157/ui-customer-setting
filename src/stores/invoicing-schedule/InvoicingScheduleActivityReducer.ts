@@ -19,11 +19,10 @@ const InvoicingScheduleReducer: Reducer = baseReducer(initialState, {
         }
     },
 
-    [InvoicingScheduleActions.REQUEST_GET_INVOICING_SCHEDULE_FINISHED](state: IInvoicingScheduleState, action: IAction<InvoicingScheduleModel>): IInvoicingScheduleState {
-        console.log(action)
+    [InvoicingScheduleActions.REQUEST_GET_INVOICING_SCHEDULE_FINISHED](state: IInvoicingScheduleState, action: IAction<ResultActions>): IInvoicingScheduleState {
         return {
             ...state,
-            data: action.payload!
+            resultActions: action.payload!
         }
     },
 

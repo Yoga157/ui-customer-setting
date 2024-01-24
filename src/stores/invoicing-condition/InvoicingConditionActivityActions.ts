@@ -15,13 +15,13 @@ type ActionUnion =
   export const REQUEST_GET_INVOICING_CONDITION: string = "InvoicingConditionActions.REQUEST_GET_INVOICING_CONDITION";
   export const REQUEST_GET_INVOICING_CONDITION_FINISHED: string = "InvoicingConditionActions.REQUEST_GET_INVOICING_CONDITION_FINISHED";
     
-  export const requestInvoicingCondition = (customerSettingID: number): any => {
+  export const requestInvoicingCondition = (customerId: number): any => {
       return async (dispatch: ReduxDispatch<ActionUnion>): Promise <void> => {
-          await ActionUtility.createThunkEffect<InvoicingConditionModel>(
+          await ActionUtility.createThunkEffect<ResultActions>(
               dispatch,
               REQUEST_GET_INVOICING_CONDITION,
               InvoicingConditionEffect.requestInvoicingCondition,
-             customerSettingID
+              customerId
           )
       }
   }

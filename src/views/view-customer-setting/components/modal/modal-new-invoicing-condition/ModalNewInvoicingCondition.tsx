@@ -51,10 +51,10 @@ const ModalNewInvoicingCondition: React.FC<IProps> = (props: React.PropsWithChil
         let userLogin = JSON.parse(localStorage.getItem('userLogin'));
         
         const NewInvoicingCondition = new InvoicingConditionModel({});
-        NewInvoicingCondition.conditionID = 0;
-        NewInvoicingCondition.customerSettingID = props.customerSettingID;
+        NewInvoicingCondition.iConditionID = 0;
+        NewInvoicingCondition.customerID = props.customerSettingID;
         NewInvoicingCondition.projectType = data.projectType;
-        NewInvoicingCondition.conditionName = data.documentInvoicing;
+        NewInvoicingCondition.documentName = data.documentInvoicing;
         NewInvoicingCondition.createUserID = userLogin?.employeeID;
         NewInvoicingCondition.modifyUserID = 0;
 

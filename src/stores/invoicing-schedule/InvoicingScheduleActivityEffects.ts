@@ -5,7 +5,7 @@ import InvoicingScheduleModel from "./models/InvoicingScheduleModel";
 import ResultActions from "models/ResultActions";
 
 export const postInvoicingSchedule = async (data: InvoicingScheduleModel): Promise<ResultActions | HttpErrorResponseModel> => {
-    const controllerName = "CustomerSetting/InvoicingSchedule";
+    const controllerName = "InvoicingSchedule/InvoicingSchedule";
     const endpoint: string = environment.api.customer.replace(
         ":controller",
         controllerName
@@ -18,21 +18,21 @@ export const postInvoicingSchedule = async (data: InvoicingScheduleModel): Promi
     );
 }
 
-export const requestInvoicingSchedule = async (customerSettingID: number): Promise<InvoicingScheduleModel | HttpErrorResponseModel> => {
-    const controllerName = "CustomerSetting/InvoicingSchedule?customerSettingID=" + customerSettingID;
+export const requestInvoicingSchedule = async (customerID: number): Promise<ResultActions | HttpErrorResponseModel> => {
+    const controllerName = "InvoicingSchedule/GetInvoicingScheduleByCustomerID?customerID=" + customerID;
     const endpoint: string = environment.api.customer.replace(
         ":controller",
         controllerName
     );
 
-    return EffectUtility.getToModel<InvoicingScheduleModel>(
-        InvoicingScheduleModel,
+    return EffectUtility.getToModel<ResultActions>(
+        ResultActions,
         endpoint,
     );
 }
 
 export const putInvoicingSchedule = async (data: InvoicingScheduleModel, id: number): Promise<ResultActions | HttpErrorResponseModel> => {
-    const controllerName = "CustomerSetting/InvoicingSchedule/" + id;
+    const controllerName = "InvoicingSchedule/InvoicingSchedule/" + id;
     const endpoint: string = environment.api.customer.replace(
         ":controller",
         controllerName

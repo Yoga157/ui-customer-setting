@@ -166,3 +166,22 @@ export const removeResultSearch = (): any => {
     );
   };
 };
+
+export const REQUEST_ACCOUNT_OWNER: string =
+  "SalesAction.REQUEST_ACCOUNT_OWNER";
+export const REQUEST_ACCOUNT_OWNER_FINISHED: string =
+  "SalesAction.REQUEST_ACCOUNT_OWNER_FINISHED";
+
+export const requestAccountOwner = (customerId: number): any => {
+  return async (
+    dispatch: ReduxDispatch<ActionUnion>,
+    getState: () => IStore
+  ): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      REQUEST_ACCOUNT_OWNER,
+      SalesAssignEffect.requestAccountOwner,
+      customerId
+    );
+  };
+};
