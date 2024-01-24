@@ -509,10 +509,6 @@ export const clearResult = (): any => {
   };
 };
 
-export const POST_CLAIM_ACCOUNT: string =
-  "CustomerActions.POST_CLAIM_ACCOUNT";
-export const POST_CLAIM_ACCOUNT_FINISHED =
-  "CustomerActions.POST_CLAIM_ACCOUNT_FINISHED";
 export const claimAccount = (data: CustomerClaimAccount): any => {
   return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
     await ActionUtility.createThunkEffect<ResultActions>(
