@@ -36,6 +36,15 @@ const CustomerNameReducer: Reducer = baseReducer(initialState, {
           resultActions: action.payload!
         };
       },
+    
+    [CustomerNameAction.REQUEST_CUSTOMER_CATEGORY_FINISHED](state: ICustomerNameState, action: IAction<ResultActions>): ICustomerNameState {
+      return {
+          ...state,
+          resultActions: action.payload!
+      }
+    },
+
+      
 })
 
 export default CustomerNameReducer

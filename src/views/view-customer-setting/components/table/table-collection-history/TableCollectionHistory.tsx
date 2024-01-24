@@ -14,16 +14,6 @@ const TableCollectionHistory: React.FC<IProps> = (props: React.PropsWithChildren
     const dispatch: Dispatch = useDispatch();
     const { data } = props;
 
-    /** success stories */
-    const onViewEditCustomerStory = useCallback((id): void => {
-        dispatch(
-          ModalFirstLevelActions.OPEN(
-            <ModalUserStories id={Number(id)} />,
-            ModalSizeEnum.Small
-          )
-        );
-    }, [dispatch]);
-
     return (
         <div className="wrapper-table" style={{ height: "fit-content"}}>
             <Table

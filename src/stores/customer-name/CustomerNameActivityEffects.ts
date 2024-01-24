@@ -30,6 +30,19 @@ export const requestCustomerById = async (customerId: number): Promise<CustomerN
     );
 }
 
+export const requestCustomerCategory = async (): Promise<ResultActions | HttpErrorResponseModel> => {
+    const controllerName = 'CustomerSetting/GetCustomerCategory/';
+    const endpoint: string = environment.api.customer.replace(
+        ":controller",
+        controllerName
+    );
+
+    return EffectUtility.getToModel<ResultActions>(
+        ResultActions,
+        endpoint
+    );
+}
+
 export const clearResult = async (): Promise<any> => {
     const clear = new ResultActions({});
     return clear;

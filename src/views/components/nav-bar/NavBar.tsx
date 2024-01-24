@@ -27,7 +27,7 @@ export const NavBar: React.FC<IProps> = (props: React.PropsWithChildren<IProps>)
 
   useEffect(() => {
     dispatch(UserActions.requestCurrentUser());
-    dispatch(WhatsNewActions.requestWhatsNew('Latest'));
+    // dispatch(WhatsNewActions.requestWhatsNew('Latest'));
   }, [dispatch]);
 
   const handleLeaveFunnelFormEdit = (route) => {

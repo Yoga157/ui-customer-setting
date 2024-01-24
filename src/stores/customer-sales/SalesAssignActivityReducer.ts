@@ -20,6 +20,7 @@ export const initialState: ISalesAssignState = {
   salesExstingModel: new SalesNameModel({}),
   SalesAssignPostModel: new SalesAssignPostModel({}),
   salesHistory: [],
+  accountOwner: new ResultActions({})
 };
 
 const SalesAssignReducer: Reducer = baseReducer(initialState, {
@@ -111,6 +112,18 @@ const SalesAssignReducer: Reducer = baseReducer(initialState, {
     return {
       ...state,
       resultActions: new ResultActions({}),
+      error: false,
+      refreshPage: false,
+    };
+  },
+
+  [SalesActions.REQUEST_ACCOUNT_OWNER_FINISHED](
+    state: ISalesAssignState,
+    action: IAction<ResultActions>
+  ): ISalesAssignState {
+    return {
+      ...state,
+      accountOwner: action.payload!,
       error: false,
       refreshPage: false,
     };

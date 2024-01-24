@@ -4,12 +4,12 @@ import * as EffectUtility from "../../utilities/EffectUtility";
 import CollectionHistoryModel from "./models/CollectionHistoryModel";
 import ResultActions from "models/ResultActions";
 
-export const requestCollectionHistory = async (customerId: number): Promise<CollectionHistoryModel | HttpErrorResponseModel> => {
-    const controllerName = "CustomerSetting/CollectionHistory?customerID=" + customerId;
+export const requestCollectionHistory = async (customerId: number): Promise<ResultActions | HttpErrorResponseModel> => {
+    const controllerName = "CustomerSetting/GetCollectionHistory?customerID=" + customerId;
     const endpoint: string = environment.api.customer.replace(
         ":controller",
         controllerName
     );
 
-    return EffectUtility.getToModel<CollectionHistoryModel>(CollectionHistoryModel, endpoint);
+    return EffectUtility.getToModel<ResultActions>(ResultActions, endpoint);
 }

@@ -5,6 +5,7 @@ import SalesNameModel from "stores/customer-sales/models/SalesNameModel";
 import ISalesResultFilter from "./models/ISalesResultFilter";
 import SalesAssignHistoryModel from "stores/customer-sales/models/SalesAssignHistoryModel";
 import ResultActions from "models/ResultActions";
+import SalesAccountOwner from "stores/customer-sales/models/SalesAccountOwner";
 
 export default interface ISearchResultSales {
   readonly title: string;
@@ -63,4 +64,22 @@ const _selectSalesHistory = (models: SalesAssignHistoryModel[]): any[] => {
 export const selectSalesHistory: Selector<IStore, any[]> = createSelector(
   (state: IStore) => state.customerSalesAssign.salesHistory,
   _selectSalesHistory
+);
+
+const _selectAccountOwner = (models: ResultActions): any[] => {
+  if (Array.isArray(models.resultObj)) {
+    return models.resultObj.map((model: SalesAccountOwner): any => ({
+      status: model.status,
+      salesName: model.salesName,
+      requestedBy: model.requestedBy,
+      requestedDate: model.requestedDate
+    }));
+  } else {
+    return [];
+  }
+};
+
+export const selectAccountOwner: Selector<IStore, any[]> = createSelector(
+  (state: IStore) => state.customerSalesAssign.accountOwner,
+  _selectAccountOwner
 );

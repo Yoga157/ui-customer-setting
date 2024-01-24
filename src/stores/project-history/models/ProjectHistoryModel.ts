@@ -1,4 +1,4 @@
-import { BaseModel, ConversionTypeEnum, IConversionOption } from "sjs-base-model";
+import { BaseModel } from "sjs-base-model";
 
 export default class ProjectHistoryModel extends BaseModel {
     funnelID: number = 0;
@@ -9,6 +9,8 @@ export default class ProjectHistoryModel extends BaseModel {
     salesDept: string = "";
     soCloseDate: string = "";
     soAmount: number = 0;
+    successStory: string = "";
+    modifiedStoryBy: any[] = [];
     
     constructor(data: Partial<ProjectHistoryModel>) {
         super();

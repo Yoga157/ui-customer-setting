@@ -8,6 +8,9 @@ import ApproveShareableAccounts from "./models/ApproveShareableccounts";
 import CustomerSettingById from "./models/CustomerSettingById";
 import CustomerID from "./models/ReleaseAccounts";
 import ResultActions from "models/ResultActions";
+import { NumberFormatState } from "react-number-format";
+import { data } from "jquery";
+import CustomerClaimAccount from "./models/CustomerClaimAccount";
 
 export const requestNoNameAcc = async (
   page?: number,
@@ -426,4 +429,67 @@ export const putApproveCustomerSetting = async (
 export const clearResult = async (): Promise<any> => {
   const clear = new ResultActions({});
   return clear;
+};
+
+export const claimAccount = async (
+  data: CustomerClaimAccount
+): Promise<ResultActions | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting";
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+
+  return EffectUtility.postToModel<ResultActions>(
+    ResultActions,
+    endpoint,
+    data
+  );
+};
+
+export const releaseAccount = async (
+  customerID: number, salesID: number, modifyUserID: number
+): Promise<ResultActions | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting/ReleaseAccount?customerID=" + customerID + "&salesID=" + salesID + "&modifyUserID=" + modifyUserID;
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+
+  return EffectUtility.putToModel<ResultActions>(
+    ResultActions,
+    endpoint
+  );
+};
+
+export const acceptRequestShareableAccount = async (
+  customerID: number, salesID: number, isApprove: boolean, modifyUserID: number
+): Promise<ResultActions | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting/ApproveCustomerSetting?customerID=" + customerID + "&salesID=" + salesID + "&isApprove=" + isApprove + "&modifyUserID=" + modifyUserID;
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+
+  return EffectUtility.putToModel<ResultActions>(
+    ResultActions,
+    endpoint
+  );
+};
+
+
+// get customer data by customer id
+export const requestCustomerDataById = async (
+  customerID: number
+): Promise<ResultActions | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting/GetCustomerData?customerID=" + customerID;
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+
+  return EffectUtility.getToModel<ResultActions>(
+    ResultActions,
+    endpoint
+  );
 };

@@ -1,3 +1,4 @@
+import ResultActions from "models/ResultActions";
 import CustomerSettingById from "./CustomerSettingById";
 import CustomerSettingModel from "./CustomerSettingModel";
 import CustomerSettingPostModel from "./CustomerSettingPostModel";
@@ -11,6 +12,7 @@ export default interface ICustomerState {
   readonly dataAll: CustomerSettingModel;
   readonly activePage: number;
   readonly dataByCustomerId: CustomerSettingById;
+  readonly customerDataById: ResultActions;
   error: boolean;
   refreshPage: boolean;
   resultActions: any;

@@ -1,6 +1,7 @@
 import { createSelector, Selector } from "reselect";
 import IStore from "../../models/IStore";
 import CustomerNameModel from "stores/customer-name/models/CustomerNameModel";
+import ResultActions from "models/ResultActions";
 
 const _selectCustomerSearch = (models: CustomerNameModel[]): any[] => {
   return models.map(
@@ -54,4 +55,21 @@ const _selectCustomerById = (model: CustomerNameModel): any => {
 
 export const selectCustomerById: Selector<IStore, any> = createSelector(
   (state: IStore) => state.customerName.customerById, _selectCustomerById
+);
+
+const _selectCustomerCategories = (categories: ResultActions): any => {
+  if (Array.isArray(categories.resultObj)) {
+    return categories.resultObj.map(
+      (category: any): any => ({
+        text: category.customerCategory,
+        value: category.customerCategory
+      })
+    );
+  } else {
+    return []
+  }
+}
+
+export const selectCustomerCategories: Selector<IStore, any> = createSelector(
+  (state: IStore) => state.customerName.resultActions, _selectCustomerCategories
 );

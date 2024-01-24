@@ -16,3 +16,17 @@ export const requestProjectHistory = async (CustomerID: number): Promise<ResultA
         endpoint
     );
 }
+
+// export const postInvoicingSchedule = async (data: InvoicingScheduleModel): Promise<ResultActions | HttpErrorResponseModel> => {
+//     const controllerName = "InvoicingSchedule/InvoicingSchedule";
+//     const endpoint: string = environment.api.customer.replace(
+//         ":controller",
+//         controllerName
+//     );
+
+//     return EffectUtility.postToModel<ResultActions>(
+//         ResultActions,
+//         endpoint,
+//         data
+//     );
+// }

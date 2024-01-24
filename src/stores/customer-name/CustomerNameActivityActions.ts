@@ -53,3 +53,16 @@ export const clearResult = (): any => {
     );
   };
 };
+
+export const REQUEST_CUSTOMER_CATEGORY: string = "CustomerNameAction.REQUEST_CUSTOMER_CATEGORY";
+export const REQUEST_CUSTOMER_CATEGORY_FINISHED: string = "CustomerNameAction.REQUEST_CUSTOMER_CATEGORY_FINISHED";
+
+export const requestCustomerCategory = (): any => {
+    return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+        await ActionUtility.createThunkEffect<ResultActions>(
+            dispatch,
+            REQUEST_CUSTOMER_CATEGORY,
+            CustomerNameEffect.requestCustomerCategory,
+        )
+    }
+}

@@ -18,7 +18,7 @@ const WhatsNewNotes = (props: any) => {
   const [activeButtonIndex, setButtonIndex] = useState(0);
 
   useEffect(() => {
-    dispatch(WhatsNewActions.requestWhatsNew(year));
+    // dispatch(WhatsNewActions.requestWhatsNew(year));
   }, [year]);
 
   const resultObject = useSelector((state: IStore) => state.whatsNew.resultActions);
