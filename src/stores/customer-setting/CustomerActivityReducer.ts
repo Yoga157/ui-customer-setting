@@ -4,10 +4,10 @@ import IAction from "../../models/IAction";
 import baseReducer from "../../utilities/BaseReducer";
 import { Reducer } from "redux";
 import CustomerSettingModel from "./models/CustomerSettingModel";
-import CustomerSettingRow from "./models/CustomerSettingRow";
 import ResultActions from "models/ResultActions";
 import CustomerSettingById from "./models/CustomerSettingById";
 import CustomerData from "./models/CustomerData";
+import CustomerSettingPostModel from "./models/CustomerSettingPostModel";
 
 export const initialState: ICustomerState = {
   data: new CustomerSettingModel({}),
@@ -15,6 +15,7 @@ export const initialState: ICustomerState = {
   dataNamed: new CustomerSettingModel({}),
   dataShareable: new CustomerSettingModel({}),
   dataAll: new CustomerSettingModel({}),
+  CustomerSettingPostModel: new CustomerSettingPostModel({}),
   dataByCustomerId: new CustomerSettingById({}),
   customerDataById: new ResultActions({}),
   error: false,
@@ -145,6 +146,30 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     };
   },
 
+  [CustomerActions.POST_CLAIM_ACCOUNT_FINISHED](
+    state: ICustomerState,
+    action: IAction<ResultActions>
+  ): any {
+    return {
+      ...state,
+      error: action.error!,
+      refreshPage: action.error ? false : true,
+      resultActions: action.payload!,
+    };
+  },
+
+  [CustomerActions.POST_REQUEST_ACCOUNT_FINISHED](
+    state: ICustomerState,
+    action: IAction<ResultActions>
+  ): any {
+    return {
+      ...state,
+      error: action.error!,
+      refreshPage: action.error ? false : true,
+      resultActions: action.payload!,
+    };
+  },
+
   [CustomerActions.SET_PAGE](
     state: ICustomerState,
     action: IAction<number>
@@ -198,7 +223,7 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     state: ICustomerState,
     action: IAction<ResultActions>
   ): ICustomerState {
-    console.log(action);
+    // console.log(action);
     return {
       ...state,
       resultActions: action.payload!,
@@ -208,6 +233,32 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
   },
 
   [CustomerActions.PUT_CUSTOMER_SETTING_FINISHED](
+    state: ICustomerState,
+    action: IAction<ResultActions>
+  ): any {
+    return {
+      ...state,
+      error: action.error!,
+      refreshPage: action.error ? false : true,
+      resultActions: action.payload!,
+    };
+  },
+
+  //RELEASE ACCOUNTS
+  [CustomerActions.PUT_RELEASES_ACCOUNTS_FINISHED](
+    state: ICustomerState,
+    action: IAction<ResultActions>
+  ): any {
+    return {
+      ...state,
+      error: action.error!,
+      refreshPage: action.error ? false : true,
+      resultActions: action.payload!,
+    };
+  },
+
+  //APPROVE SHARABALE ACCOUNTS
+  [CustomerActions.PUT_APPROVE_CUSTOMER_SETTING_FINISHED](
     state: ICustomerState,
     action: IAction<ResultActions>
   ): any {

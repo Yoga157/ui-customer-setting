@@ -4,7 +4,7 @@ import {
   IConversionOption,
 } from "sjs-base-model";
 
-export default class SalesAssignPostModel extends BaseModel {
+export default class CustomerSettingPostModel extends BaseModel {
   customerSettingID?: number = 0;
   customerID: number = 0;
   salesID: number = 0;
@@ -15,14 +15,14 @@ export default class SalesAssignPostModel extends BaseModel {
   requestedDate?: Date = new Date();
   createDate?: Date = new Date();
   createUserID: number = 0;
-  modifyDate?: Date = undefined;
+  modifyDate?: Date | undefined = undefined;
   modifyUserID?: number = 0;
 
-  constructor(data: Partial<SalesAssignPostModel>) {
+  constructor(data: Partial<CustomerSettingPostModel>) {
     super();
     this.update(data);
   }
-  public update(data: Partial<SalesAssignPostModel>): void {
+  public update(data: Partial<CustomerSettingPostModel>): void {
     const conversionOptions: IConversionOption = {
       customerSettingID: ConversionTypeEnum.Number,
       customerID: ConversionTypeEnum.Number,

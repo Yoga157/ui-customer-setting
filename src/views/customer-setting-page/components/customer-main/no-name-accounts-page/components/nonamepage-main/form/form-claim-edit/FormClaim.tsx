@@ -6,16 +6,17 @@ import IStore from "models/IStore";
 import { Form as FinalForm } from "react-final-form";
 import { Form, Grid, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
+import {} from "revalidate";
+import CustomerSettingPostModel from "stores/customer-setting/models/CustomerSettingPostModel";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
-import newReleaseAccount from "stores/customer-setting/models/ReleaseAccounts";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 
 interface IProps {
   rowData: any;
 }
 
-const ReleaseAccount: React.FC<IProps> = (
+const ClaimAccountEdit: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
@@ -33,23 +34,20 @@ const ReleaseAccount: React.FC<IProps> = (
     const userId: any = localStorage.getItem("userLogin");
 
     for (let j = 0; j < rowData.length; j++) {
-      const NewAssignSales = new newReleaseAccount(e);
-      NewAssignSales.customerID = props.rowData[j].customerID;
-      NewAssignSales.salesID = JSON.parse(userId)?.employeeID || 830;
-      NewAssignSales.modifyUserID = JSON.parse(userId)?.employeeID || 830;
+      const NewClaimAccount = new CustomerSettingPostModel(e);
+      NewClaimAccount.customerSettingID = 0;
+      NewClaimAccount.customerID = rowData[j].customerID;
+      NewClaimAccount.salesID = JSON.parse(userId)?.employeeID || 830;
+      NewClaimAccount.requestedBy = JSON.parse(userId)?.employeeID || 830;
+      NewClaimAccount.requestedDate = new Date();
+      NewClaimAccount.createDate = new Date();
+      NewClaimAccount.createUserID = JSON.parse(userId)?.employeeID || 830;
 
-      await dispatch(
-        CustomerSettingAct.putReleaseAccount(
-          NewAssignSales,
-          props.rowData[j].customerID,
-          830,
-          830
-        )
-      );
+      await dispatch(CustomerSettingAct.postClaimAccount(NewClaimAccount));
     }
     dispatch(ModalAction.CLOSE());
     dispatch(
-      CustomerSettingAct.requestNamedAcc(1, 10, "CustomerID", "ascending")
+      CustomerSettingAct.requestNoNameAcc(1, 10, "CustomerID", "ascending")
     );
   };
 
@@ -88,7 +86,7 @@ const ReleaseAccount: React.FC<IProps> = (
                 }}
               >
                 <span style={{ padding: "10px" }}>
-                  Are you sure want to release this account?
+                  Are you sure want to claim this account?
                 </span>
               </Grid.Row>
               <Grid.Row>
@@ -99,7 +97,7 @@ const ReleaseAccount: React.FC<IProps> = (
                         centered
                         width={1}
                         style={{ padding: "0px" }}
-                        key={data.customerGenID}
+                        key={data.customerID}
                       >
                         <Grid.Column style={{ marginBottom: "3rem" }}>
                           <p
@@ -125,7 +123,7 @@ const ReleaseAccount: React.FC<IProps> = (
                   Cancel
                 </Button>
                 <Button type="submit" color="blue">
-                  Yes, Release
+                  Yes, Claim it
                 </Button>
               </div>
             </Form>
@@ -136,4 +134,4 @@ const ReleaseAccount: React.FC<IProps> = (
   );
 };
 
-export default ReleaseAccount;
+export default ClaimAccountEdit;

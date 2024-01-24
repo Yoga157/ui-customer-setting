@@ -36,6 +36,22 @@ export const postClaimAccount = async (
   );
 };
 
+//Request Share Account
+export const postaRequestAccount = async (
+  data: SalesAssignPostModel
+): Promise<ResultActions | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting";
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+  return EffectUtility.postToModel<ResultActions>(
+    ResultActions,
+    endpoint,
+    data
+  );
+};
+
 export const requestSalesDropdown = async (): Promise<
   ResultActions | HttpErrorResponseModel
 > => {

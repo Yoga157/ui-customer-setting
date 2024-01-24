@@ -20,11 +20,13 @@ import FilterCustomer from "./components/nonamepage-main/filter/FilterCustomer";
 
 interface IProps {
   history: any;
+  role: string;
 }
 
 const NoNameAccountsPage: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
+  // const { role } = props;
   const dispatch: Dispatch = useDispatch();
   const [pageSize, setPage] = useState(10);
   const activePage = useSelector(
@@ -63,8 +65,8 @@ const NoNameAccountsPage: React.FC<IProps> = (
       dispatch(
         CustomerActions.requestSearchNoNameAcc(
           1,
-          tableData.totalRowNoName,
-          null,
+          tableData.totalRow,
+          "CustomerID",
           search.value
         )
       );
@@ -72,8 +74,8 @@ const NoNameAccountsPage: React.FC<IProps> = (
       dispatch(
         CustomerActions.requestNoNameAcc(
           1,
-          tableData.totalRowNoName,
-          null,
+          tableData.totalRow,
+          "CustomerID",
           "ascending"
         )
       );
@@ -84,7 +86,8 @@ const NoNameAccountsPage: React.FC<IProps> = (
         let tableHead: any;
 
         if (
-          window.location.pathname === "/data-quality/customer-setting-page"
+          window.location.pathname ===
+          "/data-quality/customer-setting-page/no-name-accounts-page"
         ) {
           tableSelect = document.getElementById(
             "exporttosetting"
@@ -101,7 +104,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
           ) as HTMLTableElement;
         }
 
-        tableHead.style.backgroundColor = "#9D9AEF";
+        tableHead.style = "none";
         for (let i = 0; i < tableSelect.rows.length; i++) {
           const firstCol = tableSelect.rows[i].cells[0];
           firstCol.remove();
@@ -116,7 +119,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
       setTimeout(() => {
         window.location.href =
           window.location.origin + window.location.pathname;
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -128,26 +131,25 @@ const NoNameAccountsPage: React.FC<IProps> = (
       "#search-input-customer"
     )! as HTMLInputElement;
 
-    if (window.location.pathname === "/customer-setting") {
-      if (search.value.length > 0) {
-        dispatch(
-          CustomerActions.requestSearchNoNameAcc(
-            data.activePage,
-            pageSize,
-            "CustomerID",
-            search.value
-          )
-        );
-      } else {
-        dispatch(
-          CustomerActions.requestNoNameAcc(
-            data.activePage,
-            pageSize,
-            "CustomerID",
-            "ascending"
-          )
-        );
-      }
+    // if (window.location.pathname === "/data-quality/customer-setting") {
+    if (search.value.length > 0) {
+      dispatch(
+        CustomerActions.requestSearchNoNameAcc(
+          data.activePage,
+          pageSize,
+          "CustomerID",
+          search.value
+        )
+      );
+    } else {
+      dispatch(
+        CustomerActions.requestNoNameAcc(
+          data.activePage,
+          pageSize,
+          "CustomerID",
+          "ascending"
+        )
+      );
     }
     // }
   };
@@ -245,6 +247,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
             <div className="wrapper-table">
               <CustomerTable
                 history={props.history}
+                role={props.role}
                 tableData={tableData}
                 getRowData={setNewRowData}
                 data={rowData}
@@ -253,7 +256,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
             <Pagination
               activePage={activePage}
               onPageChange={(e, data) => handlePaginationChange(e, data)}
-              totalPage={tableData.totalRowNoName}
+              totalPage={tableData.totalRow}
               pageSize={pageSize}
             />
           </Grid.Column>

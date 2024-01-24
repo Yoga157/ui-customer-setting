@@ -2,8 +2,11 @@ import environment from "environment";
 import HttpErrorResponseModel from "../../models/HttpErrorResponseModel";
 import * as EffectUtility from "../../utilities/EffectUtility";
 import CustomerSettingModel from "./models/CustomerSettingModel";
-import CustomerSettingRow from "./models/CustomerSettingRow";
+import CustomerSettingPostModel from "./models/CustomerSettingPostModel";
+import ResultAccounts from "./models/ReleaseAccounts";
+import ApproveShareableAccounts from "./models/ApproveShareableccounts";
 import CustomerSettingById from "./models/CustomerSettingById";
+import CustomerID from "./models/ReleaseAccounts";
 import ResultActions from "models/ResultActions";
 import { NumberFormatState } from "react-number-format";
 import { data } from "jquery";
@@ -99,7 +102,11 @@ export const requestCustomerSett = async (
   column?: string,
   sorting?: string
 ): Promise<CustomerSettingModel | HttpErrorResponseModel> => {
-  const controllerName = `CustomerSetting/GetListCustomerSetting?${page ? `page=${page}` : ``}${pageSize ? `&pageSize=${pageSize}` : ``}${column ? `&column=${column}` : ``}${sorting ? `&sorting=${sorting}` : ``}`;
+  const controllerName = `CustomerSetting/GetListCustomerSetting?${
+    page ? `page=${page}` : ``
+  }${pageSize ? `&pageSize=${pageSize}` : ``}${
+    column ? `&column=${column}` : ``
+  }${sorting ? `&sorting=${sorting}` : ``}`;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName
@@ -143,6 +150,7 @@ export const requestSearchNamedAcc = async (
   column: string | null,
   search: string | null,
   sorting?: string | null,
+  salesID?: string | null,
   pmo_customer?: boolean | null,
   holdshipment?: boolean | null,
   blacklist?: boolean | null
@@ -150,6 +158,8 @@ export const requestSearchNamedAcc = async (
   const controllerName = `CustomerSetting/GetCustomerSettingNamedAccount?page=${page}&pageSize=${pageSize}&column=${column}${
     search || search != null ? `&search=${search}` : ``
   }${sorting || sorting != null ? `&sorting=${sorting}` : ``}${
+    salesID || salesID != null ? `&salesID=${salesID}` : ``
+  }${
     pmo_customer || pmo_customer != null ? `&pmoCustomer=${pmo_customer}` : ``
   }${
     holdshipment || holdshipment != null ? `&holdshipment=${holdshipment}` : ``
@@ -167,22 +177,23 @@ export const requestSearchNamedAcc = async (
 export const requestSearchShareabelAcc = async (
   page: number,
   pageSize: number,
-  column: string,
+  column: string | null,
   search: string | null,
   sorting?: string | null,
+  salesID?: string | null,
   pmo_customer?: boolean | null,
-  holdshipment?: boolean | null,
-  blacklist?: boolean | null
+  blacklist?: boolean | null,
+  holdshipment?: boolean | null
 ): Promise<CustomerSettingModel | HttpErrorResponseModel> => {
-  const controllerName = `CustomerSetting/GetCustomerSettingSharebleAccount?page=${page}&pageSize=${pageSize}&column=${
-    column || column != null ? `&column=${column}` : ``
-  }${search || search != null ? `&search=${search}` : ``}${
-    sorting || sorting != null ? `&sorting=${sorting}` : ``
-  }${
+  const controllerName = `CustomerSetting/GetCustomerSettingSharebleAccount?page=${page}&pageSize=${pageSize}&column=${column}${
+    search || search != null ? `&search=${search}` : ``
+  }${sorting || sorting != null ? `&sorting=${sorting}` : ``}${
     pmo_customer || pmo_customer != null ? `&pmoCustomer=${pmo_customer}` : ``
+  }${salesID || salesID != null ? `&salesID=${salesID}` : ``}${
+    blacklist || blacklist != null ? `&blacklist=${blacklist}` : ``
   }${
     holdshipment || holdshipment != null ? `&holdshipment=${holdshipment}` : ``
-  }${blacklist || blacklist != null ? `&blacklist=${blacklist}` : ``}`;
+  }`;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName
@@ -199,17 +210,29 @@ export const requestSearchAllAcc = async (
   column: string | null,
   search: string | null,
   sorting?: string | null,
+  salesID?: string | null,
   pmo_customer?: boolean | null,
+  blacklist?: boolean | null,
   holdshipment?: boolean | null,
-  blacklist?: boolean | null
+  showNoName?: boolean | null,
+  showNamed?: boolean | null,
+  showShareable?: boolean | null
 ): Promise<CustomerSettingModel | HttpErrorResponseModel> => {
   const controllerName = `CustomerSetting/GetCustomerSettingAllAccount?page=${page}&pageSize=${pageSize}&column=${column}${
     search || search != null ? `&search=${search}` : ``
   }${sorting || sorting != null ? `&sorting=${sorting}` : ``}${
     pmo_customer || pmo_customer != null ? `&pmoCustomer=${pmo_customer}` : ``
+  }${salesID || salesID != null ? `&salesID=${salesID}` : ``}${
+    blacklist || blacklist != null ? `&blacklist=${blacklist}` : ``
   }${
     holdshipment || holdshipment != null ? `&holdshipment=${holdshipment}` : ``
-  }${blacklist || blacklist != null ? `&blacklist=${blacklist}` : ``}`;
+  }${showNoName || showNoName != null ? `&showNoName=${showNoName}` : ``}${
+    showNamed || showNamed != null ? `&showNamed=${showNamed}` : ``
+  }${
+    showShareable || showShareable != null
+      ? `&showShareable=${showShareable}`
+      : ``
+  }`;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName
@@ -248,6 +271,38 @@ export const requestSearchCustomerSett = async (
   return EffectUtility.getToModel<CustomerSettingModel>(
     CustomerSettingModel,
     endpoint
+  );
+};
+
+//Claim Account
+export const postClaimAccount = async (
+  data: CustomerSettingPostModel
+): Promise<ResultActions | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting";
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+  return EffectUtility.postToModel<ResultActions>(
+    ResultActions,
+    endpoint,
+    data
+  );
+};
+
+//Request Share Account
+export const postRequestAccount = async (
+  data: CustomerSettingPostModel
+): Promise<ResultActions | HttpErrorResponseModel> => {
+  const controllerName = "CustomerSetting";
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+  return EffectUtility.postToModel<ResultActions>(
+    ResultActions,
+    endpoint,
+    data
   );
 };
 
@@ -314,10 +369,55 @@ export const postCustomerSetting = async (
 };
 
 export const putCustomerSetting = async (
-  data: CustomerSettingById,
+  data: CustomerID,
   id: number
 ): Promise<ResultActions | HttpErrorResponseModel> => {
   const controllerName = "CustomerSetting/" + id;
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+
+  return EffectUtility.putToModel<ResultActions>(ResultActions, endpoint, data);
+};
+
+export const putReleaseAccount = async (
+  data: ResultAccounts,
+  customerID: number,
+  salesID: number,
+  modifyUserID: number
+): Promise<ResultActions | HttpErrorResponseModel> => {
+  const controllerName =
+    "CustomerSetting/ReleaseAccount?customerID=" +
+    customerID +
+    "&salesID=" +
+    salesID +
+    "&modifyUserID=" +
+    modifyUserID;
+  const endpoint: string = environment.api.customer.replace(
+    ":controller",
+    controllerName
+  );
+
+  return EffectUtility.putToModel<ResultActions>(ResultActions, endpoint, data);
+};
+
+export const putApproveCustomerSetting = async (
+  data: ApproveShareableAccounts,
+  customerID: number,
+  salesID: number,
+  isApprove: boolean,
+  modifyUserID: number
+): Promise<ResultActions | HttpErrorResponseModel> => {
+  const controllerName =
+    "CustomerSetting/ApproveCustomerSetting?customerID=" +
+    customerID +
+    "&salesID=" +
+    salesID +
+    "&isApprove=" +
+    isApprove +
+    "&modifyUserID=" +
+    modifyUserID;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName

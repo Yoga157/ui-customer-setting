@@ -7,6 +7,7 @@ import AllAccountsPage from "./components/customer-main/all-accounts-page/AllAcc
 
 interface IProps {
   history: any;
+  role: string;
 }
 
 interface TabType {

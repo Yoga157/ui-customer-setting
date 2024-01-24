@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,19 +6,22 @@ import IStore from "models/IStore";
 import { Form as FinalForm } from "react-final-form";
 import { Form, Grid, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
+import SalesAssignPostModel from "stores/customer-sales/models/SalesAssignPostModel";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
-import newReleaseAccount from "stores/customer-setting/models/ReleaseAccounts";
+import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
+import ApproveShareableAccounts from "stores/customer-setting/models/ApproveShareableccounts";
 
 interface IProps {
   rowData: any;
 }
 
-const ReleaseAccount: React.FC<IProps> = (
+const ApproveShareableReq: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
+  const [salesAssignArray, setSalesAssignArray] = useState([]);
   const { rowData } = props;
 
   const cancelClick = () => {
@@ -33,24 +36,31 @@ const ReleaseAccount: React.FC<IProps> = (
     const userId: any = localStorage.getItem("userLogin");
 
     for (let j = 0; j < rowData.length; j++) {
-      const NewAssignSales = new newReleaseAccount(e);
+      const NewAssignSales = new ApproveShareableAccounts(e);
       NewAssignSales.customerID = props.rowData[j].customerID;
       NewAssignSales.salesID = JSON.parse(userId)?.employeeID || 830;
+      NewAssignSales.isApprove = true;
       NewAssignSales.modifyUserID = JSON.parse(userId)?.employeeID || 830;
 
       await dispatch(
-        CustomerSettingAct.putReleaseAccount(
+        CustomerSettingAct.putApproveCustomerSetting(
           NewAssignSales,
           props.rowData[j].customerID,
           830,
+          true,
           830
         )
       );
     }
     dispatch(ModalAction.CLOSE());
-    dispatch(
-      CustomerSettingAct.requestNamedAcc(1, 10, "CustomerID", "ascending")
+    dispatch(CustomerSettingAct.requestAllAcc(1, 10, "CustomerID"));
+  };
+
+  const deleteClick = (salesID) => {
+    let filteredArray = salesAssignArray.filter(
+      (obj) => obj.salesID !== salesID
     );
+    setSalesAssignArray(filteredArray);
   };
 
   return (
@@ -88,7 +98,7 @@ const ReleaseAccount: React.FC<IProps> = (
                 }}
               >
                 <span style={{ padding: "10px" }}>
-                  Are you sure want to release this account?
+                  Are you sure want to request share this account?
                 </span>
               </Grid.Row>
               <Grid.Row>
@@ -99,7 +109,7 @@ const ReleaseAccount: React.FC<IProps> = (
                         centered
                         width={1}
                         style={{ padding: "0px" }}
-                        key={data.customerGenID}
+                        key={data.customerID}
                       >
                         <Grid.Column style={{ marginBottom: "3rem" }}>
                           <p
@@ -125,7 +135,7 @@ const ReleaseAccount: React.FC<IProps> = (
                   Cancel
                 </Button>
                 <Button type="submit" color="blue">
-                  Yes, Release
+                  Send Request
                 </Button>
               </div>
             </Form>
@@ -136,4 +146,4 @@ const ReleaseAccount: React.FC<IProps> = (
   );
 };
 
-export default ReleaseAccount;
+export default ApproveShareableReq;

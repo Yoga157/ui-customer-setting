@@ -16,7 +16,7 @@ export default function baseEnv(baseApi: string) {
       auth: `${baseApi}/api/AuthServerService/:controller`,
       jde: `${baseApi}/api/DQJDEService/:controller`,
       kpi: `${baseApi}/api/DQKpiService/:controller`,
-      login: `http://bhpapisrvdev.berca.co.id:7000/api/AuthServerService/:controller`
+      login: `http://bhpapisrvdev.berca.co.id:7000/api/AuthServerService/:controller`,
     },
     isProduction: false,
     isDevelopment: true,

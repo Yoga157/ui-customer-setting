@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,11 +6,10 @@ import IStore from "models/IStore";
 import { Form as FinalForm } from "react-final-form";
 import { Form, Grid, Card, Divider, Icon } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
-import SalesAssignPostModel from "stores/customer-sales/models/SalesAssignPostModel";
 import {} from "revalidate";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
-import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
+import CustomerSettingPostModel from "stores/customer-setting/models/CustomerSettingPostModel";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 
 interface IProps {
@@ -30,34 +29,26 @@ const ClaimAccount: React.FC<IProps> = (
   const isRequesting: boolean = useSelector((state: IStore) =>
     selectRequesting(state, [])
   );
-
   const onSubmitHandler = async (e) => {
     const userId: any = localStorage.getItem("userLogin");
 
     for (let j = 0; j < rowData.length; j++) {
-      const NewAssignSales = new SalesAssignPostModel(e);
-      NewAssignSales.customerSettingID = 0;
-      NewAssignSales.customerID = rowData[j].customerID;
-      NewAssignSales.salesID = JSON.parse(userId)?.employeeID || 830;
-      NewAssignSales.shareable = false;
-      NewAssignSales.named = true;
-      NewAssignSales.pmoCustomer = false;
-      NewAssignSales.status = "approve";
-      NewAssignSales.requestedBy = JSON.parse(userId)?.employeeID || 830;
-      NewAssignSales.requestedDate = new Date();
-      NewAssignSales.createDate = new Date();
-      NewAssignSales.createUserID = JSON.parse(userId)?.employeeID || 830;
-      NewAssignSales.modifyUserID = 0;
+      const NewClaimAccount = new CustomerSettingPostModel(e);
+      NewClaimAccount.customerSettingID = 0;
+      NewClaimAccount.customerID = rowData[j].customerID;
+      NewClaimAccount.salesID = JSON.parse(userId)?.employeeID || 812;
+      NewClaimAccount.requestedBy = JSON.parse(userId)?.employeeID || 812;
+      NewClaimAccount.requestedDate = new Date();
+      NewClaimAccount.createDate = new Date();
+      NewClaimAccount.createUserID = JSON.parse(userId)?.employeeID || 812;
 
-      await dispatch(SalesAssign.postClaimAccount(NewAssignSales));
+      await dispatch(CustomerSettingAct.postClaimAccount(NewClaimAccount));
     }
     dispatch(ModalAction.CLOSE());
     dispatch(
       CustomerSettingAct.requestNoNameAcc(1, 10, "CustomerID", "ascending")
     );
   };
-
-  const onHandlerSearch = () => {};
 
   return (
     <Fragment>
@@ -67,7 +58,7 @@ const ClaimAccount: React.FC<IProps> = (
       <Divider></Divider>
       <LoadingIndicator isActive={isRequesting}>
         <FinalForm
-          onSubmit={() => onHandlerSearch()}
+          onSubmit={onSubmitHandler}
           render={({ handleSubmit }) => (
             <Form onSubmit={handleSubmit}>
               <div>
@@ -116,32 +107,30 @@ const ClaimAccount: React.FC<IProps> = (
                   );
                 })}
               </div>
+              <div style={{ textAlign: "center" }}>
+                <Button
+                  type="button"
+                  onClick={cancelClick}
+                  style={{
+                    marginRight: "10px",
+                    padding: "12px 20px",
+                    fontSize: "15px",
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="MarBot10"
+                  type="submit"
+                  color="blue"
+                  style={{ padding: "12px 20px", fontSize: "15px" }}
+                >
+                  Submit
+                </Button>
+              </div>
             </Form>
           )}
         />
-
-        <div style={{ textAlign: "center", marginBottom: "20px" }}>
-          <Button
-            type="button"
-            onClick={cancelClick}
-            style={{
-              marginRight: "10px",
-              padding: "12px 20px",
-              fontSize: "15px",
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            className="MarBot10"
-            type="submit"
-            color="blue"
-            onClick={onSubmitHandler}
-            style={{ padding: "12px 20px", fontSize: "15px" }}
-          >
-            Submit
-          </Button>
-        </div>
       </LoadingIndicator>
     </Fragment>
   );

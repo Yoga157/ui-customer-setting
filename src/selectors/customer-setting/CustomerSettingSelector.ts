@@ -22,7 +22,7 @@ const formatDate = (date: any): any => {
 //Selector No Name Account
 const _selectCustomerSetting = (models: any): any => {
   return {
-    totalRowNoName: models.totalRows,
+    totalRow: models.totalRows,
     rows: _createTableRows(models.rows),
   };
 };
@@ -162,10 +162,6 @@ const _createTableAllRows = (models: any[]): any[] => {
 
 const _mappingObjectTableAllRow = (model: any): any => {
   return {
-    // customerSettingID:
-    //   model.customerSettingID.toString() === "undefined"
-    //     ? 0
-    //     : model.customerSettingID,
     customerID: model.customerID === null ? null : model.customerID,
     customerCategory:
       model.customerCategory === "" ? "" : model.customerCategory,
@@ -176,6 +172,7 @@ const _mappingObjectTableAllRow = (model: any): any => {
     relatedCustomer: model.relatedCustomer === "" ? "" : model.relatedCustomer,
     pmoCustomer: model.pmoCustomer === null ? null : model.pmoCustomer,
     named: model.named === null ? null : model.named,
+    shareable: model.shareable === null ? null : model.shareable,
     blacklist: model.blacklist === null ? null : model.blacklist,
     holdshipment: model.holdshipment === null ? null : model.holdshipment,
     createdBy: model.createdBy === "" ? "" : model.createdBy,
@@ -192,11 +189,14 @@ export const selectAllAccount: Selector<IStore, any> = createSelector(
 
 const _selectCustomerSettingById = (model: CustomerSettingById): any => {
   return {
-    customerSettingID: model.customerSettingID,
+    // customerSettingID: model.customerSettingID,
     customerID: model.customerID,
-    customerCategoryID: model.customerCategoryID,
-    shareable: model.shareable,
-    pmoCustomer: model.pmoCustomer,
+    salesID: model.salesID,
+    modifyUserID: model.salesID,
+
+    // customerCategoryID: model.customerCategoryID,
+    // shareable: model.shareable,
+    // pmoCustomer: model.pmoCustomer,
   };
 };
 

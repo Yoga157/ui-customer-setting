@@ -1,19 +1,18 @@
 import React, { Fragment, useEffect, useState, useCallback } from "react";
-import { Table, Dropdown, List, Icon } from "semantic-ui-react";
+import { Table, Dropdown, Icon } from "semantic-ui-react";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLevelActions";
 import ModalSizeEnum from "constants/ModalSizeEnum";
-import { selectUserResult } from "selectors/user/UserSelector";
-import IUserResult from "selectors/user/models/IUserResult";
-import IStore from "models/IStore";
 import "./CustomerTableRowStyle.scss";
 import RequestForm from "../../form/form-reqshareaccount/FormReqShare";
 import ReleaseForm from "../../form/form-release/FormRelease";
+import ShareableReq from "../../form/form-approverequest/FormApproveShareable";
 
 interface IProps {
   readonly rowData: any;
   readonly history: any;
+  readonly role: string;
   getRowData: (data: any) => void;
   data: any;
 }
@@ -22,13 +21,13 @@ const CustomerTableRow: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
-  const [openConfirm, setOpenConfirm] = useState(false);
-  const currentUser: IUserResult = useSelector((state: IStore) =>
-    selectUserResult(state)
-  );
-
+  // const [openConfirm, setOpenConfirm] = useState(false);
+  // const currentUser: IUserResult = useSelector((state: IStore) =>
+  //   selectUserResult(state)
+  // );
   const { rowData, getRowData } = props;
   const [isChecked, setIsChecked] = useState(false);
+  const { role } = props;
 
   useEffect(() => {
     setIsChecked(false);
@@ -52,7 +51,6 @@ const CustomerTableRow: React.FC<IProps> = (
   };
 
   const onRequestAccount = useCallback((): void => {
-    // console.log(rowData);
     dispatch(
       ModalFirstLevelActions.OPEN(
         <RequestForm rowData={[rowData]} />,
@@ -63,25 +61,31 @@ const CustomerTableRow: React.FC<IProps> = (
   }, [dispatch, rowData]);
 
   const onReleaseAccount = useCallback((): void => {
-    // console.log(rowData);
     dispatch(
       ModalFirstLevelActions.OPEN(
         <ReleaseForm rowData={[rowData]} />,
         ModalSizeEnum.Tiny
       )
     );
+    getRowData([]);
+  }, [dispatch, rowData]);
+
+  const onShareableRequest = useCallback((): void => {
+    dispatch(
+      ModalFirstLevelActions.OPEN(
+        <ShareableReq rowData={[rowData]} />,
+        ModalSizeEnum.Tiny
+      )
+    );
+    getRowData([]);
   }, [dispatch, rowData]);
 
   const onEdit = (id: number) => {
     props.history.push({
-      pathname: "customer-setting-page/" + id,
+      pathname: "customer-setting/" + id,
       state: { rowData },
     });
   };
-
-  // useEffect(() => {
-  //   console.log("Efect");
-  // }, []);
 
   return (
     <Fragment>
@@ -105,6 +109,48 @@ const CustomerTableRow: React.FC<IProps> = (
             </div>
             <Dropdown pointing="left" icon="ellipsis vertical">
               <Dropdown.Menu>
+                {role === "SALES" && (
+                  <>
+                    <Dropdown.Item
+                      text="View/Edit"
+                      icon="edit outline"
+                      onClick={() => onEdit(rowData.customerID)}
+                    />
+
+                    <Dropdown.Item
+                      text="Request Share Account"
+                      icon="share"
+                      onClick={onRequestAccount}
+                    />
+
+                    <Dropdown.Item
+                      text="Realease Account"
+                      icon="times circle"
+                      onClick={onReleaseAccount}
+                    />
+                    {rowData.status !== "CANCEL" &&
+                      rowData.CustomerID === "" && (
+                        <Dropdown.Item text="Cancel" icon="remove circle" />
+                      )}
+                  </>
+                )}
+
+                {role === "ADMIN" && (
+                  <>
+                    <Dropdown.Item
+                      text="View/Edit"
+                      icon="edit outline"
+                      onClick={() => onEdit(rowData.customerID)}
+                    />
+                    <Dropdown.Item
+                      text="Approve Shareable Request"
+                      icon="circle check"
+                      onClick={onShareableRequest}
+                    />
+                  </>
+                )}
+              </Dropdown.Menu>
+              {/* <Dropdown.Menu>
                 <Dropdown.Item
                   text="View/Edit"
                   icon="edit outline"
@@ -126,7 +172,7 @@ const CustomerTableRow: React.FC<IProps> = (
                 {rowData.status != "CANCEL" && rowData.CustomerID == "" && (
                   <Dropdown.Item text="Cancel" icon="remove circle" />
                 )}
-              </Dropdown.Menu>
+              </Dropdown.Menu> */}
             </Dropdown>
           </div>
         </Table.Cell>
@@ -162,8 +208,6 @@ const CustomerTableRow: React.FC<IProps> = (
               margin: "auto",
               height: "2rem",
               display: "flex",
-              // justifyContent: "center",
-              // textAlign: "center",
             }}
           >
             <p
@@ -338,7 +382,6 @@ const CustomerTableRow: React.FC<IProps> = (
               maxWidth: "15rem",
               width: "10rem",
               margin: "auto",
-              height: "2rem",
               display: "flex",
               justifyContent: "center",
               textAlign: "center",
@@ -355,9 +398,80 @@ const CustomerTableRow: React.FC<IProps> = (
             </p>{" "}
           </div>
         </Table.Cell>
-        <Table.Cell>{rowData.createdDate}</Table.Cell>
-        <Table.Cell>{rowData.modifiedBy}</Table.Cell>
-        <Table.Cell>{rowData.modifiedDate}</Table.Cell>
+        <Table.Cell>
+          {" "}
+          <div
+            style={{
+              color: "white",
+              borderRadius: "1rem",
+              maxWidth: "15rem",
+              width: "10rem",
+              margin: "auto",
+              display: "flex",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            <p
+              style={{
+                fontSize: "1rem",
+                color: "#46494c",
+              }}
+            >
+              {" "}
+              {rowData.createdDate}
+            </p>{" "}
+          </div>
+        </Table.Cell>
+        <Table.Cell>
+          {" "}
+          <div
+            style={{
+              color: "white",
+              borderRadius: "1rem",
+              maxWidth: "15rem",
+              width: "10rem",
+              margin: "auto",
+              display: "flex",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            <p
+              style={{
+                fontSize: "1rem",
+                color: "#46494c",
+              }}
+            >
+              {" "}
+              {rowData.modifiedBy}
+            </p>{" "}
+          </div>{" "}
+        </Table.Cell>
+        <Table.Cell>
+          <div
+            style={{
+              color: "white",
+              borderRadius: "1rem",
+              maxWidth: "15rem",
+              width: "10rem",
+              margin: "auto",
+              display: "flex",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            <p
+              style={{
+                fontSize: "1rem",
+                color: "#46494c",
+              }}
+            >
+              {" "}
+              {rowData.modifiedDate}
+            </p>{" "}
+          </div>
+        </Table.Cell>
       </Table.Row>
     </Fragment>
   );

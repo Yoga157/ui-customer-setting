@@ -22,24 +22,22 @@ export const InputSearch: React.FC = () => {
   };
 
   const onSearch = () => {
-    if (location.pathname == "/customer-setting-page") {
-      if (btnCancel || searchText.length === 0) {
+    // if (location.pathname == "/data-quality/customer-setting") {
+    if (btnCancel || searchText.length === 0) {
+      dispatch(CustomerSetting.requestAllAcc(1, 10, "CustomerID", "ascending"));
+      dispatch(CustomerSetting.setActivePage(1));
+      setSearchText("");
+      setBtnCancel(false);
+    } else {
+      if (searchText.length > 1) {
         dispatch(
-          CustomerSetting.requestAllAcc(1, 10, "CustomerID", "ascending")
+          CustomerSetting.requestSearchAllAcc(1, 10, "CustomerID", searchText)
         );
         dispatch(CustomerSetting.setActivePage(1));
-        setSearchText("");
-        setBtnCancel(false);
-      } else {
-        if (searchText.length > 1) {
-          dispatch(
-            CustomerSetting.requestSearchAllAcc(1, 10, "CustomerID", searchText)
-          );
-          dispatch(CustomerSetting.setActivePage(1));
-          setBtnCancel(!btnCancel);
-        }
+        setBtnCancel(!btnCancel);
       }
     }
+    // }
   };
 
   const isRequesting: boolean = useSelector((state: IStore) =>

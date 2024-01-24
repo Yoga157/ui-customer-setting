@@ -15,6 +15,7 @@ import { selectFunnels } from "selectors/funnel/FunnelSelector";
 interface IProps {
   readonly tableData: any;
   readonly history: any;
+  readonly role: string;
   getRowData: (data: any) => void;
   data: any;
 }
@@ -140,6 +141,7 @@ const CustomerTable: React.FC<IProps> = (
         props.tableData.rows.map((item) => (
           <CustomerTableRow
             history={props.history}
+            role={props.role}
             key={item.customerSettingID}
             rowData={item}
             getRowData={props.getRowData}
