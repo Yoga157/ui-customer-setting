@@ -49,7 +49,7 @@ const ReleaseAccount: React.FC<IProps> = (
     }
     dispatch(ModalAction.CLOSE());
     dispatch(
-      CustomerSettingAct.requestNamedAcc(1, 10, "CustomerID", "ascending")
+      CustomerSettingAct.requestAllAcc(1, 10, "CustomerID", "ascending")
     );
   };
 

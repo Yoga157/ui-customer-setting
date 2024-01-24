@@ -1,23 +1,14 @@
-import React, { useEffect, Fragment, useState, useCallback } from "react";
-import { Button, SearchInput } from "views/components/UI";
+import React, { useEffect, Fragment, useState } from "react";
+import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
-import { Form as FinalForm, Field } from "react-final-form";
-import { Form, Grid, Card, Divider, Icon } from "semantic-ui-react";
+import { Form as FinalForm } from "react-final-form";
+import { Form, Grid, Card, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
-import { selectSalesSearchOptions } from "selectors/select-options/SalesAssignSelector";
-import SalesAssignPostModel from "stores/customer-sales/models/SalesAssignPostModel";
-import { format } from "date-fns";
-import {
-  combineValidators,
-  isRequired,
-  composeValidators,
-  createValidator,
-} from "revalidate";
+import ReleaseAccount from "stores/customer-setting/models/ReleaseAccounts";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
-import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 
 interface IProps {
@@ -28,22 +19,8 @@ const RelaseAccountMod: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
-  const [salesName, setSalesName] = useState(" ");
   const [salesAssignArray, setSalesAssignArray] = useState([]);
   const { rowData } = props;
-  const salesStoreSearch = useSelector((state: IStore) =>
-    selectSalesSearchOptions(state)
-  );
-
-  const handleSearchChangeSales = useCallback(
-    (data) => {
-      setSalesName(data);
-      if (data.length >= 2) {
-        dispatch(SalesAssign.requestSalesByName(data));
-      }
-    },
-    [dispatch]
-  );
 
   const cancelClick = () => {
     dispatch(ModalAction.CLOSE());
@@ -57,22 +34,23 @@ const RelaseAccountMod: React.FC<IProps> = (
     const userId: any = localStorage.getItem("userLogin");
 
     for (let j = 0; j < rowData.length; j++) {
-      for (let i = 0; i < salesAssignArray.length; i++) {
-        const NewAssignSales = new SalesAssignPostModel(e);
-        // NewAssignSales.assignID = JSON.parse(userId)?.employeeID;
-        NewAssignSales.salesID = salesAssignArray[i].salesID;
-        NewAssignSales.customerSettingID = rowData[j].customerSettingID;
-        // NewAssignSales.AssignedBy = JSON.parse(userId)?.employeeID;
-        NewAssignSales.createDate = new Date(props.rowData[j].createDate);
-        NewAssignSales.createUserID = JSON.parse(userId)?.employeeID;
-        NewAssignSales.modifyUserID = JSON.parse(userId)?.employeeID;
+      const NewAssignSales = new ReleaseAccount(e);
+      NewAssignSales.customerID = props.rowData[j].customerID;
+      NewAssignSales.salesID = JSON.parse(userId)?.employeeID || 830;
+      NewAssignSales.modifyUserID = JSON.parse(userId)?.employeeID || 830;
 
-        await dispatch(SalesAssign.postAssignedSales(NewAssignSales));
-      }
+      await dispatch(
+        CustomerSettingAct.putReleaseAccount(
+          NewAssignSales,
+          props.rowData[j].customerID,
+          830,
+          830
+        )
+      );
     }
     dispatch(ModalAction.CLOSE());
     dispatch(
-      CustomerSettingAct.requestCustomerSett(1, 10, "CustomerSettingID")
+      CustomerSettingAct.requestNamedAcc(1, 10, "CustomerID", "ascending")
     );
   };
 
@@ -85,35 +63,6 @@ const RelaseAccountMod: React.FC<IProps> = (
     setSalesAssignArray(filteredArray);
   };
 
-  const onResultSelectSales = (data: any) => {
-    let checkSales = salesAssignArray.find(
-      (obj) => obj.salesID === data.result.salesID
-    );
-    if (checkSales === undefined) {
-      setSalesAssignArray([
-        ...salesAssignArray,
-        {
-          salesName: data.result.title,
-          salesID: data.result.salesID,
-        },
-      ]);
-    }
-    setSalesName("");
-  };
-
-  const isValidsalesName = createValidator(
-    (message) => (value) => {
-      if (value === 0) {
-        return message;
-      }
-    },
-    "Invalid Sales Name"
-  );
-
-  const validate = combineValidators({
-    salesName: composeValidators(isValidsalesName, isRequired("Sales Name"))(),
-  });
-
   return (
     <Fragment>
       <Card.Header>
@@ -122,7 +71,6 @@ const RelaseAccountMod: React.FC<IProps> = (
       <Divider></Divider>
       <LoadingIndicator isActive={isRequesting}>
         <FinalForm
-          validate={validate}
           onSubmit={() => onHandlerSearch()}
           render={({ handleSubmit }) => (
             <Form onSubmit={handleSubmit}>

@@ -8,12 +8,13 @@ import { selectUserResult } from "selectors/user/UserSelector";
 import IUserResult from "selectors/user/models/IUserResult";
 import IStore from "models/IStore";
 import "./CustomerTableRowStyle.scss";
-import ClaimForm from "../../form/form-claim/FormClaim";
+import ClaimFormEdit from "../../form/form-claim-edit/FormClaim";
 import { useHistory } from "react-router-dom";
 
 interface IProps {
   readonly rowData: any;
   readonly history: any;
+  readonly role: string;
   getRowData: (data: any) => void;
   data: any;
 }
@@ -27,6 +28,7 @@ const CustomerTableRow: React.FC<IProps> = (
   // const currentUser: IUserResult = useSelector((state: IStore) =>
   //   selectUserResult(state)
   // );
+  const { role } = props;
   const [isChecked, setIsChecked] = useState(false);
   const { rowData, getRowData } = props;
 
@@ -54,7 +56,7 @@ const CustomerTableRow: React.FC<IProps> = (
   const onClaimAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ClaimForm rowData={[rowData]} />,
+        <ClaimFormEdit rowData={[rowData]} />,
         ModalSizeEnum.Tiny
       )
     );
@@ -90,20 +92,33 @@ const CustomerTableRow: React.FC<IProps> = (
             </div>
             <Dropdown pointing="left" icon="ellipsis vertical">
               <Dropdown.Menu>
-                <Dropdown.Item
-                  text="View/Edit"
-                  icon="edit outline"
-                  onClick={() => onEdit(rowData.customerID)}
-                />
+                {role === "SALES" && (
+                  <>
+                    <Dropdown.Item
+                      text="View/Edit"
+                      icon="edit outline"
+                      onClick={() => onEdit(rowData.customerID)}
+                    />
 
-                <Dropdown.Item
-                  text="Claim Account"
-                  icon="circle check"
-                  onClick={onClaimAccount}
-                />
+                    <Dropdown.Item
+                      text="Claim Account"
+                      icon="circle check"
+                      onClick={onClaimAccount}
+                    />
 
-                {rowData.status != "CANCEL" && rowData.CustomerID == "" && (
-                  <Dropdown.Item text="Cancel" icon="remove circle" />
+                    {rowData.status !== "CANCEL" &&
+                      rowData.CustomerID === "" && (
+                        <Dropdown.Item text="Cancel" icon="remove circle" />
+                      )}
+                  </>
+                )}
+
+                {role === "ADMIN" && (
+                  <Dropdown.Item
+                    text="View/Edit"
+                    icon="edit outline"
+                    onClick={() => onEdit(rowData.customerID)}
+                  />
                 )}
               </Dropdown.Menu>
             </Dropdown>
@@ -214,26 +229,103 @@ const CustomerTableRow: React.FC<IProps> = (
           )}
         </Table.Cell>
         <Table.Cell textAlign="center">
-          {" "}
           <div
             style={{
+              color: "white",
               borderRadius: "1rem",
+              maxWidth: "15rem",
               width: "10rem",
               margin: "auto",
               display: "flex",
-              alignItems: "center",
               justifyContent: "center",
+              textAlign: "center",
             }}
           >
-            <p style={{ fontSize: "1rem", textAlign: "center" }}>
+            <p
+              style={{
+                fontSize: "1rem",
+                color: "#46494c",
+              }}
+            >
               {" "}
               {rowData.createdBy}
             </p>{" "}
           </div>
         </Table.Cell>
-        <Table.Cell>{rowData.createdDate}</Table.Cell>
-        <Table.Cell>{rowData.modifiedBy}</Table.Cell>
-        <Table.Cell>{rowData.modifiedDate}</Table.Cell>
+        <Table.Cell>
+          {" "}
+          <div
+            style={{
+              color: "white",
+              borderRadius: "1rem",
+              maxWidth: "15rem",
+              width: "10rem",
+              margin: "auto",
+              display: "flex",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            <p
+              style={{
+                fontSize: "1rem",
+                color: "#46494c",
+              }}
+            >
+              {" "}
+              {rowData.createdDate}
+            </p>{" "}
+          </div>
+        </Table.Cell>
+        <Table.Cell>
+          {" "}
+          <div
+            style={{
+              color: "white",
+              borderRadius: "1rem",
+              maxWidth: "15rem",
+              width: "10rem",
+              margin: "auto",
+              display: "flex",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            <p
+              style={{
+                fontSize: "1rem",
+                color: "#46494c",
+              }}
+            >
+              {" "}
+              {rowData.modifiedBy}
+            </p>{" "}
+          </div>{" "}
+        </Table.Cell>
+        <Table.Cell>
+          <div
+            style={{
+              color: "white",
+              borderRadius: "1rem",
+              maxWidth: "15rem",
+              width: "10rem",
+              margin: "auto",
+              display: "flex",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            <p
+              style={{
+                fontSize: "1rem",
+                color: "#46494c",
+              }}
+            >
+              {" "}
+              {rowData.modifiedDate}
+            </p>{" "}
+          </div>
+        </Table.Cell>
       </Table.Row>
     </Fragment>
   );

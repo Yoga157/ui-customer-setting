@@ -1,4 +1,10 @@
-import React, { Fragment, useState, useCallback, useEffect, useRef} from "react";
+import React, {
+  Fragment,
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import "./ViewEditCustomer.scss";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,10 +12,25 @@ import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLeve
 import ModalSizeEnum from "constants/ModalSizeEnum";
 import { Form as FinalForm, Field } from "react-final-form";
 import { Link, useParams } from "react-router-dom";
-import { Divider, Dropdown, Form, Label, Icon, Table, Button, Checkbox, Input } from "semantic-ui-react";
-import { DropdownClearInput, CheckBox as CheckboxInvoicing, RichTextEditor, Pagination } from "views/components/UI";
+import {
+  Divider,
+  Dropdown,
+  Form,
+  Label,
+  Icon,
+  Table,
+  Button,
+  Checkbox,
+  Input,
+} from "semantic-ui-react";
+import {
+  DropdownClearInput,
+  CheckBox as CheckboxInvoicing,
+  RichTextEditor,
+  Pagination,
+} from "views/components/UI";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
-import * as data from "../../data"
+import * as data from "../../data";
 
 import ModalNewInvoicingCondition from "../modal/modal-new-invoicing-condition/ModalNewInvoicingCondition";
 import ModalNewRelatedCondition from "../modal/modal-new-related-customer/ModalNewRelatedCustomer";
@@ -17,22 +38,25 @@ import ModalNewRelatedFile from "../modal/modal-new-related-file/ModalNewRelated
 import TableNewCustomerSetting from "../table/table-new-customer-setting/TableNewCustomerSetting";
 import { DeletePopUp } from "../delete";
 
-import { selectCustomerById, selectCustomerSearchOptions } from "selectors/select-options/CustomerNameSelector";
+import {
+  selectCustomerById,
+  selectCustomerSearchOptions,
+} from "selectors/select-options/CustomerNameSelector";
 import IStore from "models/IStore";
-import * as CustomerName from "stores/customer-name/CustomerNameActivityActions"
-import * as CustomerSetting from "stores/customer-setting/CustomerActivityActions"
-import * as CustomerPIC from "stores/customer-pic/CustomerPICActions"
-import * as BrandSummary from "stores/brand-summary/BrandSummaryActivityActions"
-import * as ServiceSummary from "stores/service-summary/ServiceSummaryActivityActions"
-import * as InvoicingSchedule from "stores/invoicing-schedule/InvoicingScheduleActivityActions"
-import * as InvoicingCondition from "stores/invoicing-condition/InvoicingConditionActivityActions"
-import * as RelatedCustomer from "stores/related-customer/RelatedCustomerActivityActions"
-import * as RelatedFile from "stores/related-file/RelatedFileActivityActions"
-import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions"
-import * as ConfigItem from "stores/config-item/ConfigItemActivityActions"
-import * as CollectionHistory from "stores/collection-history/CollectionHistoryActivityActions"
-import * as ProjectHistory from "stores/project-history/ProjectHistoryActivityActions"
-import * as ToastsAction from 'stores/toasts/ToastsAction';
+import * as CustomerName from "stores/customer-name/CustomerNameActivityActions";
+import * as CustomerSetting from "stores/customer-setting/CustomerActivityActions";
+import * as CustomerPIC from "stores/customer-pic/CustomerPICActions";
+import * as BrandSummary from "stores/brand-summary/BrandSummaryActivityActions";
+import * as ServiceSummary from "stores/service-summary/ServiceSummaryActivityActions";
+import * as InvoicingSchedule from "stores/invoicing-schedule/InvoicingScheduleActivityActions";
+import * as InvoicingCondition from "stores/invoicing-condition/InvoicingConditionActivityActions";
+import * as RelatedCustomer from "stores/related-customer/RelatedCustomerActivityActions";
+import * as RelatedFile from "stores/related-file/RelatedFileActivityActions";
+import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
+import * as ConfigItem from "stores/config-item/ConfigItemActivityActions";
+import * as CollectionHistory from "stores/collection-history/CollectionHistoryActivityActions";
+import * as ProjectHistory from "stores/project-history/ProjectHistoryActivityActions";
+import * as ToastsAction from "stores/toasts/ToastsAction";
 import { selectCustomerPIC } from "selectors/customer-pic/CustomerPICSelectors";
 import { selectCustomerSettingByCustomerId } from "selectors/customer-setting/CustomerSettingSelector";
 import { selectBrandSummary } from "selectors/brand-summary/BrandSummarySelector";
@@ -40,7 +64,10 @@ import { selectServiceSummary } from "selectors/service-summary/ServiceSummarySe
 import { selectInvoicingCondition } from "selectors/invoicing-condition/InvoicingConditionSelector";
 import { selectRelatedCustomer } from "selectors/related-customer/RelatedCustomerSelector";
 import { selectRelatedFile } from "selectors/related-file/RelatedFileSelector";
-import { selectSalesHistory, selectSalesSearchOptions } from "selectors/select-options/SalesAssignSelector";
+import {
+  selectSalesHistory,
+  selectSalesSearchOptions,
+} from "selectors/select-options/SalesAssignSelector";
 import InvoicingScheduleModel from "stores/invoicing-schedule/models/InvoicingScheduleModel";
 import SalesAssignPostModel from "stores/customer-sales/models/SalesAssignPostModel";
 import CustomerSettingById from "stores/customer-setting/models/CustomerSettingById";
@@ -55,899 +82,1382 @@ import TableCollectionHistory from "../table/table-collection-history/TableColle
 import ClaimReleaseButton from "../button/ClaimReleaseButton";
 
 interface IProps {
-    customer: {
-        customerSettingID: number,
-        customerID: number,
-        shareable: boolean,
-        named: boolean,
-        pmoCustomer: boolean,
-        customerCategory: string,
-        customerName: string,
-        customerAddress: string,
-        blacklist: boolean,
-        holdshipment: boolean,
-        sales: string,
-        avgAR: number,
-        shareableApprovalStatus: any
-    },
-    role: string
+  customer: {
+    customerSettingID: number;
+    customerID: number;
+    shareable: boolean;
+    named: boolean;
+    pmoCustomer: boolean;
+    customerCategory: string;
+    customerName: string;
+    customerAddress: string;
+    blacklist: boolean;
+    holdshipment: boolean;
+    sales: string;
+    avgAR: number;
+    shareableApprovalStatus: any;
+  };
+  role: string;
 }
 
 interface routeParams {
-    id: string;
+  id: string;
 }
 
-const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
-    const dispatch: Dispatch = useDispatch();
-    const { customer, role } = props;
-    
-    /** Customer data */
-    const accountStatus = (customer.named == null && customer.shareable == null) ? "No Name Account" : (customer.named ? "Named Account" : "Shareable Account");
-    // get employeeName dari local storage
-    const employeeName = "Anjar Wahyudi";
-    // cek apakah employeeName memiliki customer ini
-    const salesArray: string[] = customer.sales.split(", ");
-    const isEmployeeOwnCustomer: boolean = salesArray.includes(employeeName);
-    console.log(salesArray, isEmployeeOwnCustomer)
-    
-    /** Handle dropdown data yang di-get */
-    const [openPicList, setOpenPicList] = useState(false);
-    const [openBrandSummary, setOpenBrandSummary] = useState(false);
-    const [openServiceSummary, setOpenServiceSummary] = useState(false);
-    const [openSalesHistory, setOpenSalesHistory] = useState(false);
-    const [openProjectHistory, setOpenProjectHistory] = useState(false);
-    const [openCollectionHistory, setOpenCollectionHistory] = useState(false);
-    const [openConfigItem, setOpenConfigItem] = useState(false);
+const ViewEditCustomer: React.FC<IProps> = (
+  props: React.PropsWithChildren<IProps>
+) => {
+  const dispatch: Dispatch = useDispatch();
+  const { customer, role } = props;
 
-    const picData = useSelector((state: IStore) => selectCustomerPIC(state));
-    const brandSummaryData = useSelector((state: IStore) => selectBrandSummary(state));
-    const serviceSummaryData = useSelector((state: IStore) => selectServiceSummary(state));
-    const salesHistoryData = useSelector((state: IStore) => selectSalesHistory(state));
-    const configItemData = useSelector((state: IStore) => selectConfigItem(state));
-    const collectionHistoryData = useSelector((state: IStore) => selectCollectionHistory(state));
-    const projectHistoryData = useSelector((state: IStore) => selectProjectHistory(state));
-    
-    /** Project History */
-    const [allHistoryData, setAllHistoryData] = useState(projectHistoryData)
-    const [historyPageSize, setHistoryPageSize] = useState(5)
-    const [historyActivePage, setHistoryActivePage] = useState(1)
-    const [historyData, setHistoryData] = useState(allHistoryData.slice(0, historyPageSize))
-    console.log(allHistoryData)
+  /** Customer data */
+  const accountStatus =
+    customer.named == null && customer.shareable == null
+      ? "No Name Account"
+      : customer.named
+      ? "Named Account"
+      : "Shareable Account";
+  // get employeeName dari local storage
+  const employeeName = "Anjar Wahyudi";
+  // cek apakah employeeName memiliki customer ini
+  const salesArray: string[] = customer.sales.split(", ");
+  const isEmployeeOwnCustomer: boolean = salesArray.includes(employeeName);
+  console.log(salesArray, isEmployeeOwnCustomer);
 
-    // fungsi mengatur perubahan halaman
-    const historyChangePage = (e, page) => {
-        const startIndex = (page.activePage - 1) * historyPageSize;
-        const endIndex = startIndex + historyPageSize;
-        const paginatedData = allHistoryData.slice(startIndex, endIndex);
+  /** Handle dropdown data yang di-get */
+  const [openPicList, setOpenPicList] = useState(false);
+  const [openBrandSummary, setOpenBrandSummary] = useState(false);
+  const [openServiceSummary, setOpenServiceSummary] = useState(false);
+  const [openSalesHistory, setOpenSalesHistory] = useState(false);
+  const [openProjectHistory, setOpenProjectHistory] = useState(false);
+  const [openCollectionHistory, setOpenCollectionHistory] = useState(false);
+  const [openConfigItem, setOpenConfigItem] = useState(false);
 
-        setHistoryData(paginatedData)
-        setHistoryActivePage(page.activePage)
+  const picData = useSelector((state: IStore) => selectCustomerPIC(state));
+  const brandSummaryData = useSelector((state: IStore) =>
+    selectBrandSummary(state)
+  );
+  const serviceSummaryData = useSelector((state: IStore) =>
+    selectServiceSummary(state)
+  );
+  const salesHistoryData = useSelector((state: IStore) =>
+    selectSalesHistory(state)
+  );
+  const configItemData = useSelector((state: IStore) =>
+    selectConfigItem(state)
+  );
+  const collectionHistoryData = useSelector((state: IStore) =>
+    selectCollectionHistory(state)
+  );
+  const projectHistoryData = useSelector((state: IStore) =>
+    selectProjectHistory(state)
+  );
+
+  /** Project History */
+  const [allHistoryData, setAllHistoryData] = useState(projectHistoryData);
+  const [historyPageSize, setHistoryPageSize] = useState(5);
+  const [historyActivePage, setHistoryActivePage] = useState(1);
+  const [historyData, setHistoryData] = useState(
+    allHistoryData.slice(0, historyPageSize)
+  );
+  console.log(allHistoryData);
+
+  // fungsi mengatur perubahan halaman
+  const historyChangePage = (e, page) => {
+    const startIndex = (page.activePage - 1) * historyPageSize;
+    const endIndex = startIndex + historyPageSize;
+    const paginatedData = allHistoryData.slice(startIndex, endIndex);
+
+    setHistoryData(paginatedData);
+    setHistoryActivePage(page.activePage);
+  };
+
+  const [searchText, setSearchText] = useState("");
+  const [cancelBtn, setCancelBtn] = useState(false);
+
+  const onChangeSearch = (event: any, data: any) => {
+    setSearchText(data.value);
+    if (data.value == "") {
+      setCancelBtn(false);
+    } else {
+      setCancelBtn(true);
     }
+  };
 
-    const [searchText, setSearchText] = useState("");
-    const [cancelBtn, setCancelBtn] = useState(false);
+  // fungsi untuk mengatur pencarian
+  const onSearch = () => {
+    if (searchText.length === 0) {
+      setAllHistoryData(projectHistoryData);
+      setSearchText("");
+      setCancelBtn(false);
+    } else {
+      if (searchText.length > 1) {
+        setCancelBtn(true);
+        const lowerKeyword = searchText.toLowerCase();
 
-    const onChangeSearch = (event: any, data: any) => {
-        setSearchText(data.value);
-        if(data.value == "") {
-            setCancelBtn(false);
-        } else {
-            setCancelBtn(true);
-        }
-    };
-    
-    // fungsi untuk mengatur pencarian
-    const onSearch = () => {
-        if (searchText.length === 0) {
-            setAllHistoryData(projectHistoryData)
-            setSearchText("");
-            setCancelBtn(false);
-
-        } else {
-            if (searchText.length > 1) {
-                setCancelBtn(true);
-                const lowerKeyword = searchText.toLowerCase();
-
-                const filteredArray = projectHistoryData.filter((item) =>
-                    Object.values(item).some((value) =>
-                        typeof value === 'string' && value.toLowerCase().includes(lowerKeyword)
-                    )
-                );
-
-                setAllHistoryData(filteredArray);
-            }
-        }
-    };
-
-    useEffect(() => {
-        setHistoryData(allHistoryData.slice(0, historyPageSize));
-        setHistoryActivePage(1);
-    }, [allHistoryData])
-
-    const onClickedCancelButton = () => {
-        setAllHistoryData(projectHistoryData)
-        setSearchText("");
-        setCancelBtn(false);
-    }
-
-    /** Add setting */
-    const [pmoCustomer, setPmoCustomer] = useState(customer.pmoCustomer ? "TRUE" : "FALSE");
-
-    const handlePmoCustomer = () => {
-        if(pmoCustomer == "FALSE") {
-            setPmoCustomer("TRUE")
-        } else {
-            setPmoCustomer("FALSE")
-        }
-    }
-
-    /** Invoicing schedule */
-    const invoicingSchedule = useSelector((state: IStore) => selectInvoicingSchedule(state));
-
-    const days = ["All days", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-    const [daysArray, setDaysArray] = useState(invoicingSchedule.scheduleDays?.split(", ") || []);
-    const [isAllDaysChecked, setIsAllDaysChecked] = useState(invoicingSchedule.scheduleDays === "Monday, Tuesday, Wednesday, Thursday, Friday" || false)
-
-    const checkDay = (day) => {
-        if(day == "All days") {
-            if(daysArray.includes("Monday") && daysArray.includes("Tuesday") && daysArray.includes("Wednesday") && daysArray.includes("Thursday") && daysArray.includes("Friday")){
-                setIsAllDaysChecked(false)
-                setDaysArray([])
-            } else {
-                setDaysArray(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
-                setIsAllDaysChecked(true)
-            }
-        } else {
-            const isDaySelected = daysArray.includes(day);
-
-            if (isDaySelected) {
-                setDaysArray(daysArray.filter(selectedDay => selectedDay !== day));
-            } else {
-                setDaysArray([...daysArray, day]);
-            }
-        }
-    }
-
-    const [minDate, setMinDate] = useState(invoicingSchedule.minDate || 0)
-    const [maxDate, setMaxDate] = useState(invoicingSchedule.maxDate || 0)
-    const [remark, setRemark] = useState(invoicingSchedule.remark || "")
-
-    const onSubmitCustomerSettingHandler = async (values) => {
-        let userLogin = JSON.parse(localStorage.getItem('userLogin'));
-
-        console.log("submit setting data")
-        console.log(values)
-        console.log(daysArray)
-
-        // const NewCustomerSettingData = new CustomerSettingById({})
-        // NewCustomerSettingData.customerSettingID = Number(id);
-        // NewCustomerSettingData.customerID = customerSettingData.customerID;
-        // NewCustomerSettingData.customerCategoryID = customerSettingData.customerCategoryID;
-        // NewCustomerSettingData.shareable = shareable == "TRUE" ? true : false;
-        // NewCustomerSettingData.pmoCustomer = pmoCustomer == "TRUE" ? true : false;
-        // NewCustomerSettingData.createUserID = customerSettingData.createUserID;
-        // NewCustomerSettingData.modifyUserID = userLogin?.employeeID != null ? userLogin.employeeID : 0;
-        
-        // await dispatch(CustomerSetting.putCustomerSetting(NewCustomerSettingData, Number(id)));
-
-        /** post invoicing schedule */
-        let remark = values.remark;
-
-        // const NewInvoicingSchedule = new InvoicingScheduleModel({});
-        // NewInvoicingSchedule.scheduleID = invoicingSchedule.scheduleID;
-        // NewInvoicingSchedule.customerSettingID = Number(id);
-        // NewInvoicingSchedule.scheduleDays = daysArray.join(", ");
-        // NewInvoicingSchedule.remark = remark;
-        // NewInvoicingSchedule.minDate = minDate;
-        // NewInvoicingSchedule.maxDate = maxDate;
-        // NewInvoicingSchedule.createUserID = invoicingSchedule.createUserID;
-        // NewInvoicingSchedule.modifyUserID = userLogin?.employeeID;
-
-        // dispatch(InvoicingSchedule.putInvoicingSchedule(NewInvoicingSchedule, invoicingSchedule.scheduleID))
-
-        // dispatch(CustomerSetting.postCustomerSetting(NewCustomerSettingData));
-        dispatch(ToastsAction.add('Edit customer setting data success!', ToastStatusEnum.Success));
-        // setCustomerName('');
-        // setCustomerData(undefined);
-    }
-
-    /** Project Type */
-    const [projectType, setProjectType] = useState("")
-    const projectTypeData = [
-        {
-            text: "Manage Operation",
-            value: "Manage Operation"
-        },
-        {
-            text: "Manage Service",
-            value: "Manage Service"
-        },
-        {
-            text: "Project Type",
-            value: "Project Type"
-        },
-    ]
-
-    const onChangeProjectType = (data: any): any => {
-        setProjectType(data)
-    }
-
-    const onSubmitData = (data) => {
-
-    }
-
-    /** Invoicing requirement */
-    const onAddInvoicingCondition = useCallback((): void => {
-        dispatch(
-          ModalFirstLevelActions.OPEN(
-            <ModalNewInvoicingCondition customerSettingID={customer.customerID} />,
-            ModalSizeEnum.Small
+        const filteredArray = projectHistoryData.filter((item) =>
+          Object.values(item).some(
+            (value) =>
+              typeof value === "string" &&
+              value.toLowerCase().includes(lowerKeyword)
           )
         );
-    }, [dispatch]);
 
-    const invoicingConditionData = useSelector((state: IStore) => selectInvoicingCondition(state));
+        setAllHistoryData(filteredArray);
+      }
+    }
+  };
 
-    const deleteInvoicingCondition = useCallback((idToDel: number): void => {
-        dispatch(
-          ModalFirstLevelActions.OPEN(
-            <DeletePopUp deleteFunc={InvoicingCondition.deleteInvoicingCondition} refreshFunc={InvoicingCondition.requestInvoicingCondition} id={idToDel} customerSettingID={customer.customerID} content="invoicing condition" />,
-            ModalSizeEnum.Tiny
-          )
-        );
-      }, [dispatch]);
+  useEffect(() => {
+    setHistoryData(allHistoryData.slice(0, historyPageSize));
+    setHistoryActivePage(1);
+  }, [allHistoryData]);
 
-    /** Related customer */
-    const onAddRelatedCustomer = useCallback((): void => {
-        dispatch(
-          ModalFirstLevelActions.OPEN(
-            <ModalNewRelatedCondition customerSettingID={customer.customerID} />,
-            ModalSizeEnum.Tiny
-          )
-        );
-      }, [dispatch]);
+  const onClickedCancelButton = () => {
+    setAllHistoryData(projectHistoryData);
+    setSearchText("");
+    setCancelBtn(false);
+  };
 
-    const relatedCustomerData = useSelector((state: IStore) => selectRelatedCustomer(state));
-    
-    const deleteRelatedCustomer = useCallback((idToDel: number): void => {
-        dispatch(
-          ModalFirstLevelActions.OPEN(
-            <DeletePopUp deleteFunc={RelatedCustomer.deleteRelatedCustomer} refreshFunc={RelatedCustomer.requestRelatedCustomer} id={idToDel} customerSettingID={customer.customerID} content="related customer" />,
-            ModalSizeEnum.Tiny
-          )
-        );
-      }, [dispatch]);
+  /** Add setting */
+  const [pmoCustomer, setPmoCustomer] = useState(
+    customer.pmoCustomer ? "TRUE" : "FALSE"
+  );
 
-    /** RelatedFile */
-    const onAddRelatedFile = useCallback((): void => {
-        dispatch(
-          ModalFirstLevelActions.OPEN(
-            <ModalNewRelatedFile customerSettingID={customer.customerID} />,
-            ModalSizeEnum.Small
-          )
-        );
-      }, [dispatch]);
-    
-    const relatedFileData = useSelector((state: IStore) => selectRelatedFile(state));
+  const handlePmoCustomer = () => {
+    if (pmoCustomer == "FALSE") {
+      setPmoCustomer("TRUE");
+    } else {
+      setPmoCustomer("FALSE");
+    }
+  };
 
-    const deleteRelatedFile = useCallback((idToDel: number): void => {
-        dispatch(
+  /** Invoicing schedule */
+  const invoicingSchedule = useSelector((state: IStore) =>
+    selectInvoicingSchedule(state)
+  );
+
+  const days = [
+    "All days",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+  ];
+  const [daysArray, setDaysArray] = useState(
+    invoicingSchedule.scheduleDays?.split(", ") || []
+  );
+  const [isAllDaysChecked, setIsAllDaysChecked] = useState(
+    invoicingSchedule.scheduleDays ===
+      "Monday, Tuesday, Wednesday, Thursday, Friday" || false
+  );
+
+  const checkDay = (day) => {
+    if (day == "All days") {
+      if (
+        daysArray.includes("Monday") &&
+        daysArray.includes("Tuesday") &&
+        daysArray.includes("Wednesday") &&
+        daysArray.includes("Thursday") &&
+        daysArray.includes("Friday")
+      ) {
+        setIsAllDaysChecked(false);
+        setDaysArray([]);
+      } else {
+        setDaysArray(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]);
+        setIsAllDaysChecked(true);
+      }
+    } else {
+      const isDaySelected = daysArray.includes(day);
+
+      if (isDaySelected) {
+        setDaysArray(daysArray.filter((selectedDay) => selectedDay !== day));
+      } else {
+        setDaysArray([...daysArray, day]);
+      }
+    }
+  };
+
+  const [minDate, setMinDate] = useState(invoicingSchedule.minDate || 0);
+  const [maxDate, setMaxDate] = useState(invoicingSchedule.maxDate || 0);
+  const [remark, setRemark] = useState(invoicingSchedule.remark || "");
+
+  const onSubmitCustomerSettingHandler = async (values) => {
+    let userLogin = JSON.parse(localStorage.getItem("userLogin"));
+
+    console.log("submit setting data");
+    console.log(values);
+    console.log(daysArray);
+
+    // const NewCustomerSettingData = new CustomerSettingById({})
+    // NewCustomerSettingData.customerSettingID = Number(id);
+    // NewCustomerSettingData.customerID = customerSettingData.customerID;
+    // NewCustomerSettingData.customerCategoryID = customerSettingData.customerCategoryID;
+    // NewCustomerSettingData.shareable = shareable == "TRUE" ? true : false;
+    // NewCustomerSettingData.pmoCustomer = pmoCustomer == "TRUE" ? true : false;
+    // NewCustomerSettingData.createUserID = customerSettingData.createUserID;
+    // NewCustomerSettingData.modifyUserID = userLogin?.employeeID != null ? userLogin.employeeID : 0;
+
+    // await dispatch(CustomerSetting.putCustomerSetting(NewCustomerSettingData, Number(id)));
+
+    /** post invoicing schedule */
+    let remark = values.remark;
+
+    // const NewInvoicingSchedule = new InvoicingScheduleModel({});
+    // NewInvoicingSchedule.scheduleID = invoicingSchedule.scheduleID;
+    // NewInvoicingSchedule.customerSettingID = Number(id);
+    // NewInvoicingSchedule.scheduleDays = daysArray.join(", ");
+    // NewInvoicingSchedule.remark = remark;
+    // NewInvoicingSchedule.minDate = minDate;
+    // NewInvoicingSchedule.maxDate = maxDate;
+    // NewInvoicingSchedule.createUserID = invoicingSchedule.createUserID;
+    // NewInvoicingSchedule.modifyUserID = userLogin?.employeeID;
+
+    // dispatch(InvoicingSchedule.putInvoicingSchedule(NewInvoicingSchedule, invoicingSchedule.scheduleID))
+
+    // dispatch(CustomerSetting.postCustomerSetting(NewCustomerSettingData));
+    dispatch(
+      ToastsAction.add(
+        "Edit customer setting data success!",
+        ToastStatusEnum.Success
+      )
+    );
+    // setCustomerName('');
+    // setCustomerData(undefined);
+  };
+
+  /** Project Type */
+  const [projectType, setProjectType] = useState("");
+  const projectTypeData = [
+    {
+      text: "Manage Operation",
+      value: "Manage Operation",
+    },
+    {
+      text: "Manage Service",
+      value: "Manage Service",
+    },
+    {
+      text: "Project Type",
+      value: "Project Type",
+    },
+  ];
+
+  const onChangeProjectType = (data: any): any => {
+    setProjectType(data);
+  };
+
+  const onSubmitData = (data) => {};
+
+  /** Invoicing requirement */
+  const onAddInvoicingCondition = useCallback((): void => {
+    dispatch(
+      ModalFirstLevelActions.OPEN(
+        <ModalNewInvoicingCondition customerSettingID={customer.customerID} />,
+        ModalSizeEnum.Small
+      )
+    );
+  }, [dispatch]);
+
+  const invoicingConditionData = useSelector((state: IStore) =>
+    selectInvoicingCondition(state)
+  );
+
+  const deleteInvoicingCondition = useCallback(
+    (idToDel: number): void => {
+      dispatch(
         ModalFirstLevelActions.OPEN(
-            <DeletePopUp deleteFunc={RelatedFile.deleteRelatedFile} refreshFunc={RelatedFile.requestRelatedFile} id={idToDel} customerSettingID={customer.customerID} content="related file" />,
-            ModalSizeEnum.Tiny
+          <DeletePopUp
+            deleteFunc={InvoicingCondition.deleteInvoicingCondition}
+            refreshFunc={InvoicingCondition.requestInvoicingCondition}
+            id={idToDel}
+            customerSettingID={customer.customerID}
+            content="invoicing condition"
+          />,
+          ModalSizeEnum.Tiny
         )
-        );
-    }, [dispatch]);
-    
-    /** data yang perlu di get */
-    useEffect(() => {
-        // console.log(customerSettingData)
-        // if(!Number.isNaN(customer.customerID)) {
-        if(projectHistoryData.length == 0) {
-            // dispatch(CustomerName.requestCustomerById(customerSettingData.customerID))
-            // dispatch(ConfigItem.requestConfigItem(customerSettingData.customerID))
-            // dispatch(CollectionHistory.requestCollectionHistory(customerSettingData.customerID))
-            dispatch(CustomerPIC.requestGetCustomerPIC(customer.customerID))
-            dispatch(BrandSummary.requestBrandSummary(customer.customerID))
-            dispatch(ServiceSummary.requestServiceSummary(customer.customerID))
-            dispatch(ProjectHistory.requestProjectHistory(customer.customerID))
-            setPmoCustomer(customer.pmoCustomer ? "TRUE": "FALSE")
-        }
+      );
+    },
+    [dispatch]
+  );
 
-        if(projectHistoryData.length != 0) {
-            setAllHistoryData(projectHistoryData)
-        }
-        
-        if(!Number.isNaN(invoicingSchedule.scheduleID)) {
-            if(invoicingSchedule.scheduleDays === "Monday, Tuesday, Wednesday, Thursday, Friday") {
-                setIsAllDaysChecked(true)
-            } else {
-                setIsAllDaysChecked(false)
-            }
+  /** Related customer */
+  const onAddRelatedCustomer = useCallback((): void => {
+    dispatch(
+      ModalFirstLevelActions.OPEN(
+        <ModalNewRelatedCondition customerSettingID={customer.customerID} />,
+        ModalSizeEnum.Tiny
+      )
+    );
+  }, [dispatch]);
 
-            setDaysArray(invoicingSchedule.scheduleDays.split(", "))
-            setMinDate(invoicingSchedule.minDate)
-            setMaxDate(invoicingSchedule.maxDate)
-            setRemark(invoicingSchedule.remark)
+  const relatedCustomerData = useSelector((state: IStore) =>
+    selectRelatedCustomer(state)
+  );
 
-        }
-    }, [dispatch, invoicingSchedule, projectHistoryData])
+  const deleteRelatedCustomer = useCallback(
+    (idToDel: number): void => {
+      dispatch(
+        ModalFirstLevelActions.OPEN(
+          <DeletePopUp
+            deleteFunc={RelatedCustomer.deleteRelatedCustomer}
+            refreshFunc={RelatedCustomer.requestRelatedCustomer}
+            id={idToDel}
+            customerSettingID={customer.customerID}
+            content="related customer"
+          />,
+          ModalSizeEnum.Tiny
+        )
+      );
+    },
+    [dispatch]
+  );
 
-    const isRequesting: boolean = false;
-    // const isRequesting: boolean = useSelector((state: IStore) =>
-    //     selectRequesting(state, [
-    //         InvoicingCondition.REQUEST_GET_INVOICING_CONDITION,
-    //         RelatedFile.REQUEST_GET_RELATED_FILE,
-    //         SalesAssign.REQUEST_SALES_HISTORY,
-    //         InvoicingSchedule.REQUEST_GET_INVOICING_SCHEDULE,
-    //         CustomerSetting.REQUEST_CUSTOMER_SETTING_BY_ID,
-    //         CustomerName.REQUEST_CUSTOMER_BY_ID,
-    //         ConfigItem.REQUEST_GET_CONFIG_ITEM,
-    //         CollectionHistory.REQUEST_GET_COLLECTION_HISTORY,
-    //         CustomerPIC.REQUEST_GET_CUSTOMER_PIC,
-    //         BrandSummary.REQUEST_GET_BRAND_SUMMARY,
-    //         ServiceSummary.REQUEST_GET_SERVICE_SUMMARY,
-    //         ProjectHistory.REQUEST_GET_PROJECT_HISTORY
-    //     ])
-    // );
+  /** RelatedFile */
+  const onAddRelatedFile = useCallback((): void => {
+    dispatch(
+      ModalFirstLevelActions.OPEN(
+        <ModalNewRelatedFile customerSettingID={customer.customerID} />,
+        ModalSizeEnum.Small
+      )
+    );
+  }, [dispatch]);
 
-    /** mengatur style dan fungsionalitas status approval */
-    const firstDivRef = useRef(null);
-    const secondDivRef = useRef(null);
-    const hrRef = useRef(null);
+  const relatedFileData = useSelector((state: IStore) =>
+    selectRelatedFile(state)
+  );
 
-    const statusDivRef = useRef(null);
-    const linkRef = useRef(null);
+  const deleteRelatedFile = useCallback(
+    (idToDel: number): void => {
+      dispatch(
+        ModalFirstLevelActions.OPEN(
+          <DeletePopUp
+            deleteFunc={RelatedFile.deleteRelatedFile}
+            refreshFunc={RelatedFile.requestRelatedFile}
+            id={idToDel}
+            customerSettingID={customer.customerID}
+            content="related file"
+          />,
+          ModalSizeEnum.Tiny
+        )
+      );
+    },
+    [dispatch]
+  );
 
-    // state untuk membuka dan menutup status approval
-    const [showStatus, setShowStatus] = useState(false);
-    const [navbarHeight, setNavbarHeight] = useState(0);
+  /** data yang perlu di get */
+  useEffect(() => {
+    // console.log(customerSettingData)
+    // if(!Number.isNaN(customer.customerID)) {
+    if (projectHistoryData.length == 0) {
+      // dispatch(CustomerName.requestCustomerById(customerSettingData.customerID))
+      // dispatch(ConfigItem.requestConfigItem(customerSettingData.customerID))
+      // dispatch(CollectionHistory.requestCollectionHistory(customerSettingData.customerID))
+      dispatch(CustomerPIC.requestGetCustomerPIC(customer.customerID));
+      dispatch(BrandSummary.requestBrandSummary(customer.customerID));
+      dispatch(ServiceSummary.requestServiceSummary(customer.customerID));
+      dispatch(ProjectHistory.requestProjectHistory(customer.customerID));
+      setPmoCustomer(customer.pmoCustomer ? "TRUE" : "FALSE");
+    }
 
-    useEffect(() => {
-        const firstDivElement = firstDivRef.current;
-        const secondDivElement = secondDivRef.current;
-        
-        if (firstDivElement && secondDivElement) {
-            const firstElementWidth = firstDivElement.offsetWidth;
-            const secondElementWidth = secondDivElement.offsetWidth;
-            
-            hrRef.current.style.paddingLeft = `calc(${firstElementWidth/2}px + 5.5em)`;
-            hrRef.current.style.paddingRight = `calc(${secondElementWidth/2}px + 5.5em)`;
-        }
-        
-        const statusDivElement = statusDivRef.current;
+    if (projectHistoryData.length != 0) {
+      setAllHistoryData(projectHistoryData);
+    }
 
-        if (statusDivElement) {
-            const statusElementHeight = statusDivElement.offsetHeight;
-            linkRef.current.style.marginTop = `calc(${statusElementHeight}px + 1em)`;
-        }
+    if (!Number.isNaN(invoicingSchedule.scheduleID)) {
+      if (
+        invoicingSchedule.scheduleDays ===
+        "Monday, Tuesday, Wednesday, Thursday, Friday"
+      ) {
+        setIsAllDaysChecked(true);
+      } else {
+        setIsAllDaysChecked(false);
+      }
 
-        const navbarElement = document.querySelector('.DisInlineBlock') as HTMLElement;
+      setDaysArray(invoicingSchedule.scheduleDays.split(", "));
+      setMinDate(invoicingSchedule.minDate);
+      setMaxDate(invoicingSchedule.maxDate);
+      setRemark(invoicingSchedule.remark);
+    }
+  }, [dispatch, invoicingSchedule, projectHistoryData]);
 
-        if (navbarElement) {
-            const navbarHeight = navbarElement.offsetHeight;
-            setNavbarHeight(navbarHeight)
-        }
-      }, [setNavbarHeight, showStatus]);
+  const isRequesting: boolean = false;
+  // const isRequesting: boolean = useSelector((state: IStore) =>
+  //     selectRequesting(state, [
+  //         InvoicingCondition.REQUEST_GET_INVOICING_CONDITION,
+  //         RelatedFile.REQUEST_GET_RELATED_FILE,
+  //         SalesAssign.REQUEST_SALES_HISTORY,
+  //         InvoicingSchedule.REQUEST_GET_INVOICING_SCHEDULE,
+  //         CustomerSetting.REQUEST_CUSTOMER_SETTING_BY_ID,
+  //         CustomerName.REQUEST_CUSTOMER_BY_ID,
+  //         ConfigItem.REQUEST_GET_CONFIG_ITEM,
+  //         CollectionHistory.REQUEST_GET_COLLECTION_HISTORY,
+  //         CustomerPIC.REQUEST_GET_CUSTOMER_PIC,
+  //         BrandSummary.REQUEST_GET_BRAND_SUMMARY,
+  //         ServiceSummary.REQUEST_GET_SERVICE_SUMMARY,
+  //         ProjectHistory.REQUEST_GET_PROJECT_HISTORY
+  //     ])
+  // );
 
-    return (
-        <Fragment>
-            {customer?.shareableApprovalStatus?.approvalStatus &&
-                <div ref={statusDivRef} style={{ zIndex: 4, position: "fixed", top: 0, left: 0, width: "100vw", color: "#55637A"}}> 
-                    <div style={{ paddingTop: "6em", paddingInline: "5.5em", paddingBottom: "1.5em", backgroundColor: "#DADCDB", transition: "opacity 0.5s ease-in-out, transform 0.5s ease-in-out", opacity: showStatus ? 1 : 0, transform: `translateY(${({showStatus}) => (showStatus ? '0' : '-50px')})`, display: showStatus ? 'block' : 'none' }}>
-                        <h4>Shareable Account Approval</h4>
-                        <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-                            <div ref={firstDivRef} style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", fontSize: "small", zIndex: 1 }}>
-                                <div style={{ height: "1rem", width: "1rem", borderRadius: "100%", backgroundColor: "#589DDB"}}></div>
-                                <p className="margin-0">Request By</p>
-                                <p className="margin-0" style={{ fontWeight: "bold" }}>{customer?.shareableApprovalStatus?.requestedBy}</p>
-                                <span style={{ color: "grey" }}><Icon name="check circle" style={{ color: "#27D4A5" }}/>{customer?.shareableApprovalStatus?.requestedDate}</span>
-                            </div>
+  /** mengatur style dan fungsionalitas status approval */
+  const firstDivRef = useRef(null);
+  const secondDivRef = useRef(null);
+  const hrRef = useRef(null);
 
-                            <div ref={secondDivRef} style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", fontSize: "small", zIndex: 1 }}>
-                                <div style={{ height: "1rem", width: "1rem", borderRadius: "100%", backgroundColor: "#589DDB"}}></div>
-                                <p className="margin-0">{customer?.shareableApprovalStatus?.approvalStatus.toUpperCase() == "WAITING" ? "Waiting Approval By" : (customer?.shareableApprovalStatus?.approvalStatus.toUpperCase() == "APPROVED" ? "Approved By" : "Rejected By")}</p>
-                                <p className="margin-0" style={{ fontWeight: "bold" }}>{customer?.shareableApprovalStatus?.approvalBy}</p>
-                                <span style={{ color: "grey" }}>
-                                    {customer?.shareableApprovalStatus?.approvalStatus.toUpperCase() == "WAITING" ? 
-                                        <><Icon name="exclamation circle" style={{ color: "#FFA800" }}/> Waiting Approval </> : 
-                                    (customer?.shareableApprovalStatus?.approvalStatus.toUpperCase() == "APPROVED" ?
-                                        <><Icon name="check circle" style={{ color: "#27D4A5" }}/> {customer?.shareableApprovalStatus?.approvalDate}</> : 
-                                        <><Icon name="remove circle" style={{ color: "red" }}/> Rejected</>
-                                    )}
-                                </span>
-                            </div>
+  const statusDivRef = useRef(null);
+  const linkRef = useRef(null);
 
-                            <div ref={hrRef} style={{ position: "absolute", zIndex: 0, width: "100%", left: "50%", transform: "translate(-50%)" }}>
-                                <hr style={{ backgroundColor: "#BCC0C5", height: "2px", borderStyle: "none", width: "100%" }}/>
-                            </div>
-                        </div>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: !showStatus ? `${navbarHeight}px` : `0`, cursor: "pointer" }} onClick={() => setShowStatus(!showStatus)}>
-                        <div style={{ backgroundColor: "#656DD1", borderRadius: "0 0 10rem 10rem", padding: "0.1rem 2.5rem"}}>
-                            <span style={{ color: "white", fontSize: "small" }}>{!showStatus ? "Approval Status" : ""}<Icon name="angle down" style={{ color: "white" }}/></span>
-                        </div>
-                    </div>
+  // state untuk membuka dan menutup status approval
+  const [showStatus, setShowStatus] = useState(false);
+  const [navbarHeight, setNavbarHeight] = useState(0);
+
+  useEffect(() => {
+    const firstDivElement = firstDivRef.current;
+    const secondDivElement = secondDivRef.current;
+
+    if (firstDivElement && secondDivElement) {
+      const firstElementWidth = firstDivElement.offsetWidth;
+      const secondElementWidth = secondDivElement.offsetWidth;
+
+      hrRef.current.style.paddingLeft = `calc(${firstElementWidth /
+        2}px + 5.5em)`;
+      hrRef.current.style.paddingRight = `calc(${secondElementWidth /
+        2}px + 5.5em)`;
+    }
+
+    const statusDivElement = statusDivRef.current;
+
+    if (statusDivElement) {
+      const statusElementHeight = statusDivElement.offsetHeight;
+      linkRef.current.style.marginTop = `calc(${statusElementHeight}px + 1em)`;
+    }
+
+    const navbarElement = document.querySelector(
+      ".DisInlineBlock"
+    ) as HTMLElement;
+
+    if (navbarElement) {
+      const navbarHeight = navbarElement.offsetHeight;
+      setNavbarHeight(navbarHeight);
+    }
+  }, [setNavbarHeight, showStatus]);
+
+  return (
+    <Fragment>
+      {customer?.shareableApprovalStatus?.approvalStatus && (
+        <div
+          ref={statusDivRef}
+          style={{
+            zIndex: 4,
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            color: "#55637A",
+          }}
+        >
+          <div
+            style={{
+              paddingTop: "6em",
+              paddingInline: "5.5em",
+              paddingBottom: "1.5em",
+              backgroundColor: "#DADCDB",
+              transition:
+                "opacity 0.5s ease-in-out, transform 0.5s ease-in-out",
+              opacity: showStatus ? 1 : 0,
+              transform: `translateY(${({ showStatus }) =>
+                showStatus ? "0" : "-50px"})`,
+              display: showStatus ? "block" : "none",
+            }}
+          >
+            <h4>Shareable Account Approval</h4>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <div
+                ref={firstDivRef}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  fontSize: "small",
+                  zIndex: 1,
+                }}
+              >
+                <div
+                  style={{
+                    height: "1rem",
+                    width: "1rem",
+                    borderRadius: "100%",
+                    backgroundColor: "#589DDB",
+                  }}
+                ></div>
+                <p className="margin-0">Request By</p>
+                <p className="margin-0" style={{ fontWeight: "bold" }}>
+                  {customer?.shareableApprovalStatus?.requestedBy}
+                </p>
+                <span style={{ color: "grey" }}>
+                  <Icon name="check circle" style={{ color: "#27D4A5" }} />
+                  {customer?.shareableApprovalStatus?.requestedDate}
+                </span>
+              </div>
+
+              <div
+                ref={secondDivRef}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  fontSize: "small",
+                  zIndex: 1,
+                }}
+              >
+                <div
+                  style={{
+                    height: "1rem",
+                    width: "1rem",
+                    borderRadius: "100%",
+                    backgroundColor: "#589DDB",
+                  }}
+                ></div>
+                <p className="margin-0">
+                  {customer?.shareableApprovalStatus?.approvalStatus.toUpperCase() ==
+                  "WAITING"
+                    ? "Waiting Approval By"
+                    : customer?.shareableApprovalStatus?.approvalStatus.toUpperCase() ==
+                      "APPROVED"
+                    ? "Approved By"
+                    : "Rejected By"}
+                </p>
+                <p className="margin-0" style={{ fontWeight: "bold" }}>
+                  {customer?.shareableApprovalStatus?.approvalBy}
+                </p>
+                <span style={{ color: "grey" }}>
+                  {customer?.shareableApprovalStatus?.approvalStatus.toUpperCase() ==
+                  "WAITING" ? (
+                    <>
+                      <Icon
+                        name="exclamation circle"
+                        style={{ color: "#FFA800" }}
+                      />{" "}
+                      Waiting Approval{" "}
+                    </>
+                  ) : customer?.shareableApprovalStatus?.approvalStatus.toUpperCase() ==
+                    "APPROVED" ? (
+                    <>
+                      <Icon name="check circle" style={{ color: "#27D4A5" }} />{" "}
+                      {customer?.shareableApprovalStatus?.approvalDate}
+                    </>
+                  ) : (
+                    <>
+                      <Icon name="remove circle" style={{ color: "red" }} />{" "}
+                      Rejected
+                    </>
+                  )}
+                </span>
+              </div>
+
+              <div
+                ref={hrRef}
+                style={{
+                  position: "absolute",
+                  zIndex: 0,
+                  width: "100%",
+                  left: "50%",
+                  transform: "translate(-50%)",
+                }}
+              >
+                <hr
+                  style={{
+                    backgroundColor: "#BCC0C5",
+                    height: "2px",
+                    borderStyle: "none",
+                    width: "100%",
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: !showStatus ? `${navbarHeight}px` : `0`,
+              cursor: "pointer",
+            }}
+            onClick={() => setShowStatus(!showStatus)}
+          >
+            <div
+              style={{
+                backgroundColor: "#656DD1",
+                borderRadius: "0 0 10rem 10rem",
+                padding: "0.1rem 2.5rem",
+              }}
+            >
+              <span style={{ color: "white", fontSize: "small" }}>
+                {!showStatus ? "Approval Status" : ""}
+                <Icon name="angle down" style={{ color: "white" }} />
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div ref={linkRef}>
+        <Link to="/customer-setting" className="link">
+          {"< Back to Customer Setting List"}
+        </Link>
+
+        <div className="form-container">
+          {/* judul add new customer setting */}
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <p className="page-title grey">VIEW/EDIT CUSTOMER SETTING</p>
+            <div className="pmo-toggle">
+              <p style={{ margin: "0 1rem 0 0" }}>PMO customer</p>
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <p className="margin-0">OFF</p>
+                <Checkbox
+                  toggle
+                  checked={pmoCustomer == "TRUE" ? true : false}
+                  onChange={() => handlePmoCustomer()}
+                  className="toggle-margin"
+                ></Checkbox>
+                <p className="margin-0">ON</p>
+              </div>
+            </div>
+          </div>
+
+          <Divider></Divider>
+
+          <LoadingIndicator isActive={isRequesting}>
+            {/* search customer name dan data customer */}
+
+            {/* {(customerData.customerID != 0 && !Number.isNaN(customerSettingData.customerID)) && */}
+            <>
+              <div className="padding-horizontal customer-search-container">
+                <div className="customer-data-container">
+                  <label
+                    className="address-font-label"
+                    style={{ textAlign: "left" }}
+                  >
+                    Account Status
+                  </label>
+                  <Label
+                    style={{
+                      backgroundColor:
+                        accountStatus == "Named Account"
+                          ? "#959EAC"
+                          : accountStatus == "No Name Account"
+                          ? "#949AA1"
+                          : "#27D4A5",
+                      color: "white",
+                    }}
+                    className="boolean-container"
+                  >
+                    <p>{accountStatus}</p>
+                  </Label>
                 </div>
-            }
 
-            <div ref={linkRef}>
-                <Link to="/customer-setting" className="link">{"< Back to Customer Setting List"}</Link>
+                <div className="customer-data-container">
+                  <label className="customer-data-label">Cust. Category</label>
+                  <p
+                    style={{ fontSize: "24px", fontWeight: "bold" }}
+                    className="grey"
+                  >
+                    Enterprise
+                  </p>
+                </div>
 
-                <div className="form-container">
-                    {/* judul add new customer setting */}
-                    <div style={{ display: "flex", justifyContent: "space-between"}}>
-                        <p className="page-title grey">VIEW/EDIT CUSTOMER SETTING</p>
-                        <div className="pmo-toggle">
-                            <p style={{ margin: "0 1rem 0 0"}}>PMO customer</p>
-                            <div style={{ display: "flex", justifyContent: "center"}}>
-                                <p className="margin-0">OFF</p>
-                                <Checkbox toggle  checked={pmoCustomer=="TRUE" ? true : false} onChange={() => handlePmoCustomer()} className="toggle-margin"></Checkbox>
-                                <p className="margin-0">ON</p>
+                <div className="customer-data-container">
+                  <label className="customer-data-label">CustomerID</label>
+                  <p
+                    style={{ fontSize: "24px", fontWeight: "bold" }}
+                    className="grey"
+                  >
+                    {customer.customerID}
+                  </p>
+                </div>
+
+                <div className="customer-data-container">
+                  <label className="customer-data-label">Blacklist</label>
+                  <Label
+                    color={customer.blacklist ? "red" : "teal"}
+                    className="boolean-container"
+                  >
+                    <Icon name="address book" />
+                    {customer.blacklist ? "Yes" : "No"}
+                  </Label>
+                </div>
+
+                <div className="customer-data-container">
+                  <label className="customer-data-label">Holdshipment</label>
+                  <Label
+                    color={customer.holdshipment ? "red" : "blue"}
+                    className="boolean-container"
+                  >
+                    <Icon name="truck" />
+                    {customer.holdshipment ? "Yes" : "No"}
+                  </Label>
+                </div>
+
+                <div className="customer-data-container">
+                  <label className="customer-data-label">Avg. AR (days)</label>
+                  <p className="grey avgar-font">{customer.avgAR}</p>
+                </div>
+              </div>
+
+              <div style={{ margin: "14px 0" }} className="padding-horizontal">
+                <label
+                  className="address-font-label"
+                  style={{ textAlign: "left" }}
+                >
+                  Customer Name
+                </label>
+                <p
+                  style={{ fontSize: "20px", fontWeight: "bold" }}
+                  className="grey"
+                >
+                  {customer.customerName}
+                </p>
+              </div>
+
+              <div style={{ margin: "14px 0" }} className="padding-horizontal">
+                <label className="address-font-label">Address</label>
+                <p style={{ fontSize: "20px" }} className="grey">
+                  {customer.customerAddress}
+                </p>
+              </div>
+            </>
+            {/* } */}
+
+            <Divider></Divider>
+
+            <div className="padding-horizontal title-button-row">
+              <p className="grey margin-0 bold text-align-left">
+                ACCOUNT OWNER SETTING
+              </p>
+              <ClaimReleaseButton
+                accountStatus={accountStatus}
+                isEmployeeOwnCustomer={isEmployeeOwnCustomer}
+              />
+            </div>
+
+            <Divider></Divider>
+
+            <div style={{}} className="padding-horizontal">
+              <TableNewCustomerSetting
+                data={data.accOwnerData}
+                header={data.accOwnerHeader}
+                sequenceNum={true}
+              />
+            </div>
+            <Divider></Divider>
+
+            {/* {(customer.customerID != 0 && !Number.isNaN(customerSettingData.customerID)) ? */}
+            <>
+              {/* data get mengenai customer */}
+              <div className="padding-horizontal">
+                <div className="grey get-data-container">
+                  <div
+                    className="accordion-container"
+                    onClick={() => setOpenPicList(!openPicList)}
+                  >
+                    <span className="bold">CUSTOMER PIC LIST</span>
+                    {openPicList ? (
+                      <Icon name="triangle down" />
+                    ) : (
+                      <Icon name="triangle right" />
+                    )}
+                  </div>
+                  <Divider className="margin-0"></Divider>
+
+                  {openPicList && (
+                    <>
+                      <div className="table-container">
+                        <TableNewCustomerSetting
+                          data={picData}
+                          header={data.picHeader}
+                          sequenceNum={true}
+                        />
+                      </div>
+                      <Divider className="margin-0"></Divider>
+                    </>
+                  )}
+
+                  <div
+                    className="accordion-container"
+                    onClick={() => setOpenBrandSummary(!openBrandSummary)}
+                  >
+                    <span className="bold">BRAND SUMMARY</span>
+                    {openBrandSummary ? (
+                      <Icon name="triangle down" />
+                    ) : (
+                      <Icon name="triangle right" />
+                    )}
+                  </div>
+                  <Divider className="margin-0"></Divider>
+
+                  {openBrandSummary && (
+                    <>
+                      <div className="table-container">
+                        <TableNewCustomerSetting
+                          data={brandSummaryData}
+                          header={data.brandHeader}
+                          sequenceNum={true}
+                        />
+                      </div>
+                      <Divider className="margin-0"></Divider>
+                    </>
+                  )}
+
+                  <div
+                    className="accordion-container"
+                    onClick={() => setOpenServiceSummary(!openServiceSummary)}
+                  >
+                    <span className="bold">SERVICE SUMMARY</span>
+                    {openServiceSummary ? (
+                      <Icon name="triangle down" />
+                    ) : (
+                      <Icon name="triangle right" />
+                    )}
+                  </div>
+                  <Divider className="margin-0"></Divider>
+
+                  {openServiceSummary && (
+                    <>
+                      <div className="table-container">
+                        <TableNewCustomerSetting
+                          data={serviceSummaryData}
+                          header={data.serviceHeader}
+                          sequenceNum={true}
+                        />
+                      </div>
+                      <Divider className="margin-0"></Divider>
+                    </>
+                  )}
+
+                  <div
+                    className="accordion-container"
+                    onClick={() => setOpenSalesHistory(!openSalesHistory)}
+                  >
+                    <span className="bold">SALES ASSIGN HISTORY</span>
+                    {openSalesHistory ? (
+                      <Icon name="triangle down" />
+                    ) : (
+                      <Icon name="triangle right" />
+                    )}
+                  </div>
+                  <Divider className="margin-0"></Divider>
+
+                  {openSalesHistory && (
+                    <>
+                      <div className="table-container">
+                        <TableNewCustomerSetting
+                          data={salesHistoryData}
+                          header={data.salesHistoryHeader}
+                          sequenceNum={true}
+                        />
+                      </div>
+                      <Divider className="margin-0"></Divider>
+                    </>
+                  )}
+
+                  <div
+                    className="accordion-container"
+                    onClick={() => setOpenProjectHistory(!openProjectHistory)}
+                  >
+                    <span className="bold">PROJECT CUSTOMER HISTORY</span>
+                    {openProjectHistory ? (
+                      <Icon name="triangle down" />
+                    ) : (
+                      <Icon name="triangle right" />
+                    )}
+                  </div>
+                  <Divider className="margin-0"></Divider>
+
+                  {openProjectHistory && (
+                    <>
+                      <div className="table-container">
+                        <div style={{ marginBottom: "1rem", width: "35%" }}>
+                          <label className="customer-data-label">
+                            Filter Search
+                          </label>
+                          <div
+                            style={{
+                              marginTop: "0.5rem",
+                              position: "relative",
+                              width: "100%",
+                            }}
+                          >
+                            <Input
+                              style={{ width: "100%", height: "2.5rem" }}
+                              placeholder="Search..."
+                              onChange={onChangeSearch}
+                              onKeyPress={(event) => {
+                                if (event.charCode == 13) {
+                                  onSearch();
+                                }
+                              }}
+                              value={searchText}
+                            />
+                            <div
+                              style={{
+                                position: "absolute",
+                                display: "flex",
+                                right: "0",
+                                top: "0",
+                                height: "100%",
+                                alignItems: "center",
+                              }}
+                            >
+                              {cancelBtn ? (
+                                <Icon
+                                  name="cancel"
+                                  onClick={onClickedCancelButton}
+                                  style={{
+                                    marginBottom: "0.3rem",
+                                    marginRight: "1rem",
+                                  }}
+                                />
+                              ) : (
+                                <Icon
+                                  name="search"
+                                  style={{
+                                    marginBottom: "0.3rem",
+                                    marginRight: "1rem",
+                                  }}
+                                />
+                              )}
                             </div>
+                          </div>
                         </div>
+
+                        <TableProjectHistory
+                          data={historyData}
+                          setOpenCollectionHistory={setOpenCollectionHistory}
+                        />
+
+                        <div style={{ marginTop: "1rem" }}>
+                          <Pagination
+                            activePage={historyActivePage}
+                            onPageChange={(e, data) =>
+                              historyChangePage(e, data)
+                            }
+                            totalPage={allHistoryData.length}
+                            pageSize={historyPageSize}
+                          />
+                        </div>
+                      </div>
+                      <Divider className="margin-0"></Divider>
+                    </>
+                  )}
+
+                  <div
+                    className="accordion-container"
+                    onClick={() =>
+                      setOpenCollectionHistory(!openCollectionHistory)
+                    }
+                  >
+                    <span className="bold">COLLECTION HISTORY</span>
+                    {openCollectionHistory ? (
+                      <Icon name="triangle down" />
+                    ) : (
+                      <Icon name="triangle right" />
+                    )}
+                  </div>
+                  <Divider className="margin-0"></Divider>
+
+                  {openCollectionHistory && (
+                    <>
+                      <div className="table-container">
+                        <TableCollectionHistory
+                          data={data.collectionHistoryData}
+                        />
+                        {/* <TableNewCustomerSetting data={data.collectionHistoryData} header={data.collectionHistoryHeader} sequenceNum={false} /> */}
+                      </div>
+                      <Divider className="margin-0"></Divider>
+                    </>
+                  )}
+
+                  <div
+                    className="accordion-container"
+                    onClick={() => setOpenConfigItem(!openConfigItem)}
+                  >
+                    <span className="bold">CONFIG ITEM</span>
+                    {openConfigItem ? (
+                      <Icon name="triangle down" />
+                    ) : (
+                      <Icon name="triangle right" />
+                    )}
+                  </div>
+
+                  {openConfigItem && (
+                    <>
+                      <Divider className="margin-0"></Divider>
+                      <div className="table-container">
+                        <TableNewCustomerSetting
+                          data={configItemData}
+                          header={data.configItemHeader}
+                          sequenceNum={false}
+                        />
+                        <div style={{ marginTop: "1rem" }}>
+                          <Pagination
+                            activePage={1}
+                            onPageChange={() => {}}
+                            totalPage={2}
+                            pageSize={1}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <Divider></Divider>
+
+              <p className="padding-horizontal grey margin-0 bold text-align-left">
+                INVOICING SCHEDULE SETTING
+              </p>
+
+              <Divider></Divider>
+
+              <FinalForm
+                onSubmit={(values: any) =>
+                  onSubmitCustomerSettingHandler(values)
+                }
+                render={({ handleSubmit, pristine, invalid }) => (
+                  <Form onSubmit={handleSubmit}>
+                    <div className="padding-horizontal">
+                      <div>
+                        <div style={{ marginBottom: "0.5rem" }}>
+                          <label style={{ marginRight: "10px" }}>
+                            Days
+                            <label
+                              style={{ color: "red" }}
+                              className="mandatory"
+                            >
+                              {" "}
+                              *
+                            </label>
+                          </label>
+                        </div>
+                        <p style={{ fontSize: "20px", fontWeight: "bold" }}>
+                          Monday, Tuesday
+                        </p>
+                      </div>
+
+                      <div className="invoicing-schedule-position">
+                        <div className="date-range-container">
+                          <p className="grey bold">
+                            Invoicing Date Range{" "}
+                            <span style={{ color: "red" }}>*</span>
+                          </p>
+                          <div className="date-range-container-input">
+                            <div
+                              className="date-range-input"
+                              style={{ marginRight: "1rem" }}
+                            >
+                              <label htmlFor="minDate">Min. Date(Day)</label>
+                              <p
+                                style={{
+                                  textAlign: "right",
+                                  fontSize: "18px",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                1
+                              </p>
+                            </div>
+                            <div className="date-range-input">
+                              <label htmlFor="maxDate">Max. Date(Day)</label>
+                              <p
+                                style={{
+                                  textAlign: "right",
+                                  fontSize: "18px",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                20
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div style={{ width: "100%" }}>
+                          <label className="customer-data-label">Remark</label>
+                          <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit, sed do eiusmod tempor incididunt ut labore et
+                            dolore magna aliqua. Ut enim ad minim veniam, quis
+                            nostrud exercitation ullamco laboris nisi ut aliquip
+                            ex ea commodo consequat. Duis aute irure dolor in
+                            reprehenderit in voluptate velit esse cillum dolore
+                            eu fugiat nulla pariatur. Excepteur sint occaecat
+                            cupidatat non proident, sunt in culpa qui officia
+                            deserunt mollit anim id est laborum.
+                          </p>
+                        </div>
+                      </div>
                     </div>
 
                     <Divider></Divider>
 
-                    <LoadingIndicator isActive={isRequesting}>
-                    {/* search customer name dan data customer */}
+                    <p className="padding-horizontal grey margin-0 bold text-align-left">
+                      INVOICING CONDITION
+                    </p>
 
-                    {/* {(customerData.customerID != 0 && !Number.isNaN(customerSettingData.customerID)) && */}
-                         <>
-                        <div className="padding-horizontal customer-search-container">
-                            <div className="customer-data-container">
-                                <label className="address-font-label" style={{ textAlign: "left"}}>Account Status</label>
-                                <Label style={{ backgroundColor: accountStatus == "Named Account" ? "#959EAC" : (accountStatus == "No Name Account" ? "#949AA1" : "#27D4A5"), color: "white" }} className="boolean-container">
-                                    <p>{accountStatus}</p>
-                                </Label>
-                            </div>
+                    <Divider></Divider>
 
-                            <div className="customer-data-container">
-                                <label className="customer-data-label">Cust. Category</label>
-                                <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">Enterprise</p>
-                            </div>
-
-                            <div className="customer-data-container">
-                                <label className="customer-data-label">CustomerID</label>
-                                <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">{customer.customerID}</p>
-                            </div>
-
-                            <div className="customer-data-container">
-                                <label className="customer-data-label">Blacklist</label>
-                                <Label color={customer.blacklist ? "red" : "teal"} className="boolean-container">
-                                    <Icon name='address book'/>{customer.blacklist ? "Yes" : "No"}
-                                </Label>
-                            </div>
-
-                            <div className="customer-data-container">
-                                <label className="customer-data-label">Holdshipment</label>
-                                <Label color={customer.holdshipment ? "red" : "blue"} className="boolean-container">
-                                    <Icon name='truck'/>{customer.holdshipment ? "Yes" : "No"}
-                                </Label>
-                            </div>
-
-                            <div className="customer-data-container">
-                                <label className="customer-data-label">Avg. AR (days)</label>
-                                <p className="grey avgar-font">{customer.avgAR}</p>
-                            </div>
+                    <div className="padding-horizontal">
+                      <div className="invoicing-condition-button">
+                        <div style={{ width: "30%" }}>
+                          <Field
+                            name="projectType"
+                            component={DropdownClearInput}
+                            placeholder="Select project type"
+                            labelName="Project Type"
+                            options={projectTypeData}
+                            values={projectType}
+                            onChanged={onChangeProjectType}
+                            mandatory={true}
+                          />
                         </div>
 
-                        <div style={{ margin: "14px 0" }} className="padding-horizontal">
-                            <label className="address-font-label" style={{ textAlign: "left"}}>Customer Name</label>
-                            <p style={{ fontSize: "20px", fontWeight: "bold"}} className="grey">{customer.customerName}</p>
-                        </div>
+                        <Button
+                          color="yellow"
+                          size="small"
+                          type="button"
+                          onClick={onAddInvoicingCondition}
+                        >
+                          <Icon name="add" />
+                          Add Invoicing Condition
+                        </Button>
+                      </div>
 
-                        <div style={{ margin: "14px 0" }} className="padding-horizontal">
-                            <label className="address-font-label">Address</label>
-                            <p style={{ fontSize: "20px"}} className="grey">{customer.customerAddress}</p>
-                        </div>
+                      <Table striped>
+                        <Table.Header>
+                          <Table.Row>
+                            <Table.HeaderCell>No</Table.HeaderCell>
+                            <Table.HeaderCell>Action</Table.HeaderCell>
+                            <Table.HeaderCell>Project Type</Table.HeaderCell>
+                            <Table.HeaderCell>
+                              Document Requirement
+                            </Table.HeaderCell>
+                          </Table.Row>
+                        </Table.Header>
 
-                        </>
-                    {/* } */}
+                        <Table.Body>
+                          {invoicingConditionData.length == 0 ? (
+                            <Table.Row>
+                              <Table.Cell colSpan={16} textAlign="center">
+                                No data
+                              </Table.Cell>
+                            </Table.Row>
+                          ) : (
+                            invoicingConditionData.map((data, index) => (
+                              <Table.Row key={index}>
+                                <Table.Cell>{index + 1}</Table.Cell>
+                                <Table.Cell>
+                                  <div
+                                    className="trash-container"
+                                    onClick={() =>
+                                      deleteInvoicingCondition(data.conditionID)
+                                    }
+                                  >
+                                    <Icon
+                                      className="trash-icon"
+                                      name="trash alternate"
+                                    />
+                                  </div>
+                                </Table.Cell>
+                                <Table.Cell>{data.projectType}</Table.Cell>
+                                <Table.Cell>{data.conditionName}</Table.Cell>
+                              </Table.Row>
+                            ))
+                          )}
+                        </Table.Body>
+                      </Table>
+                    </div>
 
                     <Divider></Divider>
 
                     <div className="padding-horizontal title-button-row">
-                        <p className="grey margin-0 bold text-align-left">ACCOUNT OWNER SETTING</p>
-                        <ClaimReleaseButton accountStatus={accountStatus} isEmployeeOwnCustomer={isEmployeeOwnCustomer} />
+                      <p className="grey margin-0 bold text-align-left">
+                        RELATED CUSTOMER
+                      </p>
+                      <Button
+                        color="yellow"
+                        size="small"
+                        type="button"
+                        onClick={onAddRelatedCustomer}
+                      >
+                        <Icon name="add" />
+                        Add Related Customer
+                      </Button>
                     </div>
 
                     <Divider></Divider>
 
-                    <div style={{ }} className="padding-horizontal">
-                        <TableNewCustomerSetting data={data.accOwnerData} header={data.accOwnerHeader} sequenceNum={true} />
+                    <div className="padding-horizontal">
+                      <Table striped>
+                        <Table.Header>
+                          <Table.Row>
+                            <Table.HeaderCell>No</Table.HeaderCell>
+                            <Table.HeaderCell>Action</Table.HeaderCell>
+                            <Table.HeaderCell>Customer Name</Table.HeaderCell>
+                            <Table.HeaderCell>Address</Table.HeaderCell>
+                            <Table.HeaderCell>Cust. Category</Table.HeaderCell>
+                            <Table.HeaderCell>Avg. AR (Days)</Table.HeaderCell>
+                            <Table.HeaderCell>Blacklist</Table.HeaderCell>
+                            <Table.HeaderCell>Holdshipment</Table.HeaderCell>
+                          </Table.Row>
+                        </Table.Header>
+
+                        <Table.Body>
+                          {relatedCustomerData.length == 0 ? (
+                            <Table.Row>
+                              <Table.Cell colSpan={16} textAlign="center">
+                                No data
+                              </Table.Cell>
+                            </Table.Row>
+                          ) : (
+                            relatedCustomerData.map((data, index) => (
+                              <Table.Row key={index}>
+                                <Table.Cell>{index + 1}</Table.Cell>
+                                <Table.Cell>
+                                  <div
+                                    className="trash-container"
+                                    onClick={() =>
+                                      deleteRelatedCustomer(data.relatedID)
+                                    }
+                                  >
+                                    <Icon
+                                      className="trash-icon"
+                                      name="trash alternate"
+                                    />
+                                  </div>
+                                </Table.Cell>
+                                <Table.Cell>{data.customerName}</Table.Cell>
+                                <Table.Cell>{data.customerAddress}</Table.Cell>
+                                <Table.Cell>{data.category}</Table.Cell>
+                                <Table.Cell>{data.avgAR}</Table.Cell>
+                                <Table.Cell>
+                                  <Label
+                                    color={data.blacklist ? "red" : "teal"}
+                                    className="boolean-container"
+                                  >
+                                    <Icon name="address book" />
+                                    {data.blacklist ? "Yes" : "No"}
+                                  </Label>
+                                </Table.Cell>
+                                <Table.Cell>
+                                  <Label
+                                    color={data.holdshipment ? "red" : "blue"}
+                                    className="boolean-container"
+                                  >
+                                    <Icon name="truck" />
+                                    {data.holdshipment ? "Yes" : "No"}
+                                  </Label>
+                                </Table.Cell>
+                              </Table.Row>
+                            ))
+                          )}
+                        </Table.Body>
+                      </Table>
                     </div>
+
                     <Divider></Divider>
 
-                    
-                    {/* {(customer.customerID != 0 && !Number.isNaN(customerSettingData.customerID)) ? */}
-                        <>                        
-                            {/* data get mengenai customer */}
-                            <div className="padding-horizontal">
-                                <div className="grey get-data-container">
-                                    <div className="accordion-container" onClick={() => setOpenPicList(!openPicList)}>
-                                        <span className="bold">CUSTOMER PIC LIST</span>
-                                        {openPicList ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
-                                    </div>
-                                    <Divider className="margin-0"></Divider>
-                                    
-                                    {openPicList &&
-                                        <>
-                                        <div className="table-container">
-                                            <TableNewCustomerSetting data={picData} header={data.picHeader} sequenceNum={true}/>
-                                        </div>
-                                        <Divider className="margin-0"></Divider>
-                                        </>
+                    <div className="padding-horizontal title-button-row">
+                      <p className="grey margin-0 bold text-align-left">
+                        UPLOAD RELATED FILE
+                      </p>
+                      <Button
+                        color="yellow"
+                        size="small"
+                        type="button"
+                        onClick={onAddRelatedFile}
+                      >
+                        <Icon name="add" />
+                        Add Related File
+                      </Button>
+                    </div>
+
+                    <Divider></Divider>
+
+                    <div style={{ padding: "0 2rem" }}>
+                      <Table striped>
+                        <Table.Header>
+                          <Table.Row>
+                            <Table.HeaderCell>No</Table.HeaderCell>
+                            <Table.HeaderCell>Action</Table.HeaderCell>
+                            <Table.HeaderCell>Document Name</Table.HeaderCell>
+                            <Table.HeaderCell>Type</Table.HeaderCell>
+                            <Table.HeaderCell>Upload Date</Table.HeaderCell>
+                            <Table.HeaderCell>Upload By</Table.HeaderCell>
+                          </Table.Row>
+                        </Table.Header>
+
+                        <Table.Body>
+                          {relatedFileData.length == 0 ? (
+                            <Table.Row>
+                              <Table.Cell colSpan={16} textAlign="center">
+                                No data
+                              </Table.Cell>
+                            </Table.Row>
+                          ) : (
+                            relatedFileData.map((data, index) => (
+                              <Table.Row key={index}>
+                                <Table.Cell>{index + 1}</Table.Cell>
+                                <Table.Cell>
+                                  <div
+                                    className="trash-container"
+                                    onClick={() =>
+                                      deleteRelatedFile(data.relatedFileID)
                                     }
+                                  >
+                                    <Icon
+                                      className="trash-icon"
+                                      name="trash alternate"
+                                    />
+                                  </div>
+                                </Table.Cell>
+                                <Table.Cell>{data.documentName}</Table.Cell>
+                                <Table.Cell>{data.documentType}</Table.Cell>
+                                <Table.Cell>{data.uploadDate}</Table.Cell>
+                                <Table.Cell>{data.uploadBy}</Table.Cell>
+                              </Table.Row>
+                            ))
+                          )}
+                        </Table.Body>
+                      </Table>
+                    </div>
 
-                                    <div className="accordion-container" onClick={() => setOpenBrandSummary(!openBrandSummary)}>
-                                        <span className="bold">BRAND SUMMARY</span>
-                                        {openBrandSummary ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
-                                    </div>
-                                    <Divider className="margin-0"></Divider>
-
-                                    {openBrandSummary &&
-                                        <>
-                                        <div className="table-container">
-                                            <TableNewCustomerSetting data={brandSummaryData} header={data.brandHeader} sequenceNum={true}/>
-                                        </div>
-                                        <Divider className="margin-0"></Divider>
-                                        </>
-                                    }
-
-                                    <div className="accordion-container" onClick={() => setOpenServiceSummary(!openServiceSummary)}>
-                                        <span className="bold">SERVICE SUMMARY</span>
-                                        {openServiceSummary ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
-                                    </div>
-                                    <Divider className="margin-0"></Divider>
-
-                                    {openServiceSummary &&
-                                        <>
-                                        <div className="table-container">
-                                            <TableNewCustomerSetting data={serviceSummaryData} header={data.serviceHeader} sequenceNum={true}/>
-                                        </div>
-                                        <Divider className="margin-0"></Divider>
-                                        </>
-                                    }
-
-                                    <div className="accordion-container" onClick={() => setOpenSalesHistory(!openSalesHistory)}>
-                                        <span className="bold">SALES ASSIGN HISTORY</span>
-                                        {openSalesHistory ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
-                                    </div>
-                                    <Divider className="margin-0"></Divider>
-
-                                    {openSalesHistory &&
-                                        <>
-                                        <div className="table-container">
-                                            <TableNewCustomerSetting data={salesHistoryData} header={data.salesHistoryHeader} sequenceNum={true}/>
-                                        </div>
-                                        <Divider className="margin-0"></Divider>
-                                        </>
-                                    }
-
-                                    <div className="accordion-container" onClick={() => setOpenProjectHistory(!openProjectHistory)}>
-                                        <span className="bold">PROJECT CUSTOMER HISTORY</span>
-                                        {openProjectHistory ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
-                                    </div>
-                                    <Divider className="margin-0"></Divider>
-
-                                    {openProjectHistory &&
-                                        <>
-                                        <div className="table-container">
-                                            <div style={{ marginBottom: "1rem", width: "35%"}}>
-                                                <label className="customer-data-label">Filter Search</label>
-                                                <div style={{ marginTop: "0.5rem", position: "relative", width: "100%" }}>
-                                                    <Input
-                                                        style={{ width: "100%", height: "2.5rem" }}
-                                                        placeholder="Search..."
-                                                        onChange={onChangeSearch}
-                                                        onKeyPress={(event) => {
-                                                            if (event.charCode == 13) {
-                                                                onSearch();
-                                                            }
-                                                        }}
-                                                        value={searchText}
-                                                    />
-                                                    <div style={{ position: "absolute", display: "flex", right: "0", top: "0", height: "100%", alignItems: "center"}}>
-                                                        {cancelBtn ?
-                                                            <Icon name="cancel" onClick={onClickedCancelButton} style={{ marginBottom: "0.3rem", marginRight: "1rem" }}/>
-                                                        :
-                                                            <Icon name="search" style={{ marginBottom: "0.3rem", marginRight: "1rem" }}/>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <TableProjectHistory data={historyData} setOpenCollectionHistory={setOpenCollectionHistory}/>
-
-                                            <div style={{ marginTop: "1rem" }}>
-                                                <Pagination
-                                                    activePage={historyActivePage}
-                                                    onPageChange={(e, data) => historyChangePage(e, data)}
-                                                    totalPage={allHistoryData.length}
-                                                    pageSize={historyPageSize}
-                                                />
-                                            </div>
-                                        </div>
-                                        <Divider className="margin-0"></Divider>
-                                        </>
-                                    }
-
-                                    <div className="accordion-container" onClick={() => setOpenCollectionHistory(!openCollectionHistory)}>
-                                        <span className="bold">COLLECTION HISTORY</span>
-                                        {openCollectionHistory ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
-                                    </div>
-                                    <Divider className="margin-0"></Divider>
-
-                                    {openCollectionHistory &&
-                                        <>
-                                        <div className="table-container">
-                                            <TableCollectionHistory data={data.collectionHistoryData}/>
-                                        {/* <TableNewCustomerSetting data={data.collectionHistoryData} header={data.collectionHistoryHeader} sequenceNum={false} /> */}
-                                        </div>
-                                        <Divider className="margin-0"></Divider>
-                                        </>
-                                    }
-
-                                    <div className="accordion-container" onClick={() => setOpenConfigItem(!openConfigItem)}>
-                                        <span className="bold">CONFIG ITEM</span>
-                                        {openConfigItem ? <Icon name="triangle down"/> : <Icon name="triangle right"/>}
-                                    </div>
-
-                                    {openConfigItem &&
-                                        <>
-                                        <Divider className="margin-0"></Divider>
-                                        <div className="table-container">
-                                            <TableNewCustomerSetting data={configItemData} header={data.configItemHeader} sequenceNum={false}/>
-                                            <div style={{ marginTop: "1rem" }}>
-                                                <Pagination
-                                                    activePage={1}
-                                                    onPageChange={() => {}}
-                                                    totalPage={2}
-                                                    pageSize={1}
-                                                />
-                                            </div>
-                                        </div>
-                                        </>
-                                    }
-                                </div>
-                            </div>
-
-                            <Divider></Divider>
-
-                            <p className="padding-horizontal grey margin-0 bold text-align-left">INVOICING SCHEDULE SETTING</p>
-
-                            <Divider></Divider>
-
-                            <FinalForm
-                                onSubmit={(values: any) => onSubmitCustomerSettingHandler(values)}
-                                render={({ handleSubmit, pristine, invalid }) => (
-                                <Form onSubmit={handleSubmit} >
-
-                                    <div className="padding-horizontal">
-                                        <div>
-                                            <div style={{ marginBottom: "0.5rem"}}>
-                                                <label style={{ marginRight: '10px' }}>
-                                                Days
-                                                    <label style={{ color: 'red' }} className="mandatory">
-                                                        {' '}
-                                                        *
-                                                    </label>
-                                                </label>
-                                            </div>
-                                            <p style={{ fontSize: "20px", fontWeight: "bold"}}>Monday, Tuesday</p>
-                                        </div>
-                                        
-                                        <div className="invoicing-schedule-position">
-                                            <div className="date-range-container">
-                                                <p className="grey bold">Invoicing Date Range <span style={{ color: "red"}}>*</span></p>
-                                                <div className="date-range-container-input">
-                                                    <div className="date-range-input" style={{ marginRight: "1rem"}}>
-                                                        <label htmlFor="minDate">Min. Date(Day)</label>
-                                                        <p style={{ textAlign: "right", fontSize: "18px", fontWeight: "bold"}}>1</p>
-                                                    </div>
-                                                    <div className="date-range-input">
-                                                        <label htmlFor="maxDate">Max. Date(Day)</label>
-                                                        <p style={{ textAlign: "right", fontSize: "18px", fontWeight: "bold"}}>20</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div style={{ width: "100%" }}>
-                                                <label className="customer-data-label">Remark</label>
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <Divider></Divider>
-
-                                    <p className="padding-horizontal grey margin-0 bold text-align-left">INVOICING CONDITION</p>
-
-                                    <Divider></Divider>
-
-                                    <div className="padding-horizontal">
-                                        <div className="invoicing-condition-button">
-                                            <div style={{ width: "30%"}}>
-                                                <Field
-                                                    name="projectType"
-                                                    component={DropdownClearInput}
-                                                    placeholder="Select project type"
-                                                    labelName="Project Type"
-                                                    options={projectTypeData}
-                                                    values={projectType}
-                                                    onChanged={onChangeProjectType}
-                                                    mandatory={true}
-                                                />
-                                            </div>
-
-                                            <Button  color="yellow" size="small" type="button" onClick={onAddInvoicingCondition}><Icon name="add"/>Add Invoicing Condition</Button>
-                                        </div>
-
-                                        <Table
-                                        striped
-                                        >
-                                        <Table.Header>
-                                            <Table.Row>
-                                                <Table.HeaderCell>No</Table.HeaderCell>
-                                                <Table.HeaderCell>Action</Table.HeaderCell>
-                                                <Table.HeaderCell>Project Type</Table.HeaderCell>
-                                                <Table.HeaderCell>Document Requirement</Table.HeaderCell>
-                                            </Table.Row>
-                                        </Table.Header>
-
-                                        <Table.Body>
-                                            {invoicingConditionData.length == 0 ?
-                                                <Table.Row>
-                                                    <Table.Cell colSpan={16} textAlign="center">
-                                                    No data
-                                                    </Table.Cell>
-                                                </Table.Row>
-                                            :
-                                                (invoicingConditionData.map((data, index) => (
-                                                <Table.Row key={index}>
-                                                        <Table.Cell>{index + 1}</Table.Cell>
-                                                        <Table.Cell>
-                                                            <div className="trash-container" onClick={() => deleteInvoicingCondition(data.conditionID)}>
-                                                                <Icon className="trash-icon" name="trash alternate"/>
-                                                            </div>
-                                                        </Table.Cell>
-                                                        <Table.Cell>{data.projectType}</Table.Cell>
-                                                        <Table.Cell>{data.conditionName}</Table.Cell>
-                                                </Table.Row>
-                                                )))
-                                            }
-                                        </Table.Body>
-                                        </Table>
-                                    </div>
-
-                                    <Divider></Divider>
-
-                                    <div className="padding-horizontal title-button-row">
-                                        <p className="grey margin-0 bold text-align-left">RELATED CUSTOMER</p>
-                                        <Button color="yellow" size="small" type="button" onClick={onAddRelatedCustomer}><Icon name="add"/>Add Related Customer</Button>
-                                    </div>
-
-                                    <Divider></Divider>
-
-                                    <div className="padding-horizontal">
-                                        <Table
-                                        striped
-                                        >
-                                        <Table.Header>
-                                            <Table.Row>
-                                                <Table.HeaderCell>No</Table.HeaderCell>
-                                                <Table.HeaderCell>Action</Table.HeaderCell>
-                                                <Table.HeaderCell>Customer Name</Table.HeaderCell>
-                                                <Table.HeaderCell>Address</Table.HeaderCell>
-                                                <Table.HeaderCell>Cust. Category</Table.HeaderCell>
-                                                <Table.HeaderCell>Avg. AR (Days)</Table.HeaderCell>
-                                                <Table.HeaderCell>Blacklist</Table.HeaderCell>
-                                                <Table.HeaderCell>Holdshipment</Table.HeaderCell>
-                                            </Table.Row>
-                                        </Table.Header>
-
-                                        <Table.Body>
-                                            {relatedCustomerData.length == 0 ?
-                                                <Table.Row>
-                                                    <Table.Cell colSpan={16} textAlign="center">
-                                                    No data
-                                                    </Table.Cell>
-                                                </Table.Row>
-                                            :
-                                                (relatedCustomerData.map((data, index) => (
-                                                <Table.Row key={index}>
-                                                        <Table.Cell>{index + 1}</Table.Cell>
-                                                        <Table.Cell>
-                                                            <div className="trash-container" onClick={() => deleteRelatedCustomer(data.relatedID)}>
-                                                                <Icon className="trash-icon" name="trash alternate"/>
-                                                            </div>
-                                                        </Table.Cell>
-                                                        <Table.Cell>{data.customerName}</Table.Cell>
-                                                        <Table.Cell>{data.customerAddress}</Table.Cell>
-                                                        <Table.Cell>{data.category}</Table.Cell>
-                                                        <Table.Cell>{data.avgAR}</Table.Cell>
-                                                        <Table.Cell>
-                                                            <Label color={data.blacklist ? "red" : "teal"} className="boolean-container">
-                                                                <Icon name='address book'/>{data.blacklist ? "Yes" : "No"}
-                                                            </Label>
-                                                        </Table.Cell>
-                                                        <Table.Cell>
-                                                            <Label color={data.holdshipment ? "red" : "blue"} className="boolean-container">
-                                                                <Icon name='truck'/>{data.holdshipment ? "Yes" : "No"}
-                                                            </Label>
-                                                        </Table.Cell>
-                                                </Table.Row>
-                                                )))
-                                            }
-                                        </Table.Body>
-                                        </Table>
-                                    </div>
-
-                                    <Divider></Divider>
-
-                                    <div className="padding-horizontal title-button-row">
-                                        <p className="grey margin-0 bold text-align-left">UPLOAD RELATED FILE</p>
-                                        <Button color="yellow" size="small" type="button" onClick={onAddRelatedFile}><Icon name="add"/>Add Related File</Button>
-                                    </div>
-
-                                    <Divider></Divider>
-
-                                    <div style={{ padding: "0 2rem"}}>
-                                        <Table
-                                        striped
-                                        >
-                                        <Table.Header>
-                                            <Table.Row>
-                                                <Table.HeaderCell>No</Table.HeaderCell>
-                                                <Table.HeaderCell>Action</Table.HeaderCell>
-                                                <Table.HeaderCell>Document Name</Table.HeaderCell>
-                                                <Table.HeaderCell>Type</Table.HeaderCell>
-                                                <Table.HeaderCell>Upload Date</Table.HeaderCell>
-                                                <Table.HeaderCell>Upload By</Table.HeaderCell>
-                                            </Table.Row>
-                                        </Table.Header>
-
-                                        <Table.Body>
-                                            {relatedFileData.length == 0 ?
-                                                <Table.Row>
-                                                    <Table.Cell colSpan={16} textAlign="center">
-                                                    No data
-                                                    </Table.Cell>
-                                                </Table.Row>
-                                            :
-                                                (relatedFileData.map((data, index) => (
-                                                <Table.Row key={index}>
-                                                        <Table.Cell>{index + 1}</Table.Cell>
-                                                        <Table.Cell>
-                                                            <div className="trash-container" onClick={() => deleteRelatedFile(data.relatedFileID)}>
-                                                                <Icon className="trash-icon" name="trash alternate"/>
-                                                            </div>
-                                                        </Table.Cell>
-                                                        <Table.Cell>{data.documentName}</Table.Cell>
-                                                        <Table.Cell>{data.documentType}</Table.Cell>
-                                                        <Table.Cell>{data.uploadDate}</Table.Cell>
-                                                        <Table.Cell>{data.uploadBy}</Table.Cell>
-                                                </Table.Row>
-                                                )))
-                                            }
-                                        </Table.Body>
-                                        </Table>
-                                    </div>
-                                
-                                    <Divider style={{ marginBottom: "0px"}}></Divider>
-                                    <div className="button-container">
-                                        <div className="button-inner-container">
-                                            <Button style={{ marginRight: "1rem" }} type="button">Cancel</Button>
-                                            <Button color="blue" type="submit">Submit</Button>
-                                        </div>
-                                    </div>
-
-                            </Form>
-                            )}/>
-                        </>
-                    {/* :
+                    <Divider style={{ marginBottom: "0px" }}></Divider>
+                    <div className="button-container">
+                      <div className="button-inner-container">
+                        <Button style={{ marginRight: "1rem" }} type="button">
+                          Cancel
+                        </Button>
+                        <Button color="blue" type="submit">
+                          Submit
+                        </Button>
+                      </div>
+                    </div>
+                  </Form>
+                )}
+              />
+            </>
+            {/* :
                         <>
                             <Divider style={{ marginBottom: "0px"}}></Divider>
                             <div className="button-container">
@@ -958,11 +1468,11 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                             </div>
                         </>
                     } */}
-                    </LoadingIndicator>
-                </div>
-            </div>
-        </Fragment>
-    )
-}
+          </LoadingIndicator>
+        </div>
+      </div>
+    </Fragment>
+  );
+};
 
 export default ViewEditCustomer;

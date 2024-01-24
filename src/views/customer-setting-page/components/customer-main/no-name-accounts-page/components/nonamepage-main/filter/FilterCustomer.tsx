@@ -65,12 +65,12 @@ const FilterCustomer: React.FC<{
       CustomerSettingAct.requestSearchNoNameAcc(
         1,
         10,
-        "customerID",
-        "ascending",
+        "CustomerID",
         null,
+        "ascending",
         pmo_customer,
-        blacklist,
-        holdshipment
+        holdshipment,
+        blacklist
       )
     );
   };
@@ -83,7 +83,9 @@ const FilterCustomer: React.FC<{
     setBlacklistYesChecked(false);
     setBlacklistNoChecked(false);
 
-    dispatch(CustomerSettingAct.requestNoNameAcc(1, 10, "CustomerID"));
+    dispatch(
+      CustomerSettingAct.requestNoNameAcc(1, 10, "CustomerID", "ascending")
+    );
   };
 
   return (

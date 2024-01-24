@@ -63,19 +63,19 @@ const AdjSetting: React.FC<IProps> = (
 
     for (let j = 0; j < rowData.length; j++) {
       const CustomerSetting = new CustomerSettingID({});
-      CustomerSetting.customerSettingID = props.rowData[j].customerSettingID;
+      // CustomerSetting.customerSettingID = props.rowData[j].customerSettingID;
       CustomerSetting.customerID = props.rowData[j].customerID;
-      CustomerSetting.customerCategoryID = "";
-      CustomerSetting.shareable = shareableChecked == "TRUE" ? true : false;
-      CustomerSetting.pmoCustomer =
-        pmo_customerChecked == "TRUE" ? true : false;
-      CustomerSetting.createDate = format(
-        new Date(props.rowData[j].createDate),
-        "yyyy-MM-dd"
-      );
-      CustomerSetting.createUserID = props.rowData[j].createUserID;
-      CustomerSetting.modifyDate = date;
-      CustomerSetting.modifyUserID = JSON.parse(userId)?.employeeID;
+      // CustomerSetting.customerCategoryID = "";
+      // CustomerSetting.shareable = shareableChecked == "TRUE" ? true : false;
+      // CustomerSetting.pmoCustomer =
+      pmo_customerChecked == "TRUE" ? true : false;
+      // CustomerSetting.createDate = format(
+      //   new Date(props.rowData[j].createDate),
+      //   "yyyy-MM-dd"
+      // // );
+      // CustomerSetting.createUserID = props.rowData[j].createUserID;
+      // CustomerSetting.modifyDate = date;
+      // CustomerSetting.modifyUserID = JSON.parse(userId)?.employeeID;
 
       await dispatch(
         CustomerSettingAct.putCustomerSetting(

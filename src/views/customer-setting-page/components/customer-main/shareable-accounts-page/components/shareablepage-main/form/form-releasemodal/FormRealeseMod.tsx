@@ -1,24 +1,26 @@
-import React, { Fragment } from "react";
+import React, { useEffect, Fragment, useState } from "react";
 import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
 import { Form as FinalForm } from "react-final-form";
-import { Form, Grid, Divider } from "semantic-ui-react";
+import { Form, Grid, Card, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
+import ReleaseAccount from "stores/customer-setting/models/ReleaseAccounts";
+import { format } from "date-fns";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
-import newReleaseAccount from "stores/customer-setting/models/ReleaseAccounts";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 
 interface IProps {
   rowData: any;
 }
 
-const ReleaseAccount: React.FC<IProps> = (
+const RelaseAccountMod: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
+  const [salesAssignArray, setSalesAssignArray] = useState([]);
   const { rowData } = props;
 
   const cancelClick = () => {
@@ -33,7 +35,7 @@ const ReleaseAccount: React.FC<IProps> = (
     const userId: any = localStorage.getItem("userLogin");
 
     for (let j = 0; j < rowData.length; j++) {
-      const NewAssignSales = new newReleaseAccount(e);
+      const NewAssignSales = new ReleaseAccount(e);
       NewAssignSales.customerID = props.rowData[j].customerID;
       NewAssignSales.salesID = JSON.parse(userId)?.employeeID || 830;
       NewAssignSales.modifyUserID = JSON.parse(userId)?.employeeID || 830;
@@ -53,87 +55,93 @@ const ReleaseAccount: React.FC<IProps> = (
     );
   };
 
+  const onHandlerSearch = () => {};
+
   return (
     <Fragment>
+      <Card.Header>
+        <h4>Release Accounts</h4>
+      </Card.Header>
+      <Divider></Divider>
       <LoadingIndicator isActive={isRequesting}>
         <FinalForm
-          onSubmit={onSubmitHandler}
+          onSubmit={() => onHandlerSearch()}
           render={({ handleSubmit }) => (
             <Form onSubmit={handleSubmit}>
-              <Grid.Row>
-                {rowData.length == 1}
+              <div>
                 <div
                   style={{
+                    backgroundColor: "#f97452",
+                    textAlign: "center",
+                    borderRadius: "5rem",
+                    height: "3.5rem",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    margin: "1rem",
                   }}
                 >
-                  <div style={{ padding: "0px" }}>
-                    <img
-                      className="ui centered medium"
-                      src="/assets/info.png"
-                      sizes="small"
-                      style={{ width: "150px", height: "150px" }}
-                    />
-                  </div>
+                  <p
+                    style={{
+                      textAlign: "center",
+                      fontFamily: "Arial, sans-serif",
+                      fontSize: "1rem",
+                      lineHeight: "1.5",
+                      color: "#ffff",
+                    }}
+                  >
+                    Are you sure want to release all this accounts ?
+                  </p>
                 </div>
-              </Grid.Row>
-              <Grid.Row
-                centered
-                style={{
-                  textAlign: "center",
-                  marginTop: "1.5rem",
-                }}
-              >
-                <span style={{ padding: "10px" }}>
-                  Are you sure want to release this account?
-                </span>
-              </Grid.Row>
-              <Grid.Row>
+                <Divider></Divider>
                 {rowData.map((data) => {
                   return (
-                    <div>
+                    <>
                       <Grid.Row
-                        centered
                         width={1}
-                        style={{ padding: "0px" }}
+                        className="padding-0"
                         key={data.customerGenID}
                       >
-                        <Grid.Column style={{ marginBottom: "3rem" }}>
-                          <p
-                            style={{
-                              textAlign: "center",
-                              fontWeight: "bold",
-                              fontSize: "1rem",
-                              marginTop: "0.5rem",
-                            }}
-                          >
+                        <Grid.Column>
+                          <h2 style={{ color: "#55637a" }}>
                             {data.customerName}
-                          </p>
+                          </h2>
                         </Grid.Column>
                       </Grid.Row>
-                    </div>
+
+                      <Divider></Divider>
+                    </>
                   );
                 })}
-              </Grid.Row>
-
-              <Divider></Divider>
-              <div style={{ textAlign: "center", marginTop: "2rem" }}>
-                <Button type="button" onClick={cancelClick}>
-                  Cancel
-                </Button>
-                <Button type="submit" color="blue">
-                  Yes, Release
-                </Button>
               </div>
             </Form>
           )}
         />
+
+        <div style={{ textAlign: "center", marginBottom: "20px" }}>
+          <Button
+            type="button"
+            onClick={cancelClick}
+            style={{
+              marginRight: "10px",
+              padding: "12px 20px",
+              fontSize: "15px",
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            className="MarBot10"
+            type="submit"
+            color="blue"
+            onClick={onSubmitHandler}
+            style={{ padding: "12px 20px", fontSize: "15px" }}
+          >
+            Submit
+          </Button>
+        </div>
       </LoadingIndicator>
     </Fragment>
   );
 };
 
-export default ReleaseAccount;
+export default RelaseAccountMod;

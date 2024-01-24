@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Grid } from "semantic-ui-react";
+import { Grid, Checkbox } from "semantic-ui-react";
 import CustomerTable from "./components/allaccountspage-main/table/CustomerTable";
 import InputSearch from "./components/allaccountspage-main/search/InputSearch";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,16 +14,19 @@ import { selectUserResult } from "selectors/user/UserSelector";
 import IUserResult from "selectors/user/models/IUserResult";
 import TableToExcel from "@linways/table-to-excel";
 import { selectAllAccount } from "selectors/customer-setting/CustomerSettingSelector";
-import RouteEnum from "constants/RouteEnum";
 import FilterCustomer from "./components/allaccountspage-main/filter/FilterCustomer";
+import { format } from "date-fns";
 
 interface IProps {
   history: any;
+  role: string;
 }
 
 const AllAccountsPage: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
+  const { role } = props;
+  console.log("Role received in AllAccountsPage:", role);
   const dispatch: Dispatch = useDispatch();
   const [pageSize, setPage] = useState(10);
   const activePage = useSelector(
@@ -33,9 +36,32 @@ const AllAccountsPage: React.FC<IProps> = (
     selectUserResult(state)
   );
   const [rowData, setRowData] = useState([]);
-
+  const [myAccount, setMyAccount] = useState(false);
   const setNewRowData = (data) => {
     setRowData(data);
+  };
+
+  const handleMyAccount = () => {
+    const userId: any = localStorage.getItem("userLogin");
+
+    if (!myAccount) {
+      setMyAccount(true);
+      const salesID = JSON.parse(userId)?.employeeID || 830;
+      dispatch(
+        CustomerActions.requestSearchAllAcc(
+          1,
+          10,
+          "CustomerID",
+          null,
+          "ascending",
+          salesID
+        )
+      );
+      // console.log(salesID);
+    } else {
+      setMyAccount(false);
+      dispatch(CustomerActions.requestAllAcc(1, 10, "CustomerID", "ascending"));
+    }
   };
 
   const exportTableToExcel = (tableID: string, filename: string): void => {
@@ -47,13 +73,18 @@ const AllAccountsPage: React.FC<IProps> = (
         CustomerActions.requestSearchAllAcc(
           1,
           tableData.totalRow,
-          null,
+          "CustomerID",
           search.value
         )
       );
     } else {
       dispatch(
-        CustomerActions.requestAllAcc(1, tableData.totalRow, null, "ascending")
+        CustomerActions.requestAllAcc(
+          1,
+          tableData.totalRow,
+          "CustomerID",
+          "ascending"
+        )
       );
     }
     if (isRequesting == false) {
@@ -85,7 +116,7 @@ const AllAccountsPage: React.FC<IProps> = (
           firstCol.remove();
         }
         TableToExcel.convert(tableSelect, {
-          name: "AllAccounts" + ".xlsx",
+          name: "AllAccounts" + currDate + ".xlsx",
           sheet: {
             name: "Sheet 1",
           },
@@ -97,6 +128,8 @@ const AllAccountsPage: React.FC<IProps> = (
       }, 4000);
     }
   };
+
+  const currDate: string = format(new Date(), "cccc LLLL d, yyyy");
 
   useEffect(() => {
     dispatch(
@@ -112,7 +145,6 @@ const AllAccountsPage: React.FC<IProps> = (
 
     // if (window.location.pathname === "/data-quality/customer-setting") {
     if (search.value.length > 0) {
-      // console.log("search");
       dispatch(
         CustomerActions.requestSearchAllAcc(
           data.activePage,
@@ -166,6 +198,56 @@ const AllAccountsPage: React.FC<IProps> = (
             <h2 className="h2-container">Customer List</h2>
           </div>
 
+          <div className="posision-container">
+            {role === "ADMIN" ? (
+              <>
+                <div
+                  className="myAccount-toggle"
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    <Checkbox
+                      style={{ margin: "0.5rem", transform: "scale(0.9)" }}
+                      toggle
+                      checked={myAccount}
+                      onChange={() => handleMyAccount()}
+                    ></Checkbox>
+                  </div>
+                  <p style={{ fontSize: "0.8rem", margin: "0.5rem" }}>
+                    MY APPROVAL FILTER
+                  </p>
+                </div>
+              </>
+            ) : (
+              <div
+                className="myAccount-toggle"
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <Checkbox
+                    style={{ margin: "0.5rem", transform: "scale(0.9)" }}
+                    toggle
+                    checked={myAccount}
+                    onChange={() => handleMyAccount()}
+                  ></Checkbox>
+                </div>
+                <p style={{ fontSize: "0.8rem", margin: "0.5rem" }}>
+                  My Account
+                </p>
+              </div>
+            )}
+          </div>
+
           <div className="posision-container-right">
             <Tooltips
               content="Export Excel"
@@ -190,6 +272,7 @@ const AllAccountsPage: React.FC<IProps> = (
             <div className="wrapper-table">
               <CustomerTable
                 history={props.history}
+                role={props.role}
                 tableData={tableData}
                 getRowData={setNewRowData}
                 data={rowData}
