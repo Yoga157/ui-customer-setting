@@ -17,7 +17,7 @@ export const REQUEST_GET_RELATED_FILE_FINISHED: string = "RelatedCustomerActions
 
 export const requestRelatedFile = (customerSettingID: number): any => {
     return async (dispatch: ReduxDispatch<ActionUnion>): Promise <void> => {
-        await ActionUtility.createThunkEffect<RelatedFileModel>(
+        await ActionUtility.createThunkEffect<ResultActions>(
             dispatch,
             REQUEST_GET_RELATED_FILE,
             RelatedFileEffect.requestRelatedFile,

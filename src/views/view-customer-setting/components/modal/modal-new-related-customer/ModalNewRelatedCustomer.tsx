@@ -79,6 +79,17 @@ const ModalNewRelatedCondition: React.FC<IProps> = (props: React.PropsWithChildr
                         onSubmit={(values: any) => onSubmitCustomerName(values)}
                         render={({ handleSubmit, pristine, invalid }) => (
                         <Form onSubmit={handleSubmit}>
+                            {/* <Field
+                                name="customerName"
+                                component={SearchInput}
+                                placeholder="Type customer name here.."
+                                labelName="Customer Name"
+                                handleSearchChange={customerOnChange}
+                                onResultSelect={onResultSelectCustomer}
+                                results={customerStoreSearch}
+                                values={customerName}
+                                mandatory={true}
+                            /> */}
                             <Field
                                 name="customerName"
                                 component={DropdownClearInput}

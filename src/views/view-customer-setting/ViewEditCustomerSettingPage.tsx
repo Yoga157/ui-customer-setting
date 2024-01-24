@@ -32,7 +32,7 @@ const ViewEditCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChi
     return (
         <Fragment>
             {customer.customerID != undefined &&
-                <ViewEditCustomer customer={customer} role={"Sales"}/>  
+                <ViewEditCustomer customer={customer} role={"Admin"}/>  
             }
         </Fragment>
     )

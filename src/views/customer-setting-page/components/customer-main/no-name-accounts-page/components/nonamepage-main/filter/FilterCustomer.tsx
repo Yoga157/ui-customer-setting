@@ -10,14 +10,17 @@ import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import { selectSalesOptions } from "selectors/select-options/SalesAssignSelector";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
+
 interface IProps {
   rowData: any;
+  getRowData: (data: any) => void;
+
 }
 
 const FilterCustomer: React.FC<{
   setOpenFilter: React.Dispatch<React.SetStateAction<boolean>>;
   openFilter: boolean;
-} & IProps> = ({ setOpenFilter, openFilter, rowData }) => {
+} & IProps> = ({ setOpenFilter, openFilter, rowData, getRowData }) => {
   const [salesAssignArray, setSalesAssignArray] = useState([]);
   const [salesFilter, setSalesFilter] = useState([]);
   const [pmo_customerYesChecked, setPmo_customerYesChecked] = useState(false);
@@ -82,6 +85,7 @@ const FilterCustomer: React.FC<{
     setHoldshipmentNoChecked(false);
     setBlacklistYesChecked(false);
     setBlacklistNoChecked(false);
+    getRowData([])
 
     dispatch(
       CustomerSettingAct.requestNoNameAcc(1, 10, "CustomerID", "ascending")

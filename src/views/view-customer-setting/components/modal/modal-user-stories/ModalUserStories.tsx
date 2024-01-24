@@ -6,16 +6,20 @@ import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
 import { Button, Divider, Form, Input, Label } from "semantic-ui-react";
 import { Form as FinalForm, Field } from "react-final-form";
 import { RichTextEditor } from "views/components/UI";
+import * as ProjectHistory from "stores/project-history/ProjectHistoryActivityActions"
+import CustomerStoryPostModel from "stores/project-history/models/CustomerStoryPostModel";
+import { useParams } from "react-router-dom";
 
 interface IProps {
-    id: number;
+    funnelID: number;
+    customerID: number;
     successStory: string;
     modifiedStoryBy: any[];
 }
 
 const ModalUserStories: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
     const dispatch: Dispatch = useDispatch();
-    const { id, successStory, modifiedStoryBy } = props;
+    const { funnelID, customerID, successStory, modifiedStoryBy } = props;
     const [story, setStory] = useState(successStory)
     const [error, setError] = useState(false)
 
@@ -29,11 +33,19 @@ const ModalUserStories: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
     const onSubmitStory = async (values) => {
         console.log(values)
-        // if(values.story.length < 30) {
-        //     setError(true)
-        // }
+        let userLogin = JSON.parse(localStorage.getItem('userLogin'));
 
-        
+        let postUserStory = new CustomerStoryPostModel({});
+        postUserStory.storyID = 0;
+        postUserStory.funnelID = funnelID;
+        postUserStory.story = values.story;
+        postUserStory.createUserID = userLogin?.employeeID || 850;
+        postUserStory.createDate = new Date();
+
+        dispatch(ProjectHistory.postInvoicingSchedule(postUserStory)).then(() => {
+            dispatch(ProjectHistory.requestProjectHistory(customerID))
+            dispatch(ModalAction.CLOSE());
+        });
     }
 
     const cancelClick = () => {

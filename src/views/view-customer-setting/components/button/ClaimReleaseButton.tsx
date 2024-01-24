@@ -53,6 +53,8 @@ const ClaimReleaseButton: React.FC<IProps> = (props: React.PropsWithChildren<IPr
         )
       );
     };
+
+    console.log(customer)
     
 
     return (

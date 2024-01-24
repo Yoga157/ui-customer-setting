@@ -16,7 +16,14 @@ const ProjectHistoryReducer: Reducer = baseReducer(initialState, {
             ...state,
             data: action.payload!
         }
-    }
+    },
+
+    [ProjectHistoryActions.POST_CUSTOMER_STORY_FISNISHED](state: IProjectHistoryState, action: IAction<ResultActions>): IProjectHistoryState {
+        return {
+            ...state,
+            data: action.payload!
+        }
+    },
 });
 
 export default ProjectHistoryReducer;

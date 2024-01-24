@@ -14,15 +14,17 @@ import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityAct
 
 interface IProps {
   rowData: any;
+  getRowData: (data: any) => void;
 }
 
 const ClaimAccount: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
-  const { rowData } = props;
+  const { rowData, getRowData } = props;
 
   const cancelClick = () => {
+    getRowData([rowData])
     dispatch(ModalAction.CLOSE());
   };
 

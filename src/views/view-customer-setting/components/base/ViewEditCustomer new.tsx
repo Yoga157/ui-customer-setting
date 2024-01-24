@@ -40,7 +40,7 @@ import { selectServiceSummary } from "selectors/service-summary/ServiceSummarySe
 import { selectInvoicingCondition } from "selectors/invoicing-condition/InvoicingConditionSelector";
 import { selectRelatedCustomer } from "selectors/related-customer/RelatedCustomerSelector";
 import { selectRelatedFile } from "selectors/related-file/RelatedFileSelector";
-import { selectAccountOwner, selectSalesHistory, selectSalesSearchOptions } from "selectors/select-options/SalesAssignSelector";
+import { selectSalesHistory, selectSalesSearchOptions } from "selectors/select-options/SalesAssignSelector";
 import InvoicingScheduleModel from "stores/invoicing-schedule/models/InvoicingScheduleModel";
 import SalesAssignPostModel from "stores/customer-sales/models/SalesAssignPostModel";
 import CustomerSettingById from "stores/customer-setting/models/CustomerSettingById";
@@ -84,15 +84,14 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
     /** Customer data */
     const accountStatus = customer.accountStatus;
-    const shareableApprovalStatus = customer?.shareableApprovalStatus;
-    const shareableRequestStatus = shareableApprovalStatus?.status?.toUpperCase();
     // get employeeName dari local storage
     // cek apakah employeeName memiliki customer ini
-    let userLogin = JSON.parse(localStorage.getItem('userLogin'));
-    const employeeName = userLogin?.fullName ||  "Terang Laksana";
+    const employeeName = "Anindita D Soelistyo";
     const salesArray: string[] = customer.salesName?.split(", ");
     const isEmployeeOwnCustomer: boolean = salesArray?.includes(employeeName);
-    const isEmployeeRequestShareable: boolean = shareableApprovalStatus?.requestedBy == employeeName && shareableRequestStatus == "PENDING";
+    
+    // shareable request status
+    const shareableRequestStatus = customer?.shareableApprovalStatus?.approvalBy == "0" ? "WAITING" : "APPROVED";
 
     // customer category
     const [customerCategory, setCustomerCategory] = useState("");
@@ -123,7 +122,6 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     const configItemData = useSelector((state: IStore) => selectConfigItem(state));
     const collectionHistoryData = useSelector((state: IStore) => selectCollectionHistory(state));
     const projectHistoryData = useSelector((state: IStore) => selectProjectHistory(state));
-    const accountOwnerData = useSelector((state: IStore) => selectAccountOwner(state));
     
     /** Project History */
     const [allHistoryData, setAllHistoryData] = useState(projectHistoryData)
@@ -220,42 +218,17 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     }
 
     /** Invoicing schedule */
-    // const invoicingSchedule = useSelector((state: IStore) => selectInvoicingSchedule(state));
-
-    // const days = ["All days", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-    // const [daysArray, setDaysArray] = useState(invoicingSchedule.scheduleDays?.split(", ") || []);
-    // const [isAllDaysChecked, setIsAllDaysChecked] = useState(invoicingSchedule.scheduleDays === "Monday, Tuesday, Wednesday, Thursday, Friday" || false)
-
-    // const checkDay = (day) => {
-    //     if(day == "All days") {
-    //         if(daysArray.includes("Monday") && daysArray.includes("Tuesday") && daysArray.includes("Wednesday") && daysArray.includes("Thursday") && daysArray.includes("Friday")){
-    //             setIsAllDaysChecked(false)
-    //             setDaysArray([])
-    //         } else {
-    //             setDaysArray(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
-    //             setIsAllDaysChecked(true)
-    //         }
-    //     } else {
-    //         const isDaySelected = daysArray.includes(day);
-
-    //         if (isDaySelected) {
-    //             setDaysArray(daysArray.filter(selectedDay => selectedDay !== day));
-    //         } else {
-    //             setDaysArray([...daysArray, day]);
-    //         }
-    //     }
-    // }
     const invoicingSchedule = useSelector((state: IStore) => selectInvoicingSchedule(state));
     const [dayChecked, setDayChecked] = useState([]);
+
 
     const days = ["All days", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     const [daysArray, setDaysArray] = useState(invoicingSchedule.scheduleDays?.split(", ") || []);
     const [isAllDaysChecked, setIsAllDaysChecked] = useState(invoicingSchedule.scheduleDays === "Monday, Tuesday, Wednesday, Thursday, Friday" || false)
-    
     useEffect(()=>{
         if(invoicingSchedule?.scheduleDays !== undefined){
             setDayChecked(invoicingSchedule?.scheduleDays?.split(", "))
-            setDaysArray(invoicingSchedule?.scheduleDays?.split(", "))
+            setDaysArray(invoicingSchedule.scheduleDays?.split(", "))
         }
     }, [invoicingSchedule])
 
@@ -278,11 +251,9 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
             }
         }
     }
-
     const [minDate, setMinDate] = useState(invoicingSchedule.minDate || 0)
     const [maxDate, setMaxDate] = useState(invoicingSchedule.maxDate || 0)
     const [remark, setRemark] = useState(invoicingSchedule.remark || "")
-
     const onSubmitCustomerSettingHandler = async (values) => {
         let userLogin = JSON.parse(localStorage.getItem('userLogin'));
 
@@ -306,7 +277,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
         // const NewInvoicingSchedule = new InvoicingScheduleModel({});
         // NewInvoicingSchedule.scheduleID = invoicingSchedule.scheduleID;
-        // NewInvoicingSchedule.customerSettingID = Number(id);
+        // NewInvoicingSchedule.customerSettingID = Number(customer.customerID);
         // NewInvoicingSchedule.scheduleDays = daysArray.join(", ");
         // NewInvoicingSchedule.remark = remark;
         // NewInvoicingSchedule.minDate = minDate;
@@ -320,6 +291,31 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
         dispatch(ToastsAction.add('Edit customer setting data success!', ToastStatusEnum.Success));
         // setCustomerName('');
         // setCustomerData(undefined);
+    }
+
+    /** Project Type */
+    const [projectType, setProjectType] = useState("")
+    const projectTypeData = [
+        {
+            text: "Manage Operation",
+            value: "Manage Operation"
+        },
+        {
+            text: "Manage Service",
+            value: "Manage Service"
+        },
+        {
+            text: "Project Type",
+            value: "Project Type"
+        },
+    ]
+
+    const onChangeProjectType = (data: any): any => {
+        setProjectType(data)
+    }
+
+    const onSubmitData = (data) => {
+
     }
 
     /** Invoicing requirement */
@@ -343,44 +339,6 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
         );
       }, [dispatch]);
 
-    /** Project Type dan Invoicing Condition */
-    const [projectType, setProjectType] = useState("")
-    const [allDataInvoicingCondition, setAllDataInvoicingCondition] = useState(invoicingConditionData || []);
-    const projectTypeData = [
-        {
-            text: "Manage Operation",
-            value: "Manage Operation"
-        },
-        {
-            text: "Manage Service",
-            value: "Manage Service"
-        },
-        {
-            text: "Project Type",
-            value: "Project Type"
-        },
-    ]
-
-    const onChangeProjectType = (data: any): any => {
-        setProjectType(data)
-        console.log(data)
-       
-        if(data != '') {
-            const filteredArray = allDataInvoicingCondition.filter((item) =>
-                item.projectType.toLowerCase() == data.toLowerCase()
-            );
-    
-            setAllDataInvoicingCondition(filteredArray)
-        } else {
-            setAllDataInvoicingCondition(invoicingConditionData)
-        }
-
-    }
-
-    const onSubmitData = (data) => {
-
-    }
-
     /** Related customer */
     const onAddRelatedCustomer = useCallback((): void => {
         dispatch(
@@ -392,6 +350,17 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
       }, [dispatch]);
 
     const relatedCustomerData = useSelector((state: IStore) => selectRelatedCustomer(state));
+    // const relatedCustomerData = [
+    //     {
+    //         relatedID: 1,
+    //         customerName: "Example",
+    //         customerAddress: "Jalan jalan",
+    //         category: "Enterprise",
+    //         avgAR: 0,
+    //         blacklist: false,
+    //         holdshipment: false
+    //     }
+    // ]
     
     const deleteRelatedCustomer = useCallback((idToDel: number): void => {
         dispatch(
@@ -434,21 +403,17 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
             dispatch(BrandSummary.requestBrandSummary(customer.customerID))
             dispatch(ServiceSummary.requestServiceSummary(customer.customerID))
             dispatch(ProjectHistory.requestProjectHistory(customer.customerID))
-            dispatch(SalesAssign.requestAccountOwner(customer.customerID))
 
             dispatch(InvoicingSchedule.requestInvoicingSchedule(customer.customerID))
             dispatch(InvoicingCondition.requestInvoicingCondition(customer.customerID))
-            dispatch(RelatedCustomer.requestRelatedCustomer(customer.customerID));
-            dispatch(RelatedFile.requestRelatedFile(customer.customerID))
             setPmoCustomer(customer.pmoCustomer ? "TRUE": "FALSE")
         }
     }, [dispatch, customer])
 
     useEffect(() => {
-        if(projectHistoryData.length != 0 && Object.keys(invoicingSchedule).length != 0 && Object.keys(invoicingConditionData).length != 0) {
+        if(projectHistoryData.length != 0 && Object.keys(invoicingSchedule).length != 0) {
             setAllHistoryData(projectHistoryData)
-            setAllDataInvoicingCondition(invoicingConditionData)
-
+            console.log(invoicingSchedule)
             if(invoicingSchedule.scheduleDays === "Monday, Tuesday, Wednesday, Thursday, Friday") {
                 setIsAllDaysChecked(true)
             } else {
@@ -460,7 +425,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
             setMaxDate(invoicingSchedule.maxDate)
             setRemark(invoicingSchedule.remark)
         }
-    }, [invoicingSchedule, invoicingConditionData, projectHistoryData])
+    }, [invoicingSchedule, projectHistoryData])
 
     const isRequesting: boolean = useSelector((state: IStore) =>
         selectRequesting(state, [
@@ -520,7 +485,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
     return (
         <Fragment>
-            {shareableApprovalStatus.length != 0 &&
+            {customer?.shareableApprovalStatus?.requestedBy &&
                 <div ref={statusDivRef} style={{ zIndex: 4, position: "fixed", top: 0, left: 0, width: "100vw", color: "#55637A"}}> 
                     <div style={{ paddingTop: "6em", paddingInline: "5.5em", paddingBottom: "1.5em", backgroundColor: "#DADCDB", transition: "opacity 0.5s ease-in-out, transform 0.5s ease-in-out", opacity: showStatus ? 1 : 0, transform: `translateY(${({showStatus}) => (showStatus ? '0' : '-50px')})`, display: showStatus ? 'block' : 'none' }}>
                         <h4>Shareable Account Approval</h4>
@@ -528,19 +493,19 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                             <div ref={firstDivRef} style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", fontSize: "small", zIndex: 1 }}>
                                 <div style={{ height: "1rem", width: "1rem", borderRadius: "100%", backgroundColor: "#589DDB"}}></div>
                                 <p className="margin-0">Request By</p>
-                                <p className="margin-0" style={{ fontWeight: "bold" }}>{shareableApprovalStatus?.requestedBy}</p>
-                                <span style={{ color: "grey" }}><Icon name="check circle" style={{ color: "#27D4A5" }}/>{shareableApprovalStatus?.requestedDate}</span>
+                                <p className="margin-0" style={{ fontWeight: "bold" }}>{customer?.shareableApprovalStatus?.requestedBy}</p>
+                                <span style={{ color: "grey" }}><Icon name="check circle" style={{ color: "#27D4A5" }}/>{customer?.shareableApprovalStatus?.requestedDate}</span>
                             </div>
 
                             <div ref={secondDivRef} style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", fontSize: "small", zIndex: 1 }}>
                                 <div style={{ height: "1rem", width: "1rem", borderRadius: "100%", backgroundColor: "#589DDB"}}></div>
-                                <p className="margin-0">{shareableRequestStatus == "PENDING" ? "Waiting Approval By" : (shareableRequestStatus == "APPROVED" ? "Approved By" : "Rejected By")}</p>
-                                <p className="margin-0" style={{ fontWeight: "bold" }}>{shareableApprovalStatus?.approvalBy != null ? shareableApprovalStatus?.approvalBy : "Rima Wulansari"}</p>
+                                <p className="margin-0">{shareableRequestStatus == "WAITING" ? "Waiting Approval By" : (shareableRequestStatus == "APPROVED" ? "Approved By" : "Rejected By")}</p>
+                                <p className="margin-0" style={{ fontWeight: "bold" }}>{customer?.shareableApprovalStatus?.approvalBy}</p>
                                 <span style={{ color: "grey" }}>
-                                    {shareableRequestStatus == "PENDING" ? 
+                                    {shareableRequestStatus == "WAITING" ? 
                                         <><Icon name="exclamation circle" style={{ color: "#FFA800" }}/> Waiting Approval </> : 
                                     (shareableRequestStatus == "APPROVED" ?
-                                        <><Icon name="check circle" style={{ color: "#27D4A5" }}/> {shareableApprovalStatus?.approvalDate}</> : 
+                                        <><Icon name="check circle" style={{ color: "#27D4A5" }}/> {customer?.shareableApprovalStatus?.approvalDate}</> : 
                                         <><Icon name="remove circle" style={{ color: "red" }}/> Rejected</>
                                     )}
                                 </span>
@@ -659,13 +624,14 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
                     <div className="padding-horizontal title-button-row">
                         <p className="grey margin-0 bold text-align-left">ACCOUNT OWNER SETTING</p>
-                        <ClaimReleaseButton customer={customer} accountStatus={accountStatus} isEmployeeOwnCustomer={isEmployeeOwnCustomer} isEmployeeRequestShareable={isEmployeeRequestShareable} role={role} />
+                        {/* {console.log("customer awal", customer)} */}
+                        {/* <ClaimReleaseButton customer={customer} accountStatus={accountStatus} isEmployeeOwnCustomer={isEmployeeOwnCustomer} role={role} /> */}
                     </div>
 
                     <Divider></Divider>
 
                     <div style={{ }} className="padding-horizontal">
-                        <TableNewCustomerSetting data={accountOwnerData} header={data.accOwnerHeader} sequenceNum={true} />
+                        <TableNewCustomerSetting data={data.accOwnerData} header={data.accOwnerHeader} sequenceNum={true} />
                     </div>
                     <Divider></Divider>
 
@@ -768,7 +734,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                 </div>
                                             </div>
 
-                                            <TableProjectHistory data={historyData} customerID={customer.customerID} setOpenCollectionHistory={setOpenCollectionHistory}/>
+                                            {/* <TableProjectHistory data={historyData} setOpenCollectionHistory={setOpenCollectionHistory}/> */}
 
                                             <div style={{ marginTop: "1rem" }}>
                                                 <Pagination
@@ -826,10 +792,9 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                             <Divider></Divider>
 
                             <p className="padding-horizontal grey margin-0 bold text-align-left">INVOICING SCHEDULE SETTING</p>
-
-                            <Divider></Divider>
-
-                            <FinalForm
+                            {invoicingSchedule?.scheduleDays !== undefined && (dayChecked.length > 0 && invoicingSchedule?.scheduleDays?.length > 0) &&
+                                <> 
+                                    <FinalForm
                                 onSubmit={(values: any) => onSubmitCustomerSettingHandler(values)}
                                 render={({ handleSubmit, pristine, invalid }) => (
                                 <Form onSubmit={handleSubmit} >
@@ -846,12 +811,9 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                 </label>
                                             </div>
                                             {role.toUpperCase() == "SALES" ?
-                                                <p style={{ fontSize: "20px", fontWeight: "bold"}}>{invoicingSchedule?.scheduleDays != null ? invoicingSchedule?.scheduleDays : "No data" }</p>
+                                                <p style={{ fontSize: "20px", fontWeight: "bold"}}>{invoicingSchedule?.scheduleDays}</p>
                                             :
                                                 <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
-                                                    {/* {days.map((day) => 
-                                                        <CheckboxInvoicing label={day} value={day} defaultChecked={isAllDaysChecked && day=="All days" ? isAllDaysChecked : (isAllDaysChecked ? !daysArray.includes(day) : daysArray.includes(day))} disabled={isAllDaysChecked && day !== "All days"} style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
-                                                    )} */}
                                                     {days.map((day) => 
                                                         <CheckboxInvoicing label={day} value={day} defaultChecked={dayChecked?.find((p:any)=>p.includes(day)) !== undefined || dayChecked?.find((p:any)=>p.includes("All days")) !== undefined } style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
                                                     )}
@@ -871,7 +833,8 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                             <input
                                                                 name="minDate"
                                                                 type="number"
-                                                                value={minDate}
+                                                                defaultValue={invoicingSchedule?.minDate}
+                                                                value={minDate > 0 ? minDate : invoicingSchedule?.minDate}
                                                                 onChange={(e) =>
                                                                     setMinDate(parseInt(e.target.value, 10))
                                                                 }
@@ -887,7 +850,8 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                             <input
                                                                 name="maxDate"
                                                                 type="number"
-                                                                value={maxDate}
+                                                                defaultValue={invoicingSchedule?.maxDate}
+                                                                value={maxDate > 0 ? maxDate : invoicingSchedule?.maxDate}
                                                                 onChange={(e) =>
                                                                     setMaxDate(parseInt(e.target.value, 10))
                                                                 }
@@ -909,8 +873,8 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                         component={RichTextEditor}
                                                         placeholder="e.g. Remark"
                                                         labelName="Remark"
-                                                        value={remark}
-                                                        defaultValue={remark}
+                                                        value={remark.length > 0 ? remark : invoicingSchedule?.remark}
+                                                        defaultValue={invoicingSchedule?.remark}
                                                     />
                                                 }
                                             </div>
@@ -954,14 +918,14 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                         </Table.Header>
 
                                         <Table.Body>
-                                            {allDataInvoicingCondition.length == 0 ?
+                                            {invoicingConditionData.length == 0 ?
                                                 <Table.Row>
                                                     <Table.Cell colSpan={16} textAlign="center">
                                                     No data
                                                     </Table.Cell>
                                                 </Table.Row>
                                             :
-                                                (allDataInvoicingCondition.map((data, index) => (
+                                                (invoicingConditionData.map((data, index) => (
                                                 <Table.Row key={index}>
                                                         <Table.Cell>{index + 1}</Table.Cell>
                                                         <Table.Cell>
@@ -1021,7 +985,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                             </div>
                                                         </Table.Cell>
                                                         <Table.Cell>{data.customerName}</Table.Cell>
-                                                        <Table.Cell>{data.address}</Table.Cell>
+                                                        <Table.Cell>{data.customerAddress}</Table.Cell>
                                                         <Table.Cell>{data.category}</Table.Cell>
                                                         <Table.Cell>{data.avgAR}</Table.Cell>
                                                         <Table.Cell>
@@ -1101,7 +1065,12 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                     </div>
 
                             </Form>
+                            
                             )}/>
+                                </>
+                            }
+                            <Divider></Divider>
+                            
                         </>
                     {/* :
                         <>

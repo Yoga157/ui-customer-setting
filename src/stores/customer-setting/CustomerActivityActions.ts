@@ -560,7 +560,7 @@ export const acceptRequestShareableAccount = (customerID: number, salesID: numbe
   return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
     await ActionUtility.createThunkEffect<ResultActions>(
       dispatch,
-      POST_CUSTOMER_SETTING,
+      PUT_ACCEPT_REQUEST_SHAREABLE,
       CustomerEffect.acceptRequestShareableAccount,
       customerID,
       salesID,

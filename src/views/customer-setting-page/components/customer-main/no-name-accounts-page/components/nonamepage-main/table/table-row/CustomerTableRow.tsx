@@ -33,7 +33,11 @@ const CustomerTableRow: React.FC<IProps> = (
   const { rowData, getRowData } = props;
 
   useEffect(() => {
-    setIsChecked(false);
+    // if(props.data.find((obj) => obj.customerID === rowData.customerID)){
+    //   setIsChecked(true);
+    // } else {
+    //   setIsChecked(false)
+    // }
   }, [rowData]);
 
   const setRowData = (data) => {
