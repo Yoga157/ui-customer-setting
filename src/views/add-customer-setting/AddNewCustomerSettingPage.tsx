@@ -398,21 +398,21 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (
   let userLogin = JSON.parse(localStorage.getItem("userLogin"));
 
   const onSubmitCustomerSettingHandler = async (values) => {
-    setRemark(values.remark);
+    // setRemark(values.remark);
 
-    /** post customer setting data */
-    const NewCustomerSettingData = new CustomerSettingById({});
-    NewCustomerSettingData.customerSettingID = 0;
-    NewCustomerSettingData.customerID = customerData.customerID;
-    NewCustomerSettingData.customerCategoryID = "CATEGORY";
-    NewCustomerSettingData.shareable = shareable == "TRUE" ? true : false;
-    NewCustomerSettingData.pmoCustomer = pmoCustomer == "TRUE" ? true : false;
-    NewCustomerSettingData.createUserID =
-      userLogin?.employeeID != null ? userLogin.employeeID : 0;
-    NewCustomerSettingData.modifyUserID =
-      userLogin?.employeeID != null ? userLogin.employeeID : 0;
+    // /** post customer setting data */
+    // const NewCustomerSettingData = new CustomerSettingById({});
+    // NewCustomerSettingData.customerSettingID = 0;
+    // NewCustomerSettingData.customerID = customerData.customerID;
+    // NewCustomerSettingData.customerCategoryID = "CATEGORY";
+    // NewCustomerSettingData.shareable = shareable == "TRUE" ? true : false;
+    // NewCustomerSettingData.pmoCustomer = pmoCustomer == "TRUE" ? true : false;
+    // NewCustomerSettingData.createUserID =
+    //   userLogin?.employeeID != null ? userLogin.employeeID : 0;
+    // NewCustomerSettingData.modifyUserID =
+    //   userLogin?.employeeID != null ? userLogin.employeeID : 0;
 
-    await dispatch(CustomerSetting.postCustomerSetting(NewCustomerSettingData));
+    // await dispatch(CustomerSetting.postCustomerSetting(NewCustomerSettingData));
   };
 
   const [isRequesting, setIsRequesting] = useState(false);
@@ -436,17 +436,17 @@ const AddNewCustomerSettingPage: React.FC<IProps> = (
       });
 
       /** post invoicing schedule */
-      const NewInvoicingSchedule = new InvoicingScheduleModel({});
-      NewInvoicingSchedule.scheduleID = 0;
-      NewInvoicingSchedule.customerSettingID = postResponse.customerSettingID;
-      NewInvoicingSchedule.scheduleDays = daysArray.join(", ");
-      NewInvoicingSchedule.remark = remark;
-      NewInvoicingSchedule.minDate = minDate;
-      NewInvoicingSchedule.maxDate = maxDate;
-      NewInvoicingSchedule.createUserID = 0;
-      NewInvoicingSchedule.modifyUserID = 0;
+      // const NewInvoicingSchedule = new InvoicingScheduleModel({});
+      // NewInvoicingSchedule.scheduleID = 0;
+      // NewInvoicingSchedule.customerSettingID = postResponse.customerSettingID;
+      // NewInvoicingSchedule.scheduleDays = daysArray.join(", ");
+      // NewInvoicingSchedule.remark = remark;
+      // NewInvoicingSchedule.minDate = minDate;
+      // NewInvoicingSchedule.maxDate = maxDate;
+      // NewInvoicingSchedule.createUserID = 0;
+      // NewInvoicingSchedule.modifyUserID = 0;
 
-      dispatch(InvoicingSchedule.postInvoicingSchedule(NewInvoicingSchedule));
+      // dispatch(InvoicingSchedule.postInvoicingSchedule(NewInvoicingSchedule));
 
       /** post invoicing condition */
       // invoicingConditionData.map((data) => {

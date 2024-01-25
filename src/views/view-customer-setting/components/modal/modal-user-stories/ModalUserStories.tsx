@@ -63,7 +63,10 @@ const ModalUserStories: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                 onSubmit={(values: any) => onSubmitStory(values)}
                 render={({ handleSubmit, pristine, invalid }) => (
                 <Form onSubmit={handleSubmit}>
-                    <Field name="story" initialValue={story} defaultValue={story} values={story} component={RichTextEditor} placeholder="e.g. User Story" />  
+                    
+                    <Field name="story" initialValue={story} defaultValue={story} values={story} component={RichTextEditor} placeholder="e.g. User Story" onChange={onChangeStory} />  
+                    
+                    
                     <label style={{ color: error ? "red" : "#A0A8B3", fontStyle: "italic" }}>{error ? "Belum memenuhi batas minimum" : "30 Characters Minimum"}</label>
                     <div style={{ color: "#8992A1", backgroundColor: "#E1E1E1", padding: "0.5rem 0", fontStyle: "italic", fontSize: "10px", marginTop: "1rem" }}>
                         {modifiedStoryBy.map((data, index) => {

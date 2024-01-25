@@ -258,7 +258,6 @@ export const selectPostResponseCustomerSetting: Selector<
 
 export const _selectCustomerDataById = (model: ResultActions): any => {
   if(Object.keys(model.resultObj).length != 0) {
-    console.log("selector", model.resultObj)
     let lastIndex = model.resultObj.shareableApprovalStatus.length != 0 ? model.resultObj.shareableApprovalStatus.length - 1 : 0;
     return {
       accountStatus : model.resultObj.accountStatus,
@@ -274,9 +273,9 @@ export const _selectCustomerDataById = (model: ResultActions): any => {
       shareableApprovalStatus : model.resultObj.shareableApprovalStatus.length != 0 ? {
         status: model.resultObj.shareableApprovalStatus[lastIndex].status,
         requestedBy: model.resultObj.shareableApprovalStatus[lastIndex].requestedBy,
-        requestedDate: formatDate(model.resultObj.shareableApprovalStatus[lastIndex].requestedDate),
+        requestedDate: model.resultObj.shareableApprovalStatus[lastIndex].requestedDate,
         approvalBy: model.resultObj.shareableApprovalStatus[lastIndex].approvalBy,
-        approvalDate: formatDate(model.resultObj.shareableApprovalStatus[lastIndex].approvalDate)
+        approvalDate: model.resultObj.shareableApprovalStatus[lastIndex].approvalDate
       } : [],
     }
   } else {
@@ -290,4 +289,30 @@ export const selectCustomerDataById: Selector<
 > = createSelector(
   (state: IStore) => state.customerSetting.customerDataById,
   _selectCustomerDataById
+);
+
+export const _selectSearchCustomerByName = (model: ResultActions): any => {
+  if(Object.keys(model.resultObj).length != 0) {
+    return model.resultObj.map(
+      (model: any): any => ({
+        key: model.customerID,
+        title: model.customerName,
+        customerID: model.customerID,
+        customerAddress: model.customerAddress,
+        blacklist: model.blacklist,
+        holdshipment: model.holdshipment,
+        avgAR: model.avgAR
+      })
+    )
+  } else {
+    return [];
+  }
+}
+
+export const selectSearchCustomerByName: Selector<
+  IStore,
+  any
+> = createSelector(
+  (state: IStore) => state.customerSetting.searchCustomerByName,
+  _selectSearchCustomerByName
 );

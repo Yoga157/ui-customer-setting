@@ -34,7 +34,7 @@ import * as CollectionHistory from "stores/collection-history/CollectionHistoryA
 import * as ProjectHistory from "stores/project-history/ProjectHistoryActivityActions"
 import * as ToastsAction from 'stores/toasts/ToastsAction';
 import { selectCustomerPIC } from "selectors/customer-pic/CustomerPICSelectors";
-import { selectCustomerSettingByCustomerId } from "selectors/customer-setting/CustomerSettingSelector";
+import { selectCustomerSettingByCustomerId, selectSearchCustomerByName } from "selectors/customer-setting/CustomerSettingSelector";
 import { selectBrandSummary } from "selectors/brand-summary/BrandSummarySelector";
 import { selectServiceSummary } from "selectors/service-summary/ServiceSummarySelector";
 import { selectInvoicingCondition } from "selectors/invoicing-condition/InvoicingConditionSelector";
@@ -53,6 +53,7 @@ import { selectProjectHistory } from "selectors/project-history/ProjectHistorySe
 import TableProjectHistory from "../table/table-project-history/TableProjectHistory";
 import TableCollectionHistory from "../table/table-collection-history/TableCollectionHistory";
 import ClaimReleaseButton from "../button/ClaimReleaseButton";
+import CustomerSettingPutModel from "stores/customer-setting/models/CustomerSettingPutModel";
 
 interface IProps {
     customer: {
@@ -95,7 +96,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     const isEmployeeRequestShareable: boolean = shareableApprovalStatus?.requestedBy == employeeName && shareableRequestStatus == "PENDING";
 
     // customer category
-    const [customerCategory, setCustomerCategory] = useState("");
+    const [customerCategory, setCustomerCategory] = useState(customer.customerCategory);
     const customerCategoryOptions = useSelector((state: IStore) => selectCustomerCategories(state));
     
     const onSubmitCustCategory = async (e) => {
@@ -104,7 +105,6 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
     const onChangeCustomerCategory = (data : any) => {
         setCustomerCategory(data)
-        console.log(data)
     }
 
     /** Handle dropdown data yang di-get */
@@ -220,63 +220,40 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     }
 
     /** Invoicing schedule */
-    // const invoicingSchedule = useSelector((state: IStore) => selectInvoicingSchedule(state));
+    const invoicingSchedule = useSelector((state: IStore) => selectInvoicingSchedule(state));
+    // const [dayChecked, setDayChecked] = useState([]);
 
-    // const days = ["All days", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-    // const [daysArray, setDaysArray] = useState(invoicingSchedule.scheduleDays?.split(", ") || []);
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+    const [daysArray, setDaysArray] = useState(invoicingSchedule.scheduleDays?.split(", ") || []);
     // const [isAllDaysChecked, setIsAllDaysChecked] = useState(invoicingSchedule.scheduleDays === "Monday, Tuesday, Wednesday, Thursday, Friday" || false)
 
-    // const checkDay = (day) => {
-    //     if(day == "All days") {
-    //         if(daysArray.includes("Monday") && daysArray.includes("Tuesday") && daysArray.includes("Wednesday") && daysArray.includes("Thursday") && daysArray.includes("Friday")){
-    //             setIsAllDaysChecked(false)
-    //             setDaysArray([])
-    //         } else {
-    //             setDaysArray(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
-    //             setIsAllDaysChecked(true)
-    //         }
-    //     } else {
-    //         const isDaySelected = daysArray.includes(day);
-
-    //         if (isDaySelected) {
-    //             setDaysArray(daysArray.filter(selectedDay => selectedDay !== day));
-    //         } else {
-    //             setDaysArray([...daysArray, day]);
-    //         }
-    //     }
-    // }
-    const invoicingSchedule = useSelector((state: IStore) => selectInvoicingSchedule(state));
-    const [dayChecked, setDayChecked] = useState([]);
-
-    const days = ["All days", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-    const [daysArray, setDaysArray] = useState(invoicingSchedule.scheduleDays?.split(", ") || []);
-    const [isAllDaysChecked, setIsAllDaysChecked] = useState(invoicingSchedule.scheduleDays === "Monday, Tuesday, Wednesday, Thursday, Friday" || false)
-    
-    useEffect(()=>{
-        if(invoicingSchedule?.scheduleDays !== undefined){
-            setDayChecked(invoicingSchedule?.scheduleDays?.split(", "))
-            setDaysArray(invoicingSchedule?.scheduleDays?.split(", "))
-        }
-    }, [invoicingSchedule])
-
     const checkDay = (day) => {
-        if(day == "All days") {
-            if(daysArray.includes("Monday") && daysArray.includes("Tuesday") && daysArray.includes("Wednesday") && daysArray.includes("Thursday") && daysArray.includes("Friday")){
-                setIsAllDaysChecked(false)
-                setDaysArray([])
-            } else {
-                setDaysArray(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
-                setIsAllDaysChecked(true)
-            }
-        } else {
+        // if(day === "All days") {
+        //     if(daysArray.includes("Monday") && daysArray.includes("Tuesday") && daysArray.includes("Wednesday") && daysArray.includes("Thursday") && daysArray.includes("Friday")){
+        //         setIsAllDaysChecked(false)
+        //         setDaysArray([])
+        //         setDayChecked([])
+        //     } else if(daysArray.includes("Monday") || daysArray.includes("Tuesday") || daysArray.includes("Wednesday") || daysArray.includes("Thursday") || daysArray.includes("Friday")){
+        //         setIsAllDaysChecked(false)
+        //         setDaysArray([])
+        //         setDayChecked([])
+        //     } else {
+        //         setDaysArray(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
+        //         setDayChecked(["All days"])
+        //         setIsAllDaysChecked(true)
+        //     }
+        // } else {
             const isDaySelected = daysArray.includes(day);
 
             if (isDaySelected) {
                 setDaysArray(daysArray.filter(selectedDay => selectedDay !== day));
+                // setDayChecked(dayChecked.filter(selectedDay => selectedDay !== day));
             } else {
                 setDaysArray([...daysArray, day]);
+                // setDayChecked([...dayChecked, day]);
             }
-        }
+        // }
+        console.log(day, daysArray)
     }
 
     const [minDate, setMinDate] = useState(invoicingSchedule.minDate || 0)
@@ -290,36 +267,47 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
         console.log(values)
         console.log(daysArray)
 
-        // const NewCustomerSettingData = new CustomerSettingById({})
-        // NewCustomerSettingData.customerSettingID = Number(id);
-        // NewCustomerSettingData.customerID = customerSettingData.customerID;
-        // NewCustomerSettingData.customerCategoryID = customerSettingData.customerCategoryID;
-        // NewCustomerSettingData.shareable = shareable == "TRUE" ? true : false;
-        // NewCustomerSettingData.pmoCustomer = pmoCustomer == "TRUE" ? true : false;
-        // NewCustomerSettingData.createUserID = customerSettingData.createUserID;
-        // NewCustomerSettingData.modifyUserID = userLogin?.employeeID != null ? userLogin.employeeID : 0;
-        
-        // await dispatch(CustomerSetting.putCustomerSetting(NewCustomerSettingData, Number(id)));
+        const PutCustomerSetting = new CustomerSettingPutModel({});
+        PutCustomerSetting.customerID = customer.customerID;
+        PutCustomerSetting.customerCategory = customerCategory;
+        PutCustomerSetting.pmoCustomer = pmoCustomer == "TRUE" ? true : false;
+
+        await dispatch(CustomerSetting.putCustomerSettingCategoryPmo(PutCustomerSetting, customer.customerID));
 
         /** post invoicing schedule */
         let remark = values.remark;
 
-        // const NewInvoicingSchedule = new InvoicingScheduleModel({});
-        // NewInvoicingSchedule.scheduleID = invoicingSchedule.scheduleID;
-        // NewInvoicingSchedule.customerSettingID = Number(id);
-        // NewInvoicingSchedule.scheduleDays = daysArray.join(", ");
-        // NewInvoicingSchedule.remark = remark;
-        // NewInvoicingSchedule.minDate = minDate;
-        // NewInvoicingSchedule.maxDate = maxDate;
-        // NewInvoicingSchedule.createUserID = invoicingSchedule.createUserID;
-        // NewInvoicingSchedule.modifyUserID = userLogin?.employeeID;
+        if(Object.keys(invoicingSchedule).length == 0) {
+            const NewInvoicingSchedule = new InvoicingScheduleModel({});
+            NewInvoicingSchedule.iScheduleID = 0;
+            NewInvoicingSchedule.customerID = customer.customerID;
+            NewInvoicingSchedule.scheduleDays = daysArray.join(", ");
+            NewInvoicingSchedule.remark = remark;
+            NewInvoicingSchedule.minDate = minDate;
+            NewInvoicingSchedule.maxDate = maxDate;
+            NewInvoicingSchedule.createUserID = userLogin?.employeeID || null;
+            NewInvoicingSchedule.modifyUserID = userLogin?.employeeID || null;
+            console.log(NewInvoicingSchedule)
+    
+            await dispatch(InvoicingSchedule.postInvoicingSchedule(NewInvoicingSchedule))
+        } else {
+            const UpdateInvoicingSchedule = new InvoicingScheduleModel({});
+            UpdateInvoicingSchedule.iScheduleID = invoicingSchedule.scheduleID;
+            UpdateInvoicingSchedule.customerID = customer.customerID;
+            UpdateInvoicingSchedule.scheduleDays = daysArray.join(", ");
+            UpdateInvoicingSchedule.remark = remark;
+            UpdateInvoicingSchedule.minDate = minDate;
+            UpdateInvoicingSchedule.maxDate = maxDate;
+            UpdateInvoicingSchedule.createUserID = invoicingSchedule.createUserID;
+            UpdateInvoicingSchedule.modifyUserID = userLogin?.employeeID || null;
 
-        // dispatch(InvoicingSchedule.putInvoicingSchedule(NewInvoicingSchedule, invoicingSchedule.scheduleID))
+            console.log(UpdateInvoicingSchedule)
+            await dispatch(InvoicingSchedule.putInvoicingSchedule(UpdateInvoicingSchedule, invoicingSchedule.scheduleID))   
+        }
 
-        // dispatch(CustomerSetting.postCustomerSetting(NewCustomerSettingData));
-        dispatch(ToastsAction.add('Edit customer setting data success!', ToastStatusEnum.Success));
-        // setCustomerName('');
-        // setCustomerData(undefined);
+        await dispatch(CustomerSetting.requestCustomerDataById(customer.customerID));
+        await dispatch(InvoicingSchedule.requestInvoicingSchedule(customer.customerID));
+        await dispatch(ToastsAction.add('Edit customer setting data success!', ToastStatusEnum.Success))
     }
 
     /** Invoicing requirement */
@@ -445,17 +433,27 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     }, [dispatch, customer])
 
     useEffect(() => {
-        if(projectHistoryData.length != 0 && Object.keys(invoicingSchedule).length != 0 && Object.keys(invoicingConditionData).length != 0) {
+        if(projectHistoryData.length != 0 && Object.keys(invoicingConditionData).length != 0) {
             setAllHistoryData(projectHistoryData)
             setAllDataInvoicingCondition(invoicingConditionData)
+        }
 
-            if(invoicingSchedule.scheduleDays === "Monday, Tuesday, Wednesday, Thursday, Friday") {
-                setIsAllDaysChecked(true)
+        if(Object.keys(invoicingSchedule).length != 0) {
+            console.log(invoicingSchedule)
+            // if(invoicingSchedule.scheduleDays === "Monday, Tuesday, Wednesday, Thursday, Friday") {
+            //     setIsAllDaysChecked(true)
+            //     setDayChecked(["All days"])
+            // } else {
+            //     setIsAllDaysChecked(false)
+            //     setDayChecked(invoicingSchedule.scheduleDays.split(", "))
+            // }
+
+            // setDayChecked(invoicingSchedule.scheduleDays.split(", "))
+            if(invoicingSchedule.scheduleDays == "") {
+                setDaysArray([])
             } else {
-                setIsAllDaysChecked(false)
+                setDaysArray(invoicingSchedule.scheduleDays.split(", "))
             }
-    
-            setDaysArray(invoicingSchedule.scheduleDays.split(", "))
             setMinDate(invoicingSchedule.minDate)
             setMaxDate(invoicingSchedule.maxDate)
             setRemark(invoicingSchedule.remark)
@@ -465,7 +463,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     const isRequesting: boolean = useSelector((state: IStore) =>
         selectRequesting(state, [
             InvoicingCondition.REQUEST_GET_INVOICING_CONDITION,
-            // RelatedFile.REQUEST_GET_RELATED_FILE,
+            RelatedFile.REQUEST_GET_RELATED_FILE,
             SalesAssign.REQUEST_SALES_HISTORY,
             InvoicingSchedule.REQUEST_GET_INVOICING_SCHEDULE,
             CustomerSetting.REQUEST_CUSTOMER_DATA_BY_CUSTOMER_ID,
@@ -849,12 +847,42 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                 <p style={{ fontSize: "20px", fontWeight: "bold"}}>{invoicingSchedule?.scheduleDays != null ? invoicingSchedule?.scheduleDays : "No data" }</p>
                                             :
                                                 <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
+                                                    {/* {invoicingSchedule?.scheduleDays !== undefined && (dayChecked.length > 0 && invoicingSchedule?.scheduleDays?.length > 0) ? days.map((day) => 
+                                                        <CheckboxInvoicing label={day} value={day} defaultChecked={dayChecked?.find((p:any)=>p.includes(day)) !== undefined || dayChecked?.find((p:any)=>p.includes("All days")) !== undefined } disabled={isAllDaysChecked && day !== "All days"} style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
+                                                    )
+                                                :
+                                                days.map((day) => 
+                                                        <CheckboxInvoicing label={day} value={day} disabled={isAllDaysChecked && day !== "All days"} style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
+                                                )} */}
                                                     {/* {days.map((day) => 
-                                                        <CheckboxInvoicing label={day} value={day} defaultChecked={isAllDaysChecked && day=="All days" ? isAllDaysChecked : (isAllDaysChecked ? !daysArray.includes(day) : daysArray.includes(day))} disabled={isAllDaysChecked && day !== "All days"} style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
+                                                        invoicingSchedule?.scheduleDays !== undefined && (dayChecked.length > 0 && invoicingSchedule?.scheduleDays?.length > 0) ?
+                                                            <CheckboxInvoicing label={day} value={day} defaultChecked={dayChecked?.find((p:any)=>p.includes(day)) !== undefined || dayChecked?.find((p:any)=>p.includes("All days")) !== undefined } disabled={isAllDaysChecked && day !== "All days" } style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
+                                                            :
+                                                            <CheckboxInvoicing label={day} value={day} defaultChecked={dayChecked?.find((p:any)=>p.includes(day)) !== undefined || dayChecked?.find((p:any)=>p.includes("All days")) !== undefined } disabled={isAllDaysChecked && day !== "All days" } style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
+                                                        
                                                     )} */}
-                                                    {days.map((day) => 
-                                                        <CheckboxInvoicing label={day} value={day} defaultChecked={dayChecked?.find((p:any)=>p.includes(day)) !== undefined || dayChecked?.find((p:any)=>p.includes("All days")) !== undefined } style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
+                                                    {/* {invoicingSchedule?.scheduleDays !== undefined && (dayChecked.length > 0 && invoicingSchedule?.scheduleDays?.length > 0) && days.map((day) => 
+                                                        <CheckboxInvoicing label={day} value={day} defaultChecked={dayChecked?.find((p:any)=>p.includes(day)) !== undefined || dayChecked?.find((p:any)=>p.includes("All days")) !== undefined } disabled={isAllDaysChecked && day !== "All days" } style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
+                                                    )} */}
+                                                    {daysArray.length > 0 &&
+                                                    days.map((day, index) => 
+                                                        <CheckboxInvoicing key={index} label={day} value={day} defaultChecked={daysArray?.find((p:any)=>p.includes(day)) !== undefined || daysArray?.find((p:any)=>p.includes("All days")) !== undefined } style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
                                                     )}
+
+                                                    {console.log(daysArray.length, daysArray)}
+                                                    {daysArray.length == 0 &&
+                                                    days.map((day, index) => 
+                                                        <CheckboxInvoicing key={index} label={day} value={day} style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
+                                                    )}
+
+                                                    {/* {
+                                                        days.map((day) => 
+                                                            (invoicingSchedule?.scheduleDays !== undefined && (daysArray.length > 0 && invoicingSchedule?.scheduleDays?.length > 0) ? 
+                                                            <CheckboxInvoicing label={day} value={day} defaultChecked={daysArray?.find((p:any)=>p.includes(day)) !== undefined || daysArray?.find((p:any)=>p.includes("All days")) !== undefined } style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
+                                                            :
+                                                            <CheckboxInvoicing label={day} value={day} style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>)
+                                                        )
+                                                    } */}
                                                 </div>
                                             }
                                         </div>

@@ -13,6 +13,7 @@ export default interface ICustomerState {
   readonly activePage: number;
   readonly dataByCustomerId: CustomerSettingById;
   readonly customerDataById: ResultActions;
+  readonly searchCustomerByName: ResultActions;
   error: boolean;
   refreshPage: boolean;
   resultActions: any;

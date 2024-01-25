@@ -59,7 +59,7 @@ const NamedAccountsPage: React.FC<IProps> = (
   const handleMyAccount = () => {
     const userId: any = localStorage.getItem("userLogin");
 
-    if (!myAccount) {
+    if(myAccount == false) {
       setMyAccount(true);
       const salesID = JSON.parse(userId)?.employeeID || 830;
       dispatch(
@@ -72,12 +72,12 @@ const NamedAccountsPage: React.FC<IProps> = (
           salesID
         )
       );
-      // console.log(salesID);
     } else {
       setMyAccount(false);
       dispatch(
         CustomerSettingAct.requestNamedAcc(1, 10, "CustomerID", "ascending")
       );
+      
     }
   };
 
@@ -161,7 +161,20 @@ const NamedAccountsPage: React.FC<IProps> = (
     )! as HTMLInputElement;
 
     // if (window.location.pathname === "/data-quality/customer-setting-page") {
-    if (search.value.length > 0) {
+    if (myAccount) {
+      const userId: any = localStorage.getItem("userLogin");
+      const salesID = JSON.parse(userId)?.employeeID || 830;
+      dispatch(
+        CustomerSettingAct.requestSearchNamedAcc(
+          data.activePage,
+          pageSize,
+          "CustomerID",
+          null,
+          "ascending",
+          salesID
+        )
+      );
+    } else if (search.value.length > 0) {
       dispatch(
         CustomerActions.requestSearchNamedAcc(
           data.activePage,
