@@ -20,7 +20,9 @@ interface routeParams {
 const ViewEditCustomerSettingPage: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
     const dispatch: Dispatch = useDispatch();
     const { id } = useParams<routeParams>();
+    let userLogin = JSON.parse(localStorage.getItem('userLogin'));
 
+    const role = userLogin.role;
     const customer = useSelector((state: IStore) => selectCustomerDataById(state));
 
     useEffect(() => {

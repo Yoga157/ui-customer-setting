@@ -78,7 +78,6 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     state: ICustomerState,
     action: IAction<CustomerSettingModel>
   ): ICustomerState {
-    // console.log("Received data from API:", action.payload);
     return {
       ...state,
       data: action.payload!,
@@ -206,7 +205,6 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     state: ICustomerState,
     action: IAction<CustomerSettingById>
   ): ICustomerState {
-    console.log(action);
     return {
       ...state,
       dataByCustomerId: action.payload!,
@@ -224,7 +222,6 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     state: ICustomerState,
     action: IAction<ResultActions>
   ): ICustomerState {
-    // console.log(action);
     return {
       ...state,
       resultActions: action.payload!,
@@ -323,7 +320,6 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     state: ICustomerState,
     action: IAction<ResultActions>
   ): ICustomerState {
-    console.log(action);
     return {
       ...state,
       customerDataById: action.payload!,
@@ -334,7 +330,6 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     state: ICustomerState,
     action: IAction<ResultActions>
   ): ICustomerState {
-    console.log(action);
     return {
       ...state,
       searchCustomerByName: action.payload!,

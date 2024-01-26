@@ -81,7 +81,9 @@ interface routeParams {
 
 const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
     const dispatch: Dispatch = useDispatch();
+    const { id } = useParams<routeParams>();
     const { customer, role } = props;
+    const customerID = Number(id);
 
     /** Customer data */
     const accountStatus = customer.accountStatus;
@@ -90,7 +92,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     // get employeeName dari local storage
     // cek apakah employeeName memiliki customer ini
     let userLogin = JSON.parse(localStorage.getItem('userLogin'));
-    const employeeName = userLogin?.fullName ||  "Terang Laksana";
+    const employeeName = userLogin?.fullName;
     const salesArray: string[] = customer.salesName?.split(", ");
     const isEmployeeOwnCustomer: boolean = salesArray?.includes(employeeName);
     const isEmployeeRequestShareable: boolean = shareableApprovalStatus?.requestedBy == employeeName && shareableRequestStatus == "PENDING";
@@ -100,7 +102,6 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     const customerCategoryOptions = useSelector((state: IStore) => selectCustomerCategories(state));
     
     const onSubmitCustCategory = async (e) => {
-        console.log(e);
     };
 
     const onChangeCustomerCategory = (data : any) => {
@@ -253,7 +254,6 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                 // setDayChecked([...dayChecked, day]);
             }
         // }
-        console.log(day, daysArray)
     }
 
     const [minDate, setMinDate] = useState(invoicingSchedule.minDate || 0)
@@ -262,10 +262,6 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
     const onSubmitCustomerSettingHandler = async (values) => {
         let userLogin = JSON.parse(localStorage.getItem('userLogin'));
-
-        console.log("submit setting data")
-        console.log(values)
-        console.log(daysArray)
 
         const PutCustomerSetting = new CustomerSettingPutModel({});
         PutCustomerSetting.customerID = customer.customerID;
@@ -287,7 +283,6 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
             NewInvoicingSchedule.maxDate = maxDate;
             NewInvoicingSchedule.createUserID = userLogin?.employeeID || null;
             NewInvoicingSchedule.modifyUserID = userLogin?.employeeID || null;
-            console.log(NewInvoicingSchedule)
     
             await dispatch(InvoicingSchedule.postInvoicingSchedule(NewInvoicingSchedule))
         } else {
@@ -301,7 +296,6 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
             UpdateInvoicingSchedule.createUserID = invoicingSchedule.createUserID;
             UpdateInvoicingSchedule.modifyUserID = userLogin?.employeeID || null;
 
-            console.log(UpdateInvoicingSchedule)
             await dispatch(InvoicingSchedule.putInvoicingSchedule(UpdateInvoicingSchedule, invoicingSchedule.scheduleID))   
         }
 
@@ -351,7 +345,6 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
     const onChangeProjectType = (data: any): any => {
         setProjectType(data)
-        console.log(data)
        
         if(data != '') {
             const filteredArray = allDataInvoicingCondition.filter((item) =>
@@ -433,13 +426,15 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     }, [dispatch, customer])
 
     useEffect(() => {
-        if(projectHistoryData.length != 0 && Object.keys(invoicingConditionData).length != 0) {
+        if(projectHistoryData.length > 0) {
             setAllHistoryData(projectHistoryData)
+        }
+        
+        if(Object.keys(invoicingConditionData).length != 0) {
             setAllDataInvoicingCondition(invoicingConditionData)
         }
 
         if(Object.keys(invoicingSchedule).length != 0) {
-            console.log(invoicingSchedule)
             // if(invoicingSchedule.scheduleDays === "Monday, Tuesday, Wednesday, Thursday, Friday") {
             //     setIsAllDaysChecked(true)
             //     setDayChecked(["All days"])
@@ -458,7 +453,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
             setMaxDate(invoicingSchedule.maxDate)
             setRemark(invoicingSchedule.remark)
         }
-    }, [invoicingSchedule, invoicingConditionData, projectHistoryData])
+    }, [invoicingSchedule, invoicingConditionData, projectHistoryData, customer])
 
     const isRequesting: boolean = useSelector((state: IStore) =>
         selectRequesting(state, [
@@ -578,80 +573,76 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                     <LoadingIndicator isActive={isRequesting}>
                     {/* search customer name dan data customer */}
 
-                    {/* {(customerData.customerID != 0 && !Number.isNaN(customerSettingData.customerID)) && */}
-                         <>
-                        <div className="padding-horizontal customer-search-container">
-                            <div className="customer-data-container">
-                                <label className="address-font-label" style={{ textAlign: "left"}}>Account Status</label>
-                                <Label style={{ backgroundColor: accountStatus == "Named Account" ? "#656DD1" : (accountStatus == "No Name Account" ? "#949AA1" : "#27D4A5"), color: "white" }} className="boolean-container">
-                                    <p>{accountStatus}</p>
-                                </Label>
-                            </div>
 
-                            <div className="customer-data-container">
-                                {
-                                    role.toUpperCase() == "SALES" ? 
-                                    <>
-                                        <label className="customer-data-label">Cust. Category</label>
-                                        <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">{customer.customerCategory}</p>
-                                    </>
-                                    :
-                                    <FinalForm
-                                    onSubmit={(values: any) => onSubmitCustCategory(values)}
-                                    render={({ handleSubmit, pristine, invalid }) => (
-                                        <Form onSubmit={handleSubmit}>
-                                        <Field
-                                            labelName="Cust. Category Name"
-                                            name="customerCategoryName"
-                                            component={DropdownClearInput}
-                                            placeholder="Choose category"
-                                            options={customerCategoryOptions}
-                                            onChanged={onChangeCustomerCategory}
-                                            values={customerCategory}
-                                            mandatory={true}
-                                        />
-                                        </Form>
-                                    )}/>
-                                }
-                            </div>
-
-                            <div className="customer-data-container">
-                                <label className="customer-data-label">CustomerID</label>
-                                <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">{customer.customerID}</p>
-                            </div>
-
-                            <div className="customer-data-container">
-                                <label className="customer-data-label">Blacklist</label>
-                                <Label color={customer.blacklist ? "red" : "teal"} className="boolean-container">
-                                    <Icon name='address book'/>{customer.blacklist ? "Yes" : "No"}
-                                </Label>
-                            </div>
-
-                            <div className="customer-data-container">
-                                <label className="customer-data-label">Holdshipment</label>
-                                <Label color={customer.holdshipment ? "red" : "blue"} className="boolean-container">
-                                    <Icon name='truck'/>{customer.holdshipment ? "Yes" : "No"}
-                                </Label>
-                            </div>
-
-                            <div className="customer-data-container">
-                                <label className="customer-data-label">Avg. AR (days)</label>
-                                <p className="grey avgar-font">{customer.avgAR}</p>
-                            </div>
+                    <div className="padding-horizontal customer-search-container">
+                        <div className="customer-data-container">
+                            <label className="address-font-label" style={{ textAlign: "left"}}>Account Status</label>
+                            <Label style={{ backgroundColor: accountStatus == "Named Account" ? "#656DD1" : (accountStatus == "No Name Account" ? "#949AA1" : "#27D4A5"), color: "white" }} className="boolean-container">
+                                <p>{accountStatus}</p>
+                            </Label>
                         </div>
 
-                        <div style={{ margin: "14px 0" }} className="padding-horizontal">
-                            <label className="address-font-label" style={{ textAlign: "left"}}>Customer Name</label>
-                            <p style={{ fontSize: "20px", fontWeight: "bold"}} className="grey">{customer.customerName}</p>
+                        <div className="customer-data-container">
+                            {
+                                role.toUpperCase() == "SALES" ? 
+                                <>
+                                    <label className="customer-data-label">Cust. Category</label>
+                                    <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">{customer.customerCategory}</p>
+                                </>
+                                :
+                                <FinalForm
+                                onSubmit={(values: any) => onSubmitCustCategory(values)}
+                                render={({ handleSubmit, pristine, invalid }) => (
+                                    <Form onSubmit={handleSubmit}>
+                                    <Field
+                                        labelName="Cust. Category Name"
+                                        name="customerCategoryName"
+                                        component={DropdownClearInput}
+                                        placeholder="Choose category"
+                                        options={customerCategoryOptions}
+                                        onChanged={onChangeCustomerCategory}
+                                        values={customerCategory}
+                                        mandatory={true}
+                                    />
+                                    </Form>
+                                )}/>
+                            }
                         </div>
 
-                        <div style={{ margin: "14px 0" }} className="padding-horizontal">
-                            <label className="address-font-label">Address</label>
-                            <p style={{ fontSize: "20px"}} className="grey">{customer.customerAddress}</p>
+                        <div className="customer-data-container">
+                            <label className="customer-data-label">CustomerID</label>
+                            <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">{customer.customerID}</p>
                         </div>
 
-                        </>
-                    {/* } */}
+                        <div className="customer-data-container">
+                            <label className="customer-data-label">Blacklist</label>
+                            <Label color={customer.blacklist ? "red" : "teal"} className="boolean-container">
+                                <Icon name='address book'/>{customer.blacklist ? "Yes" : "No"}
+                            </Label>
+                        </div>
+
+                        <div className="customer-data-container">
+                            <label className="customer-data-label">Holdshipment</label>
+                            <Label color={customer.holdshipment ? "red" : "blue"} className="boolean-container">
+                                <Icon name='truck'/>{customer.holdshipment ? "Yes" : "No"}
+                            </Label>
+                        </div>
+
+                        <div className="customer-data-container">
+                            <label className="customer-data-label">Avg. AR (days)</label>
+                            <p className="grey avgar-font">{customer.avgAR}</p>
+                        </div>
+                    </div>
+
+                    <div style={{ margin: "14px 0" }} className="padding-horizontal">
+                        <label className="address-font-label" style={{ textAlign: "left"}}>Customer Name</label>
+                        <p style={{ fontSize: "20px", fontWeight: "bold"}} className="grey">{customer.customerName}</p>
+                    </div>
+
+                    <div style={{ margin: "14px 0" }} className="padding-horizontal">
+                        <label className="address-font-label">Address</label>
+                        <p style={{ fontSize: "20px"}} className="grey">{customer.customerAddress}</p>
+                    </div>
 
                     <Divider></Divider>
 
@@ -668,7 +659,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                     <Divider></Divider>
 
                     
-                    {/* {(customer.customerID != 0 && !Number.isNaN(customerSettingData.customerID)) ? */}
+                    {(customer.customerID != undefined) &&
                         <>                        
                             {/* data get mengenai customer */}
                             <div className="padding-horizontal">
@@ -847,42 +838,15 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                 <p style={{ fontSize: "20px", fontWeight: "bold"}}>{invoicingSchedule?.scheduleDays != null ? invoicingSchedule?.scheduleDays : "No data" }</p>
                                             :
                                                 <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
-                                                    {/* {invoicingSchedule?.scheduleDays !== undefined && (dayChecked.length > 0 && invoicingSchedule?.scheduleDays?.length > 0) ? days.map((day) => 
-                                                        <CheckboxInvoicing label={day} value={day} defaultChecked={dayChecked?.find((p:any)=>p.includes(day)) !== undefined || dayChecked?.find((p:any)=>p.includes("All days")) !== undefined } disabled={isAllDaysChecked && day !== "All days"} style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
-                                                    )
-                                                :
-                                                days.map((day) => 
-                                                        <CheckboxInvoicing label={day} value={day} disabled={isAllDaysChecked && day !== "All days"} style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
-                                                )} */}
-                                                    {/* {days.map((day) => 
-                                                        invoicingSchedule?.scheduleDays !== undefined && (dayChecked.length > 0 && invoicingSchedule?.scheduleDays?.length > 0) ?
-                                                            <CheckboxInvoicing label={day} value={day} defaultChecked={dayChecked?.find((p:any)=>p.includes(day)) !== undefined || dayChecked?.find((p:any)=>p.includes("All days")) !== undefined } disabled={isAllDaysChecked && day !== "All days" } style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
-                                                            :
-                                                            <CheckboxInvoicing label={day} value={day} defaultChecked={dayChecked?.find((p:any)=>p.includes(day)) !== undefined || dayChecked?.find((p:any)=>p.includes("All days")) !== undefined } disabled={isAllDaysChecked && day !== "All days" } style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
-                                                        
-                                                    )} */}
-                                                    {/* {invoicingSchedule?.scheduleDays !== undefined && (dayChecked.length > 0 && invoicingSchedule?.scheduleDays?.length > 0) && days.map((day) => 
-                                                        <CheckboxInvoicing label={day} value={day} defaultChecked={dayChecked?.find((p:any)=>p.includes(day)) !== undefined || dayChecked?.find((p:any)=>p.includes("All days")) !== undefined } disabled={isAllDaysChecked && day !== "All days" } style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
-                                                    )} */}
                                                     {daysArray.length > 0 &&
                                                     days.map((day, index) => 
                                                         <CheckboxInvoicing key={index} label={day} value={day} defaultChecked={daysArray?.find((p:any)=>p.includes(day)) !== undefined || daysArray?.find((p:any)=>p.includes("All days")) !== undefined } style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
                                                     )}
 
-                                                    {console.log(daysArray.length, daysArray)}
                                                     {daysArray.length == 0 &&
                                                     days.map((day, index) => 
                                                         <CheckboxInvoicing key={index} label={day} value={day} style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
                                                     )}
-
-                                                    {/* {
-                                                        days.map((day) => 
-                                                            (invoicingSchedule?.scheduleDays !== undefined && (daysArray.length > 0 && invoicingSchedule?.scheduleDays?.length > 0) ? 
-                                                            <CheckboxInvoicing label={day} value={day} defaultChecked={daysArray?.find((p:any)=>p.includes(day)) !== undefined || daysArray?.find((p:any)=>p.includes("All days")) !== undefined } style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
-                                                            :
-                                                            <CheckboxInvoicing label={day} value={day} style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>)
-                                                        )
-                                                    } */}
                                                 </div>
                                             }
                                         </div>
@@ -1121,27 +1085,19 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                     </div>
                                 
                                     <Divider style={{ marginBottom: "0px"}}></Divider>
-                                    <div className="button-container">
-                                        <div className="button-inner-container">
-                                            <Button style={{ marginRight: "1rem" }} type="button">Cancel</Button>
-                                            <Button color="blue" type="submit">Submit</Button>
+                                    {role.toUpperCase() == "ADMIN" &&
+                                        <div className="button-container">
+                                            <div className="button-inner-container">
+                                                <Button style={{ marginRight: "1rem" }} type="button">Cancel</Button>
+                                                <Button color="blue" type="submit">Submit</Button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    }
 
                             </Form>
                             )}/>
                         </>
-                    {/* :
-                        <>
-                            <Divider style={{ marginBottom: "0px"}}></Divider>
-                            <div className="button-container">
-                                <div className="button-inner-container">
-                                    <Button style={{ marginRight: "1rem" }}>Cancel</Button>
-                                    <Button color="blue" disabled>Submit</Button>
-                                </div>
-                            </div>
-                        </>
-                    } */}
+                    }
                     </LoadingIndicator>
                 </div>
             </div>
