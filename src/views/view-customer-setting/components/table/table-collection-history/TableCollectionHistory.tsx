@@ -42,7 +42,7 @@ const TableCollectionHistory: React.FC<IProps> = (props: React.PropsWithChildren
                             <Table.Cell textAlign="center">{data.invoiceNumber}</Table.Cell>
                             <Table.Cell textAlign="center">{data.invoiceDate}</Table.Cell>
                             <Table.Cell textAlign="center">{data.soid}</Table.Cell>
-                            <Table.Cell textAlign="center">{data.collectionAmount}</Table.Cell>
+                            <Table.Cell textAlign="right">{data.collectionAmount}</Table.Cell>
                             <Table.Cell textAlign="center">{data.collectionDate}</Table.Cell>
                     </Table.Row>
                     )))

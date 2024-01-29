@@ -93,7 +93,7 @@ const TableProjectHistory: React.FC<IProps> = (props: React.PropsWithChildren<IP
                             <Table.Cell textAlign="center">{data.salesName}</Table.Cell>
                             <Table.Cell textAlign="center">{data.salesDepartment}</Table.Cell>
                             <Table.Cell textAlign="center">{data.soCloseDate}</Table.Cell>
-                            <Table.Cell textAlign="center">{data.soAmount}</Table.Cell>
+                            <Table.Cell textAlign="right">{data.soAmount}</Table.Cell>
                     </Table.Row>
                     )))
                 }
