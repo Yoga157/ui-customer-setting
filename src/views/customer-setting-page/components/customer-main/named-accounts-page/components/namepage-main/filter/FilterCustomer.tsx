@@ -2,22 +2,31 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
 import IStore from "models/IStore";
-import { Divider, Grid, Form, Select } from "semantic-ui-react";
-import { Button, DropdownClearInput, SelectInput } from "views/components/UI";
+import { Divider, Grid, Form } from "semantic-ui-react";
+import { Button, DropdownClearInput } from "views/components/UI";
 import { Form as FinalForm, Field } from "react-final-form";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import { selectSalesOptions } from "selectors/select-options/SalesAssignSelector";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
+
 interface IProps {
   rowData: any;
+  getRowData: (data: any) => void;
+  getFilterData: (data: any) => void;
 }
 
 const FilterCustomer: React.FC<{
   setOpenFilter: React.Dispatch<React.SetStateAction<boolean>>;
   openFilter: boolean;
-} & IProps> = ({ setOpenFilter, openFilter, rowData }) => {
+} & IProps> = ({
+  setOpenFilter,
+  openFilter,
+  rowData,
+  getRowData,
+  getFilterData,
+}) => {
   const [salesName, setSalesName] = useState("");
   const [salesAssignArray, setSalesAssignArray] = useState([]);
   const [salesFilter, setSalesFilter] = useState([]);
@@ -27,7 +36,6 @@ const FilterCustomer: React.FC<{
   const [holdshipmentNoChecked, setHoldshipmentNoChecked] = useState(false);
   const [blacklistYesChecked, setBlacklistYesChecked] = useState(false);
   const [blacklistNoChecked, setBlacklistNoChecked] = useState(false);
-
   const dispatch: Dispatch = useDispatch();
 
   const isRequesting: boolean = useSelector((state: IStore) =>
@@ -35,9 +43,8 @@ const FilterCustomer: React.FC<{
   );
 
   const onResultSelectSales = (data: any): any => {
-    console.log(data);
     let checkSales = salesAssignArray.find((obj) => obj.sales === data.salesID);
-    if (checkSales === undefined) {
+    if (checkSales === undefined && data.salesID != undefined) {
       setSalesAssignArray([
         ...salesAssignArray,
         {
@@ -45,7 +52,7 @@ const FilterCustomer: React.FC<{
           salesID: data.salesID,
         },
       ]);
-
+      console.log(data.salesID);
       setSalesFilter([...salesFilter, data.salesID.toString()]);
     }
   };
@@ -80,6 +87,13 @@ const FilterCustomer: React.FC<{
         : blacklistNoChecked
         ? false
         : null;
+
+    getFilterData({
+      pmo_customer: pmo_customer,
+      newsalesAssign: newsalesAssign,
+      holdshipment: holdshipment,
+      blacklist: blacklist,
+    });
 
     dispatch(
       CustomerSettingAct.requestSearchNamedAcc(
@@ -120,6 +134,7 @@ const FilterCustomer: React.FC<{
     setBlacklistNoChecked(false);
     setSalesName("");
     setSalesAssignArray([]);
+    getRowData([]);
 
     dispatch(
       CustomerSettingAct.requestNamedAcc(1, 10, "CustomerID", "ascending")

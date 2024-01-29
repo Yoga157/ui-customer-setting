@@ -22,11 +22,20 @@ interface IProps {
   role: string;
 }
 
+interface FilterData {
+  nonameAccount: any;
+  namedAccount: any;
+  pmo_customer: any;
+  newsalesAssign: any;
+  holdshipment: any;
+  blacklist: any;
+  shareableAccount: any;
+}
+
 const AllAccountsPage: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const { role } = props;
-  console.log("Role received in AllAccountsPage:", role);
   const dispatch: Dispatch = useDispatch();
   const [pageSize, setPage] = useState(10);
   const activePage = useSelector(
@@ -36,7 +45,11 @@ const AllAccountsPage: React.FC<IProps> = (
     selectUserResult(state)
   );
   const [rowData, setRowData] = useState([]);
+  const [filterData, setFilterData] = useState<FilterData | undefined>(
+    undefined
+  );
   const [myAccount, setMyAccount] = useState(false);
+
   const setNewRowData = (data) => {
     setRowData(data);
   };
@@ -44,23 +57,63 @@ const AllAccountsPage: React.FC<IProps> = (
   const handleMyAccount = () => {
     const userId: any = localStorage.getItem("userLogin");
 
-    if (!myAccount) {
+    if (myAccount == false) {
       setMyAccount(true);
-      const salesID = JSON.parse(userId)?.employeeID || 830;
+      const salesID = JSON.parse(userId)?.employeeID;
       dispatch(
         CustomerActions.requestSearchAllAcc(
-          1,
-          10,
+          activePage,
+          pageSize,
           "CustomerID",
           null,
           "ascending",
           salesID
         )
       );
-      // console.log(salesID);
     } else {
       setMyAccount(false);
-      dispatch(CustomerActions.requestAllAcc(1, 10, "CustomerID", "ascending"));
+      dispatch(
+        dispatch(
+          CustomerActions.requestAllAcc(
+            activePage,
+            pageSize,
+            "CustomerID",
+            "ascending"
+          )
+        )
+      );
+    }
+  };
+
+  const handleMyApproval = () => {
+    const userId: any = localStorage.getItem("userLogin");
+    // setMyAccount(!myAccount);
+
+    if (myAccount == false) {
+      setMyAccount(true);
+      const salesID = JSON.parse(userId)?.employeeID || 26932;
+      dispatch(
+        CustomerActions.requestSearchAllAcc(
+          activePage,
+          pageSize,
+          "CustomerID",
+          null,
+          "ascending",
+          null,
+          26932
+        )
+      );
+    } else {
+      setMyAccount(false);
+
+      dispatch(
+        CustomerActions.requestAllAcc(
+          activePage,
+          pageSize,
+          "CustomerID",
+          "ascending"
+        )
+      );
     }
   };
 
@@ -144,7 +197,38 @@ const AllAccountsPage: React.FC<IProps> = (
     )! as HTMLInputElement;
 
     // if (window.location.pathname === "/data-quality/customer-setting") {
-    if (search.value.length > 0) {
+
+    if (filterData != undefined) {
+      dispatch(
+        CustomerActions.requestSearchAllAcc(
+          data.activePage,
+          pageSize,
+          "CustomerID",
+          null,
+          "ascending",
+          filterData.newsalesAssign,
+          filterData.pmo_customer,
+          filterData.blacklist,
+          filterData.holdshipment,
+          filterData.nonameAccount,
+          filterData.namedAccount,
+          filterData.shareableAccount
+        )
+      );
+    } else if (myAccount) {
+      const userId: any = localStorage.getItem("userLogin");
+      const salesID = JSON.parse(userId)?.employeeID;
+      dispatch(
+        CustomerActions.requestSearchAllAcc(
+          data.activePage,
+          pageSize,
+          "CustomerID",
+          null,
+          "ascending",
+          salesID
+        )
+      );
+    } else if (search.value.length > 0) {
       dispatch(
         CustomerActions.requestSearchAllAcc(
           data.activePage,
@@ -215,7 +299,7 @@ const AllAccountsPage: React.FC<IProps> = (
                       style={{ margin: "0.5rem", transform: "scale(0.9)" }}
                       toggle
                       checked={myAccount}
-                      onChange={() => handleMyAccount()}
+                      onChange={() => handleMyApproval()}
                     ></Checkbox>
                   </div>
                   <p style={{ fontSize: "0.8rem", margin: "0.5rem" }}>
@@ -274,6 +358,7 @@ const AllAccountsPage: React.FC<IProps> = (
                 history={props.history}
                 role={props.role}
                 tableData={tableData}
+                myAccount={myAccount}
                 getRowData={setNewRowData}
                 data={rowData}
               />
@@ -293,6 +378,7 @@ const AllAccountsPage: React.FC<IProps> = (
           setOpenFilter={setOpenFilter}
           openFilter={openFilter}
           rowData={rowData}
+          getFilterData={setFilterData}
         />
       )}
     </Fragment>

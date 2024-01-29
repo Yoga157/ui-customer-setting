@@ -36,11 +36,11 @@ const ClaimAccount: React.FC<IProps> = (
       const NewClaimAccount = new CustomerSettingPostModel(e);
       NewClaimAccount.customerSettingID = 0;
       NewClaimAccount.customerID = rowData[j].customerID;
-      NewClaimAccount.salesID = JSON.parse(userId)?.employeeID || 830;
-      NewClaimAccount.requestedBy = JSON.parse(userId)?.employeeID || 830;
+      NewClaimAccount.salesID = JSON.parse(userId)?.employeeID;
+      NewClaimAccount.requestedBy = JSON.parse(userId)?.employeeID;
       NewClaimAccount.requestedDate = new Date();
       NewClaimAccount.createDate = new Date();
-      NewClaimAccount.createUserID = JSON.parse(userId)?.employeeID || 830;
+      NewClaimAccount.createUserID = JSON.parse(userId)?.employeeID;
 
       await dispatch(CustomerSettingAct.postRequestAccount(NewClaimAccount));
     }

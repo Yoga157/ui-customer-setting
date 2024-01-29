@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,11 +15,27 @@ interface IProps {
   rowData: any;
 }
 
+interface FilterData {
+  nonameAccount: any;
+  namedAccount: any;
+  pmo_customer: any;
+  newsalesAssign: any;
+  holdshipment: any;
+  blacklist: any;
+  shareableAccount: any;
+}
+
 const ReleaseAccount: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
   const { rowData } = props;
+  const [filterData, setFilterData] = useState<FilterData | undefined>(
+    undefined
+  );
+  const activePage = useSelector(
+    (state: IStore) => state.customerSetting.activePage
+  );
 
   const cancelClick = () => {
     dispatch(ModalAction.CLOSE());
@@ -33,23 +49,38 @@ const ReleaseAccount: React.FC<IProps> = (
     const userId: any = localStorage.getItem("userLogin");
 
     for (let j = 0; j < rowData.length; j++) {
-      const NewAssignSales = new newReleaseAccount(e);
-      NewAssignSales.customerID = props.rowData[j].customerID;
-      NewAssignSales.salesID = JSON.parse(userId)?.employeeID || 830;
-      NewAssignSales.modifyUserID = JSON.parse(userId)?.employeeID || 830;
-
       await dispatch(
         CustomerSettingAct.putReleaseAccount(
-          NewAssignSales,
-          props.rowData[j].customerID,
-          830,
-          830
+          (rowData.customerID = props.rowData[j].customerID),
+          (rowData.salesID = JSON.parse(userId)?.employeeID),
+          (rowData.modifyUserID = JSON.parse(userId)?.employeeID)
         )
       );
     }
     dispatch(ModalAction.CLOSE());
     dispatch(
-      CustomerSettingAct.requestAllAcc(1, 10, "CustomerID", "ascending")
+      CustomerSettingAct.requestSearchAllAcc(
+        activePage,
+        10,
+        "CustomerID",
+        null,
+        "ascending",
+        filterData.newsalesAssign,
+        filterData.pmo_customer,
+        filterData.blacklist,
+        filterData.holdshipment,
+        filterData.nonameAccount,
+        filterData.namedAccount,
+        filterData.shareableAccount
+      )
+    );
+    dispatch(
+      CustomerSettingAct.requestAllAcc(
+        activePage,
+        10,
+        "CustomerID",
+        "ascending"
+      )
     );
   };
 

@@ -3,6 +3,7 @@ import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
+import "../Modal.scss";
 import { Form as FinalForm } from "react-final-form";
 import { Form, Grid, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
@@ -33,17 +34,11 @@ const ReleaseAccount: React.FC<IProps> = (
     const userId: any = localStorage.getItem("userLogin");
 
     for (let j = 0; j < rowData.length; j++) {
-      const NewAssignSales = new newReleaseAccount(e);
-      NewAssignSales.customerID = props.rowData[j].customerID;
-      NewAssignSales.salesID = JSON.parse(userId)?.employeeID || 830;
-      NewAssignSales.modifyUserID = JSON.parse(userId)?.employeeID || 830;
-
       await dispatch(
         CustomerSettingAct.putReleaseAccount(
-          NewAssignSales,
-          props.rowData[j].customerID,
-          830,
-          830
+          (rowData.customerID = props.rowData[j].customerID),
+          (rowData.salesID = JSON.parse(userId)?.employeeID),
+          (rowData.modifyUserID = JSON.parse(userId)?.employeeID)
         )
       );
     }

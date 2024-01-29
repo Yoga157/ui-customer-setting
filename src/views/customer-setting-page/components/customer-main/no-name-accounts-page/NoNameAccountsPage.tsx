@@ -23,20 +23,24 @@ interface IProps {
   role: string;
 }
 
+interface FilterData {
+  pmo_customer: any;
+  holdshipment: any;
+  blacklist: any;
+}
+
 const NoNameAccountsPage: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
-  // const { role } = props;
   const dispatch: Dispatch = useDispatch();
   const [pageSize, setPage] = useState(10);
   const activePage = useSelector(
     (state: IStore) => state.customerSetting.activePage
   );
-  // const currentUser: IUserResult = useSelector((state: IStore) =>
-  //   selectUserResult(state)
-  // );
   const [rowData, setRowData] = useState([]);
-
+  const [filterData, setFilterData] = useState<FilterData | undefined>(
+    undefined
+  );
   const setNewRowData = (data) => {
     setRowData(data);
   };
@@ -44,12 +48,11 @@ const NoNameAccountsPage: React.FC<IProps> = (
   const onClaimAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ClaimForm rowData={rowData} />,
+        <ClaimForm rowData={rowData} getRowData={setRowData} />,
         ModalSizeEnum.Small
       )
     );
-    setRowData([]);
-  }, [dispatch, rowData, setRowData]);
+  }, [dispatch, rowData]);
 
   useEffect(() => {
     dispatch(
@@ -64,7 +67,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
     if (search.value.length > 0) {
       dispatch(
         CustomerActions.requestSearchNoNameAcc(
-          1,
+          activePage,
           tableData.totalRow,
           "CustomerID",
           search.value
@@ -86,8 +89,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
         let tableHead: any;
 
         if (
-          window.location.pathname ===
-          "/data-quality/customer-setting-page/no-name-accounts-page"
+          window.location.pathname === "/data-quality/customer-setting-page"
         ) {
           tableSelect = document.getElementById(
             "exporttosetting"
@@ -132,7 +134,20 @@ const NoNameAccountsPage: React.FC<IProps> = (
     )! as HTMLInputElement;
 
     // if (window.location.pathname === "/data-quality/customer-setting") {
-    if (search.value.length > 0) {
+    if (filterData != undefined) {
+      dispatch(
+        CustomerActions.requestSearchNoNameAcc(
+          1,
+          10,
+          "CustomerID",
+          null,
+          "ascending",
+          filterData.pmo_customer,
+          filterData.holdshipment,
+          filterData.blacklist
+        )
+      );
+    } else if (search.value.length > 0) {
       dispatch(
         CustomerActions.requestSearchNoNameAcc(
           data.activePage,
@@ -268,6 +283,8 @@ const NoNameAccountsPage: React.FC<IProps> = (
           setOpenFilter={setOpenFilter}
           openFilter={openFilter}
           rowData={rowData}
+          getRowData={setRowData}
+          getFilterData={setFilterData}
         />
       )}
     </Fragment>

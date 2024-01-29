@@ -54,7 +54,7 @@ const Tabs: FC<TabsProps> = ({
         aria-labelledby={`btn-${selectedTab}`}
         id={`tabpanel-${selectedTab}`}
       >
-        {Panel && <Panel.Component index={selectedTab} role={"ADMIN"} />}
+        {Panel && <Panel.Component index={selectedTab} role={"SALES"} />}
       </div>
     </div>
   );

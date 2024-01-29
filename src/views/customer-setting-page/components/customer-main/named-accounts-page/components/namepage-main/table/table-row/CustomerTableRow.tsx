@@ -7,7 +7,7 @@ import ModalSizeEnum from "constants/ModalSizeEnum";
 import "./CustomerTableRowStyle.scss";
 import RequestForm from "../../form/form-reqshareaccount/FormReqShare";
 import ReleaseForm from "../../form/form-release/FormRelease";
-import ShareableReq from "../../form/form-approverequest/FormApproveShareable";
+import ApproveReq from "../../form/form-approverequest/FormApproveShareable";
 
 interface IProps {
   readonly rowData: any;
@@ -21,17 +21,9 @@ const CustomerTableRow: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
-  // const [openConfirm, setOpenConfirm] = useState(false);
-  // const currentUser: IUserResult = useSelector((state: IStore) =>
-  //   selectUserResult(state)
-  // );
-  const { rowData, getRowData } = props;
+  const { rowData, getRowData, data } = props;
   const [isChecked, setIsChecked] = useState(false);
   const { role } = props;
-
-  useEffect(() => {
-    setIsChecked(false);
-  }, [rowData]);
 
   const setRowData = (data) => {
     let checkData = props.data.find(
@@ -47,7 +39,7 @@ const CustomerTableRow: React.FC<IProps> = (
     } else {
       getRowData([...props.data, data]);
     }
-    setIsChecked((prevChecked) => !prevChecked);
+    // setIsChecked((prevChecked) => !prevChecked);
   };
 
   const onRequestAccount = useCallback((): void => {
@@ -70,10 +62,10 @@ const CustomerTableRow: React.FC<IProps> = (
     getRowData([]);
   }, [dispatch, rowData]);
 
-  const onShareableRequest = useCallback((): void => {
+  const onApproveShareable = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ShareableReq rowData={[rowData]} />,
+        <ApproveReq rowData={[rowData]} />,
         ModalSizeEnum.Tiny
       )
     );
@@ -103,7 +95,11 @@ const CustomerTableRow: React.FC<IProps> = (
                 <input
                   type="checkbox"
                   onClick={() => setRowData(rowData)}
-                  checked={isChecked}
+                  checked={
+                    data.find((item) => item.customerID == rowData.customerID)
+                      ? true
+                      : false
+                  }
                 ></input>
               </label>
             </div>
@@ -145,34 +141,11 @@ const CustomerTableRow: React.FC<IProps> = (
                     <Dropdown.Item
                       text="Approve Shareable Request"
                       icon="circle check"
-                      onClick={onShareableRequest}
+                      onClick={onApproveShareable}
                     />
                   </>
                 )}
               </Dropdown.Menu>
-              {/* <Dropdown.Menu>
-                <Dropdown.Item
-                  text="View/Edit"
-                  icon="edit outline"
-                  onClick={() => onEdit(rowData.customerID)}
-                />
-
-                <Dropdown.Item
-                  text="Request Share Account"
-                  icon="share"
-                  onClick={onRequestAccount}
-                />
-
-                <Dropdown.Item
-                  text="Realease Account"
-                  icon="times circle"
-                  onClick={onReleaseAccount}
-                />
-
-                {rowData.status != "CANCEL" && rowData.CustomerID == "" && (
-                  <Dropdown.Item text="Cancel" icon="remove circle" />
-                )}
-              </Dropdown.Menu> */}
             </Dropdown>
           </div>
         </Table.Cell>
@@ -206,7 +179,6 @@ const CustomerTableRow: React.FC<IProps> = (
               maxWidth: "20rem",
               width: "15rem",
               margin: "auto",
-              height: "2rem",
               display: "flex",
             }}
           >
@@ -301,7 +273,6 @@ const CustomerTableRow: React.FC<IProps> = (
               maxWidth: "20rem",
               width: "15rem",
               margin: "auto",
-              height: "2rem",
               display: "flex",
             }}
           >

@@ -1,14 +1,14 @@
-import React, { useEffect, Fragment, useState, useCallback } from "react";
-import { Button, SearchInput } from "views/components/UI";
+import React, { Fragment, useState, useCallback } from "react";
+import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
-import { Form as FinalForm, Field } from "react-final-form";
-import { Form, Grid, Card, Divider, Icon } from "semantic-ui-react";
+import { Form as FinalForm } from "react-final-form";
+import { Form, Grid, Card, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
 import { selectSalesSearchOptions } from "selectors/select-options/SalesAssignSelector";
 import SalesAssignPostModel from "stores/customer-sales/models/SalesAssignPostModel";
-import { format } from "date-fns";
+import "../Modal.scss";
 import {
   combineValidators,
   isRequired,

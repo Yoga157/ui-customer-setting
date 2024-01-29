@@ -23,6 +23,13 @@ interface IProps {
   role: string;
 }
 
+interface FilterData {
+  pmo_customer: any;
+  newsalesAssign: any;
+  holdshipment: any;
+  blacklist: any;
+}
+
 const ShareableAccountsPage: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
@@ -32,9 +39,9 @@ const ShareableAccountsPage: React.FC<IProps> = (
   const activePage = useSelector(
     (state: IStore) => state.customerSetting.activePage
   );
-  // const currentUser: IUserResult = useSelector((state: IStore) =>
-  //   selectUserResult(state)
-  // );
+  const [filterData, setFilterData] = useState<FilterData | undefined>(
+    undefined
+  );
   const [rowData, setRowData] = useState([]);
   const [myAccount, setMyAccount] = useState(false);
 
@@ -45,30 +52,28 @@ const ShareableAccountsPage: React.FC<IProps> = (
   const onReleaseAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ModReleaseForm rowData={rowData} />,
+        <ModReleaseForm rowData={rowData} getRowData={setRowData} />,
         ModalSizeEnum.Small
       )
     );
-    setRowData([]);
-  }, [dispatch, rowData, setRowData]);
+  }, [dispatch, rowData]);
 
   const handleMyAccount = () => {
     const userId: any = localStorage.getItem("userLogin");
 
-    if (!myAccount) {
+    if (myAccount == false) {
       setMyAccount(true);
-      const salesID = JSON.parse(userId)?.employeeID || 830;
+      const salesID = JSON.parse(userId)?.employeeID;
       dispatch(
         CustomerActions.requestSearchShareabelAcc(
-          1,
-          10,
+          activePage,
+          pageSize,
           "CustomerID",
           null,
           "ascending",
           salesID
         )
       );
-      // console.log(salesID);
     } else {
       setMyAccount(false);
       dispatch(
@@ -162,12 +167,39 @@ const ShareableAccountsPage: React.FC<IProps> = (
     )! as HTMLInputElement;
 
     // if (window.location.pathname === "/data-quality/customer-setting") {
-    if (search.value.length > 0) {
+    if (filterData != undefined) {
+      dispatch(
+        CustomerActions.requestSearchAllAcc(
+          data.activePage,
+          pageSize,
+          "CustomerID",
+          null,
+          "ascending",
+          filterData.newsalesAssign,
+          filterData.pmo_customer,
+          filterData.blacklist,
+          filterData.holdshipment
+        )
+      );
+    } else if (myAccount) {
+      const userId: any = localStorage.getItem("userLogin");
+      const salesID = JSON.parse(userId)?.employeeID;
       dispatch(
         CustomerActions.requestSearchShareabelAcc(
           data.activePage,
           pageSize,
+          "CustomerID",
           null,
+          "ascending",
+          salesID
+        )
+      );
+    } else if (search.value.length > 0) {
+      dispatch(
+        CustomerActions.requestShareabledAcc(
+          data.activePage,
+          pageSize,
+          "CustomerID",
           search.value
         )
       );
@@ -176,11 +208,12 @@ const ShareableAccountsPage: React.FC<IProps> = (
         CustomerActions.requestShareabledAcc(
           data.activePage,
           pageSize,
-          "customerID",
+          "CustomerID",
           "ascending"
         )
       );
     }
+
     // }
   };
 
@@ -230,7 +263,6 @@ const ShareableAccountsPage: React.FC<IProps> = (
                     fontSize: "0.8rem",
                     alignItems: "center",
                   }}
-                  // color="red"
                   icon="times circle"
                   disabled={rowData.length === 0 || rowData.length > 5}
                   size="mini"
@@ -318,6 +350,8 @@ const ShareableAccountsPage: React.FC<IProps> = (
           setOpenFilter={setOpenFilter}
           openFilter={openFilter}
           rowData={rowData}
+          getRowData={setRowData}
+          getFilterData={setFilterData}
         />
       )}
     </Fragment>

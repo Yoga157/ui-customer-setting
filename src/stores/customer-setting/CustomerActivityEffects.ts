@@ -60,7 +60,7 @@ export const requestShareabledAcc = async (
   column?: string | null,
   sorting?: string
 ): Promise<CustomerSettingModel | HttpErrorResponseModel> => {
-  const controllerName = `CustomerSetting/GetCustomerSettingSharebleAccount?${
+  const controllerName = `CustomerSetting/GetCustomerSettingShareableAccount?${
     page ? `page=${page}` : ``
   }${pageSize ? `&pageSize=${pageSize}` : ``}${
     column ? `&column=${column}` : ``
@@ -185,7 +185,7 @@ export const requestSearchShareabelAcc = async (
   blacklist?: boolean | null,
   holdshipment?: boolean | null
 ): Promise<CustomerSettingModel | HttpErrorResponseModel> => {
-  const controllerName = `CustomerSetting/GetCustomerSettingSharebleAccount?page=${page}&pageSize=${pageSize}&column=${column}${
+  const controllerName = `CustomerSetting/GetCustomerSettingShareableAccount?page=${page}&pageSize=${pageSize}&column=${column}${
     search || search != null ? `&search=${search}` : ``
   }${sorting || sorting != null ? `&sorting=${sorting}` : ``}${
     pmo_customer || pmo_customer != null ? `&pmoCustomer=${pmo_customer}` : ``
@@ -211,6 +211,7 @@ export const requestSearchAllAcc = async (
   search: string | null,
   sorting?: string | null,
   salesID?: string | null,
+  myAccount?: number | null,
   pmo_customer?: boolean | null,
   blacklist?: boolean | null,
   holdshipment?: boolean | null,
@@ -223,8 +224,8 @@ export const requestSearchAllAcc = async (
   }${sorting || sorting != null ? `&sorting=${sorting}` : ``}${
     pmo_customer || pmo_customer != null ? `&pmoCustomer=${pmo_customer}` : ``
   }${salesID || salesID != null ? `&salesID=${salesID}` : ``}${
-    blacklist || blacklist != null ? `&blacklist=${blacklist}` : ``
-  }${
+    myAccount || myAccount != null ? `&myAccount=${myAccount}` : ``
+  }${blacklist || blacklist != null ? `&blacklist=${blacklist}` : ``}${
     holdshipment || holdshipment != null ? `&holdshipment=${holdshipment}` : ``
   }${showNoName || showNoName != null ? `&showNoName=${showNoName}` : ``}${
     showNamed || showNamed != null ? `&showNamed=${showNamed}` : ``
@@ -382,7 +383,6 @@ export const putCustomerSetting = async (
 };
 
 export const putReleaseAccount = async (
-  data: ResultAccounts,
   customerID: number,
   salesID: number,
   modifyUserID: number
@@ -399,7 +399,7 @@ export const putReleaseAccount = async (
     controllerName
   );
 
-  return EffectUtility.putToModel<ResultActions>(ResultActions, endpoint, data);
+  return EffectUtility.putToModel<ResultActions>(ResultActions, endpoint);
 };
 
 export const putApproveCustomerSetting = async (
@@ -448,48 +448,58 @@ export const claimAccount = async (
 };
 
 export const releaseAccount = async (
-  customerID: number, salesID: number, modifyUserID: number
+  customerID: number,
+  salesID: number,
+  modifyUserID: number
 ): Promise<ResultActions | HttpErrorResponseModel> => {
-  const controllerName = "CustomerSetting/ReleaseAccount?customerID=" + customerID + "&salesID=" + salesID + "&modifyUserID=" + modifyUserID;
+  const controllerName =
+    "CustomerSetting/ReleaseAccount?customerID=" +
+    customerID +
+    "&salesID=" +
+    salesID +
+    "&modifyUserID=" +
+    modifyUserID;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName
   );
 
-  return EffectUtility.putToModel<ResultActions>(
-    ResultActions,
-    endpoint
-  );
+  return EffectUtility.putToModel<ResultActions>(ResultActions, endpoint);
 };
 
 export const acceptRequestShareableAccount = async (
-  customerID: number, salesID: number, isApprove: boolean, modifyUserID: number
+  customerID: number,
+  salesID: number,
+  isApprove: boolean,
+  modifyUserID: number
 ): Promise<ResultActions | HttpErrorResponseModel> => {
-  const controllerName = "CustomerSetting/ApproveCustomerSetting?customerID=" + customerID + "&salesID=" + salesID + "&isApprove=" + isApprove + "&modifyUserID=" + modifyUserID;
+  const controllerName =
+    "CustomerSetting/ApproveCustomerSetting?customerID=" +
+    customerID +
+    "&salesID=" +
+    salesID +
+    "&isApprove=" +
+    isApprove +
+    "&modifyUserID=" +
+    modifyUserID;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName
   );
 
-  return EffectUtility.putToModel<ResultActions>(
-    ResultActions,
-    endpoint
-  );
+  return EffectUtility.putToModel<ResultActions>(ResultActions, endpoint);
 };
-
 
 // get customer data by customer id
 export const requestCustomerDataById = async (
   customerID: number
 ): Promise<ResultActions | HttpErrorResponseModel> => {
-  const controllerName = "CustomerSetting/GetCustomerData?customerID=" + customerID;
+  const controllerName =
+    "CustomerSetting/GetCustomerData?customerID=" + customerID;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName
   );
 
-  return EffectUtility.getToModel<ResultActions>(
-    ResultActions,
-    endpoint
-  );
+  return EffectUtility.getToModel<ResultActions>(ResultActions, endpoint);
 };

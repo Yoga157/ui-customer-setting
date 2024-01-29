@@ -26,10 +26,16 @@ interface IProps {
   role: string;
 }
 
+interface FilterData {
+  pmo_customer: any;
+  newsalesAssign: any;
+  holdshipment: any;
+  blacklist: any;
+}
+
 const NamedAccountsPage: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
-  // const { role } = props;
   const dispatch: Dispatch = useDispatch();
   const [pageSize, setPage] = useState(10);
   const activePage = useSelector(
@@ -39,7 +45,9 @@ const NamedAccountsPage: React.FC<IProps> = (
     selectUserResult(state)
   );
   const [rowData, setRowData] = useState([]);
-  const [isChecked, setIsChecked] = useState(false);
+  const [filterData, setFilterData] = useState<FilterData | undefined>(
+    undefined
+  );
   const [myAccount, setMyAccount] = useState(false);
 
   const setNewRowData = (data) => {
@@ -49,30 +57,27 @@ const NamedAccountsPage: React.FC<IProps> = (
   const onReleaseAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ModReleaseForm rowData={rowData} />,
+        <ModReleaseForm rowData={rowData} getRowData={setRowData} />,
         ModalSizeEnum.Small
       )
     );
-    setRowData([]);
-  }, [dispatch, rowData, setRowData]);
+  }, [dispatch, rowData]);
 
   const handleMyAccount = () => {
     const userId: any = localStorage.getItem("userLogin");
-
-    if (!myAccount) {
+    if (myAccount == false) {
       setMyAccount(true);
-      const salesID = JSON.parse(userId)?.employeeID || 830;
+      const salesID = JSON.parse(userId)?.employeeID;
       dispatch(
         CustomerSettingAct.requestSearchNamedAcc(
-          1,
-          10,
+          activePage,
+          pageSize,
           "CustomerID",
           null,
           "ascending",
           salesID
         )
       );
-      // console.log(salesID);
     } else {
       setMyAccount(false);
       dispatch(
@@ -161,7 +166,35 @@ const NamedAccountsPage: React.FC<IProps> = (
     )! as HTMLInputElement;
 
     // if (window.location.pathname === "/data-quality/customer-setting-page") {
-    if (search.value.length > 0) {
+
+    if (filterData != undefined) {
+      dispatch(
+        CustomerSettingAct.requestSearchNamedAcc(
+          activePage,
+          pageSize,
+          "CustomerID",
+          null,
+          "ascending",
+          filterData.newsalesAssign,
+          filterData.pmo_customer,
+          filterData.holdshipment,
+          filterData.blacklist
+        )
+      );
+    } else if (myAccount) {
+      const userId: any = localStorage.getItem("userLogin");
+      const salesID = JSON.parse(userId)?.employeeID;
+      dispatch(
+        CustomerSettingAct.requestSearchNamedAcc(
+          data.activePage,
+          pageSize,
+          "CustomerID",
+          null,
+          "ascending",
+          salesID
+        )
+      );
+    } else if (search.value.length > 0) {
       dispatch(
         CustomerActions.requestSearchNamedAcc(
           data.activePage,
@@ -227,7 +260,6 @@ const NamedAccountsPage: React.FC<IProps> = (
                     fontSize: "0.8rem",
                     alignItems: "center",
                   }}
-                  // color="red"
                   icon="times circle"
                   disabled={rowData.length === 0 || rowData.length > 5}
                   size="mini"
@@ -315,6 +347,8 @@ const NamedAccountsPage: React.FC<IProps> = (
           setOpenFilter={setOpenFilter}
           openFilter={openFilter}
           rowData={rowData}
+          getRowData={setRowData}
+          getFilterData={setFilterData}
         />
       )}
     </Fragment>

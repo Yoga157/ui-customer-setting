@@ -35,28 +35,20 @@ const ReleaseAccount: React.FC<IProps> = (
     const userId: any = localStorage.getItem("userLogin");
 
     for (let j = 0; j < rowData.length; j++) {
-      for (let i = 0; i < salesAssignArray.length; i++) {
-        const NewAssignSales = new SalesAssignPostModel(e);
-        NewAssignSales.salesID = salesAssignArray[i].salesID;
-        NewAssignSales.customerSettingID = rowData[j].customerSettingID;
-        NewAssignSales.createDate = new Date(props.rowData[j].createDate);
-        NewAssignSales.createUserID = JSON.parse(userId)?.employeeID;
-        NewAssignSales.modifyUserID = JSON.parse(userId)?.employeeID;
-
-        await dispatch(SalesAssign.postAssignedSales(NewAssignSales));
-      }
+      const NewAssignSales = new SalesAssignPostModel(e);
+      NewAssignSales.customerSettingID = 0;
+      NewAssignSales.customerID = rowData[j].customerID;
+      NewAssignSales.salesID = JSON.parse(userId)?.employeeID;
+      NewAssignSales.requestedBy = JSON.parse(userId)?.employeeID;
+      NewAssignSales.createUserID = JSON.parse(userId)?.employeeID;
+      NewAssignSales.requestedDate = new Date();
+      NewAssignSales.createDate = new Date();
+      await dispatch(CustomerSettingAct.postRequestAccount(NewAssignSales));
     }
     dispatch(ModalAction.CLOSE());
     dispatch(
-      CustomerSettingAct.requestCustomerSett(1, 10, "CustomerSettingID")
+      CustomerSettingAct.requestAllAcc(1, 10, "CustomerID", "ascending")
     );
-  };
-
-  const deleteClick = (salesID) => {
-    let filteredArray = salesAssignArray.filter(
-      (obj) => obj.salesID !== salesID
-    );
-    setSalesAssignArray(filteredArray);
   };
 
   return (
