@@ -416,6 +416,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
             dispatch(ServiceSummary.requestServiceSummary(customer.customerID))
             dispatch(ProjectHistory.requestProjectHistory(customer.customerID))
             dispatch(SalesAssign.requestAccountOwner(customer.customerID))
+            dispatch(SalesAssign.requestSalesHistory(customer.customerID))
 
             dispatch(InvoicingSchedule.requestInvoicingSchedule(customer.customerID))
             dispatch(InvoicingCondition.requestInvoicingCondition(customer.customerID))
@@ -586,7 +587,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                             {
                                 role.toUpperCase() == "SALES" ? 
                                 <>
-                                    <label className="customer-data-label">Cust. Category</label>
+                                    <label className="customer-data-label">Industry Classification</label>
                                     <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">{customer.customerCategory}</p>
                                 </>
                                 :
@@ -595,7 +596,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                 render={({ handleSubmit, pristine, invalid }) => (
                                     <Form onSubmit={handleSubmit}>
                                     <Field
-                                        labelName="Cust. Category Name"
+                                        labelName="Industry Classification"
                                         name="customerCategoryName"
                                         component={DropdownClearInput}
                                         placeholder="Choose category"

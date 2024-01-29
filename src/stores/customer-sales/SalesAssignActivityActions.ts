@@ -122,16 +122,16 @@ export const REQUEST_SALES_HISTORY: string =
 export const REQUEST_SALES_HISTORY_FINISHED: string =
   "SalesAction.REQUEST_SALES_HISTORY_FINISHED";
 
-export const requestSalesHistory = (customerSettingId: number): any => {
+export const requestSalesHistory = (customerId: number): any => {
   return async (
     dispatch: ReduxDispatch<ActionUnion>,
     getState: () => IStore
   ): Promise<void> => {
-    await ActionUtility.createThunkEffect<SalesAssignHistoryModel>(
+    await ActionUtility.createThunkEffect<ResultActions>(
       dispatch,
       REQUEST_SALES_HISTORY,
       SalesAssignEffect.requestSalesHistory,
-      customerSettingId
+      customerId
     );
   };
 };

@@ -19,7 +19,7 @@ export const initialState: ISalesAssignState = {
   resultActions: new ResultActions({}),
   salesExstingModel: new SalesNameModel({}),
   SalesAssignPostModel: new SalesAssignPostModel({}),
-  salesHistory: [],
+  salesHistory: new ResultActions({}),
   accountOwner: new ResultActions({})
 };
 
@@ -87,7 +87,7 @@ const SalesAssignReducer: Reducer = baseReducer(initialState, {
 
   [SalesActions.REQUEST_SALES_HISTORY_FINISHED](
     state: ISalesAssignState,
-    action: IAction<SalesAssignHistoryModel[]>
+    action: IAction<ResultActions>
   ): ISalesAssignState {
     return {
       ...state,
