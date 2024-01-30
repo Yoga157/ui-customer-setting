@@ -54,6 +54,7 @@ import TableProjectHistory from "../table/table-project-history/TableProjectHist
 import TableCollectionHistory from "../table/table-collection-history/TableCollectionHistory";
 import ClaimReleaseButton from "../button/ClaimReleaseButton";
 import CustomerSettingPutModel from "stores/customer-setting/models/CustomerSettingPutModel";
+import ModalShowRejectReason from "../modal/modal-show-reject-reason/ModalShowRejectReason";
 
 interface IProps {
     customer: {
@@ -89,6 +90,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     const accountStatus = customer.accountStatus;
     const shareableApprovalStatus = customer?.shareableApprovalStatus;
     const shareableRequestStatus = shareableApprovalStatus?.status?.toUpperCase();
+
     // get employeeName dari local storage
     // cek apakah employeeName memiliki customer ini
     let userLogin = JSON.parse(localStorage.getItem('userLogin'));
@@ -222,38 +224,18 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
     /** Invoicing schedule */
     const invoicingSchedule = useSelector((state: IStore) => selectInvoicingSchedule(state));
-    // const [dayChecked, setDayChecked] = useState([]);
 
     const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     const [daysArray, setDaysArray] = useState(invoicingSchedule.scheduleDays?.split(", ") || []);
-    // const [isAllDaysChecked, setIsAllDaysChecked] = useState(invoicingSchedule.scheduleDays === "Monday, Tuesday, Wednesday, Thursday, Friday" || false)
 
     const checkDay = (day) => {
-        // if(day === "All days") {
-        //     if(daysArray.includes("Monday") && daysArray.includes("Tuesday") && daysArray.includes("Wednesday") && daysArray.includes("Thursday") && daysArray.includes("Friday")){
-        //         setIsAllDaysChecked(false)
-        //         setDaysArray([])
-        //         setDayChecked([])
-        //     } else if(daysArray.includes("Monday") || daysArray.includes("Tuesday") || daysArray.includes("Wednesday") || daysArray.includes("Thursday") || daysArray.includes("Friday")){
-        //         setIsAllDaysChecked(false)
-        //         setDaysArray([])
-        //         setDayChecked([])
-        //     } else {
-        //         setDaysArray(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
-        //         setDayChecked(["All days"])
-        //         setIsAllDaysChecked(true)
-        //     }
-        // } else {
-            const isDaySelected = daysArray.includes(day);
+        const isDaySelected = daysArray.includes(day);
 
-            if (isDaySelected) {
-                setDaysArray(daysArray.filter(selectedDay => selectedDay !== day));
-                // setDayChecked(dayChecked.filter(selectedDay => selectedDay !== day));
-            } else {
-                setDaysArray([...daysArray, day]);
-                // setDayChecked([...dayChecked, day]);
-            }
-        // }
+        if (isDaySelected) {
+            setDaysArray(daysArray.filter(selectedDay => selectedDay !== day));
+        } else {
+            setDaysArray([...daysArray, day]);
+        }
     }
 
     const [minDate, setMinDate] = useState(invoicingSchedule.minDate || 0)
@@ -436,15 +418,6 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
         }
 
         if(Object.keys(invoicingSchedule).length != 0) {
-            // if(invoicingSchedule.scheduleDays === "Monday, Tuesday, Wednesday, Thursday, Friday") {
-            //     setIsAllDaysChecked(true)
-            //     setDayChecked(["All days"])
-            // } else {
-            //     setIsAllDaysChecked(false)
-            //     setDayChecked(invoicingSchedule.scheduleDays.split(", "))
-            // }
-
-            // setDayChecked(invoicingSchedule.scheduleDays.split(", "))
             if(invoicingSchedule.scheduleDays == "") {
                 setDaysArray([])
             } else {
@@ -463,7 +436,6 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
             SalesAssign.REQUEST_SALES_HISTORY,
             InvoicingSchedule.REQUEST_GET_INVOICING_SCHEDULE,
             CustomerSetting.REQUEST_CUSTOMER_DATA_BY_CUSTOMER_ID,
-            // CustomerName.REQUEST_CUSTOMER_BY_ID,
             ConfigItem.REQUEST_GET_CONFIG_ITEM,
             CollectionHistory.REQUEST_GET_COLLECTION_HISTORY,
             CustomerPIC.REQUEST_GET_CUSTOMER_PIC,
@@ -512,6 +484,15 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
         }
       }, [setNavbarHeight, showStatus]);
 
+      const openReason = useCallback((desc: string): void => {
+        dispatch(
+          ModalFirstLevelActions.OPEN(
+            <ModalShowRejectReason description={desc} />,
+            ModalSizeEnum.Tiny
+          )
+        );
+      }, [dispatch]);
+
     return (
         <Fragment>
             {shareableApprovalStatus.length != 0 &&
@@ -535,7 +516,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                         <><Icon name="exclamation circle" style={{ color: "#FFA800" }}/> Waiting Approval </> : 
                                     (shareableRequestStatus == "APPROVED" ?
                                         <><Icon name="check circle" style={{ color: "#27D4A5" }}/> {shareableApprovalStatus?.approvalDate}</> : 
-                                        <><Icon name="remove circle" style={{ color: "red" }}/> Rejected</>
+                                        <><Icon name="remove circle" style={{ color: "red" }}/> Rejected, <span style={{ fontSize: "smaller", color: "#656DD1", fontStyle: "italic", cursor: "pointer" }} onClick={() => openReason(shareableApprovalStatus?.description)}>Click to see the reason</span></>
                                     )}
                                 </span>
                             </div>

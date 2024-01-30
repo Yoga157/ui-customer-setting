@@ -38,19 +38,19 @@ const ApproveShareableReq: React.FC<IProps> = (
     for (let j = 0; j < rowData.length; j++) {
       const NewAssignSales = new ApproveShareableAccounts(e);
       NewAssignSales.customerID = props.rowData[j].customerID;
-      NewAssignSales.salesID = JSON.parse(userId)?.employeeID || 830;
+      NewAssignSales.salesID = props.rowData[j].salesShareableID;
       NewAssignSales.isApprove = true;
-      NewAssignSales.modifyUserID = JSON.parse(userId)?.employeeID || 830;
+      NewAssignSales.modifyUserID = JSON.parse(userId)?.employeeID;
 
-      await dispatch(
-        CustomerSettingAct.putApproveCustomerSetting(
-          NewAssignSales,
-          props.rowData[j].customerID,
-          830,
-          true,
-          830
-        )
-      );
+      // await dispatch(
+      //   CustomerSettingAct.putApproveCustomerSetting(
+      //     NewAssignSales,
+      //     props.rowData[j].customerID,
+      //     830,
+      //     true,
+      //     830
+      //   )
+      // );
     }
     dispatch(ModalAction.CLOSE());
     dispatch(CustomerSettingAct.requestAllAcc(1, 10, "CustomerID"));

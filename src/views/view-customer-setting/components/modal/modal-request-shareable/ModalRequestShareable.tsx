@@ -3,10 +3,11 @@ import "../Modal.scss"
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
-import { Divider, Form, Grid } from "semantic-ui-react";
+import { Divider, Form, Grid, Label, Select } from "semantic-ui-react";
 import { Form as FinalForm, Field } from "react-final-form";
-import { DropdownClearInput, Button } from "views/components/UI";
+import { DropdownClearInput, Button, TextAreaInput } from "views/components/UI";
 import * as CustomerSetting from "stores/customer-setting/CustomerActivityActions";
+import value from "environment";
 
 interface IProps {
     customer: any;
@@ -15,20 +16,33 @@ interface IProps {
 const ModalAcceptRequestShareableAccount: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
     const dispatch: Dispatch = useDispatch();
     const { customer } = props;
+    const [isReject, setIsReject] = useState(null);
+    const [alasan, setAlasan] = useState("");
 
-    const onSubmitHandler = async (type: string) => {
-        // console.log(data)
+    const actionOptions = [
+        {key: 1, value: "Reject", text: "Reject"},
+        {key: 2, value: "Approve", text: "Approve"}
+    ];
+
+    const onSubmitAction = (value: any) => {
+
+    }
+
+    const onChangeAction = (data : any) => {
+        if(data == "Reject") {
+            setIsReject(true)
+        } else if(data == "Approve") {
+            setIsReject(false)
+        }
+    }
+
+    const onSubmitHandler = async (values) => {
         let userLogin = JSON.parse(localStorage.getItem('userLogin'));
 
-        dispatch(CustomerSetting.acceptRequestShareableAccount(customer.customerID, userLogin?.employeeID || 812, type.toUpperCase() == "APPROVE" ? true : false, userLogin?.employeeID || 812)).then(() => {
+        dispatch(CustomerSetting.acceptRequestShareableAccount(customer.customerID, userLogin?.employeeID || 26932, isReject, userLogin?.employeeID || 26932, alasan)).then(() => {
             dispatch(CustomerSetting.requestCustomerDataById(customer.customerID))
             dispatch(ModalAction.CLOSE());
         });
-
-        // dispatch(CustomerSetting.acceptRequestShareableAccount(customer.customerID, 812, type.toUpperCase() == "APPROVE" ? true : false, 812)).then(() => {
-        //     dispatch(CustomerSetting.requestCustomerDataById(customer.customerID))
-        //     dispatch(ModalAction.CLOSE());
-        // });
     }
 
     const cancelClick = () => {
@@ -38,7 +52,7 @@ const ModalAcceptRequestShareableAccount: React.FC<IProps> = (props: React.Props
     return (
         <Fragment>
             <FinalForm
-                onSubmit={onSubmitHandler}
+                onSubmit={(values: any) => onSubmitHandler(values)}
                 render={({ handleSubmit }) => (
                     <Form onSubmit={handleSubmit}>
                     <Grid.Row>
@@ -59,20 +73,40 @@ const ModalAcceptRequestShareableAccount: React.FC<IProps> = (props: React.Props
                         </div>
                         </div>
                     </Grid.Row>
-                    <Grid.Row centered style={{ textAlign: "center" }}>
+                    <Grid.Row centered style={{ textAlign: "center", marginBottom: "1rem" }}>
                         <span style={{ padding: "10px" }}>
                         Are you sure want to approve this shareable account request?
                         </span>
                         <p style={{  fontWeight: "bold", margin: 0 }}>{customer.customerName}</p>
                         <span>Request By <span style={{  fontWeight: "bold" }}>{customer.shareableApprovalStatus.requestedBy}</span></span>
                     </Grid.Row>
+                    <Grid.Row centered>
+                        <FinalForm
+                            onSubmit={(values: any) => onSubmitAction(values)}
+                            render={({ handleSubmit, pristine, invalid }) => (
+                                <Form onSubmit={handleSubmit} style={{ display: "flex", justifyContent: "center", minWidth: "fit-content"}}>
+                                    <Field
+                                        labelName="Choose Action To Continue"
+                                        name="action"
+                                        component={DropdownClearInput}
+                                        placeholder="Choose action"
+                                        options={actionOptions}
+                                        onChanged={onChangeAction}
+                                        mandatory={true}
+                                    />
+                                </Form>
+                            )}/>
+                        {isReject && 
+                            <TextAreaInput input={{value: alasan, onChange: setAlasan, name: "alasan", onBlur:()=>{}, onFocus:()=>{}}} meta={{touched: null, error: null}} labelName={"Reason To Reject"}></TextAreaInput>
+                        }
+                    </Grid.Row>
                     <Divider></Divider>
                     <div style={{ textAlign: "center" }}>
-                        <Button className="MarBot10" type="button" color="red" onClick={() => onSubmitHandler("reject")}>
-                        Reject
+                        <Button type="button" onClick={cancelClick}>
+                            Cancel
                         </Button>
-                        <Button className="MarBot10" type="button" color="blue" onClick={() => onSubmitHandler("approve")}>
-                        Approve
+                        <Button className="MarBot10" type="submit" color="blue" disabled={isReject == null}>
+                            Submit
                         </Button>
                     </div>
                     </Form>
