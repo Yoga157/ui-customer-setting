@@ -22,11 +22,20 @@ interface IProps {
   role: string;
 }
 
+interface FilterData {
+  nonameAccount: any;
+  namedAccount: any;
+  pmo_customer: any;
+  newsalesAssign: any;
+  holdshipment: any;
+  blacklist: any;
+  shareableAccount: any;
+}
+
 const AllAccountsPage: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const { role } = props;
-  console.log("Role received in AllAccountsPage:", role);
   const dispatch: Dispatch = useDispatch();
   const [pageSize, setPage] = useState(10);
   const activePage = useSelector(
@@ -35,8 +44,13 @@ const AllAccountsPage: React.FC<IProps> = (
   const currentUser: IUserResult = useSelector((state: IStore) =>
     selectUserResult(state)
   );
+  const currDate: string = format(new Date(), "cccc LLLL d, yyyy");
   const [rowData, setRowData] = useState([]);
+  const [filterData, setFilterData] = useState<FilterData | undefined>(
+    undefined
+  );
   const [myAccount, setMyAccount] = useState(false);
+
   const setNewRowData = (data) => {
     setRowData(data);
   };
@@ -44,24 +58,102 @@ const AllAccountsPage: React.FC<IProps> = (
   const handleMyAccount = () => {
     const userId: any = localStorage.getItem("userLogin");
 
-    if (!myAccount) {
+    if (myAccount == false) {
       setMyAccount(true);
-      const salesID = JSON.parse(userId)?.employeeID || 830;
+      const salesID = JSON.parse(userId)?.employeeID;
       dispatch(
         CustomerActions.requestSearchAllAcc(
-          1,
-          10,
+          activePage,
+          pageSize,
           "CustomerID",
           null,
           "ascending",
           salesID
         )
       );
-      // console.log(salesID);
     } else {
       setMyAccount(false);
-      dispatch(CustomerActions.requestAllAcc(1, 10, "CustomerID", "ascending"));
+
+      dispatch(
+        CustomerActions.requestAllAcc(
+          activePage,
+          pageSize,
+          "CustomerID",
+          "ascending"
+        )
+      );
     }
+  };
+
+  const handleMyApproval = () => {
+    const userId: any = localStorage.getItem("userLogin");
+
+    if (myAccount == false) {
+      setMyAccount(true);
+      const salesID = JSON.parse(userId)?.employeeID;
+      dispatch(
+        CustomerActions.requestSearchAllAcc(
+          activePage,
+          pageSize,
+          "CustomerID",
+          null,
+          "ascending",
+          null,
+          salesID
+        )
+      );
+    } else {
+      setMyAccount(false);
+
+      dispatch(
+        CustomerActions.requestAllAcc(
+          activePage,
+          pageSize,
+          "CustomerID",
+          "ascending"
+        )
+      );
+    }
+  };
+
+  const generateExcel = () => {
+    let tableSelect: any;
+    let tableHead: any;
+
+    if (window.location.pathname === "/data-quality/customer-setting-page") {
+      tableSelect = document.getElementById(
+        "exporttosetting"
+      ) as HTMLTableElement;
+      tableHead = document.querySelector(
+        "#exporttosetting > thead > tr > th:nth-child(1)"
+      ) as HTMLTableElement;
+    } else {
+      tableSelect = document.getElementById("exportosett") as HTMLTableElement;
+      tableHead = document.querySelector(
+        "#exportosett > thead > tr > th:nth-child(1)"
+      ) as HTMLTableElement;
+    }
+
+    if (tableHead) {
+      tableHead.style.display = "none";
+    }
+
+    const tableClone = tableSelect.cloneNode(true) as HTMLTableElement;
+
+    for (let i = 0; i < tableClone.rows.length; i++) {
+      const firstCol = tableClone.rows[i].cells[0];
+      if (firstCol) {
+        firstCol.remove();
+      }
+    }
+
+    // Convert the cloned table to Excel
+    TableToExcel.convert(tableClone, {
+      name: "AllAccounts_" + currDate + ".xlsx",
+      sheet: {
+        name: "Sheet 1",
+      },
+    });
   };
 
   const exportTableToExcel = (tableID: string, filename: string): void => {
@@ -76,7 +168,20 @@ const AllAccountsPage: React.FC<IProps> = (
           "CustomerID",
           search.value
         )
-      );
+      )
+        .then(() => {
+          generateExcel();
+        })
+        .then(() => {
+          dispatch(
+            CustomerActions.requestAllAcc(
+              1,
+              pageSize,
+              "CustomerID",
+              search.value
+            )
+          );
+        });
     } else {
       dispatch(
         CustomerActions.requestAllAcc(
@@ -85,51 +190,22 @@ const AllAccountsPage: React.FC<IProps> = (
           "CustomerID",
           "ascending"
         )
-      );
-    }
-    if (isRequesting == false) {
-      setTimeout(() => {
-        let tableSelect: any;
-        let tableHead: any;
-
-        if (
-          window.location.pathname === "/data-quality/customer-setting-page"
-        ) {
-          tableSelect = document.getElementById(
-            "exporttosetting"
-          ) as HTMLTableElement;
-          tableHead = document.querySelector(
-            "#exporttosetting > thead > tr > th:nth-child(1)"
-          ) as HTMLTableElement;
-        } else {
-          tableSelect = document.getElementById(
-            "exportosett"
-          ) as HTMLTableElement;
-          tableHead = document.querySelector(
-            "#exportosett > thead > tr > th:nth-child(1)"
-          ) as HTMLTableElement;
-        }
-
-        tableHead.style.display = "none";
-        for (let i = 0; i < tableSelect.rows.length; i++) {
-          const firstCol = tableSelect.rows[i].cells[0];
-          firstCol.remove();
-        }
-        TableToExcel.convert(tableSelect, {
-          name: "AllAccounts" + currDate + ".xlsx",
-          sheet: {
-            name: "Sheet 1",
-          },
+      )
+        .then(() => {
+          generateExcel();
+        })
+        .then(() => {
+          dispatch(
+            CustomerActions.requestAllAcc(
+              1,
+              pageSize,
+              "CustomerID",
+              "ascending"
+            )
+          );
         });
-      }, 3000);
-      setTimeout(() => {
-        window.location.href =
-          window.location.origin + window.location.pathname;
-      }, 4000);
     }
   };
-
-  const currDate: string = format(new Date(), "cccc LLLL d, yyyy");
 
   useEffect(() => {
     dispatch(
@@ -144,7 +220,38 @@ const AllAccountsPage: React.FC<IProps> = (
     )! as HTMLInputElement;
 
     // if (window.location.pathname === "/data-quality/customer-setting") {
-    if (search.value.length > 0) {
+
+    if (filterData != undefined) {
+      dispatch(
+        CustomerActions.requestSearchAllAcc(
+          data.activePage,
+          pageSize,
+          "CustomerID",
+          null,
+          "ascending",
+          filterData.newsalesAssign,
+          filterData.pmo_customer,
+          filterData.blacklist,
+          filterData.holdshipment,
+          filterData.nonameAccount,
+          filterData.namedAccount,
+          filterData.shareableAccount
+        )
+      );
+    } else if (myAccount) {
+      const userId: any = localStorage.getItem("userLogin");
+      const salesID = JSON.parse(userId)?.employeeID;
+      dispatch(
+        CustomerActions.requestSearchAllAcc(
+          data.activePage,
+          pageSize,
+          "CustomerID",
+          null,
+          "ascending",
+          salesID
+        )
+      );
+    } else if (search.value.length > 0) {
       dispatch(
         CustomerActions.requestSearchAllAcc(
           data.activePage,
@@ -199,7 +306,7 @@ const AllAccountsPage: React.FC<IProps> = (
           </div>
 
           <div className="posision-container">
-            {role === "ADMIN" ? (
+            {role === "Admin" ? (
               <>
                 <div
                   className="myAccount-toggle"
@@ -215,7 +322,7 @@ const AllAccountsPage: React.FC<IProps> = (
                       style={{ margin: "0.5rem", transform: "scale(0.9)" }}
                       toggle
                       checked={myAccount}
-                      onChange={() => handleMyAccount()}
+                      onChange={() => handleMyApproval()}
                     ></Checkbox>
                   </div>
                   <p style={{ fontSize: "0.8rem", margin: "0.5rem" }}>
@@ -274,6 +381,7 @@ const AllAccountsPage: React.FC<IProps> = (
                 history={props.history}
                 role={props.role}
                 tableData={tableData}
+                myAccount={myAccount}
                 getRowData={setNewRowData}
                 data={rowData}
               />
@@ -293,6 +401,7 @@ const AllAccountsPage: React.FC<IProps> = (
           setOpenFilter={setOpenFilter}
           openFilter={openFilter}
           rowData={rowData}
+          getFilterData={setFilterData}
         />
       )}
     </Fragment>

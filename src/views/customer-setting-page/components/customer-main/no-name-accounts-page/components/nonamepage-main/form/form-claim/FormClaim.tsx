@@ -1,12 +1,12 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
 import { Form as FinalForm } from "react-final-form";
-import { Form, Grid, Card, Divider, Icon } from "semantic-ui-react";
+import { Form, Grid, Card, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
-import {} from "revalidate";
+import "../Modal.scss";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import CustomerSettingPostModel from "stores/customer-setting/models/CustomerSettingPostModel";
@@ -14,6 +14,7 @@ import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityAct
 
 interface IProps {
   rowData: any;
+  getRowData: (data: any) => void;
 }
 
 const ClaimAccount: React.FC<IProps> = (
@@ -27,7 +28,7 @@ const ClaimAccount: React.FC<IProps> = (
   };
 
   const isRequesting: boolean = useSelector((state: IStore) =>
-    selectRequesting(state, [])
+    selectRequesting(state, [CustomerSettingAct.POST_CLAIM_ACCOUNT])
   );
   const onSubmitHandler = async (e) => {
     const userId: any = localStorage.getItem("userLogin");
@@ -36,14 +37,15 @@ const ClaimAccount: React.FC<IProps> = (
       const NewClaimAccount = new CustomerSettingPostModel(e);
       NewClaimAccount.customerSettingID = 0;
       NewClaimAccount.customerID = rowData[j].customerID;
-      NewClaimAccount.salesID = JSON.parse(userId)?.employeeID || 812;
-      NewClaimAccount.requestedBy = JSON.parse(userId)?.employeeID || 812;
+      NewClaimAccount.salesID = JSON.parse(userId)?.employeeID;
+      NewClaimAccount.requestedBy = JSON.parse(userId)?.employeeID;
       NewClaimAccount.requestedDate = new Date();
       NewClaimAccount.createDate = new Date();
-      NewClaimAccount.createUserID = JSON.parse(userId)?.employeeID || 812;
+      NewClaimAccount.createUserID = JSON.parse(userId)?.employeeID;
 
       await dispatch(CustomerSettingAct.postClaimAccount(NewClaimAccount));
     }
+    props.getRowData([]);
     dispatch(ModalAction.CLOSE());
     dispatch(
       CustomerSettingAct.requestNoNameAcc(1, 10, "CustomerID", "ascending")
@@ -79,7 +81,6 @@ const ClaimAccount: React.FC<IProps> = (
                       fontFamily: "Arial, sans-serif",
                       fontSize: "1rem",
                       lineHeight: "1.3",
-                      // color: "#A5AA89",
                     }}
                   >
                     Please pay more attention to customer accounts that you

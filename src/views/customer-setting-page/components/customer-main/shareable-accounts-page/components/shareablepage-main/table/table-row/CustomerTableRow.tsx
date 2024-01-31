@@ -4,9 +4,6 @@ import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLevelActions";
 import ModalSizeEnum from "constants/ModalSizeEnum";
-import { selectUserResult } from "selectors/user/UserSelector";
-import IUserResult from "selectors/user/models/IUserResult";
-import IStore from "models/IStore";
 import "./CustomerTableRowStyle.scss";
 import ClaimForm from "../../form/form-claim/FormClaim";
 
@@ -22,12 +19,9 @@ const CustomerTableRow: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
-  const [openConfirm, setOpenConfirm] = useState(false);
-  const currentUser: IUserResult = useSelector((state: IStore) =>
-    selectUserResult(state)
-  );
   const { role } = props;
-  const { rowData, getRowData } = props;
+  const { rowData, getRowData, data } = props;
+  const [isChecked, setIsChecked] = useState(false);
 
   const setRowData = (data) => {
     let checkData = props.data.find(
@@ -43,6 +37,7 @@ const CustomerTableRow: React.FC<IProps> = (
     } else {
       getRowData([...props.data, data]);
     }
+    // setIsChecked((prevChecked) => !prevChecked);
   };
 
   const onClaimAccount = useCallback((): void => {
@@ -77,12 +72,17 @@ const CustomerTableRow: React.FC<IProps> = (
                 <input
                   type="checkbox"
                   onClick={() => setRowData(rowData)}
+                  checked={
+                    data.find((item) => item.customerID == rowData.customerID)
+                      ? true
+                      : false
+                  }
                 ></input>
               </label>
             </div>
             <Dropdown pointing="left" icon="ellipsis vertical">
               <Dropdown.Menu>
-                {role === "SALES" && (
+                {role === "Sales" && (
                   <>
                     <Dropdown.Item
                       text="View/Edit"
@@ -103,7 +103,7 @@ const CustomerTableRow: React.FC<IProps> = (
                   </>
                 )}
 
-                {role === "ADMIN" && (
+                {role === "Admin" && (
                   <Dropdown.Item
                     text="View/Edit"
                     icon="edit outline"
@@ -209,8 +209,6 @@ const CustomerTableRow: React.FC<IProps> = (
               margin: "auto",
               height: "auto",
               display: "flex",
-              // justifyContent: "center",
-              // textAlign: "center",
             }}
           >
             <p

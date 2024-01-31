@@ -225,6 +225,7 @@ export const requestSearchNamedAcc = (
   search: string,
   sorting?: string,
   salesID?: string,
+  myAccount?: number,
   pmo_customer?: boolean,
   holdshipment?: boolean,
   blacklist?: boolean
@@ -240,6 +241,7 @@ export const requestSearchNamedAcc = (
       search,
       sorting,
       salesID,
+      myAccount,
       pmo_customer,
       holdshipment,
       blacklist
@@ -292,6 +294,7 @@ export const requestSearchAllAcc = (
   search: string,
   sorting?: string,
   salesID?: string,
+  myAccount?: number,
   pmo_customer?: boolean,
   blacklist?: boolean,
   holdshipment?: boolean,
@@ -310,6 +313,7 @@ export const requestSearchAllAcc = (
       search,
       sorting,
       salesID,
+      myAccount,
       pmo_customer,
       blacklist,
       holdshipment,
@@ -431,7 +435,6 @@ export const PUT_RELEASES_ACCOUNTS: string =
 export const PUT_RELEASES_ACCOUNTS_FINISHED =
   "CustomerActions.PUT_RELEASES_ACCOUNTS_FINISHED";
 export const putReleaseAccount = (
-  data: CustomerID,
   customerID: number,
   salesID: number,
   modifyUserID: number
@@ -441,7 +444,6 @@ export const putReleaseAccount = (
       dispatch,
       PUT_RELEASES_ACCOUNTS,
       CustomerEffect.putReleaseAccount,
-      data,
       customerID,
       salesID,
       modifyUserID
@@ -509,10 +511,6 @@ export const clearResult = (): any => {
   };
 };
 
-export const POST_CLAIM_ACCOUNT: string =
-  "CustomerActions.POST_CLAIM_ACCOUNT";
-export const POST_CLAIM_ACCOUNT_FINISHED =
-  "CustomerActions.POST_CLAIM_ACCOUNT_FINISHED";
 export const claimAccount = (data: CustomerClaimAccount): any => {
   return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
     await ActionUtility.createThunkEffect<ResultActions>(
@@ -543,7 +541,11 @@ export const PUT_RELEASE_ACCOUNT: string =
   "CustomerActions.PUT_RELEASE_ACCOUNT";
 export const PUT_RELEASE_ACCOUNT_FINISHED =
   "CustomerActions.PUT_RELEASE_ACCOUNT_FINISHED";
-export const releaseAccount = (customerID: number, salesID: number, modifyUserID: number): any => {
+export const releaseAccount = (
+  customerID: number,
+  salesID: number,
+  modifyUserID: number
+): any => {
   return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
     await ActionUtility.createThunkEffect<ResultActions>(
       dispatch,
@@ -560,11 +562,16 @@ export const PUT_ACCEPT_REQUEST_SHAREABLE: string =
   "CustomerActions.PUT_ACCEPT_REQUEST_SHAREABLE";
 export const PUT_ACCEPT_REQUEST_SHAREABLE_FINISHED =
   "CustomerActions.PUT_ACCEPT_REQUEST_SHAREABLE_FINISHED";
-export const acceptRequestShareableAccount = (customerID: number, salesID: number, isApprove: boolean, modifyUserID: number): any => {
+export const acceptRequestShareableAccount = (
+  customerID: number,
+  salesID: number,
+  isApprove: boolean,
+  modifyUserID: number
+): any => {
   return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
     await ActionUtility.createThunkEffect<ResultActions>(
       dispatch,
-      POST_CUSTOMER_SETTING,
+      PUT_ACCEPT_REQUEST_SHAREABLE,
       CustomerEffect.acceptRequestShareableAccount,
       customerID,
       salesID,

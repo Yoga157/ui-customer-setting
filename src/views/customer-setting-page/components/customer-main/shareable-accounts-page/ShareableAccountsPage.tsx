@@ -23,6 +23,13 @@ interface IProps {
   role: string;
 }
 
+interface FilterData {
+  pmo_customer: any;
+  newsalesAssign: any;
+  holdshipment: any;
+  blacklist: any;
+}
+
 const ShareableAccountsPage: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
@@ -32,11 +39,12 @@ const ShareableAccountsPage: React.FC<IProps> = (
   const activePage = useSelector(
     (state: IStore) => state.customerSetting.activePage
   );
-  // const currentUser: IUserResult = useSelector((state: IStore) =>
-  //   selectUserResult(state)
-  // );
+  const [filterData, setFilterData] = useState<FilterData | undefined>(
+    undefined
+  );
   const [rowData, setRowData] = useState([]);
   const [myAccount, setMyAccount] = useState(false);
+  const currDate: string = format(new Date(), "cccc LLLL d, yyyy");
 
   const setNewRowData = (data) => {
     setRowData(data);
@@ -45,30 +53,28 @@ const ShareableAccountsPage: React.FC<IProps> = (
   const onReleaseAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ModReleaseForm rowData={rowData} />,
+        <ModReleaseForm rowData={rowData} getRowData={setRowData} />,
         ModalSizeEnum.Small
       )
     );
-    setRowData([]);
-  }, [dispatch, rowData, setRowData]);
+  }, [dispatch, rowData]);
 
   const handleMyAccount = () => {
     const userId: any = localStorage.getItem("userLogin");
 
-    if (!myAccount) {
+    if (myAccount == false) {
       setMyAccount(true);
-      const salesID = JSON.parse(userId)?.employeeID || 830;
+      const salesID = JSON.parse(userId)?.employeeID;
       dispatch(
         CustomerActions.requestSearchShareabelAcc(
-          1,
-          10,
+          activePage,
+          pageSize,
           "CustomerID",
           null,
           "ascending",
           salesID
         )
       );
-      // console.log(salesID);
     } else {
       setMyAccount(false);
       dispatch(
@@ -77,6 +83,45 @@ const ShareableAccountsPage: React.FC<IProps> = (
     }
   };
 
+  const generateExcel = () => {
+    let tableSelect: any;
+    let tableHead: any;
+
+    if (window.location.pathname === "/data-quality/customer-setting-page") {
+      tableSelect = document.getElementById(
+        "exporttosetting"
+      ) as HTMLTableElement;
+      tableHead = document.querySelector(
+        "#exporttosetting > thead > tr > th:nth-child(1)"
+      ) as HTMLTableElement;
+    } else {
+      tableSelect = document.getElementById("exportosett") as HTMLTableElement;
+      tableHead = document.querySelector(
+        "#exportosett > thead > tr > th:nth-child(1)"
+      ) as HTMLTableElement;
+    }
+
+    if (tableHead) {
+      tableHead.style.display = "none";
+    }
+
+    const tableClone = tableSelect.cloneNode(true) as HTMLTableElement;
+
+    for (let i = 0; i < tableClone.rows.length; i++) {
+      const firstCol = tableClone.rows[i].cells[0];
+      if (firstCol) {
+        firstCol.remove();
+      }
+    }
+
+    // Convert the cloned table to Excel
+    TableToExcel.convert(tableClone, {
+      name: "ShareableAccounts_" + currDate + ".xlsx",
+      sheet: {
+        name: "Sheet 1",
+      },
+    });
+  };
   const exportTableToExcel = (tableID: string, filename: string): void => {
     const search = document.querySelector(
       "#search-input-customer"
@@ -89,7 +134,20 @@ const ShareableAccountsPage: React.FC<IProps> = (
           "CustomerID",
           search.value
         )
-      );
+      )
+        .then(() => {
+          generateExcel();
+        })
+        .then(() => {
+          dispatch(
+            CustomerActions.requestShareabledAcc(
+              1,
+              pageSize,
+              "CustomerID",
+              search.value
+            )
+          );
+        });
     } else {
       dispatch(
         CustomerActions.requestShareabledAcc(
@@ -98,51 +156,22 @@ const ShareableAccountsPage: React.FC<IProps> = (
           "CustomerID",
           "ascending"
         )
-      );
-    }
-    if (isRequesting == false) {
-      setTimeout(() => {
-        let tableSelect: any;
-        let tableHead: any;
-
-        if (
-          window.location.pathname === "/data-quality/customer-setting-page"
-        ) {
-          tableSelect = document.getElementById(
-            "exporttosetting"
-          ) as HTMLTableElement;
-          tableHead = document.querySelector(
-            "#exporttosetting > thead > tr > th:nth-child(1)"
-          ) as HTMLTableElement;
-        } else {
-          tableSelect = document.getElementById(
-            "exportosett"
-          ) as HTMLTableElement;
-          tableHead = document.querySelector(
-            "#exportosett > thead > tr > th:nth-child(1)"
-          ) as HTMLTableElement;
-        }
-
-        tableHead.style.display = "none";
-        for (let i = 0; i < tableSelect.rows.length; i++) {
-          const firstCol = tableSelect.rows[i].cells[0];
-          firstCol.remove();
-        }
-        TableToExcel.convert(tableSelect, {
-          name: "ShareableAccounts" + currDate + ".xlsx",
-          sheet: {
-            name: "Sheet 1",
-          },
+      )
+        .then(() => {
+          generateExcel();
+        })
+        .then(() => {
+          dispatch(
+            CustomerActions.requestShareabledAcc(
+              1,
+              pageSize,
+              "CustomerID",
+              "ascending"
+            )
+          );
         });
-      }, 3000);
-      setTimeout(() => {
-        window.location.href =
-          window.location.origin + window.location.pathname;
-      }, 4000);
     }
   };
-
-  const currDate: string = format(new Date(), "cccc LLLL d, yyyy");
 
   useEffect(() => {
     dispatch(
@@ -162,12 +191,39 @@ const ShareableAccountsPage: React.FC<IProps> = (
     )! as HTMLInputElement;
 
     // if (window.location.pathname === "/data-quality/customer-setting") {
-    if (search.value.length > 0) {
+    if (filterData != undefined) {
+      dispatch(
+        CustomerActions.requestSearchAllAcc(
+          data.activePage,
+          pageSize,
+          "CustomerID",
+          null,
+          "ascending",
+          filterData.newsalesAssign,
+          filterData.pmo_customer,
+          filterData.blacklist,
+          filterData.holdshipment
+        )
+      );
+    } else if (myAccount) {
+      const userId: any = localStorage.getItem("userLogin");
+      const salesID = JSON.parse(userId)?.employeeID;
       dispatch(
         CustomerActions.requestSearchShareabelAcc(
           data.activePage,
           pageSize,
+          "CustomerID",
           null,
+          "ascending",
+          salesID
+        )
+      );
+    } else if (search.value.length > 0) {
+      dispatch(
+        CustomerActions.requestShareabledAcc(
+          data.activePage,
+          pageSize,
+          "CustomerID",
           search.value
         )
       );
@@ -176,11 +232,12 @@ const ShareableAccountsPage: React.FC<IProps> = (
         CustomerActions.requestShareabledAcc(
           data.activePage,
           pageSize,
-          "customerID",
+          "CustomerID",
           "ascending"
         )
       );
     }
+
     // }
   };
 
@@ -230,9 +287,8 @@ const ShareableAccountsPage: React.FC<IProps> = (
                     fontSize: "0.8rem",
                     alignItems: "center",
                   }}
-                  // color="red"
                   icon="times circle"
-                  disabled={rowData.length === 0 || rowData.length > 5}
+                  disabled={rowData.length === 0}
                   size="mini"
                   content="Release Account"
                   onClick={onReleaseAccount}
@@ -246,7 +302,7 @@ const ShareableAccountsPage: React.FC<IProps> = (
               <p></p>
             ) : (
               <p className="p-account">
-                {rowData.length} of 5 accounts has been pick.
+                {rowData.length} accounts has been pick.
               </p>
             )}
           </div>
@@ -318,6 +374,8 @@ const ShareableAccountsPage: React.FC<IProps> = (
           setOpenFilter={setOpenFilter}
           openFilter={openFilter}
           rowData={rowData}
+          getRowData={setRowData}
+          getFilterData={setFilterData}
         />
       )}
     </Fragment>

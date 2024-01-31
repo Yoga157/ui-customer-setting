@@ -12,12 +12,20 @@ import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityAct
 import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
 interface IProps {
   rowData: any;
+  getRowData: (data: any) => void;
+  getFilterData: (data: any) => void;
 }
 
 const FilterCustomer: React.FC<{
   setOpenFilter: React.Dispatch<React.SetStateAction<boolean>>;
   openFilter: boolean;
-} & IProps> = ({ setOpenFilter, openFilter, rowData }) => {
+} & IProps> = ({
+  setOpenFilter,
+  openFilter,
+  rowData,
+  getRowData,
+  getFilterData,
+}) => {
   const [salesName, setSalesName] = useState("");
   const [salesAssignArray, setSalesAssignArray] = useState([]);
   const [salesFilter, setSalesFilter] = useState([]);
@@ -27,7 +35,6 @@ const FilterCustomer: React.FC<{
   const [holdshipmentNoChecked, setHoldshipmentNoChecked] = useState(false);
   const [blacklistYesChecked, setBlacklistYesChecked] = useState(false);
   const [blacklistNoChecked, setBlacklistNoChecked] = useState(false);
-
   const dispatch: Dispatch = useDispatch();
 
   const isRequesting: boolean = useSelector((state: IStore) =>
@@ -40,7 +47,7 @@ const FilterCustomer: React.FC<{
   const onResultSelectSales = (data: any): any => {
     console.log(data);
     let checkSales = salesAssignArray.find((obj) => obj.sales === data.salesID);
-    if (checkSales === undefined) {
+    if (checkSales === undefined && data.salesID != undefined) {
       setSalesAssignArray([
         ...salesAssignArray,
         {
@@ -48,7 +55,7 @@ const FilterCustomer: React.FC<{
           salesID: data.salesID,
         },
       ]);
-
+      console.log(data.salesID);
       setSalesFilter([...salesFilter, data.salesID.toString()]);
     }
   };
@@ -84,6 +91,13 @@ const FilterCustomer: React.FC<{
         ? false
         : null;
 
+    getFilterData({
+      pmo_customer: pmo_customer,
+      newsalesAssign: newsalesAssign,
+      holdshipment: holdshipment,
+      blacklist: blacklist,
+    });
+
     dispatch(
       CustomerSettingAct.requestSearchShareabelAcc(
         1,
@@ -97,7 +111,6 @@ const FilterCustomer: React.FC<{
         holdshipment
       )
     );
-    // console.log(pmo_customer);
   };
 
   const salesStoreDropdown = useSelector((state: IStore) =>
@@ -124,9 +137,10 @@ const FilterCustomer: React.FC<{
     setBlacklistNoChecked(false);
     setSalesName("");
     setSalesAssignArray([]);
+    getRowData([]);
 
     dispatch(
-      CustomerSettingAct.requestNamedAcc(1, 10, "CustomerID", "ascending")
+      CustomerSettingAct.requestShareabledAcc(1, 10, "CustomerID", "ascending")
     );
   };
 
@@ -171,318 +185,325 @@ const FilterCustomer: React.FC<{
                 position: "relative",
               }}
             >
-              {/* <LoadingIndicator isActive={isRequesting}> */}
-              <div ref={titleFilterRef}>
-                <Grid columns="equal" widht={8}>
-                  <Grid.Column width={8} verticalAlign="middle">
-                    <h4>ADVANCE FILTER</h4>
-                  </Grid.Column>
+              <LoadingIndicator isActive={isRequesting}>
+                <div ref={titleFilterRef}>
+                  <Grid columns="equal" widht={8}>
+                    <Grid.Column width={8} verticalAlign="middle">
+                      <h4>ADVANCE FILTER</h4>
+                    </Grid.Column>
 
-                  <Grid.Column width={8}>
-                    <Button
-                      className="m-05r"
-                      icon="close"
-                      style={{ backgroundColor: "transparent", color: "black" }}
-                      floated="right"
-                      size="tiny"
-                      onClick={() => setOpenFilter(!openFilter)}
-                    />
-                  </Grid.Column>
-                </Grid>
+                    <Grid.Column width={8}>
+                      <Button
+                        className="m-05r"
+                        icon="close"
+                        style={{
+                          backgroundColor: "transparent",
+                          color: "black",
+                        }}
+                        floated="right"
+                        size="tiny"
+                        onClick={() => setOpenFilter(!openFilter)}
+                      />
+                    </Grid.Column>
+                  </Grid>
 
-                <Divider></Divider>
-              </div>
-              <div ref={contentFilterRef} style={{ overflowY: "auto" }}>
-                <Grid.Row>
-                  <p>PMO Customer</p>
+                  <Divider></Divider>
+                </div>
+                <div ref={contentFilterRef} style={{ overflowY: "auto" }}>
                   <Grid.Row>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        width: "fit-content",
-                        marginTop: "1rem",
-                      }}
-                    >
+                    <p>PMO Customer</p>
+                    <Grid.Row>
                       <div
                         style={{
                           display: "flex",
-                          alignItems: "center",
+                          flexDirection: "row",
+                          width: "fit-content",
+                          marginTop: "1rem",
                         }}
                       >
-                        <label
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <input
-                            name="pmo_customer"
-                            type="checkbox"
-                            checked={pmo_customerYesChecked}
-                            style={{
-                              marginRight: "0.5rem",
-                              transform: "scale(1)",
-                            }}
-                            onChange={() =>
-                              setPmo_customerYesChecked(!pmo_customerYesChecked)
-                            }
-                          ></input>
-                          <span>Yes</span>
-                        </label>
-                      </div>
-                      <div style={{ margin: "0 1rem" }}></div>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <label
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <input
-                            type="checkbox"
-                            style={{
-                              marginRight: "0.5rem",
-                              transform: "scale(1)",
-                            }}
-                            checked={pmo_customerNoChecked}
-                            onChange={() =>
-                              setPmo_customerNoChecked(!pmo_customerNoChecked)
-                            }
-                          ></input>
-                          <span>No</span>
-                        </label>
-                      </div>
-                    </div>
-                  </Grid.Row>
-                </Grid.Row>
-                <Divider></Divider>
-
-                <Grid.Row>
-                  <Grid.Column>
-                    <p>Sales Assign</p>
-                    <Field
-                      name="salesName"
-                      component={DropdownClearInput}
-                      placeholder="-Choose Sales-"
-                      values={salesName}
-                      options={salesStoreDropdown}
-                      onChanged={onResultSelectSales}
-                    />
-                  </Grid.Column>
-                </Grid.Row>
-
-                <Grid.Row>
-                  <Grid.Column>
-                    {salesAssignArray.map((data) => {
-                      return (
                         <div
-                          style={{ marginTop: "0.5rem" }}
-                          className="ui label labelBorPad"
-                          key={data.salesID}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
                         >
-                          <span>{data.salesName}</span>
-                          <i
-                            className="delete icon btnSales"
-                            onClick={() => deleteClick(data.salesID)}
-                          ></i>
+                          <label
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <input
+                              name="pmo_customer"
+                              type="checkbox"
+                              checked={pmo_customerYesChecked}
+                              style={{
+                                marginRight: "0.5rem",
+                                transform: "scale(1)",
+                              }}
+                              onChange={() =>
+                                setPmo_customerYesChecked(
+                                  !pmo_customerYesChecked
+                                )
+                              }
+                            ></input>
+                            <span>Yes</span>
+                          </label>
                         </div>
-                      );
-                    })}
-                  </Grid.Column>
-                </Grid.Row>
-                <Divider></Divider>
+                        <div style={{ margin: "0 1rem" }}></div>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <label
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              style={{
+                                marginRight: "0.5rem",
+                                transform: "scale(1)",
+                              }}
+                              checked={pmo_customerNoChecked}
+                              onChange={() =>
+                                setPmo_customerNoChecked(!pmo_customerNoChecked)
+                              }
+                            ></input>
+                            <span>No</span>
+                          </label>
+                        </div>
+                      </div>
+                    </Grid.Row>
+                  </Grid.Row>
+                  <Divider></Divider>
 
-                <Grid.Row>
-                  <p>Holdshipment Customer</p>
                   <Grid.Row>
-                    <div
+                    <Grid.Column>
+                      <p>Sales Assign</p>
+                      <Field
+                        name="salesName"
+                        component={DropdownClearInput}
+                        placeholder="-Choose Sales-"
+                        values={salesName}
+                        options={salesStoreDropdown}
+                        onChanged={onResultSelectSales}
+                      />
+                    </Grid.Column>
+                  </Grid.Row>
+
+                  <Grid.Row>
+                    <Grid.Column>
+                      {salesAssignArray.map((data) => {
+                        return (
+                          <div
+                            style={{ marginTop: "0.5rem" }}
+                            className="ui label labelBorPad"
+                            key={data.salesID}
+                          >
+                            <span>{data.salesName}</span>
+                            <i
+                              className="delete icon btnSales"
+                              onClick={() => deleteClick(data.salesID)}
+                            ></i>
+                          </div>
+                        );
+                      })}
+                    </Grid.Column>
+                  </Grid.Row>
+                  <Divider></Divider>
+
+                  <Grid.Row>
+                    <p>Holdshipment Customer</p>
+                    <Grid.Row>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          width: "fit-content",
+                          marginTop: "1rem",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <label
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <input
+                              name="holdshipment"
+                              value="yes"
+                              type="checkbox"
+                              checked={holdshipmentYesChecked}
+                              style={{
+                                marginRight: "0.5rem",
+                                transform: "scale(1)",
+                              }}
+                              onChange={() =>
+                                setHoldshipmentYesChecked(
+                                  !holdshipmentYesChecked
+                                )
+                              }
+                            ></input>
+                            <span>Yes</span>
+                          </label>
+                        </div>
+                        <div style={{ margin: "0 1rem" }}></div>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <label
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              style={{
+                                marginRight: "0.5rem",
+                                transform: "scale(1)",
+                              }}
+                              checked={holdshipmentNoChecked}
+                              onChange={() =>
+                                setHoldshipmentNoChecked(!holdshipmentNoChecked)
+                              }
+                            ></input>
+                            <span>No</span>
+                          </label>
+                        </div>
+                      </div>
+                    </Grid.Row>
+                  </Grid.Row>
+                  <Divider></Divider>
+
+                  <Grid.Row>
+                    <p>Blacklist Customer</p>
+                    <Grid.Row>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          width: "fit-content",
+                          marginTop: "1rem",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <label
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              name="blacklist"
+                              value="yes"
+                              style={{
+                                marginRight: "0.5rem",
+                                transform: "scale(1)",
+                              }}
+                              checked={blacklistYesChecked}
+                              onChange={() =>
+                                setBlacklistYesChecked(!blacklistYesChecked)
+                              }
+                            ></input>
+                            <span>Yes</span>
+                          </label>
+                        </div>
+                        <div style={{ margin: "0 1rem" }}></div>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <label
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              style={{
+                                marginRight: "0.5rem",
+                                transform: "scale(1)",
+                              }}
+                              checked={blacklistNoChecked}
+                              onChange={() =>
+                                setBlacklistNoChecked(!blacklistNoChecked)
+                              }
+                            ></input>
+                            <span>No</span>
+                          </label>
+                        </div>
+                      </div>
+                    </Grid.Row>
+                  </Grid.Row>
+                </div>
+
+                <div
+                  ref={buttonFilterRef}
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    textAlign: "center",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "column",
+                    width: "calc(100% - 50px)",
+                  }}
+                >
+                  <Divider style={{ width: "100%" }}></Divider>
+
+                  <Grid.Row>
+                    <Button
+                      className="MarBot20"
+                      type="submit"
                       style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        width: "fit-content",
-                        marginTop: "1rem",
+                        width: "18rem",
+                        color: "#f5f5f5",
+                        background: "#656dd1",
                       }}
                     >
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <label
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <input
-                            name="holdshipment"
-                            value="yes"
-                            type="checkbox"
-                            checked={holdshipmentYesChecked}
-                            style={{
-                              marginRight: "0.5rem",
-                              transform: "scale(1)",
-                            }}
-                            onChange={() =>
-                              setHoldshipmentYesChecked(!holdshipmentYesChecked)
-                            }
-                          ></input>
-                          <span>Yes</span>
-                        </label>
-                      </div>
-                      <div style={{ margin: "0 1rem" }}></div>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <label
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <input
-                            type="checkbox"
-                            style={{
-                              marginRight: "0.5rem",
-                              transform: "scale(1)",
-                            }}
-                            checked={holdshipmentNoChecked}
-                            onChange={() =>
-                              setHoldshipmentNoChecked(!holdshipmentNoChecked)
-                            }
-                          ></input>
-                          <span>No</span>
-                        </label>
-                      </div>
-                    </div>
+                      Apply Filter
+                    </Button>
                   </Grid.Row>
-                </Grid.Row>
-                <Divider></Divider>
-
-                <Grid.Row>
-                  <p>Blacklist Customer</p>
                   <Grid.Row>
-                    <div
+                    <Button
+                      type="button"
+                      onClick={() => resetClick()}
                       style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        width: "fit-content",
-                        marginTop: "1rem",
+                        width: "18rem",
+                        color: "#656dd1",
+                        background: "#f5f5f5",
                       }}
                     >
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <label
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <input
-                            type="checkbox"
-                            name="blacklist"
-                            value="yes"
-                            style={{
-                              marginRight: "0.5rem",
-                              transform: "scale(1)",
-                            }}
-                            checked={blacklistYesChecked}
-                            onChange={() =>
-                              setBlacklistYesChecked(!blacklistYesChecked)
-                            }
-                          ></input>
-                          <span>Yes</span>
-                        </label>
-                      </div>
-                      <div style={{ margin: "0 1rem" }}></div>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <label
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <input
-                            type="checkbox"
-                            style={{
-                              marginRight: "0.5rem",
-                              transform: "scale(1)",
-                            }}
-                            checked={blacklistNoChecked}
-                            onChange={() =>
-                              setBlacklistNoChecked(!blacklistNoChecked)
-                            }
-                          ></input>
-                          <span>No</span>
-                        </label>
-                      </div>
-                    </div>
+                      <p>Reset Filter</p>
+                    </Button>
                   </Grid.Row>
-                </Grid.Row>
-              </div>
-
-              <div
-                ref={buttonFilterRef}
-                style={{
-                  position: "absolute",
-                  bottom: 0,
-                  textAlign: "center",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "column",
-                  width: "calc(100% - 50px)",
-                }}
-              >
-                <Divider style={{ width: "100%" }}></Divider>
-
-                <Grid.Row>
-                  <Button
-                    className="MarBot20"
-                    type="submit"
-                    style={{
-                      width: "18rem",
-                      color: "#f5f5f5",
-                      background: "#656dd1",
-                    }}
-                  >
-                    Apply Filter
-                  </Button>
-                </Grid.Row>
-                <Grid.Row>
-                  <Button
-                    type="button"
-                    onClick={() => resetClick()}
-                    style={{
-                      width: "18rem",
-                      color: "#656dd1",
-                      background: "#f5f5f5",
-                    }}
-                  >
-                    <p>Reset Filter</p>
-                  </Button>
-                </Grid.Row>
-              </div>
-              {/* </LoadingIndicator> */}
+                </div>
+              </LoadingIndicator>
             </div>
           </Form>
         )}

@@ -1,5 +1,5 @@
-import React, { Fragment, useEffect, useState, useCallback } from "react";
-import { Table, Dropdown, List, Icon } from "semantic-ui-react";
+import React, { Fragment, useState, useCallback } from "react";
+import { Table, Dropdown, Icon } from "semantic-ui-react";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLevelActions";
@@ -9,18 +9,16 @@ import IUserResult from "selectors/user/models/IUserResult";
 import IStore from "models/IStore";
 import "./CustomerTableRowStyle.scss";
 import ClaimForm from "../../form/form-claim/FormClaim";
-import AddSalesAssign from "../../form/form-create/FormAdd";
-import RouteEnum from "constants/RouteEnum";
-import * as CustomerSettActions from "stores/customer-setting/CustomerActivityActions";
 import { useHistory } from "react-router-dom";
 import RequestForm from "../../form/form-reqshareaccount/FormReqShare";
-import ReleaseForm from "../../form/form-release/FormRelease";
+import ApproveReq from "../../form/form-release/FormRelease";
 import ShareableReq from "../../form/form-approverequest/FormApproveShareable";
 
 interface IProps {
   readonly rowData: any;
   readonly history: any;
   readonly role: string;
+  readonly myAccount: boolean;
   getRowData: (data: any) => void;
   data: any;
 }
@@ -30,29 +28,12 @@ const CustomerTableRow: React.FC<IProps> = (
 ) => {
   const dispatch: Dispatch = useDispatch();
   const history = useHistory();
-  const [openConfirm, setOpenConfirm] = useState(false);
   const currentUser: IUserResult = useSelector((state: IStore) =>
     selectUserResult(state)
   );
-
   const { rowData, getRowData } = props;
   const { role } = props;
-
-  const setRowData = (data) => {
-    let checkData = props.data.find(
-      (obj) => obj.customerID === data.customerID
-    );
-
-    if (checkData) {
-      getRowData(
-        props.data.filter(
-          (selectedData) => selectedData.customerID !== data.customerID
-        )
-      );
-    } else {
-      getRowData([...props.data, data]);
-    }
-  };
+  const userId: any = JSON.parse(localStorage.getItem("userLogin"));
 
   const onRequestAccount = useCallback((): void => {
     dispatch(
@@ -64,7 +45,7 @@ const CustomerTableRow: React.FC<IProps> = (
     getRowData([]);
   }, [dispatch, rowData]);
 
-  const onShareableRequest = useCallback((): void => {
+  const onApproveShareable = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
         <ShareableReq rowData={[rowData]} />,
@@ -77,7 +58,7 @@ const CustomerTableRow: React.FC<IProps> = (
   const onReleaseAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ReleaseForm rowData={[rowData]} />,
+        <ApproveReq rowData={[rowData]} />,
         ModalSizeEnum.Tiny
       )
     );
@@ -119,8 +100,9 @@ const CustomerTableRow: React.FC<IProps> = (
                   onClick={() => onEdit(rowData.CustomerID)}
                 />
 
-                {(rowData.named === false || rowData.shareable === false) &&
-                  role === "SALES" && (
+                {rowData.named === false &&
+                  rowData.shareable === false &&
+                  role === "Sales" && (
                     <Dropdown.Item
                       text="Claim Account"
                       icon="circle check"
@@ -128,29 +110,33 @@ const CustomerTableRow: React.FC<IProps> = (
                     />
                   )}
 
-                {rowData.named === true && role === "ADMIN" && (
+                {rowData.named === true && role === "Admin" && (
                   <>
                     <Dropdown.Item
                       text="Approve Shareable Request"
                       icon="circle check"
-                      onClick={onShareableRequest}
+                      onClick={onApproveShareable}
                     />
                   </>
                 )}
 
-                {rowData.named === true && role === "SALES" && (
+                {rowData.named === true && role === "Sales" && (
                   <>
-                    <Dropdown.Item
-                      text="Request Share Account"
-                      icon="share"
-                      onClick={onRequestAccount}
-                    />
+                    {rowData.salesName != userId.fullName && (
+                      <Dropdown.Item
+                        text="Request Share Account"
+                        icon="share"
+                        onClick={onRequestAccount}
+                      />
+                    )}
 
-                    <Dropdown.Item
-                      text="Release Account"
-                      icon="remove circle"
-                      onClick={onReleaseAccount}
-                    />
+                    {rowData.salesName == userId.fullName && (
+                      <Dropdown.Item
+                        text="Realease Account"
+                        icon="times circle"
+                        onClick={onReleaseAccount}
+                      />
+                    )}
                   </>
                 )}
 
@@ -158,99 +144,6 @@ const CustomerTableRow: React.FC<IProps> = (
                   <Dropdown.Item text="Cancel" icon="remove circle" />
                 )}
               </Dropdown.Menu>
-              {/* <Dropdown.Menu>
-                {rowData.shareable == true &&
-                rowData.named == false &&
-                role === "ADMIN" ? (
-                  <>
-                    <Dropdown.Item
-                      text="View/Edit"
-                      icon="edit outline"
-                      onClick={() => onEdit(rowData.CustomerID)}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <Dropdown.Item
-                      text="View/Edit"
-                      icon="edit outline"
-                      onClick={() => onEdit(rowData.CustomerID)}
-                    />
-                    <Dropdown.Item
-                      text="Claim Account"
-                      icon="circle check"
-                      onClick={onClaimAccount}
-                    />
-                  </>
-                )}
-
-                {rowData.named == false &&
-                rowData.shareable == false &&
-                role === "ADMIN" && (
-                  <>
-                    <Dropdown.Item
-                      text="View/Edit"
-                      icon="edit outline"
-                      onClick={() => onEdit(rowData.CustomerID)}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <Dropdown.Item
-                      text="View/Edit"
-                      icon="edit outline"
-                      onClick={() => onEdit(rowData.CustomerID)}
-                    />
-                    <Dropdown.Item
-                      text="Claim Account"
-                      icon="circle check"
-                      onClick={onClaimAccount}
-                    />
-                  </>
-                )}
-
-                {rowData.named == true &&
-                rowData.shareable == false &&
-                role === "ADMIN" ? (
-                  <>
-                    <Dropdown.Item
-                      text="View/Edit"
-                      icon="edit outline"
-                      onClick={() => onEdit(rowData.CustomerID)}
-                    />
-
-                    <Dropdown.Item
-                      text="Approve Shareable Request"
-                      icon="circle check"
-                      onClick={onShareableRequest}
-                    />
-                  </>
-                ) &&  (
-                  <>
-                    <Dropdown.Item
-                      text="View/Edit"
-                      icon="edit outline"
-                      onClick={() => onEdit(rowData.CustomerID)}
-                    />
-
-                    <Dropdown.Item
-                      text="Request Share Account"
-                      icon="share"
-                      onClick={onRequestAccount}
-                    />
-
-                    <Dropdown.Item
-                      text="Release Account"
-                      icon="remove circle"
-                      onClick={onReleaseAccount}
-                    />
-                  </>
-                )}
-
-                {rowData.status != "CANCEL" && rowData.customerID == "" && (
-                  <Dropdown.Item text="Cancel" icon="remove circle" />
-                )}
-              </Dropdown.Menu> */}
             </Dropdown>
           </div>
         </Table.Cell>

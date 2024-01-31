@@ -1,12 +1,12 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
 import { Form as FinalForm } from "react-final-form";
-import { Form, Grid, Card, Divider, Icon } from "semantic-ui-react";
+import { Form, Grid, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
-import SalesAssignPostModel from "stores/customer-sales/models/SalesAssignPostModel";
+import CustomerSettingPostModel from "stores/customer-setting/models/CustomerSettingPostModel";
 import {} from "revalidate";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
@@ -35,22 +35,18 @@ const ClaimAccount: React.FC<IProps> = (
     const userId: any = localStorage.getItem("userLogin");
 
     for (let j = 0; j < rowData.length; j++) {
-      const NewAssignSales = new SalesAssignPostModel(e);
-      NewAssignSales.customerSettingID = 0;
-      NewAssignSales.customerID = rowData[j].customerID;
-      NewAssignSales.salesID = JSON.parse(userId)?.employeeID || 830;
-      NewAssignSales.shareable = false;
-      NewAssignSales.named = true;
-      NewAssignSales.pmoCustomer = false;
-      // NewAssignSales.status = "approve";
-      NewAssignSales.requestedBy = JSON.parse(userId)?.employeeID || 830;
-      NewAssignSales.requestedDate = new Date();
-      NewAssignSales.createDate = new Date();
-      NewAssignSales.createUserID = JSON.parse(userId)?.employeeID || 830;
-      NewAssignSales.modifyUserID = 0;
+      const NewClaimAccount = new CustomerSettingPostModel(e);
+      NewClaimAccount.customerSettingID = 0;
+      NewClaimAccount.customerID = rowData[j].customerID;
+      NewClaimAccount.salesID = JSON.parse(userId)?.employeeID;
+      NewClaimAccount.requestedBy = JSON.parse(userId)?.employeeID;
+      NewClaimAccount.requestedDate = new Date();
+      NewClaimAccount.createDate = new Date();
+      NewClaimAccount.createUserID = JSON.parse(userId)?.employeeID;
 
-      await dispatch(SalesAssign.postClaimAccount(NewAssignSales));
+      await dispatch(CustomerSettingAct.postClaimAccount(NewClaimAccount));
     }
+
     dispatch(ModalAction.CLOSE());
     dispatch(
       CustomerSettingAct.requestNoNameAcc(1, 10, "CustomerID", "ascending")

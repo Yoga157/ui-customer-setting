@@ -48,8 +48,8 @@ const CustomerTable: React.FC<IProps> = (
       }
       data-cols-width={
         window.location.pathname === "/data-quality/customer-setting-page"
-          ? "10,10,10,20,40,30,30,15,15,15"
-          : "10,20,40,30,30,15,15,15,15,15"
+          ? "20,10,10,20,40,30,30,15,15,15"
+          : "20,20,40,30,30,15,15,15,15,15"
       }
     >
       <Table.Header>
@@ -142,7 +142,7 @@ const CustomerTable: React.FC<IProps> = (
           <CustomerTableRow
             history={props.history}
             role={props.role}
-            key={item.customerSettingID}
+            key={item.customerID}
             rowData={item}
             getRowData={props.getRowData}
             data={props.data}

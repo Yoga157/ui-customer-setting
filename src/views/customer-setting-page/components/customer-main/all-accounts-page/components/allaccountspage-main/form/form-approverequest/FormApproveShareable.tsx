@@ -6,10 +6,8 @@ import IStore from "models/IStore";
 import { Form as FinalForm } from "react-final-form";
 import { Form, Grid, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
-import SalesAssignPostModel from "stores/customer-sales/models/SalesAssignPostModel";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
-import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 import ApproveShareableAccounts from "stores/customer-setting/models/ApproveShareableccounts";
 
@@ -21,7 +19,6 @@ const ApproveShareableReq: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
-  const [salesAssignArray, setSalesAssignArray] = useState([]);
   const { rowData } = props;
 
   const cancelClick = () => {
@@ -36,31 +33,17 @@ const ApproveShareableReq: React.FC<IProps> = (
     const userId: any = localStorage.getItem("userLogin");
 
     for (let j = 0; j < rowData.length; j++) {
-      const NewAssignSales = new ApproveShareableAccounts(e);
-      NewAssignSales.customerID = props.rowData[j].customerID;
-      NewAssignSales.salesID = JSON.parse(userId)?.employeeID || 830;
-      NewAssignSales.isApprove = true;
-      NewAssignSales.modifyUserID = JSON.parse(userId)?.employeeID || 830;
-
       await dispatch(
-        CustomerSettingAct.putApproveCustomerSetting(
-          NewAssignSales,
-          props.rowData[j].customerID,
-          830,
+        CustomerSettingAct.acceptRequestShareableAccount(
+          (rowData.customerID = props.rowData[j].customerID),
+          (rowData.salesID = props.rowData[j].salesShareableID),
           true,
-          830
+          (rowData.modifyUserID = JSON.parse(userId).employeeID)
         )
       );
     }
     dispatch(ModalAction.CLOSE());
     dispatch(CustomerSettingAct.requestAllAcc(1, 10, "CustomerID"));
-  };
-
-  const deleteClick = (salesID) => {
-    let filteredArray = salesAssignArray.filter(
-      (obj) => obj.salesID !== salesID
-    );
-    setSalesAssignArray(filteredArray);
   };
 
   return (
@@ -77,7 +60,6 @@ const ApproveShareableReq: React.FC<IProps> = (
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    margin: "1rem",
                   }}
                 >
                   <div style={{ padding: "0px" }}>
@@ -94,39 +76,43 @@ const ApproveShareableReq: React.FC<IProps> = (
                 centered
                 style={{
                   textAlign: "center",
-                  marginTop: "1.5rem",
                 }}
               >
-                <span style={{ padding: "10px" }}>
-                  Are you sure want to request share this account?
+                <span>
+                  Are you sure want to approve this shareable account <br />
+                  request?{" "}
                 </span>
               </Grid.Row>
-              <Grid.Row>
-                {rowData.map((data) => {
-                  return (
-                    <div>
-                      <Grid.Row
-                        centered
-                        width={1}
-                        style={{ padding: "0px" }}
-                        key={data.customerID}
-                      >
-                        <Grid.Column style={{ marginBottom: "3rem" }}>
-                          <p
-                            style={{
-                              textAlign: "center",
-                              fontWeight: "bold",
-                              fontSize: "1rem",
-                              marginTop: "0.5rem",
-                            }}
-                          >
-                            {data.customerName}
-                          </p>
-                        </Grid.Column>
-                      </Grid.Row>
-                    </div>
-                  );
-                })}
+              <Grid.Row centered>
+                {rowData.map((data) => (
+                  <Grid.Column
+                    key={data.customerID}
+                    style={{ marginTop: "1rem" }}
+                  >
+                    <p
+                      style={{
+                        textAlign: "center",
+                        fontWeight: "bold",
+                        fontSize: "1rem",
+                        marginTop: "1rem",
+                        padding: "0.5rem",
+                      }}
+                    >
+                      {data.customerName}
+                    </p>
+                  </Grid.Column>
+                ))}
+              </Grid.Row>
+
+              <Grid.Row centered style={{ textAlign: "center" }}>
+                {rowData.map((data) => (
+                  <span key={data.customerID}>
+                    Request By{" "}
+                    <span style={{ fontWeight: "bold" }}>
+                      {data.requestedBy}
+                    </span>
+                  </span>
+                ))}
               </Grid.Row>
 
               <Divider></Divider>
@@ -135,7 +121,7 @@ const ApproveShareableReq: React.FC<IProps> = (
                   Cancel
                 </Button>
                 <Button type="submit" color="blue">
-                  Send Request
+                  Approve
                 </Button>
               </div>
             </Form>
