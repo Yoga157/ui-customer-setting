@@ -27,6 +27,8 @@ export default class CustomerSettingRow extends BaseModel {
   createdDate?: Date = undefined;
   modifiedBy: string = "";
   modifiedDate?: Date = undefined;
+  approvalBy?: number = 0;
+  status?: string = null;
 
   constructor(data: Partial<CustomerSettingRow>) {
     super();
@@ -55,6 +57,8 @@ export default class CustomerSettingRow extends BaseModel {
       holdshipment: ConversionTypeEnum.Boolean,
       createdBy: ConversionTypeEnum.String,
       modifiedBy: ConversionTypeEnum.String,
+      approvalBy: ConversionTypeEnum.Number,
+      status: ConversionTypeEnum.String
     };
 
     super.update(data, conversionOptions);

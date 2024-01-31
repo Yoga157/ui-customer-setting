@@ -57,10 +57,10 @@ const App: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => (
             <SidebarContainers />
             <Container style={{ marginTop: "7em" }}>
               <Switch>
-                <Route
+                {/* <Route
                   path={RouteEnum.FunnelOpportunity}
                   component={FunnelOpportunity}
-                />{" "}
+                />{" "} */}
                 <Route
                   path="/customer-setting/:id(\d+)"
                   component={ViewCustomerSetting}
@@ -69,7 +69,7 @@ const App: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => (
                   path={RouteEnum.CustomerSetting}
                   component={CustomerSettingPage}
                 />
-                <Route path={RouteEnum.Dashboard} component={DashboardPage} />
+                {/* <Route path={RouteEnum.Dashboard} component={DashboardPage} /> */}
               </Switch>
             </Container>
           </>

@@ -101,6 +101,8 @@ const _mappingObjectTableNameRow = (model: any): any => {
     createdDate: model.createdDate === "" ? null : model.createdDate,
     modifiedBy: model.modifiedBy === "" ? "" : model.modifiedBy,
     modifiedDate: model.modifiedDate === "" ? null : model.modifiedDate,
+    approvalBy: model.approvalBy === 0 ? null : model.approvalBy,
+    status: model.status === null ? null : model.status,
   };
 };
 

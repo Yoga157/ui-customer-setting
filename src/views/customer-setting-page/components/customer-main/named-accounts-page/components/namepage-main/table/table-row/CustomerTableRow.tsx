@@ -8,6 +8,7 @@ import "./CustomerTableRowStyle.scss";
 import RequestForm from "../../form/form-reqshareaccount/FormReqShare";
 import ReleaseForm from "../../form/form-release/FormRelease";
 import ApproveReq from "../../form/form-approverequest/FormApproveShareable";
+import { useHistory } from "react-router-dom";
 
 interface IProps {
   readonly rowData: any;
@@ -21,6 +22,7 @@ const CustomerTableRow: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
+  const history = useHistory();
   const { rowData, getRowData, data } = props;
   const [isChecked, setIsChecked] = useState(false);
   const { role } = props;
@@ -74,7 +76,7 @@ const CustomerTableRow: React.FC<IProps> = (
   }, [dispatch, rowData]);
 
   const onEdit = (id: number) => {
-    props.history.push({
+    history.push({
       pathname: "customer-setting/" + id,
       state: { rowData },
     });
@@ -82,7 +84,7 @@ const CustomerTableRow: React.FC<IProps> = (
 
   return (
     <Fragment>
-      <Table.Row key={rowData.CustomerID}>
+      <Table.Row key={rowData.CustomerID} style={{ backgroundColor: (rowData.status?.toUpperCase() == "REJECTED" && rowData?.requestedBy == userId.fullName) && "#ffe0d9" }}>
         <Table.Cell width="4">
           <div
             style={{
@@ -145,11 +147,14 @@ const CustomerTableRow: React.FC<IProps> = (
                       icon="edit outline"
                       onClick={() => onEdit(rowData.customerID)}
                     />
-                    <Dropdown.Item
-                      text="Approve Shareable Request"
-                      icon="circle check"
-                      onClick={onApproveShareable}
-                    />
+
+                    {rowData.status?.toUpperCase() == "PENDING" &&
+                      <Dropdown.Item
+                        text="Approve Shareable Request"
+                        icon="circle check"
+                        onClick={onApproveShareable}
+                      />
+                    }
                   </>
                 )}
               </Dropdown.Menu>

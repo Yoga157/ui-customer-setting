@@ -83,7 +83,7 @@ const CustomerTableRow: React.FC<IProps> = (
 
   return (
     <Fragment>
-      <Table.Row key={rowData.CustomerID}>
+      <Table.Row key={rowData.customerID}>
         <Table.Cell width="4">
           <div
             style={{
@@ -97,7 +97,7 @@ const CustomerTableRow: React.FC<IProps> = (
                 <Dropdown.Item
                   text="View/Edit"
                   icon="edit outline"
-                  onClick={() => onEdit(rowData.CustomerID)}
+                  onClick={() => onEdit(rowData.customerID)}
                 />
 
                 {rowData.named === false &&

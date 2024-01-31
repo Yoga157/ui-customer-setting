@@ -21,10 +21,9 @@ const ClaimAccount: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
-  const { rowData, getRowData } = props;
+  const { rowData } = props;
 
   const cancelClick = () => {
-    getRowData([rowData])
     dispatch(ModalAction.CLOSE());
   };
 

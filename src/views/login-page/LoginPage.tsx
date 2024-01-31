@@ -52,7 +52,7 @@ const LoginPage: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => 
     if (userLogin.email.length > 0) {
       const menu = new EmployeeFreelanceMenuAccessRequest({});
       menu.email = userLogin.email;
-      dispatch(EmployeeFreelanceActions.requestEmployeeFreelanceMenuAccess(menu));
+      // dispatch(EmployeeFreelanceActions.requestEmployeeFreelanceMenuAccess(menu));
     }
   }, [userLogin]);
 
@@ -72,11 +72,12 @@ const LoginPage: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => 
     } else {
       props.history.push(RouteEnum.GeneratedForm);
     } */
-    if (userLogin.role === 'Marketing') {
-      props.history.push(RouteEnum.FunnelOpportunity);
-    } else {
-      props.history.push(RouteEnum.Dashboard);
-    }
+    // if (userLogin.role === 'Marketing') {
+    //   props.history.push(RouteEnum.FunnelOpportunity);
+    // } else {
+    //   props.history.push(RouteEnum.Dashboard);
+    // }
+    props.history.push(RouteEnum.CustomerSetting);
   }
 
   return (

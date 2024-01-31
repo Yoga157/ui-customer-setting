@@ -34,6 +34,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
 ) => {
   const dispatch: Dispatch = useDispatch();
   const [pageSize, setPage] = useState(10);
+  const { role } = props;
   const activePage = useSelector(
     (state: IStore) => state.customerSetting.activePage
   );
@@ -240,7 +241,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
                   }}
                   color="yellow"
                   icon="check circle"
-                  disabled={rowData.length === 0}
+                  disabled={rowData.length === 0 || role.toUpperCase() == "ADMIN"}
                   size="mini"
                   content="Claim Account"
                   onClick={onClaimAccount}
@@ -251,8 +252,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
 
           <div className="posision-container">
             <div className="posision-container">
-              {console.log("row data", rowData.length)}
-              {rowData.length == 0 ? (
+              {rowData.length === 0 ? (
                 <p></p>
               ) : (
                 <p className="p-account">
