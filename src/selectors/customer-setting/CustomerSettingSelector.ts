@@ -273,9 +273,11 @@ export const _selectCustomerDataById = (model: ResultActions): any => {
       shareableApprovalStatus : model.resultObj.shareableApprovalStatus.length != 0 ? {
         status: model.resultObj.shareableApprovalStatus[lastIndex].status,
         requestedBy: model.resultObj.shareableApprovalStatus[lastIndex].requestedBy,
+        requestedUserID: model.resultObj.shareableApprovalStatus[lastIndex].requestedUserID,
         requestedDate: model.resultObj.shareableApprovalStatus[lastIndex].requestedDate,
         approvalBy: model.resultObj.shareableApprovalStatus[lastIndex].approvalBy,
-        approvalDate: model.resultObj.shareableApprovalStatus[lastIndex].approvalDate
+        approvalDate: model.resultObj.shareableApprovalStatus[lastIndex].approvalDate,
+        description: model.resultObj.shareableApprovalStatus[lastIndex].description
       } : [],
     }
   } else {

@@ -1,13 +1,12 @@
 import React, { Fragment, useState, useCallback} from "react";
 import "../Modal.scss"
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Dispatch } from "redux";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
-import { Divider, Form, Grid, Label, Select } from "semantic-ui-react";
+import { Divider, Form, Grid } from "semantic-ui-react";
 import { Form as FinalForm, Field } from "react-final-form";
 import { DropdownClearInput, Button, TextAreaInput } from "views/components/UI";
 import * as CustomerSetting from "stores/customer-setting/CustomerActivityActions";
-import value from "environment";
 
 interface IProps {
     customer: any;
@@ -17,7 +16,7 @@ const ModalAcceptRequestShareableAccount: React.FC<IProps> = (props: React.Props
     const dispatch: Dispatch = useDispatch();
     const { customer } = props;
     const [isReject, setIsReject] = useState(null);
-    const [alasan, setAlasan] = useState("");
+    const [alasan, setAlasan] = useState(null);
 
     const actionOptions = [
         {key: 1, value: "Reject", text: "Reject"},
@@ -39,7 +38,7 @@ const ModalAcceptRequestShareableAccount: React.FC<IProps> = (props: React.Props
     const onSubmitHandler = async (values) => {
         let userLogin = JSON.parse(localStorage.getItem('userLogin'));
 
-        dispatch(CustomerSetting.acceptRequestShareableAccount(customer.customerID, userLogin?.employeeID || 26932, isReject, userLogin?.employeeID || 26932, alasan)).then(() => {
+        dispatch(CustomerSetting.acceptRequestShareableAccount(customer.customerID, Number(customer.shareableApprovalStatus.requestedUserID), !isReject, userLogin?.employeeID, alasan)).then(() => {
             dispatch(CustomerSetting.requestCustomerDataById(customer.customerID))
             dispatch(ModalAction.CLOSE());
         });

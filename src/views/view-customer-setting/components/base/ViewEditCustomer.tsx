@@ -485,6 +485,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
       }, [setNavbarHeight, showStatus]);
 
       const openReason = useCallback((desc: string): void => {
+        console.log(desc)
         dispatch(
           ModalFirstLevelActions.OPEN(
             <ModalShowRejectReason description={desc} />,
