@@ -58,37 +58,37 @@ const ClaimReleaseButton: React.FC<IProps> = (props: React.PropsWithChildren<IPr
       <Fragment>
         
         {/* claim no name account */}
-        {(accountStatus == "No Name Account" && role.toUpperCase() == "SALES") &&
+        {(accountStatus == "No Name Account" && role?.toUpperCase() == "SALES") &&
             <Button color="yellow" size="small" type="button" onClick={() => onClaimAccount()}><Icon name="check circle"/>Claim Account</Button>
         }
 
         {/* release named account */}
-        {(accountStatus == "Named Account" && isEmployeeOwnCustomer && role.toUpperCase() == "SALES") &&
+        {(accountStatus == "Named Account" && isEmployeeOwnCustomer && role?.toUpperCase() == "SALES") &&
             <Button color="red" size="small" type="button" onClick={() => onReleaseAccount()}><Icon name="remove circle"/>Release Account</Button>
         }
 
         {/* request shareable account */}
-        {(accountStatus == "Named Account" && !isEmployeeOwnCustomer && !isEmployeeRequestShareable && role.toUpperCase() == "SALES") &&
+        {(accountStatus == "Named Account" && !isEmployeeOwnCustomer && !isEmployeeRequestShareable && role?.toUpperCase() == "SALES") &&
             <Button color="yellow" size="small" type="button" onClick={() => onClaimAccount()}><Icon name="share"/>Request Shareable Account</Button>
         }
 
         {/* release shareable account */}
-        {(accountStatus == "Shareable Account" && isEmployeeOwnCustomer && role.toUpperCase() == "SALES") &&
+        {(accountStatus == "Shareable Account" && isEmployeeOwnCustomer && role?.toUpperCase() == "SALES") &&
             <Button color="red" size="small" type="button" onClick={() => onReleaseAccount()}><Icon name="remove circle"/>Release Account</Button>
         }
 
         {/* claim shareable account */}
-        {(accountStatus == "Shareable Account" && !isEmployeeOwnCustomer && role.toUpperCase() == "SALES") &&
+        {(accountStatus == "Shareable Account" && !isEmployeeOwnCustomer && role?.toUpperCase() == "SALES") &&
             <Button color="yellow" size="small" type="button" onClick={() => onClaimAccount()}><Icon name="check circle"/>Claim Account</Button>
         }
 
         {/* already claimed shareable account */}
-        {(accountStatus == "Named Account" && !isEmployeeOwnCustomer && isEmployeeRequestShareable && role.toUpperCase() == "SALES") &&
+        {(accountStatus == "Named Account" && !isEmployeeOwnCustomer && isEmployeeRequestShareable && role?.toUpperCase() == "SALES") &&
             <Button size="small" type="button" disabled><Icon name="wait"/>Wait For Approval</Button>
         }
 
         {/* accept shareable request */}
-        {(accountStatus == "Named Account" && customer.shareableApprovalStatus.status.toUpperCase() == "PENDING" && role.toUpperCase() == "ADMIN") &&
+        {(accountStatus == "Named Account" && customer.shareableApprovalStatus.status?.toUpperCase() == "PENDING" && role?.toUpperCase() == "ADMIN") &&
           <div style={{ display: "flex", flexDirection: "row", alignContent: "center"}}>
             <p style={{ color: "red", fontStyle: "italic", marginBottom: 0, marginRight: "1rem", padding: 0, alignSelf: "center" }}>Request by {customer.shareableApprovalStatus?.requestedBy}</p>
             <Button color="red" size="small" type="button" onClick={() => onAcceptRequestShareableAccount()}><Icon name="share"/>Accept Shareable Request</Button>
