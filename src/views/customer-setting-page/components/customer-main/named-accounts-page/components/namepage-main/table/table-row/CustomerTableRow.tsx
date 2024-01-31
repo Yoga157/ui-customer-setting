@@ -24,6 +24,7 @@ const CustomerTableRow: React.FC<IProps> = (
   const { rowData, getRowData, data } = props;
   const [isChecked, setIsChecked] = useState(false);
   const { role } = props;
+  const userId: any = JSON.parse(localStorage.getItem("userLogin"));
 
   const setRowData = (data) => {
     let checkData = props.data.find(
@@ -105,7 +106,7 @@ const CustomerTableRow: React.FC<IProps> = (
             </div>
             <Dropdown pointing="left" icon="ellipsis vertical">
               <Dropdown.Menu>
-                {role === "SALES" && (
+                {role === "Sales" && (
                   <>
                     <Dropdown.Item
                       text="View/Edit"
@@ -113,17 +114,23 @@ const CustomerTableRow: React.FC<IProps> = (
                       onClick={() => onEdit(rowData.customerID)}
                     />
 
-                    <Dropdown.Item
-                      text="Request Share Account"
-                      icon="share"
-                      onClick={onRequestAccount}
-                    />
+                    {/* {console.log(userId.fullName)} */}
+                    {rowData.salesName != userId.fullName && (
+                      <Dropdown.Item
+                        text="Request Share Account"
+                        icon="share"
+                        onClick={onRequestAccount}
+                      />
+                    )}
 
-                    <Dropdown.Item
-                      text="Realease Account"
-                      icon="times circle"
-                      onClick={onReleaseAccount}
-                    />
+                    {rowData.salesName == userId.fullName && (
+                      <Dropdown.Item
+                        text="Realease Account"
+                        icon="times circle"
+                        onClick={onReleaseAccount}
+                      />
+                    )}
+
                     {rowData.status !== "CANCEL" &&
                       rowData.CustomerID === "" && (
                         <Dropdown.Item text="Cancel" icon="remove circle" />
@@ -131,7 +138,7 @@ const CustomerTableRow: React.FC<IProps> = (
                   </>
                 )}
 
-                {role === "ADMIN" && (
+                {role === "Admin" && (
                   <>
                     <Dropdown.Item
                       text="View/Edit"

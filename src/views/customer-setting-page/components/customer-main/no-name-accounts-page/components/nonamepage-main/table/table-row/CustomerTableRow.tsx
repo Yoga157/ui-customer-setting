@@ -87,7 +87,7 @@ const CustomerTableRow: React.FC<IProps> = (
               </div>
               <Dropdown pointing="left" icon="ellipsis vertical">
                 <Dropdown.Menu>
-                  {role === "SALES" && (
+                  {role === "Sales" && (
                     <>
                       <Dropdown.Item
                         text="View/Edit"
@@ -108,7 +108,7 @@ const CustomerTableRow: React.FC<IProps> = (
                     </>
                   )}
 
-                  {role === "ADMIN" && (
+                  {role === "Admin" && (
                     <Dropdown.Item
                       text="View/Edit"
                       icon="edit outline"

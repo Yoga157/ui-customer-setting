@@ -41,6 +41,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
   const [filterData, setFilterData] = useState<FilterData | undefined>(
     undefined
   );
+  const currDate: string = format(new Date(), "cccc LLLL d, yyyy");
   const setNewRowData = (data) => {
     setRowData(data);
   };
@@ -60,6 +61,44 @@ const NoNameAccountsPage: React.FC<IProps> = (
     );
   }, [dispatch]);
 
+  const generateExcel = () => {
+    let tableSelect: any;
+    let tableHead: any;
+    if (window.location.pathname === "/data-quality/customer-setting-page") {
+      tableSelect = document.getElementById(
+        "exporttosetting"
+      ) as HTMLTableElement;
+      tableHead = document.querySelector(
+        "#exporttosetting > thead > tr > th:nth-child(1)"
+      ) as HTMLTableElement;
+    } else {
+      tableSelect = document.getElementById("exportosett") as HTMLTableElement;
+      tableHead = document.querySelector(
+        "#exportosett > thead > tr > th:nth-child(1)"
+      ) as HTMLTableElement;
+    }
+
+    if (tableHead) {
+      tableHead.style.display = "none";
+    }
+
+    const tableClone = tableSelect.cloneNode(true) as HTMLTableElement;
+
+    for (let i = 0; i < tableClone.rows.length; i++) {
+      const firstCol = tableClone.rows[i].cells[0];
+      if (firstCol) {
+        firstCol.remove();
+      }
+    }
+
+    TableToExcel.convert(tableClone, {
+      name: "NoNameAccounts_" + currDate + ".xlsx",
+      sheet: {
+        name: "Sheet 1",
+      },
+    });
+  };
+
   const exportTableToExcel = (tableID: string, filename: string): void => {
     const search = document.querySelector(
       "#search-input-customer"
@@ -67,12 +106,25 @@ const NoNameAccountsPage: React.FC<IProps> = (
     if (search.value.length > 0) {
       dispatch(
         CustomerActions.requestSearchNoNameAcc(
-          activePage,
+          1,
           tableData.totalRow,
           "CustomerID",
           search.value
         )
-      );
+      )
+        .then(() => {
+          generateExcel();
+        })
+        .then(() => {
+          dispatch(
+            CustomerActions.requestNoNameAcc(
+              1,
+              pageSize,
+              "CustomerID",
+              search.value
+            )
+          );
+        });
     } else {
       dispatch(
         CustomerActions.requestNoNameAcc(
@@ -81,51 +133,22 @@ const NoNameAccountsPage: React.FC<IProps> = (
           "CustomerID",
           "ascending"
         )
-      );
-    }
-    if (isRequesting == false) {
-      setTimeout(() => {
-        let tableSelect: any;
-        let tableHead: any;
-
-        if (
-          window.location.pathname === "/data-quality/customer-setting-page"
-        ) {
-          tableSelect = document.getElementById(
-            "exporttosetting"
-          ) as HTMLTableElement;
-          tableHead = document.querySelector(
-            "#exporttosetting > thead > tr > th:nth-child(1)"
-          ) as HTMLTableElement;
-        } else {
-          tableSelect = document.getElementById(
-            "exportosett"
-          ) as HTMLTableElement;
-          tableHead = document.querySelector(
-            "#exportosett > thead > tr > th:nth-child(1)"
-          ) as HTMLTableElement;
-        }
-
-        tableHead.style = "none";
-        for (let i = 0; i < tableSelect.rows.length; i++) {
-          const firstCol = tableSelect.rows[i].cells[0];
-          firstCol.remove();
-        }
-        TableToExcel.convert(tableSelect, {
-          name: "NoNameAccounts_" + currDate + ".xlsx",
-          sheet: {
-            name: "Sheet 1",
-          },
+      )
+        .then(() => {
+          generateExcel();
+        })
+        .then(() => {
+          dispatch(
+            CustomerActions.requestNoNameAcc(
+              1,
+              pageSize,
+              "CustomerID",
+              "ascending"
+            )
+          );
         });
-      }, 3000);
-      setTimeout(() => {
-        window.location.href =
-          window.location.origin + window.location.pathname;
-      }, 4000);
     }
   };
-
-  const currDate: string = format(new Date(), "cccc LLLL d, yyyy");
 
   const handlePaginationChange = (e: any, data: any) => {
     dispatch(CustomerActions.setActivePage(data.activePage));
@@ -137,8 +160,8 @@ const NoNameAccountsPage: React.FC<IProps> = (
     if (filterData != undefined) {
       dispatch(
         CustomerActions.requestSearchNoNameAcc(
-          1,
-          10,
+          activePage,
+          pageSize,
           "CustomerID",
           null,
           "ascending",
@@ -171,8 +194,8 @@ const NoNameAccountsPage: React.FC<IProps> = (
 
   const isRequesting: boolean = useSelector((state: IStore) =>
     selectRequesting(state, [
-      CustomerActions.REQUEST_NO_NAME_ACCOUNTS,
       CustomerActions.REQUEST_NO_NAME_SEARCH,
+      CustomerActions.REQUEST_NO_NAME_ACCOUNTS,
     ])
   );
 
@@ -217,7 +240,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
                   }}
                   color="yellow"
                   icon="check circle"
-                  disabled={rowData.length === 0 || rowData.length > 5}
+                  disabled={rowData.length === 0}
                   size="mini"
                   content="Claim Account"
                   onClick={onClaimAccount}
@@ -232,7 +255,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
                 <p></p>
               ) : (
                 <p className="p-account">
-                  {rowData.length} of 5 accounts has been pick.
+                  {rowData.length} accounts has been pick.
                 </p>
               )}
             </div>

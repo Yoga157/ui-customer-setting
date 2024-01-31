@@ -44,6 +44,7 @@ const AllAccountsPage: React.FC<IProps> = (
   const currentUser: IUserResult = useSelector((state: IStore) =>
     selectUserResult(state)
   );
+  const currDate: string = format(new Date(), "cccc LLLL d, yyyy");
   const [rowData, setRowData] = useState([]);
   const [filterData, setFilterData] = useState<FilterData | undefined>(
     undefined
@@ -72,14 +73,13 @@ const AllAccountsPage: React.FC<IProps> = (
       );
     } else {
       setMyAccount(false);
+
       dispatch(
-        dispatch(
-          CustomerActions.requestAllAcc(
-            activePage,
-            pageSize,
-            "CustomerID",
-            "ascending"
-          )
+        CustomerActions.requestAllAcc(
+          activePage,
+          pageSize,
+          "CustomerID",
+          "ascending"
         )
       );
     }
@@ -87,11 +87,10 @@ const AllAccountsPage: React.FC<IProps> = (
 
   const handleMyApproval = () => {
     const userId: any = localStorage.getItem("userLogin");
-    // setMyAccount(!myAccount);
 
     if (myAccount == false) {
       setMyAccount(true);
-      const salesID = JSON.parse(userId)?.employeeID || 26932;
+      const salesID = JSON.parse(userId)?.employeeID;
       dispatch(
         CustomerActions.requestSearchAllAcc(
           activePage,
@@ -100,7 +99,7 @@ const AllAccountsPage: React.FC<IProps> = (
           null,
           "ascending",
           null,
-          26932
+          salesID
         )
       );
     } else {
@@ -117,6 +116,46 @@ const AllAccountsPage: React.FC<IProps> = (
     }
   };
 
+  const generateExcel = () => {
+    let tableSelect: any;
+    let tableHead: any;
+
+    if (window.location.pathname === "/data-quality/customer-setting-page") {
+      tableSelect = document.getElementById(
+        "exporttosetting"
+      ) as HTMLTableElement;
+      tableHead = document.querySelector(
+        "#exporttosetting > thead > tr > th:nth-child(1)"
+      ) as HTMLTableElement;
+    } else {
+      tableSelect = document.getElementById("exportosett") as HTMLTableElement;
+      tableHead = document.querySelector(
+        "#exportosett > thead > tr > th:nth-child(1)"
+      ) as HTMLTableElement;
+    }
+
+    if (tableHead) {
+      tableHead.style.display = "none";
+    }
+
+    const tableClone = tableSelect.cloneNode(true) as HTMLTableElement;
+
+    for (let i = 0; i < tableClone.rows.length; i++) {
+      const firstCol = tableClone.rows[i].cells[0];
+      if (firstCol) {
+        firstCol.remove();
+      }
+    }
+
+    // Convert the cloned table to Excel
+    TableToExcel.convert(tableClone, {
+      name: "AllAccounts_" + currDate + ".xlsx",
+      sheet: {
+        name: "Sheet 1",
+      },
+    });
+  };
+
   const exportTableToExcel = (tableID: string, filename: string): void => {
     const search = document.querySelector(
       "#search-input-customer"
@@ -129,7 +168,20 @@ const AllAccountsPage: React.FC<IProps> = (
           "CustomerID",
           search.value
         )
-      );
+      )
+        .then(() => {
+          generateExcel();
+        })
+        .then(() => {
+          dispatch(
+            CustomerActions.requestAllAcc(
+              1,
+              pageSize,
+              "CustomerID",
+              search.value
+            )
+          );
+        });
     } else {
       dispatch(
         CustomerActions.requestAllAcc(
@@ -138,51 +190,22 @@ const AllAccountsPage: React.FC<IProps> = (
           "CustomerID",
           "ascending"
         )
-      );
-    }
-    if (isRequesting == false) {
-      setTimeout(() => {
-        let tableSelect: any;
-        let tableHead: any;
-
-        if (
-          window.location.pathname === "/data-quality/customer-setting-page"
-        ) {
-          tableSelect = document.getElementById(
-            "exporttosetting"
-          ) as HTMLTableElement;
-          tableHead = document.querySelector(
-            "#exporttosetting > thead > tr > th:nth-child(1)"
-          ) as HTMLTableElement;
-        } else {
-          tableSelect = document.getElementById(
-            "exportosett"
-          ) as HTMLTableElement;
-          tableHead = document.querySelector(
-            "#exportosett > thead > tr > th:nth-child(1)"
-          ) as HTMLTableElement;
-        }
-
-        tableHead.style.display = "none";
-        for (let i = 0; i < tableSelect.rows.length; i++) {
-          const firstCol = tableSelect.rows[i].cells[0];
-          firstCol.remove();
-        }
-        TableToExcel.convert(tableSelect, {
-          name: "AllAccounts" + currDate + ".xlsx",
-          sheet: {
-            name: "Sheet 1",
-          },
+      )
+        .then(() => {
+          generateExcel();
+        })
+        .then(() => {
+          dispatch(
+            CustomerActions.requestAllAcc(
+              1,
+              pageSize,
+              "CustomerID",
+              "ascending"
+            )
+          );
         });
-      }, 3000);
-      setTimeout(() => {
-        window.location.href =
-          window.location.origin + window.location.pathname;
-      }, 4000);
     }
   };
-
-  const currDate: string = format(new Date(), "cccc LLLL d, yyyy");
 
   useEffect(() => {
     dispatch(
@@ -283,7 +306,7 @@ const AllAccountsPage: React.FC<IProps> = (
           </div>
 
           <div className="posision-container">
-            {role === "ADMIN" ? (
+            {role === "Admin" ? (
               <>
                 <div
                   className="myAccount-toggle"

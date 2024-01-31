@@ -36,9 +36,9 @@ const ApproveShareableReq: React.FC<IProps> = (
       await dispatch(
         CustomerSettingAct.acceptRequestShareableAccount(
           (rowData.customerID = props.rowData[j].customerID),
-          (rowData.salesID = JSON.parse(userId)?.employeeID),
-          (rowData.isApprove = true),
-          (rowData.modifyUserID = JSON.parse(userId)?.employeeID)
+          (rowData.salesID = props.rowData[j].salesShareableID),
+          true,
+          (rowData.modifyUserID = JSON.parse(userId).employeeID)
         )
       );
     }

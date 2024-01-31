@@ -94,6 +94,7 @@ const _mappingObjectTableNameRow = (model: any): any => {
     relatedCustomer: model.relatedCustomer === "" ? "" : model.relatedCustomer,
     requestedBy: model.requestedBy === null ? "" : model.requestedBy,
     pmoCustomer: model.pmoCustomer === null ? null : model.pmoCustomer,
+    salesShareableID: model.salesShareableID,
     blacklist: model.blacklist === null ? null : model.blacklist,
     holdshipment: model.holdshipment === null ? null : model.holdshipment,
     createdBy: model.createdBy === "" ? "" : model.createdBy,
@@ -171,8 +172,7 @@ const _mappingObjectTableAllRow = (model: any): any => {
     relatedCustomer: model.relatedCustomer === "" ? "" : model.relatedCustomer,
     pmoCustomer: model.pmoCustomer === null ? null : model.pmoCustomer,
     named: model.named === "" ? null : model.named,
-    salesShareableID:
-      model.salesShareableID === null ? null : model.salesShareableID,
+    salesShareableID: model.salesShareableID,
     shareable: model.shareable === null ? null : model.shareable,
     blacklist: model.blacklist === null ? null : model.blacklist,
     requestedBy: model.requestedBy === null ? "" : model.requestedBy,

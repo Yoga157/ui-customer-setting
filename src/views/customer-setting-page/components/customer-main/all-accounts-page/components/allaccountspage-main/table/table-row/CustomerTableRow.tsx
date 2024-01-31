@@ -33,6 +33,7 @@ const CustomerTableRow: React.FC<IProps> = (
   );
   const { rowData, getRowData } = props;
   const { role } = props;
+  const userId: any = JSON.parse(localStorage.getItem("userLogin"));
 
   const onRequestAccount = useCallback((): void => {
     dispatch(
@@ -82,13 +83,7 @@ const CustomerTableRow: React.FC<IProps> = (
 
   return (
     <Fragment>
-      <Table.Row
-        key={rowData.CustomerID}
-        // style={{
-        //   backgroundColor:
-        //     props.myAccount && rowData.salesShareableID != 0 && "#FFE0D9",
-        // }}
-      >
+      <Table.Row key={rowData.CustomerID}>
         <Table.Cell width="4">
           <div
             style={{
@@ -107,7 +102,7 @@ const CustomerTableRow: React.FC<IProps> = (
 
                 {rowData.named === false &&
                   rowData.shareable === false &&
-                  role === "SALES" && (
+                  role === "Sales" && (
                     <Dropdown.Item
                       text="Claim Account"
                       icon="circle check"
@@ -115,7 +110,7 @@ const CustomerTableRow: React.FC<IProps> = (
                     />
                   )}
 
-                {rowData.named === true && role === "ADMIN" && (
+                {rowData.named === true && role === "Admin" && (
                   <>
                     <Dropdown.Item
                       text="Approve Shareable Request"
@@ -125,19 +120,23 @@ const CustomerTableRow: React.FC<IProps> = (
                   </>
                 )}
 
-                {rowData.named === true && role === "SALES" && (
+                {rowData.named === true && role === "Sales" && (
                   <>
-                    <Dropdown.Item
-                      text="Request Share Account"
-                      icon="share"
-                      onClick={onRequestAccount}
-                    />
+                    {rowData.salesName != userId.fullName && (
+                      <Dropdown.Item
+                        text="Request Share Account"
+                        icon="share"
+                        onClick={onRequestAccount}
+                      />
+                    )}
 
-                    <Dropdown.Item
-                      text="Release Account"
-                      icon="remove circle"
-                      onClick={onReleaseAccount}
-                    />
+                    {rowData.salesName == userId.fullName && (
+                      <Dropdown.Item
+                        text="Realease Account"
+                        icon="times circle"
+                        onClick={onReleaseAccount}
+                      />
+                    )}
                   </>
                 )}
 

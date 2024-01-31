@@ -44,6 +44,7 @@ const ShareableAccountsPage: React.FC<IProps> = (
   );
   const [rowData, setRowData] = useState([]);
   const [myAccount, setMyAccount] = useState(false);
+  const currDate: string = format(new Date(), "cccc LLLL d, yyyy");
 
   const setNewRowData = (data) => {
     setRowData(data);
@@ -82,6 +83,45 @@ const ShareableAccountsPage: React.FC<IProps> = (
     }
   };
 
+  const generateExcel = () => {
+    let tableSelect: any;
+    let tableHead: any;
+
+    if (window.location.pathname === "/data-quality/customer-setting-page") {
+      tableSelect = document.getElementById(
+        "exporttosetting"
+      ) as HTMLTableElement;
+      tableHead = document.querySelector(
+        "#exporttosetting > thead > tr > th:nth-child(1)"
+      ) as HTMLTableElement;
+    } else {
+      tableSelect = document.getElementById("exportosett") as HTMLTableElement;
+      tableHead = document.querySelector(
+        "#exportosett > thead > tr > th:nth-child(1)"
+      ) as HTMLTableElement;
+    }
+
+    if (tableHead) {
+      tableHead.style.display = "none";
+    }
+
+    const tableClone = tableSelect.cloneNode(true) as HTMLTableElement;
+
+    for (let i = 0; i < tableClone.rows.length; i++) {
+      const firstCol = tableClone.rows[i].cells[0];
+      if (firstCol) {
+        firstCol.remove();
+      }
+    }
+
+    // Convert the cloned table to Excel
+    TableToExcel.convert(tableClone, {
+      name: "ShareableAccounts_" + currDate + ".xlsx",
+      sheet: {
+        name: "Sheet 1",
+      },
+    });
+  };
   const exportTableToExcel = (tableID: string, filename: string): void => {
     const search = document.querySelector(
       "#search-input-customer"
@@ -94,7 +134,20 @@ const ShareableAccountsPage: React.FC<IProps> = (
           "CustomerID",
           search.value
         )
-      );
+      )
+        .then(() => {
+          generateExcel();
+        })
+        .then(() => {
+          dispatch(
+            CustomerActions.requestShareabledAcc(
+              1,
+              pageSize,
+              "CustomerID",
+              search.value
+            )
+          );
+        });
     } else {
       dispatch(
         CustomerActions.requestShareabledAcc(
@@ -103,51 +156,22 @@ const ShareableAccountsPage: React.FC<IProps> = (
           "CustomerID",
           "ascending"
         )
-      );
-    }
-    if (isRequesting == false) {
-      setTimeout(() => {
-        let tableSelect: any;
-        let tableHead: any;
-
-        if (
-          window.location.pathname === "/data-quality/customer-setting-page"
-        ) {
-          tableSelect = document.getElementById(
-            "exporttosetting"
-          ) as HTMLTableElement;
-          tableHead = document.querySelector(
-            "#exporttosetting > thead > tr > th:nth-child(1)"
-          ) as HTMLTableElement;
-        } else {
-          tableSelect = document.getElementById(
-            "exportosett"
-          ) as HTMLTableElement;
-          tableHead = document.querySelector(
-            "#exportosett > thead > tr > th:nth-child(1)"
-          ) as HTMLTableElement;
-        }
-
-        tableHead.style.display = "none";
-        for (let i = 0; i < tableSelect.rows.length; i++) {
-          const firstCol = tableSelect.rows[i].cells[0];
-          firstCol.remove();
-        }
-        TableToExcel.convert(tableSelect, {
-          name: "ShareableAccounts" + currDate + ".xlsx",
-          sheet: {
-            name: "Sheet 1",
-          },
+      )
+        .then(() => {
+          generateExcel();
+        })
+        .then(() => {
+          dispatch(
+            CustomerActions.requestShareabledAcc(
+              1,
+              pageSize,
+              "CustomerID",
+              "ascending"
+            )
+          );
         });
-      }, 3000);
-      setTimeout(() => {
-        window.location.href =
-          window.location.origin + window.location.pathname;
-      }, 4000);
     }
   };
-
-  const currDate: string = format(new Date(), "cccc LLLL d, yyyy");
 
   useEffect(() => {
     dispatch(
@@ -264,7 +288,7 @@ const ShareableAccountsPage: React.FC<IProps> = (
                     alignItems: "center",
                   }}
                   icon="times circle"
-                  disabled={rowData.length === 0 || rowData.length > 5}
+                  disabled={rowData.length === 0}
                   size="mini"
                   content="Release Account"
                   onClick={onReleaseAccount}
@@ -278,7 +302,7 @@ const ShareableAccountsPage: React.FC<IProps> = (
               <p></p>
             ) : (
               <p className="p-account">
-                {rowData.length} of 5 accounts has been pick.
+                {rowData.length} accounts has been pick.
               </p>
             )}
           </div>
