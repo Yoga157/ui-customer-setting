@@ -9,6 +9,8 @@ import LoadingIndicator from "views/components/loading-indicator/LoadingIndicato
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 
+import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
+
 interface IProps {
   rowData: any;
   getRowData: (data: any) => void;

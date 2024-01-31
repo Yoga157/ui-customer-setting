@@ -34,13 +34,13 @@ import * as CollectionHistory from "stores/collection-history/CollectionHistoryA
 import * as ProjectHistory from "stores/project-history/ProjectHistoryActivityActions"
 import * as ToastsAction from 'stores/toasts/ToastsAction';
 import { selectCustomerPIC } from "selectors/customer-pic/CustomerPICSelectors";
-import { selectCustomerSettingByCustomerId, selectSearchCustomerByName } from "selectors/customer-setting/CustomerSettingSelector";
+import { selectCustomerSettingByCustomerId } from "selectors/customer-setting/CustomerSettingSelector";
 import { selectBrandSummary } from "selectors/brand-summary/BrandSummarySelector";
 import { selectServiceSummary } from "selectors/service-summary/ServiceSummarySelector";
 import { selectInvoicingCondition } from "selectors/invoicing-condition/InvoicingConditionSelector";
 import { selectRelatedCustomer } from "selectors/related-customer/RelatedCustomerSelector";
 import { selectRelatedFile } from "selectors/related-file/RelatedFileSelector";
-import { selectAccountOwner, selectSalesHistory, selectSalesSearchOptions } from "selectors/select-options/SalesAssignSelector";
+import { selectSalesHistory, selectSalesSearchOptions } from "selectors/select-options/SalesAssignSelector";
 import InvoicingScheduleModel from "stores/invoicing-schedule/models/InvoicingScheduleModel";
 import SalesAssignPostModel from "stores/customer-sales/models/SalesAssignPostModel";
 import CustomerSettingById from "stores/customer-setting/models/CustomerSettingById";
@@ -53,8 +53,6 @@ import { selectProjectHistory } from "selectors/project-history/ProjectHistorySe
 import TableProjectHistory from "../table/table-project-history/TableProjectHistory";
 import TableCollectionHistory from "../table/table-collection-history/TableCollectionHistory";
 import ClaimReleaseButton from "../button/ClaimReleaseButton";
-import CustomerSettingPutModel from "stores/customer-setting/models/CustomerSettingPutModel";
-import ModalShowRejectReason from "../modal/modal-show-reject-reason/ModalShowRejectReason";
 
 interface IProps {
     customer: {
@@ -82,32 +80,30 @@ interface routeParams {
 
 const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
     const dispatch: Dispatch = useDispatch();
-    const { id } = useParams<routeParams>();
     const { customer, role } = props;
-    const customerID = Number(id);
 
     /** Customer data */
     const accountStatus = customer.accountStatus;
-    const shareableApprovalStatus = customer?.shareableApprovalStatus;
-    const shareableRequestStatus = shareableApprovalStatus?.status?.toUpperCase();
-
     // get employeeName dari local storage
     // cek apakah employeeName memiliki customer ini
-    let userLogin = JSON.parse(localStorage.getItem('userLogin'));
-    const employeeName = userLogin?.fullName;
+    const employeeName = "Anindita D Soelistyo";
     const salesArray: string[] = customer.salesName?.split(", ");
     const isEmployeeOwnCustomer: boolean = salesArray?.includes(employeeName);
-    const isEmployeeRequestShareable: boolean = shareableApprovalStatus?.requestedBy == employeeName && shareableRequestStatus == "PENDING";
+    
+    // shareable request status
+    const shareableRequestStatus = customer?.shareableApprovalStatus?.approvalBy == "0" ? "WAITING" : "APPROVED";
 
     // customer category
-    const [customerCategory, setCustomerCategory] = useState(customer.customerCategory);
+    const [customerCategory, setCustomerCategory] = useState("");
     const customerCategoryOptions = useSelector((state: IStore) => selectCustomerCategories(state));
     
     const onSubmitCustCategory = async (e) => {
+        console.log(e);
     };
 
     const onChangeCustomerCategory = (data : any) => {
         setCustomerCategory(data)
+        console.log(data)
     }
 
     /** Handle dropdown data yang di-get */
@@ -126,7 +122,6 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
     const configItemData = useSelector((state: IStore) => selectConfigItem(state));
     const collectionHistoryData = useSelector((state: IStore) => selectCollectionHistory(state));
     const projectHistoryData = useSelector((state: IStore) => selectProjectHistory(state));
-    const accountOwnerData = useSelector((state: IStore) => selectAccountOwner(state));
     
     /** Project History */
     const [allHistoryData, setAllHistoryData] = useState(projectHistoryData)
@@ -224,66 +219,103 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
 
     /** Invoicing schedule */
     const invoicingSchedule = useSelector((state: IStore) => selectInvoicingSchedule(state));
+    const [dayChecked, setDayChecked] = useState([]);
 
-    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+    const days = ["All days", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     const [daysArray, setDaysArray] = useState(invoicingSchedule.scheduleDays?.split(", ") || []);
+    const [isAllDaysChecked, setIsAllDaysChecked] = useState(invoicingSchedule.scheduleDays === "Monday, Tuesday, Wednesday, Thursday, Friday" || false)
+    useEffect(()=>{
+        if(invoicingSchedule?.scheduleDays !== undefined){
+            setDayChecked(invoicingSchedule?.scheduleDays?.split(", "))
+            setDaysArray(invoicingSchedule.scheduleDays?.split(", "))
+        }
+    }, [invoicingSchedule])
 
     const checkDay = (day) => {
-        const isDaySelected = daysArray.includes(day);
-
-        if (isDaySelected) {
-            setDaysArray(daysArray.filter(selectedDay => selectedDay !== day));
+        if(day == "All days") {
+            if(daysArray.includes("Monday") && daysArray.includes("Tuesday") && daysArray.includes("Wednesday") && daysArray.includes("Thursday") && daysArray.includes("Friday")){
+                setIsAllDaysChecked(false)
+                setDaysArray([])
+            } else {
+                setDaysArray(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
+                setIsAllDaysChecked(true)
+            }
         } else {
-            setDaysArray([...daysArray, day]);
+            const isDaySelected = daysArray.includes(day);
+
+            if (isDaySelected) {
+                setDaysArray(daysArray.filter(selectedDay => selectedDay !== day));
+            } else {
+                setDaysArray([...daysArray, day]);
+            }
         }
     }
-
     const [minDate, setMinDate] = useState(invoicingSchedule.minDate || 0)
     const [maxDate, setMaxDate] = useState(invoicingSchedule.maxDate || 0)
     const [remark, setRemark] = useState(invoicingSchedule.remark || "")
-
     const onSubmitCustomerSettingHandler = async (values) => {
         let userLogin = JSON.parse(localStorage.getItem('userLogin'));
 
-        const PutCustomerSetting = new CustomerSettingPutModel({});
-        PutCustomerSetting.customerID = customer.customerID;
-        PutCustomerSetting.customerCategory = customerCategory;
-        PutCustomerSetting.pmoCustomer = pmoCustomer == "TRUE" ? true : false;
+        console.log("submit setting data")
+        console.log(values)
+        console.log(daysArray)
 
-        await dispatch(CustomerSetting.putCustomerSettingCategoryPmo(PutCustomerSetting, customer.customerID));
+        // const NewCustomerSettingData = new CustomerSettingById({})
+        // NewCustomerSettingData.customerSettingID = Number(id);
+        // NewCustomerSettingData.customerID = customerSettingData.customerID;
+        // NewCustomerSettingData.customerCategoryID = customerSettingData.customerCategoryID;
+        // NewCustomerSettingData.shareable = shareable == "TRUE" ? true : false;
+        // NewCustomerSettingData.pmoCustomer = pmoCustomer == "TRUE" ? true : false;
+        // NewCustomerSettingData.createUserID = customerSettingData.createUserID;
+        // NewCustomerSettingData.modifyUserID = userLogin?.employeeID != null ? userLogin.employeeID : 0;
+        
+        // await dispatch(CustomerSetting.putCustomerSetting(NewCustomerSettingData, Number(id)));
 
         /** post invoicing schedule */
         let remark = values.remark;
 
-        if(Object.keys(invoicingSchedule).length == 0) {
-            const NewInvoicingSchedule = new InvoicingScheduleModel({});
-            NewInvoicingSchedule.iScheduleID = 0;
-            NewInvoicingSchedule.customerID = customer.customerID;
-            NewInvoicingSchedule.scheduleDays = daysArray.join(", ");
-            NewInvoicingSchedule.remark = remark;
-            NewInvoicingSchedule.minDate = minDate;
-            NewInvoicingSchedule.maxDate = maxDate;
-            NewInvoicingSchedule.createUserID = userLogin?.employeeID || null;
-            NewInvoicingSchedule.modifyUserID = userLogin?.employeeID || null;
-    
-            await dispatch(InvoicingSchedule.postInvoicingSchedule(NewInvoicingSchedule))
-        } else {
-            const UpdateInvoicingSchedule = new InvoicingScheduleModel({});
-            UpdateInvoicingSchedule.iScheduleID = invoicingSchedule.scheduleID;
-            UpdateInvoicingSchedule.customerID = customer.customerID;
-            UpdateInvoicingSchedule.scheduleDays = daysArray.join(", ");
-            UpdateInvoicingSchedule.remark = remark;
-            UpdateInvoicingSchedule.minDate = minDate;
-            UpdateInvoicingSchedule.maxDate = maxDate;
-            UpdateInvoicingSchedule.createUserID = invoicingSchedule.createUserID;
-            UpdateInvoicingSchedule.modifyUserID = userLogin?.employeeID || null;
+        // const NewInvoicingSchedule = new InvoicingScheduleModel({});
+        // NewInvoicingSchedule.scheduleID = invoicingSchedule.scheduleID;
+        // NewInvoicingSchedule.customerSettingID = Number(customer.customerID);
+        // NewInvoicingSchedule.scheduleDays = daysArray.join(", ");
+        // NewInvoicingSchedule.remark = remark;
+        // NewInvoicingSchedule.minDate = minDate;
+        // NewInvoicingSchedule.maxDate = maxDate;
+        // NewInvoicingSchedule.createUserID = invoicingSchedule.createUserID;
+        // NewInvoicingSchedule.modifyUserID = userLogin?.employeeID;
 
-            await dispatch(InvoicingSchedule.putInvoicingSchedule(UpdateInvoicingSchedule, invoicingSchedule.scheduleID))   
-        }
+        // dispatch(InvoicingSchedule.putInvoicingSchedule(NewInvoicingSchedule, invoicingSchedule.scheduleID))
 
-        await dispatch(CustomerSetting.requestCustomerDataById(customer.customerID));
-        await dispatch(InvoicingSchedule.requestInvoicingSchedule(customer.customerID));
-        await dispatch(ToastsAction.add('Edit customer setting data success!', ToastStatusEnum.Success))
+        // dispatch(CustomerSetting.postCustomerSetting(NewCustomerSettingData));
+        dispatch(ToastsAction.add('Edit customer setting data success!', ToastStatusEnum.Success));
+        // setCustomerName('');
+        // setCustomerData(undefined);
+    }
+
+    /** Project Type */
+    const [projectType, setProjectType] = useState("")
+    const projectTypeData = [
+        {
+            text: "Manage Operation",
+            value: "Manage Operation"
+        },
+        {
+            text: "Manage Service",
+            value: "Manage Service"
+        },
+        {
+            text: "Project Type",
+            value: "Project Type"
+        },
+    ]
+
+    const onChangeProjectType = (data: any): any => {
+        setProjectType(data)
+    }
+
+    const onSubmitData = (data) => {
+
     }
 
     /** Invoicing requirement */
@@ -307,43 +339,6 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
         );
       }, [dispatch]);
 
-    /** Project Type dan Invoicing Condition */
-    const [projectType, setProjectType] = useState("")
-    const [allDataInvoicingCondition, setAllDataInvoicingCondition] = useState(invoicingConditionData || []);
-    const projectTypeData = [
-        {
-            text: "Manage Operation",
-            value: "Manage Operation"
-        },
-        {
-            text: "Manage Service",
-            value: "Manage Service"
-        },
-        {
-            text: "Project Type",
-            value: "Project Type"
-        },
-    ]
-
-    const onChangeProjectType = (data: any): any => {
-        setProjectType(data)
-       
-        if(data != '') {
-            const filteredArray = allDataInvoicingCondition.filter((item) =>
-                item.projectType.toLowerCase() == data.toLowerCase()
-            );
-    
-            setAllDataInvoicingCondition(filteredArray)
-        } else {
-            setAllDataInvoicingCondition(invoicingConditionData)
-        }
-
-    }
-
-    const onSubmitData = (data) => {
-
-    }
-
     /** Related customer */
     const onAddRelatedCustomer = useCallback((): void => {
         dispatch(
@@ -355,6 +350,17 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
       }, [dispatch]);
 
     const relatedCustomerData = useSelector((state: IStore) => selectRelatedCustomer(state));
+    // const relatedCustomerData = [
+    //     {
+    //         relatedID: 1,
+    //         customerName: "Example",
+    //         customerAddress: "Jalan jalan",
+    //         category: "Enterprise",
+    //         avgAR: 0,
+    //         blacklist: false,
+    //         holdshipment: false
+    //     }
+    // ]
     
     const deleteRelatedCustomer = useCallback((idToDel: number): void => {
         dispatch(
@@ -397,45 +403,38 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
             dispatch(BrandSummary.requestBrandSummary(customer.customerID))
             dispatch(ServiceSummary.requestServiceSummary(customer.customerID))
             dispatch(ProjectHistory.requestProjectHistory(customer.customerID))
-            dispatch(SalesAssign.requestAccountOwner(customer.customerID))
-            dispatch(SalesAssign.requestSalesHistory(customer.customerID))
 
             dispatch(InvoicingSchedule.requestInvoicingSchedule(customer.customerID))
             dispatch(InvoicingCondition.requestInvoicingCondition(customer.customerID))
-            dispatch(RelatedCustomer.requestRelatedCustomer(customer.customerID));
-            dispatch(RelatedFile.requestRelatedFile(customer.customerID))
             setPmoCustomer(customer.pmoCustomer ? "TRUE": "FALSE")
         }
     }, [dispatch, customer])
 
     useEffect(() => {
-        if(projectHistoryData.length > 0) {
+        if(projectHistoryData.length != 0 && Object.keys(invoicingSchedule).length != 0) {
             setAllHistoryData(projectHistoryData)
-        }
-        
-        if(Object.keys(invoicingConditionData).length != 0) {
-            setAllDataInvoicingCondition(invoicingConditionData)
-        }
-
-        if(Object.keys(invoicingSchedule).length != 0) {
-            if(invoicingSchedule.scheduleDays == "") {
-                setDaysArray([])
+            console.log(invoicingSchedule)
+            if(invoicingSchedule.scheduleDays === "Monday, Tuesday, Wednesday, Thursday, Friday") {
+                setIsAllDaysChecked(true)
             } else {
-                setDaysArray(invoicingSchedule.scheduleDays.split(", "))
+                setIsAllDaysChecked(false)
             }
+    
+            setDaysArray(invoicingSchedule.scheduleDays.split(", "))
             setMinDate(invoicingSchedule.minDate)
             setMaxDate(invoicingSchedule.maxDate)
             setRemark(invoicingSchedule.remark)
         }
-    }, [invoicingSchedule, invoicingConditionData, projectHistoryData, customer])
+    }, [invoicingSchedule, projectHistoryData])
 
     const isRequesting: boolean = useSelector((state: IStore) =>
         selectRequesting(state, [
             InvoicingCondition.REQUEST_GET_INVOICING_CONDITION,
-            RelatedFile.REQUEST_GET_RELATED_FILE,
+            // RelatedFile.REQUEST_GET_RELATED_FILE,
             SalesAssign.REQUEST_SALES_HISTORY,
             InvoicingSchedule.REQUEST_GET_INVOICING_SCHEDULE,
             CustomerSetting.REQUEST_CUSTOMER_DATA_BY_CUSTOMER_ID,
+            // CustomerName.REQUEST_CUSTOMER_BY_ID,
             ConfigItem.REQUEST_GET_CONFIG_ITEM,
             CollectionHistory.REQUEST_GET_COLLECTION_HISTORY,
             CustomerPIC.REQUEST_GET_CUSTOMER_PIC,
@@ -484,19 +483,9 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
         }
       }, [setNavbarHeight, showStatus]);
 
-      const openReason = useCallback((desc: string): void => {
-        console.log(desc)
-        dispatch(
-          ModalFirstLevelActions.OPEN(
-            <ModalShowRejectReason description={desc} />,
-            ModalSizeEnum.Tiny
-          )
-        );
-      }, [dispatch]);
-
     return (
         <Fragment>
-            {shareableApprovalStatus.length != 0 &&
+            {customer?.shareableApprovalStatus?.requestedBy &&
                 <div ref={statusDivRef} style={{ zIndex: 4, position: "fixed", top: 0, left: 0, width: "100vw", color: "#55637A"}}> 
                     <div style={{ paddingTop: "6em", paddingInline: "5.5em", paddingBottom: "1.5em", backgroundColor: "#DADCDB", transition: "opacity 0.5s ease-in-out, transform 0.5s ease-in-out", opacity: showStatus ? 1 : 0, transform: `translateY(${({showStatus}) => (showStatus ? '0' : '-50px')})`, display: showStatus ? 'block' : 'none' }}>
                         <h4>Shareable Account Approval</h4>
@@ -504,20 +493,20 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                             <div ref={firstDivRef} style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", fontSize: "small", zIndex: 1 }}>
                                 <div style={{ height: "1rem", width: "1rem", borderRadius: "100%", backgroundColor: "#589DDB"}}></div>
                                 <p className="margin-0">Request By</p>
-                                <p className="margin-0" style={{ fontWeight: "bold" }}>{shareableApprovalStatus?.requestedBy}</p>
-                                <span style={{ color: "grey" }}><Icon name="check circle" style={{ color: "#27D4A5" }}/>{shareableApprovalStatus?.requestedDate}</span>
+                                <p className="margin-0" style={{ fontWeight: "bold" }}>{customer?.shareableApprovalStatus?.requestedBy}</p>
+                                <span style={{ color: "grey" }}><Icon name="check circle" style={{ color: "#27D4A5" }}/>{customer?.shareableApprovalStatus?.requestedDate}</span>
                             </div>
 
                             <div ref={secondDivRef} style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", fontSize: "small", zIndex: 1 }}>
                                 <div style={{ height: "1rem", width: "1rem", borderRadius: "100%", backgroundColor: "#589DDB"}}></div>
-                                <p className="margin-0">{shareableRequestStatus == "PENDING" ? "Waiting Approval By" : (shareableRequestStatus == "APPROVED" ? "Approved By" : "Rejected By")}</p>
-                                <p className="margin-0" style={{ fontWeight: "bold" }}>{shareableApprovalStatus?.approvalBy != null ? shareableApprovalStatus?.approvalBy : "Rima Wulansari"}</p>
+                                <p className="margin-0">{shareableRequestStatus == "WAITING" ? "Waiting Approval By" : (shareableRequestStatus == "APPROVED" ? "Approved By" : "Rejected By")}</p>
+                                <p className="margin-0" style={{ fontWeight: "bold" }}>{customer?.shareableApprovalStatus?.approvalBy}</p>
                                 <span style={{ color: "grey" }}>
-                                    {shareableRequestStatus == "PENDING" ? 
+                                    {shareableRequestStatus == "WAITING" ? 
                                         <><Icon name="exclamation circle" style={{ color: "#FFA800" }}/> Waiting Approval </> : 
                                     (shareableRequestStatus == "APPROVED" ?
-                                        <><Icon name="check circle" style={{ color: "#27D4A5" }}/> {shareableApprovalStatus?.approvalDate}</> : 
-                                        <><Icon name="remove circle" style={{ color: "red" }}/> Rejected, <span style={{ fontSize: "smaller", color: "#656DD1", fontStyle: "italic", cursor: "pointer" }} onClick={() => openReason(shareableApprovalStatus?.description)}>Click to see the reason</span></>
+                                        <><Icon name="check circle" style={{ color: "#27D4A5" }}/> {customer?.shareableApprovalStatus?.approvalDate}</> : 
+                                        <><Icon name="remove circle" style={{ color: "red" }}/> Rejected</>
                                     )}
                                 </span>
                             </div>
@@ -556,93 +545,98 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                     <LoadingIndicator isActive={isRequesting}>
                     {/* search customer name dan data customer */}
 
+                    {/* {(customerData.customerID != 0 && !Number.isNaN(customerSettingData.customerID)) && */}
+                         <>
+                        <div className="padding-horizontal customer-search-container">
+                            <div className="customer-data-container">
+                                <label className="address-font-label" style={{ textAlign: "left"}}>Account Status</label>
+                                <Label style={{ backgroundColor: accountStatus == "Named Account" ? "#656DD1" : (accountStatus == "No Name Account" ? "#949AA1" : "#27D4A5"), color: "white" }} className="boolean-container">
+                                    <p>{accountStatus}</p>
+                                </Label>
+                            </div>
 
-                    <div className="padding-horizontal customer-search-container">
-                        <div className="customer-data-container">
-                            <label className="address-font-label" style={{ textAlign: "left"}}>Account Status</label>
-                            <Label style={{ backgroundColor: accountStatus == "Named Account" ? "#656DD1" : (accountStatus == "No Name Account" ? "#949AA1" : "#27D4A5"), color: "white" }} className="boolean-container">
-                                <p>{accountStatus}</p>
-                            </Label>
+                            <div className="customer-data-container">
+                                {
+                                    role.toUpperCase() == "SALES" ? 
+                                    <>
+                                        <label className="customer-data-label">Cust. Category</label>
+                                        <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">{customer.customerCategory}</p>
+                                    </>
+                                    :
+                                    <FinalForm
+                                    onSubmit={(values: any) => onSubmitCustCategory(values)}
+                                    render={({ handleSubmit, pristine, invalid }) => (
+                                        <Form onSubmit={handleSubmit}>
+                                        <Field
+                                            labelName="Cust. Category Name"
+                                            name="customerCategoryName"
+                                            component={DropdownClearInput}
+                                            placeholder="Choose category"
+                                            options={customerCategoryOptions}
+                                            onChanged={onChangeCustomerCategory}
+                                            values={customerCategory}
+                                            mandatory={true}
+                                        />
+                                        </Form>
+                                    )}/>
+                                }
+                            </div>
+
+                            <div className="customer-data-container">
+                                <label className="customer-data-label">CustomerID</label>
+                                <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">{customer.customerID}</p>
+                            </div>
+
+                            <div className="customer-data-container">
+                                <label className="customer-data-label">Blacklist</label>
+                                <Label color={customer.blacklist ? "red" : "teal"} className="boolean-container">
+                                    <Icon name='address book'/>{customer.blacklist ? "Yes" : "No"}
+                                </Label>
+                            </div>
+
+                            <div className="customer-data-container">
+                                <label className="customer-data-label">Holdshipment</label>
+                                <Label color={customer.holdshipment ? "red" : "blue"} className="boolean-container">
+                                    <Icon name='truck'/>{customer.holdshipment ? "Yes" : "No"}
+                                </Label>
+                            </div>
+
+                            <div className="customer-data-container">
+                                <label className="customer-data-label">Avg. AR (days)</label>
+                                <p className="grey avgar-font">{customer.avgAR}</p>
+                            </div>
                         </div>
 
-                        <div className="customer-data-container">
-                            {
-                                role.toUpperCase() == "SALES" ? 
-                                <>
-                                    <label className="customer-data-label">Industry Classification</label>
-                                    <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">{customer.customerCategory}</p>
-                                </>
-                                :
-                                <FinalForm
-                                onSubmit={(values: any) => onSubmitCustCategory(values)}
-                                render={({ handleSubmit, pristine, invalid }) => (
-                                    <Form onSubmit={handleSubmit}>
-                                    <Field
-                                        labelName="Industry Classification"
-                                        name="customerCategoryName"
-                                        component={DropdownClearInput}
-                                        placeholder="Choose category"
-                                        options={customerCategoryOptions}
-                                        onChanged={onChangeCustomerCategory}
-                                        values={customerCategory}
-                                        mandatory={true}
-                                    />
-                                    </Form>
-                                )}/>
-                            }
+                        <div style={{ margin: "14px 0" }} className="padding-horizontal">
+                            <label className="address-font-label" style={{ textAlign: "left"}}>Customer Name</label>
+                            <p style={{ fontSize: "20px", fontWeight: "bold"}} className="grey">{customer.customerName}</p>
                         </div>
 
-                        <div className="customer-data-container">
-                            <label className="customer-data-label">CustomerID</label>
-                            <p style={{fontSize: "24px", fontWeight: "bold"}} className="grey">{customer.customerID}</p>
+                        <div style={{ margin: "14px 0" }} className="padding-horizontal">
+                            <label className="address-font-label">Address</label>
+                            <p style={{ fontSize: "20px"}} className="grey">{customer.customerAddress}</p>
                         </div>
 
-                        <div className="customer-data-container">
-                            <label className="customer-data-label">Blacklist</label>
-                            <Label color={customer.blacklist ? "red" : "teal"} className="boolean-container">
-                                <Icon name='address book'/>{customer.blacklist ? "Yes" : "No"}
-                            </Label>
-                        </div>
-
-                        <div className="customer-data-container">
-                            <label className="customer-data-label">Holdshipment</label>
-                            <Label color={customer.holdshipment ? "red" : "blue"} className="boolean-container">
-                                <Icon name='truck'/>{customer.holdshipment ? "Yes" : "No"}
-                            </Label>
-                        </div>
-
-                        <div className="customer-data-container">
-                            <label className="customer-data-label">Avg. AR (days)</label>
-                            <p className="grey avgar-font">{customer.avgAR}</p>
-                        </div>
-                    </div>
-
-                    <div style={{ margin: "14px 0" }} className="padding-horizontal">
-                        <label className="address-font-label" style={{ textAlign: "left"}}>Customer Name</label>
-                        <p style={{ fontSize: "20px", fontWeight: "bold"}} className="grey">{customer.customerName}</p>
-                    </div>
-
-                    <div style={{ margin: "14px 0" }} className="padding-horizontal">
-                        <label className="address-font-label">Address</label>
-                        <p style={{ fontSize: "20px"}} className="grey">{customer.customerAddress}</p>
-                    </div>
+                        </>
+                    {/* } */}
 
                     <Divider></Divider>
 
                     <div className="padding-horizontal title-button-row">
                         <p className="grey margin-0 bold text-align-left">ACCOUNT OWNER SETTING</p>
-                        <ClaimReleaseButton customer={customer} accountStatus={accountStatus} isEmployeeOwnCustomer={isEmployeeOwnCustomer} isEmployeeRequestShareable={isEmployeeRequestShareable} role={role} />
+                        {/* {console.log("customer awal", customer)} */}
+                        {/* <ClaimReleaseButton customer={customer} accountStatus={accountStatus} isEmployeeOwnCustomer={isEmployeeOwnCustomer} role={role} /> */}
                     </div>
 
                     <Divider></Divider>
 
                     <div style={{ }} className="padding-horizontal">
-                        <TableNewCustomerSetting data={accountOwnerData} header={data.accOwnerHeader} sequenceNum={true} />
+                        <TableNewCustomerSetting data={data.accOwnerData} header={data.accOwnerHeader} sequenceNum={true} />
                     </div>
                     <Divider></Divider>
 
                     
-                    {(customer.customerID != undefined) &&
+                    {/* {(customer.customerID != 0 && !Number.isNaN(customerSettingData.customerID)) ? */}
                         <>                        
                             {/* data get mengenai customer */}
                             <div className="padding-horizontal">
@@ -740,7 +734,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                 </div>
                                             </div>
 
-                                            <TableProjectHistory data={historyData} customerID={customer.customerID} setOpenCollectionHistory={setOpenCollectionHistory}/>
+                                            {/* <TableProjectHistory data={historyData} setOpenCollectionHistory={setOpenCollectionHistory}/> */}
 
                                             <div style={{ marginTop: "1rem" }}>
                                                 <Pagination
@@ -798,10 +792,9 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                             <Divider></Divider>
 
                             <p className="padding-horizontal grey margin-0 bold text-align-left">INVOICING SCHEDULE SETTING</p>
-
-                            <Divider></Divider>
-
-                            <FinalForm
+                            {invoicingSchedule?.scheduleDays !== undefined && (dayChecked.length > 0 && invoicingSchedule?.scheduleDays?.length > 0) &&
+                                <> 
+                                    <FinalForm
                                 onSubmit={(values: any) => onSubmitCustomerSettingHandler(values)}
                                 render={({ handleSubmit, pristine, invalid }) => (
                                 <Form onSubmit={handleSubmit} >
@@ -818,17 +811,11 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                 </label>
                                             </div>
                                             {role.toUpperCase() == "SALES" ?
-                                                <p style={{ fontSize: "20px", fontWeight: "bold"}}>{invoicingSchedule?.scheduleDays != null ? invoicingSchedule?.scheduleDays : "No data" }</p>
+                                                <p style={{ fontSize: "20px", fontWeight: "bold"}}>{invoicingSchedule?.scheduleDays}</p>
                                             :
                                                 <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
-                                                    {daysArray.length > 0 &&
-                                                    days.map((day, index) => 
-                                                        <CheckboxInvoicing key={index} label={day} value={day} defaultChecked={daysArray?.find((p:any)=>p.includes(day)) !== undefined || daysArray?.find((p:any)=>p.includes("All days")) !== undefined } style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
-                                                    )}
-
-                                                    {daysArray.length == 0 &&
-                                                    days.map((day, index) => 
-                                                        <CheckboxInvoicing key={index} label={day} value={day} style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
+                                                    {days.map((day) => 
+                                                        <CheckboxInvoicing label={day} value={day} defaultChecked={dayChecked?.find((p:any)=>p.includes(day)) !== undefined || dayChecked?.find((p:any)=>p.includes("All days")) !== undefined } style={{ marginRight: "1rem" }} onClick={() => checkDay(day)}/>
                                                     )}
                                                 </div>
                                             }
@@ -846,7 +833,8 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                             <input
                                                                 name="minDate"
                                                                 type="number"
-                                                                value={minDate}
+                                                                defaultValue={invoicingSchedule?.minDate}
+                                                                value={minDate > 0 ? minDate : invoicingSchedule?.minDate}
                                                                 onChange={(e) =>
                                                                     setMinDate(parseInt(e.target.value, 10))
                                                                 }
@@ -862,7 +850,8 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                             <input
                                                                 name="maxDate"
                                                                 type="number"
-                                                                value={maxDate}
+                                                                defaultValue={invoicingSchedule?.maxDate}
+                                                                value={maxDate > 0 ? maxDate : invoicingSchedule?.maxDate}
                                                                 onChange={(e) =>
                                                                     setMaxDate(parseInt(e.target.value, 10))
                                                                 }
@@ -884,8 +873,8 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                         component={RichTextEditor}
                                                         placeholder="e.g. Remark"
                                                         labelName="Remark"
-                                                        value={remark}
-                                                        defaultValue={remark}
+                                                        value={remark.length > 0 ? remark : invoicingSchedule?.remark}
+                                                        defaultValue={invoicingSchedule?.remark}
                                                     />
                                                 }
                                             </div>
@@ -929,14 +918,14 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                         </Table.Header>
 
                                         <Table.Body>
-                                            {allDataInvoicingCondition.length == 0 ?
+                                            {invoicingConditionData.length == 0 ?
                                                 <Table.Row>
                                                     <Table.Cell colSpan={16} textAlign="center">
                                                     No data
                                                     </Table.Cell>
                                                 </Table.Row>
                                             :
-                                                (allDataInvoicingCondition.map((data, index) => (
+                                                (invoicingConditionData.map((data, index) => (
                                                 <Table.Row key={index}>
                                                         <Table.Cell>{index + 1}</Table.Cell>
                                                         <Table.Cell>
@@ -996,7 +985,7 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                                             </div>
                                                         </Table.Cell>
                                                         <Table.Cell>{data.customerName}</Table.Cell>
-                                                        <Table.Cell>{data.address}</Table.Cell>
+                                                        <Table.Cell>{data.customerAddress}</Table.Cell>
                                                         <Table.Cell>{data.category}</Table.Cell>
                                                         <Table.Cell>{data.avgAR}</Table.Cell>
                                                         <Table.Cell>
@@ -1068,19 +1057,32 @@ const ViewEditCustomer: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                                     </div>
                                 
                                     <Divider style={{ marginBottom: "0px"}}></Divider>
-                                    {role.toUpperCase() == "ADMIN" &&
-                                        <div className="button-container">
-                                            <div className="button-inner-container">
-                                                <Button style={{ marginRight: "1rem" }} type="button">Cancel</Button>
-                                                <Button color="blue" type="submit">Submit</Button>
-                                            </div>
+                                    <div className="button-container">
+                                        <div className="button-inner-container">
+                                            <Button style={{ marginRight: "1rem" }} type="button">Cancel</Button>
+                                            <Button color="blue" type="submit">Submit</Button>
                                         </div>
-                                    }
+                                    </div>
 
                             </Form>
+                            
                             )}/>
+                                </>
+                            }
+                            <Divider></Divider>
+                            
                         </>
-                    }
+                    {/* :
+                        <>
+                            <Divider style={{ marginBottom: "0px"}}></Divider>
+                            <div className="button-container">
+                                <div className="button-inner-container">
+                                    <Button style={{ marginRight: "1rem" }}>Cancel</Button>
+                                    <Button color="blue" disabled>Submit</Button>
+                                </div>
+                            </div>
+                        </>
+                    } */}
                     </LoadingIndicator>
                 </div>
             </div>

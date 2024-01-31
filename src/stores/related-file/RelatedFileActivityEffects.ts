@@ -4,18 +4,18 @@ import * as EffectUtility from "../../utilities/EffectUtility";
 import RelatedFileModel from "./models/RelatedFileModel";
 import ResultActions from "models/ResultActions";
 
-export const requestRelatedFile = async (customerSettingId: number): Promise<RelatedFileModel | HttpErrorResponseModel> => {
-    const controllerName = "CustomerSetting/RelatedFile?customerSettingID=" + customerSettingId;
+export const requestRelatedFile = async (customerSettingId: number): Promise<ResultActions | HttpErrorResponseModel> => {
+    const controllerName = "RelatedFile/GetRelatedFileByCustomerID?customerID=" + customerSettingId;
     const endpoint: string = environment.api.customer.replace(
         ":controller",
         controllerName
     );
 
-    return EffectUtility.getToModel<RelatedFileModel>(RelatedFileModel, endpoint);
+    return EffectUtility.getToModel<ResultActions>(ResultActions, endpoint);
 }
 
 export const deleteRelatedFile = async (id: number): Promise<ResultActions | HttpErrorResponseModel> => {
-    const controllerName = "CustomerSetting/RelatedFile/" + id;
+    const controllerName = "RelatedFile/" + id;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName

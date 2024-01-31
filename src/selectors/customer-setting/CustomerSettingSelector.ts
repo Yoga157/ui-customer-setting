@@ -260,34 +260,26 @@ export const _selectCustomerDataById = (model: ResultActions): any => {
         ? model.resultObj.shareableApprovalStatus.length - 1
         : 0;
     return {
-      accountStatus: model.resultObj.accountStatus,
-      customerID: model.resultObj.customerID,
-      customerCategory: model.resultObj.customerCategory,
-      customerName: model.resultObj.customerName,
-      customerAddress: model.resultObj.customerAddress,
-      pmoCustomer:
-        model.resultObj.pmoCustomer?.toUpperCase() == "TRUE" ? true : false,
-      blacklist: model.resultObj.blacklist,
-      holdshipment: model.resultObj.holdshipment,
-      avgAR: model.resultObj.avgAR,
-      salesName: model.resultObj.salesName,
-      shareableApprovalStatus:
-        lastIndex != 0
-          ? {
-              status: model.resultObj.shareableApprovalStatus[lastIndex].status,
-              requestedBy:
-                model.resultObj.shareableApprovalStatus[lastIndex].requestedBy,
-              requestedDate: formatDate(
-                model.resultObj.shareableApprovalStatus[lastIndex].requestedDate
-              ),
-              approvalBy:
-                model.resultObj.shareableApprovalStatus[lastIndex].approvalBy,
-              approvalDate: formatDate(
-                model.resultObj.shareableApprovalStatus[lastIndex].approvalDate
-              ),
-            }
-          : [],
-    };
+      accountStatus : model.resultObj.accountStatus,
+      customerID : model.resultObj.customerID,
+      customerCategory : model.resultObj.customerCategory,
+      customerName : model.resultObj.customerName,
+      customerAddress : model.resultObj.customerAddress,
+      pmoCustomer : model.resultObj.pmoCustomer?.toUpperCase() == "TRUE" ? true : false,
+      blacklist : model.resultObj.blacklist,
+      holdshipment : model.resultObj.holdshipment,
+      avgAR : model.resultObj.avgAR,
+      salesName : model.resultObj.salesName,
+      shareableApprovalStatus : model.resultObj.shareableApprovalStatus.length != 0 ? {
+        status: model.resultObj.shareableApprovalStatus[lastIndex].status,
+        requestedBy: model.resultObj.shareableApprovalStatus[lastIndex].requestedBy,
+        requestedUserID: model.resultObj.shareableApprovalStatus[lastIndex].requestedUserID,
+        requestedDate: model.resultObj.shareableApprovalStatus[lastIndex].requestedDate,
+        approvalBy: model.resultObj.shareableApprovalStatus[lastIndex].approvalBy,
+        approvalDate: model.resultObj.shareableApprovalStatus[lastIndex].approvalDate,
+        description: model.resultObj.shareableApprovalStatus[lastIndex].description
+      } : [],
+    }
   } else {
     return {};
   }
@@ -296,4 +288,30 @@ export const _selectCustomerDataById = (model: ResultActions): any => {
 export const selectCustomerDataById: Selector<IStore, any> = createSelector(
   (state: IStore) => state.customerSetting.customerDataById,
   _selectCustomerDataById
+);
+
+export const _selectSearchCustomerByName = (model: ResultActions): any => {
+  if(Object.keys(model.resultObj).length != 0) {
+    return model.resultObj.map(
+      (model: any): any => ({
+        key: model.customerID,
+        title: model.customerName,
+        customerID: model.customerID,
+        customerAddress: model.customerAddress,
+        blacklist: model.blacklist,
+        holdshipment: model.holdshipment,
+        avgAR: model.avgAR
+      })
+    )
+  } else {
+    return [];
+  }
+}
+
+export const selectSearchCustomerByName: Selector<
+  IStore,
+  any
+> = createSelector(
+  (state: IStore) => state.customerSetting.searchCustomerByName,
+  _selectSearchCustomerByName
 );

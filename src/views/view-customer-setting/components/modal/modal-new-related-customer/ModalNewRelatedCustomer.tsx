@@ -4,10 +4,10 @@ import { Dispatch } from "redux";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
 import { Label, Icon, Divider, Form } from "semantic-ui-react";
 import { Form as FinalForm, Field } from "react-final-form";
-import { DropdownClearInput, Button } from "views/components/UI";
+import { DropdownClearInput, Button, SearchInput } from "views/components/UI";
 
 import * as CustomerSetting from "stores/customer-setting/CustomerActivityActions"
-import { selectAllAccount, selectCustomerSetting, selectCustomerSettingOptions } from "selectors/customer-setting/CustomerSettingSelector";
+import { selectAllAccount, selectCustomerSetting, selectCustomerSettingOptions, selectSearchCustomerByName } from "selectors/customer-setting/CustomerSettingSelector";
 import RelatedCustomerPostModel from "stores/related-customer/models/RelatedCustomerPostModel";
 import * as RelatedCustomer from "stores/related-customer/RelatedCustomerActivityActions"
 
@@ -31,19 +31,29 @@ const ModalNewRelatedCondition: React.FC<IProps> = (props: React.PropsWithChildr
     const [customerName, setCustomerName] = useState();
     const [customerData, setCustomerData] = useState<customerData | undefined>(undefined);
 
-    const customerSettingData = useSelector((state: IStore) => selectCustomerSettingOptions(state));
-
-    const customerOnChange = (data) => {
-        if(data) {
-            // console.log(data)
-            setCustomerData(data)
-        } else {
+    const customerStoreSearch = useSelector((state: IStore) => selectSearchCustomerByName(state));
+    
+    const handleSearchChangeCustomer = useCallback(
+        (data) => {
+          setCustomerName(data);
+          if (data.length >= 5) {
+            dispatch(CustomerSetting.requestCustomerDataByName(data));
+          } else if (data.length == 0) {
             setCustomerData(undefined)
-        }
-    }
+          }
+        },
+        [dispatch]
+    );
 
-    const onSubmitCustomerName = (data) => {
-    }
+    const onResultSelectCustomer = async (data: any) => {
+        setCustomerName(data.result.customerName);
+    
+        setCustomerData(data.result);
+    };
+
+    const onSubmitCustomerName = async (values) => {
+        
+    };
 
     const onSubmitHandler = async () => {
         let userLogin = JSON.parse(localStorage.getItem('userLogin'));
@@ -81,6 +91,17 @@ const ModalNewRelatedCondition: React.FC<IProps> = (props: React.PropsWithChildr
                         <Form onSubmit={handleSubmit}>
                             <Field
                                 name="customerName"
+                                component={SearchInput}
+                                placeholder="Type customer name here.."
+                                labelName="Customer Name"
+                                handleSearchChange={handleSearchChangeCustomer}
+                                onResultSelect={onResultSelectCustomer}
+                                results={customerStoreSearch}
+                                values={customerName}
+                                mandatory={true}
+                            />
+                            {/* <Field
+                                name="customerName"
                                 component={DropdownClearInput}
                                 placeholder="Select customer"
                                 labelName="Customer Name"
@@ -88,7 +109,7 @@ const ModalNewRelatedCondition: React.FC<IProps> = (props: React.PropsWithChildr
                                 options={customerSettingData}
                                 values={customerName}
                                 mandatory={true}
-                            />
+                            /> */}
                         </Form>
                     )}/>
                     <p style={{ fontStyle: "italic", color: "#A9B0BC", marginTop: "0", fontSize: "12px"}}>Type customer name and press ENTER</p>

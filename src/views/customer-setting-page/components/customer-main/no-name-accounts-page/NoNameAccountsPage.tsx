@@ -251,7 +251,8 @@ const NoNameAccountsPage: React.FC<IProps> = (
 
           <div className="posision-container">
             <div className="posision-container">
-              {rowData.length === 0 ? (
+              {console.log("row data", rowData.length)}
+              {rowData.length == 0 ? (
                 <p></p>
               ) : (
                 <p className="p-account">

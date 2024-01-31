@@ -6,11 +6,12 @@ import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
 import { Divider, Form, Input, Label } from "semantic-ui-react";
 import { Form as FinalForm, Field } from "react-final-form";
 import { DropdownClearInput, Button, FileUpload } from "views/components/UI";
+import * as RelatedFile from "stores/related-file/RelatedFileActivityActions"
 import input from "views/components/UI/Input/Input";
 import axios from "axios";
 
 interface IProps {
-    customerSettingID: number;
+    customerID: number;
 }
 
 const ModalNewRelatedFile: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
@@ -31,14 +32,17 @@ const ModalNewRelatedFile: React.FC<IProps> = (props: React.PropsWithChildren<IP
     ]
 
     const onSubmitDocument = async (data) => {
+        let userLogin = JSON.parse(localStorage.getItem('userLogin'));
+
         let formData = new FormData();
-        formData.append("customerSettingID", `${props.customerSettingID}`);
+        formData.append("customerID", `${props.customerID}`);
         formData.append("documentName", documentName);
         formData.append("documentType", data.documentType);
         formData.append("file", uploadFile);
+        formData.append("CreateUserID", userLogin?.employeeID);
 
         try {
-            const endpoint: string = environment.api.customer.replace(":controller", "CustomerSetting/RelatedFile");
+            const endpoint: string = environment.api.customer.replace(":controller", "RelatedFile");
 
             const response = await axios.post(endpoint, formData, {
               headers: {
@@ -47,19 +51,18 @@ const ModalNewRelatedFile: React.FC<IProps> = (props: React.PropsWithChildren<IP
             });
       
             setUploadFile("")
+            dispatch(RelatedFile.requestRelatedFile(props.customerID))
             dispatch(ModalAction.CLOSE());
         } catch (error) {
             console.error(error);
         }
     }
 
-    const onSubmitDocumentType = (data) => {
+    // const onSubmitDocumentType = (data) => {
+    // }
 
-    }
-
-    const onSubmitFile = (data) => {
-
-    }
+    // const onSubmitFile = (data) => {
+    // }
 
     const cancelClick = () => {
         dispatch(ModalAction.CLOSE());

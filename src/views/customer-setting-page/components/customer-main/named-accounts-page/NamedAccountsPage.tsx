@@ -64,6 +64,7 @@ const NamedAccountsPage: React.FC<IProps> = (
 
   const handleMyAccount = () => {
     const userId: any = localStorage.getItem("userLogin");
+
     if (myAccount == false) {
       setMyAccount(true);
       const salesID = JSON.parse(userId)?.employeeID;
@@ -82,6 +83,7 @@ const NamedAccountsPage: React.FC<IProps> = (
       dispatch(
         CustomerSettingAct.requestNamedAcc(1, 10, "CustomerID", "ascending")
       );
+      
     }
   };
 
@@ -218,7 +220,6 @@ const NamedAccountsPage: React.FC<IProps> = (
     )! as HTMLInputElement;
 
     // if (window.location.pathname === "/data-quality/customer-setting-page") {
-
     if (filterData != undefined) {
       dispatch(
         CustomerSettingAct.requestSearchNamedAcc(
@@ -236,6 +237,7 @@ const NamedAccountsPage: React.FC<IProps> = (
     } else if (myAccount) {
       const userId: any = localStorage.getItem("userLogin");
       const salesID = JSON.parse(userId)?.employeeID;
+
       dispatch(
         CustomerSettingAct.requestSearchNamedAcc(
           data.activePage,

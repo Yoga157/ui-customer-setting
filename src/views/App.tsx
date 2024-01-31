@@ -23,9 +23,6 @@ const CustomerSetting = lazy(() =>
   import("./customer-setting/CustomerSetting")
 );
 
-const AddNewCustomerSetting = lazy(() =>
-  import("./add-customer-setting/AddNewCustomerSettingPage")
-);
 const ViewCustomerSetting = lazy(() =>
   import("./view-customer-setting/ViewEditCustomerSettingPage")
 );
@@ -64,10 +61,6 @@ const App: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => (
                   path={RouteEnum.FunnelOpportunity}
                   component={FunnelOpportunity}
                 />{" "}
-                <Route
-                  path={RouteEnum.AddNewCustomerSetting}
-                  component={AddNewCustomerSetting}
-                />
                 <Route
                   path="/customer-setting/:id(\d+)"
                   component={ViewCustomerSetting}

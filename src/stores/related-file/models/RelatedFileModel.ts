@@ -1,8 +1,8 @@
 import { BaseModel, ConversionTypeEnum, IConversionOption } from "sjs-base-model";
 
 export default class RelatedFileModel extends BaseModel {
-    relatedFileID: number = 0;
-    customerSettingID: number = 0;
+    rFileID: number = 0;
+    customerID: number = 0;
     documentName: string = "";
     documentType: string = "";
     documentPath: string = "";

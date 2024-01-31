@@ -5,7 +5,7 @@ import InvoicingScheduleModel from "./models/InvoicingScheduleModel";
 import ResultActions from "models/ResultActions";
 
 export const postInvoicingSchedule = async (data: InvoicingScheduleModel): Promise<ResultActions | HttpErrorResponseModel> => {
-    const controllerName = "InvoicingSchedule/InvoicingSchedule";
+    const controllerName = "InvoicingSchedule";
     const endpoint: string = environment.api.customer.replace(
         ":controller",
         controllerName
@@ -32,7 +32,7 @@ export const requestInvoicingSchedule = async (customerID: number): Promise<Resu
 }
 
 export const putInvoicingSchedule = async (data: InvoicingScheduleModel, id: number): Promise<ResultActions | HttpErrorResponseModel> => {
-    const controllerName = "InvoicingSchedule/InvoicingSchedule/" + id;
+    const controllerName = "InvoicingSchedule/" + id;
     const endpoint: string = environment.api.customer.replace(
         ":controller",
         controllerName

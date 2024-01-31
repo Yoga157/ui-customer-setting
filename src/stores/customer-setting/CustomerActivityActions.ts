@@ -12,6 +12,7 @@ import CustomerClaimAccount from "./models/CustomerClaimAccount";
 import CustomerID from "./models/ReleaseAccounts";
 import ReleaseAccounts from "./models/ApproveShareableccounts";
 import ApproveShareableAccounts from "./models/ApproveShareableccounts";
+import CustomerSettingPutModel from "./models/CustomerSettingPutModel";
 
 type ActionUnion =
   | undefined
@@ -549,7 +550,7 @@ export const releaseAccount = (
   return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
     await ActionUtility.createThunkEffect<ResultActions>(
       dispatch,
-      POST_CUSTOMER_SETTING,
+      PUT_RELEASE_ACCOUNT,
       CustomerEffect.releaseAccount,
       customerID,
       salesID,
@@ -562,12 +563,8 @@ export const PUT_ACCEPT_REQUEST_SHAREABLE: string =
   "CustomerActions.PUT_ACCEPT_REQUEST_SHAREABLE";
 export const PUT_ACCEPT_REQUEST_SHAREABLE_FINISHED =
   "CustomerActions.PUT_ACCEPT_REQUEST_SHAREABLE_FINISHED";
-export const acceptRequestShareableAccount = (
-  customerID: number,
-  salesID: number,
-  isApprove: boolean,
-  modifyUserID: number
-): any => {
+
+export const acceptRequestShareableAccount = (customerID: number, salesID: number, isApprove: boolean, modifyUserID: number, description?: string): any => {
   return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
     await ActionUtility.createThunkEffect<ResultActions>(
       dispatch,
@@ -576,7 +573,42 @@ export const acceptRequestShareableAccount = (
       customerID,
       salesID,
       isApprove,
-      modifyUserID
+      modifyUserID,
+      description
+    );
+  };
+};
+
+export const REQUEST_CUSTOMER_DATA_BY_NAME: string =
+  "CustomerActions.REQUEST_CUSTOMER_DATA_BY_NAME";
+export const REQUEST_CUSTOMER_DATA_BY_NAME_FINISHED =
+  "CustomerActions.REQUEST_CUSTOMER_DATA_BY_NAME_FINISHED";
+export const requestCustomerDataByName = (customerName: string): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      REQUEST_CUSTOMER_DATA_BY_NAME,
+      CustomerEffect.requestCustomerDataByName,
+      customerName
+    );
+  };
+};
+
+export const PUT_CUSTOMER_SETTING_CATEGORY_PMO: string =
+  "CustomerActions.PUT_CUSTOMER_SETTING_CATEGORY_PMO";
+export const PUT_CUSTOMER_SETTING_CATEGORY_PMO_FINISHED =
+  "CustomerActions.PUT_CUSTOMER_SETTING_CATEGORY_PMO_FINISHED";
+export const putCustomerSettingCategoryPmo = (
+  data: CustomerSettingPutModel,
+  customerID: number
+): any => {
+  return async (dispatch: ReduxDispatch<ActionUnion>): Promise<void> => {
+    await ActionUtility.createThunkEffect<ResultActions>(
+      dispatch,
+      PUT_CUSTOMER_SETTING_CATEGORY_PMO,
+      CustomerEffect.putCustomerSettingCategoryPmo,
+      data,
+      customerID,
     );
   };
 };

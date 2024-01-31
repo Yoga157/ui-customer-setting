@@ -7,19 +7,20 @@ import { Table, Icon } from "semantic-ui-react";
 import ModalUserStories from "../../modal/modal-user-stories/ModalUserStories";
 
 interface IProps {
+    customerID: number;
     data: any[];
     setOpenCollectionHistory: (data: any) => void;
 }
 
 const TableProjectHistory: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {
     const dispatch: Dispatch = useDispatch();
-    const { data, setOpenCollectionHistory } = props;
+    const { customerID, data, setOpenCollectionHistory } = props;
 
     /** success stories */
     const onViewEditCustomerStory = useCallback((id, successStory, modifiedStoryBy): void => {
         dispatch(
           ModalFirstLevelActions.OPEN(
-            <ModalUserStories id={Number(id)} successStory={successStory} modifiedStoryBy={modifiedStoryBy} />,
+            <ModalUserStories funnelID={Number(id)} customerID={customerID} successStory={successStory} modifiedStoryBy={modifiedStoryBy} />,
             ModalSizeEnum.Small
           )
         );
@@ -92,7 +93,7 @@ const TableProjectHistory: React.FC<IProps> = (props: React.PropsWithChildren<IP
                             <Table.Cell textAlign="center">{data.salesName}</Table.Cell>
                             <Table.Cell textAlign="center">{data.salesDepartment}</Table.Cell>
                             <Table.Cell textAlign="center">{data.soCloseDate}</Table.Cell>
-                            <Table.Cell textAlign="center">{data.soAmount}</Table.Cell>
+                            <Table.Cell textAlign="right">{data.soAmount}</Table.Cell>
                     </Table.Row>
                     )))
                 }

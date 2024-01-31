@@ -1,16 +1,16 @@
 import { BaseModel, ConversionTypeEnum, IConversionOption } from "sjs-base-model";
 
 export default class InvoicingScheduleModel extends BaseModel {
-    scheduleID: number = 0;
-    customerSettingID: number = 0;
+    iScheduleID: number = 0;
+    customerID: number = 0;
     scheduleDays: string = "";
     minDate: number = 0;
     maxDate: number = 0;
     remark: string = "";
     createUserID: number = 0;
-    createDate?: Date = undefined;
+    createDate?: Date = null;
     modifyUserID: number = 0;
-    modifyDate?: Date = undefined;
+    modifyDate?: Date = null;
 
     constructor(data: Partial<InvoicingScheduleModel>) {
         super();

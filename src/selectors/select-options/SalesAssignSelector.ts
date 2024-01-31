@@ -50,15 +50,17 @@ export const selectSalesOptions: Selector<
   _selectSales
 );
 
-const _selectSalesHistory = (models: SalesAssignHistoryModel[]): any[] => {
-  return models.map((model: SalesAssignHistoryModel): any => ({
-    assignID: model.assignID,
-    customerSettingID: model.customerSettingID,
-    salesID: model.salesID,
-    salesName: model.salesName,
-    customerName: model.customerName,
-    yearAssign: model.yearAssign,
-  }));
+const _selectSalesHistory = (models: ResultActions): any[] => {
+  if (Array.isArray(models.resultObj)) {
+    return models.resultObj.map((model: SalesAssignHistoryModel): any => ({
+      salesName: model.salesName,
+      customerName: model.customerName,
+      yearAssign: model.year,
+    }));
+  }
+  else {
+    return []
+  }
 };
 
 export const selectSalesHistory: Selector<IStore, any[]> = createSelector(

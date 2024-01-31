@@ -18,6 +18,7 @@ export const initialState: ICustomerState = {
   CustomerSettingPostModel: new CustomerSettingPostModel({}),
   dataByCustomerId: new CustomerSettingById({}),
   customerDataById: new ResultActions({}),
+  searchCustomerByName: new ResultActions({}),
   error: false,
   refreshPage: false,
   resultActions: new ResultActions({}),
@@ -77,7 +78,6 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     state: ICustomerState,
     action: IAction<CustomerSettingModel>
   ): ICustomerState {
-    // console.log("Received data from API:", action.payload);
     return {
       ...state,
       data: action.payload!,
@@ -205,7 +205,6 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     state: ICustomerState,
     action: IAction<CustomerSettingById>
   ): ICustomerState {
-    console.log(action);
     return {
       ...state,
       dataByCustomerId: action.payload!,
@@ -223,7 +222,6 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     state: ICustomerState,
     action: IAction<ResultActions>
   ): ICustomerState {
-    // console.log(action);
     return {
       ...state,
       resultActions: action.payload!,
@@ -322,10 +320,31 @@ const customerSettingReducer: Reducer = baseReducer(initialState, {
     state: ICustomerState,
     action: IAction<ResultActions>
   ): ICustomerState {
-    console.log(action);
     return {
       ...state,
       customerDataById: action.payload!,
+    };
+  },
+
+  [CustomerActions.REQUEST_CUSTOMER_DATA_BY_NAME_FINISHED](
+    state: ICustomerState,
+    action: IAction<ResultActions>
+  ): ICustomerState {
+    return {
+      ...state,
+      searchCustomerByName: action.payload!,
+    };
+  },
+
+  [CustomerActions.PUT_CUSTOMER_SETTING_CATEGORY_PMO_FINISHED](
+    state: ICustomerState,
+    action: IAction<ResultActions>
+  ): any {
+    return {
+      ...state,
+      error: action.error!,
+      refreshPage: action.error ? false : true,
+      resultActions: action.payload!,
     };
   },
 });

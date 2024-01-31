@@ -9,7 +9,7 @@ export default interface ISalesAssignState {
   readonly data: SalesAssignModel;
   readonly salesExstingModel: SalesNameModel;
   readonly SalesAssignPostModel: SalesAssignPostModel;
-  readonly salesHistory: SalesAssignHistoryModel[];
+  readonly salesHistory: ResultActions;
   readonly accountOwner: ResultActions;
   error: boolean;
   refreshPage: boolean;

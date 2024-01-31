@@ -53,7 +53,6 @@ const ClaimReleaseButton: React.FC<IProps> = (props: React.PropsWithChildren<IPr
         )
       );
     };
-    
 
     return (
       <Fragment>
@@ -89,7 +88,7 @@ const ClaimReleaseButton: React.FC<IProps> = (props: React.PropsWithChildren<IPr
         }
 
         {/* accept shareable request */}
-        {(accountStatus == "Named Account" && customer.shareableApprovalStatus.length != 0 && role.toUpperCase() == "ADMIN") &&
+        {(accountStatus == "Named Account" && customer.shareableApprovalStatus.status.toUpperCase() == "PENDING" && role.toUpperCase() == "ADMIN") &&
           <div style={{ display: "flex", flexDirection: "row", alignContent: "center"}}>
             <p style={{ color: "red", fontStyle: "italic", marginBottom: 0, marginRight: "1rem", padding: 0, alignSelf: "center" }}>Request by {customer.shareableApprovalStatus?.requestedBy}</p>
             <Button color="red" size="small" type="button" onClick={() => onAcceptRequestShareableAccount()}><Icon name="share"/>Accept Shareable Request</Button>

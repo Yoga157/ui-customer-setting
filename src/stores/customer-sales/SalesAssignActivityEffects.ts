@@ -93,18 +93,18 @@ export const clearResult = async (): Promise<any> => {
 };
 
 export const requestSalesHistory = async (
-  customerSettingId: number
-): Promise<SalesAssignHistoryModel | HttpErrorResponseModel> => {
+  customerID: number
+): Promise<ResultActions | HttpErrorResponseModel> => {
   const controllerName =
-    "CustomerSetting/CustomerSalesAssign?customerSettingID=" +
-    customerSettingId;
+    "SalesHistory/GetSalesAssignHistory?customerID=" +
+    customerID;
   const endpoint: string = environment.api.customer.replace(
     ":controller",
     controllerName
   );
 
-  return EffectUtility.getToModel<SalesAssignHistoryModel>(
-    SalesAssignHistoryModel,
+  return EffectUtility.getToModel<ResultActions>(
+    ResultActions,
     endpoint
   );
 };
