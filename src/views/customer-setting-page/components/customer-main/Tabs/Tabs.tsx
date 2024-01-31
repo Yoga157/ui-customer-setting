@@ -25,6 +25,7 @@ const Tabs: FC<TabsProps> = ({
   orientation = "horizontal",
 }) => {
   const Panel = tabs && tabs.find((tab) => tab.index === selectedTab);
+  const userLogin: any = JSON.parse(localStorage.getItem("userLogin"));
 
   return (
     <div
@@ -54,7 +55,7 @@ const Tabs: FC<TabsProps> = ({
         aria-labelledby={`btn-${selectedTab}`}
         id={`tabpanel-${selectedTab}`}
       >
-        {Panel && <Panel.Component index={selectedTab} role={"ADMIN"} />}
+        {Panel && <Panel.Component index={selectedTab} role={userLogin.role} />}
       </div>
     </div>
   );

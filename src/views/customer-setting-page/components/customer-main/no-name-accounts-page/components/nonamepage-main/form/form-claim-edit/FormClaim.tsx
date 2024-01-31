@@ -3,6 +3,7 @@ import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
+import "../Modal.scss";
 import { Form as FinalForm } from "react-final-form";
 import { Form, Grid, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
@@ -37,11 +38,11 @@ const ClaimAccountEdit: React.FC<IProps> = (
       const NewClaimAccount = new CustomerSettingPostModel(e);
       NewClaimAccount.customerSettingID = 0;
       NewClaimAccount.customerID = rowData[j].customerID;
-      NewClaimAccount.salesID = JSON.parse(userId)?.employeeID || 830;
-      NewClaimAccount.requestedBy = JSON.parse(userId)?.employeeID || 830;
+      NewClaimAccount.salesID = JSON.parse(userId)?.employeeID;
+      NewClaimAccount.requestedBy = JSON.parse(userId)?.employeeID;
       NewClaimAccount.requestedDate = new Date();
       NewClaimAccount.createDate = new Date();
-      NewClaimAccount.createUserID = JSON.parse(userId)?.employeeID || 830;
+      NewClaimAccount.createUserID = JSON.parse(userId)?.employeeID;
 
       await dispatch(CustomerSettingAct.postClaimAccount(NewClaimAccount));
     }
@@ -65,7 +66,7 @@ const ClaimAccountEdit: React.FC<IProps> = (
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    margin: "1rem",
+                    margin: "0.5rem",
                   }}
                 >
                   <div style={{ padding: "0px" }}>
@@ -82,7 +83,6 @@ const ClaimAccountEdit: React.FC<IProps> = (
                 centered
                 style={{
                   textAlign: "center",
-                  marginTop: "1.5rem",
                 }}
               >
                 <span style={{ padding: "10px" }}>
@@ -105,7 +105,7 @@ const ClaimAccountEdit: React.FC<IProps> = (
                               textAlign: "center",
                               fontWeight: "bold",
                               fontSize: "1rem",
-                              marginTop: "0.5rem",
+                              margin: "0.5rem",
                             }}
                           >
                             {data.customerName}
@@ -118,7 +118,7 @@ const ClaimAccountEdit: React.FC<IProps> = (
               </Grid.Row>
 
               <Divider></Divider>
-              <div style={{ textAlign: "center", marginTop: "2rem" }}>
+              <div style={{ textAlign: "center" }}>
                 <Button type="button" onClick={cancelClick}>
                   Cancel
                 </Button>

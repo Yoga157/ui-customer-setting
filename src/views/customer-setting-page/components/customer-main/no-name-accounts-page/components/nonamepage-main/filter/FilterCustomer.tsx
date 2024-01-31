@@ -7,29 +7,32 @@ import { Button } from "views/components/UI";
 import { Form as FinalForm } from "react-final-form";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
-import { selectSalesOptions } from "selectors/select-options/SalesAssignSelector";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
+
 import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
 
 interface IProps {
   rowData: any;
   getRowData: (data: any) => void;
-
+  getFilterData: (data: any) => void;
 }
 
 const FilterCustomer: React.FC<{
   setOpenFilter: React.Dispatch<React.SetStateAction<boolean>>;
   openFilter: boolean;
-} & IProps> = ({ setOpenFilter, openFilter, rowData, getRowData }) => {
-  const [salesAssignArray, setSalesAssignArray] = useState([]);
-  const [salesFilter, setSalesFilter] = useState([]);
+} & IProps> = ({
+  setOpenFilter,
+  openFilter,
+  rowData,
+  getRowData,
+  getFilterData,
+}) => {
   const [pmo_customerYesChecked, setPmo_customerYesChecked] = useState(false);
   const [pmo_customerNoChecked, setPmo_customerNoChecked] = useState(false);
   const [holdshipmentYesChecked, setHoldshipmentYesChecked] = useState(false);
   const [holdshipmentNoChecked, setHoldshipmentNoChecked] = useState(false);
   const [blacklistYesChecked, setBlacklistYesChecked] = useState(false);
   const [blacklistNoChecked, setBlacklistNoChecked] = useState(false);
-
   const dispatch: Dispatch = useDispatch();
 
   const isRequesting: boolean = useSelector((state: IStore) =>
@@ -64,6 +67,12 @@ const FilterCustomer: React.FC<{
         ? false
         : null;
 
+    getFilterData({
+      pmo_customer: pmo_customer,
+      holdshipment: holdshipment,
+      blacklist: blacklist,
+    });
+
     dispatch(
       CustomerSettingAct.requestSearchNoNameAcc(
         1,
@@ -85,7 +94,7 @@ const FilterCustomer: React.FC<{
     setHoldshipmentNoChecked(false);
     setBlacklistYesChecked(false);
     setBlacklistNoChecked(false);
-    getRowData([])
+    getRowData([]);
 
     dispatch(
       CustomerSettingAct.requestNoNameAcc(1, 10, "CustomerID", "ascending")

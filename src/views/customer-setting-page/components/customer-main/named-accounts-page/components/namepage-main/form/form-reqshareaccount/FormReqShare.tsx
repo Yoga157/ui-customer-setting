@@ -3,13 +3,13 @@ import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
+import "../Modal.scss";
 import { Form as FinalForm } from "react-final-form";
 import { Form, Grid, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
 import SalesAssignPostModel from "stores/customer-sales/models/SalesAssignPostModel";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
-import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 
 interface IProps {
@@ -37,9 +37,9 @@ const ReleaseAccount: React.FC<IProps> = (
       const NewAssignSales = new SalesAssignPostModel(e);
       NewAssignSales.customerSettingID = 0;
       NewAssignSales.customerID = rowData[j].customerID;
-      NewAssignSales.salesID = JSON.parse(userId)?.employeeID || 830;
-      NewAssignSales.requestedBy = JSON.parse(userId)?.employeeID || 830;
-      NewAssignSales.createUserID = JSON.parse(userId)?.employeeID || 830;
+      NewAssignSales.salesID = JSON.parse(userId)?.employeeID;
+      NewAssignSales.requestedBy = JSON.parse(userId)?.employeeID;
+      NewAssignSales.createUserID = JSON.parse(userId)?.employeeID;
       NewAssignSales.requestedDate = new Date();
       NewAssignSales.createDate = new Date();
       await dispatch(CustomerSettingAct.postRequestAccount(NewAssignSales));

@@ -14,6 +14,7 @@ import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityAct
 
 interface IProps {
   rowData: any;
+  getRowData: (data: any) => void;
 }
 
 const RelaseAccountMod: React.FC<IProps> = (
@@ -35,23 +36,17 @@ const RelaseAccountMod: React.FC<IProps> = (
     const userId: any = localStorage.getItem("userLogin");
 
     for (let j = 0; j < rowData.length; j++) {
-      const NewAssignSales = new ReleaseAccount(e);
-      NewAssignSales.customerID = props.rowData[j].customerID;
-      NewAssignSales.salesID = JSON.parse(userId)?.employeeID || 830;
-      NewAssignSales.modifyUserID = JSON.parse(userId)?.employeeID || 830;
-
       await dispatch(
         CustomerSettingAct.putReleaseAccount(
-          NewAssignSales,
-          props.rowData[j].customerID,
-          830,
-          830
+          (rowData.customerID = props.rowData[j].customerID),
+          (rowData.salesID = JSON.parse(userId)?.employeeID),
+          (rowData.modifyUserID = JSON.parse(userId)?.employeeID)
         )
       );
     }
     dispatch(ModalAction.CLOSE());
     dispatch(
-      CustomerSettingAct.requestNamedAcc(1, 10, "CustomerID", "ascending")
+      CustomerSettingAct.requestShareabledAcc(1, 10, "CustomerID", "ascending")
     );
   };
 

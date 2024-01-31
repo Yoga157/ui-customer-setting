@@ -2,26 +2,27 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
 import IStore from "models/IStore";
-import { Divider, Grid, Form, Select } from "semantic-ui-react";
-import { Button, DropdownClearInput, SelectInput } from "views/components/UI";
+import { Divider, Grid, Form } from "semantic-ui-react";
+import { Button, DropdownClearInput } from "views/components/UI";
 import { Form as FinalForm, Field } from "react-final-form";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import { selectSalesOptions } from "selectors/select-options/SalesAssignSelector";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
+
 interface IProps {
   rowData: any;
+  getFilterData: (data: any) => void;
 }
 
 const FilterCustomer: React.FC<{
   setOpenFilter: React.Dispatch<React.SetStateAction<boolean>>;
   openFilter: boolean;
-} & IProps> = ({ setOpenFilter, openFilter, rowData }) => {
+} & IProps> = ({ setOpenFilter, openFilter, rowData, getFilterData }) => {
   const [salesName, setSalesName] = useState("");
   const [salesAssignArray, setSalesAssignArray] = useState([]);
   const [salesFilter, setSalesFilter] = useState([]);
-
   const [noNameAccountYesChecked, setNoNameAccountYesChecked] = useState(true);
   const [noNameAccountNoChecked, setNoNameAccountNoChecked] = useState(true);
   const [namedAccountYesChecked, setNamedAccountYesChecked] = useState(true);
@@ -49,9 +50,8 @@ const FilterCustomer: React.FC<{
   );
 
   const onResultSelectSales = (data: any): any => {
-    console.log(data);
     let checkSales = salesAssignArray.find((obj) => obj.sales === data.salesID);
-    if (checkSales === undefined) {
+    if (checkSales === undefined && data.salesID != undefined) {
       setSalesAssignArray([
         ...salesAssignArray,
         {
@@ -59,7 +59,7 @@ const FilterCustomer: React.FC<{
           salesID: data.salesID,
         },
       ]);
-
+      console.log(data.salesID);
       setSalesFilter([...salesFilter, data.salesID.toString()]);
     }
   };
@@ -122,6 +122,16 @@ const FilterCustomer: React.FC<{
         ? false
         : null;
 
+    getFilterData({
+      nonameAccount: nonameAccount,
+      namedAccount: namedAccount,
+      shareableAccount: shareableAccount,
+      pmo_customer: pmo_customer,
+      newsalesAssign: newsalesAssign,
+      holdshipment: holdshipment,
+      blacklist: blacklist,
+    });
+
     dispatch(
       CustomerSettingAct.requestSearchAllAcc(
         1,
@@ -130,6 +140,7 @@ const FilterCustomer: React.FC<{
         null,
         "ascending",
         newsalesAssign,
+        null,
         pmo_customer,
         blacklist,
         holdshipment,
@@ -138,7 +149,6 @@ const FilterCustomer: React.FC<{
         shareableAccount
       )
     );
-    console.log(namedAccount);
   };
 
   const salesStoreDropdown = useSelector((state: IStore) =>

@@ -26,21 +26,28 @@ interface IProps {
   role: string;
 }
 
+interface FilterData {
+  pmo_customer: any;
+  newsalesAssign: any;
+  holdshipment: any;
+  blacklist: any;
+}
+
 const NamedAccountsPage: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
-  // const { role } = props;
   const dispatch: Dispatch = useDispatch();
+  const { role } = props;
   const [pageSize, setPage] = useState(10);
   const activePage = useSelector(
     (state: IStore) => state.customerSetting.activePage
   );
-  const currentUser: IUserResult = useSelector((state: IStore) =>
-    selectUserResult(state)
-  );
   const [rowData, setRowData] = useState([]);
-  const [isChecked, setIsChecked] = useState(false);
+  const [filterData, setFilterData] = useState<FilterData | undefined>(
+    undefined
+  );
   const [myAccount, setMyAccount] = useState(false);
+  const currDate: string = format(new Date(), "cccc LLLL d, yyyy");
 
   const setNewRowData = (data) => {
     setRowData(data);
@@ -49,23 +56,22 @@ const NamedAccountsPage: React.FC<IProps> = (
   const onReleaseAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ModReleaseForm rowData={rowData} />,
+        <ModReleaseForm rowData={rowData} getRowData={setRowData} />,
         ModalSizeEnum.Small
       )
     );
-    setRowData([]);
-  }, [dispatch, rowData, setRowData]);
+  }, [dispatch, rowData]);
 
   const handleMyAccount = () => {
     const userId: any = localStorage.getItem("userLogin");
 
-    if(myAccount == false) {
+    if (myAccount == false) {
       setMyAccount(true);
-      const salesID = JSON.parse(userId)?.employeeID || 830;
+      const salesID = JSON.parse(userId)?.employeeID;
       dispatch(
         CustomerSettingAct.requestSearchNamedAcc(
-          1,
-          10,
+          activePage,
+          pageSize,
           "CustomerID",
           null,
           "ascending",
@@ -81,6 +87,75 @@ const NamedAccountsPage: React.FC<IProps> = (
     }
   };
 
+  const handleMyApproval = () => {
+    const userId: any = localStorage.getItem("userLogin");
+
+    if (myAccount == false) {
+      setMyAccount(true);
+      const salesID = JSON.parse(userId)?.employeeID;
+      dispatch(
+        CustomerActions.requestSearchNamedAcc(
+          activePage,
+          pageSize,
+          "CustomerID",
+          null,
+          "ascending",
+          null,
+          salesID
+        )
+      );
+    } else {
+      setMyAccount(false);
+
+      dispatch(
+        CustomerActions.requestNamedAcc(
+          activePage,
+          pageSize,
+          "CustomerID",
+          "ascending"
+        )
+      );
+    }
+  };
+
+  const generateExcel = () => {
+    let tableSelect: any;
+    let tableHead: any;
+    if (window.location.pathname === "/data-quality/customer-setting-page") {
+      tableSelect = document.getElementById(
+        "exporttosetting"
+      ) as HTMLTableElement;
+      tableHead = document.querySelector(
+        "#exporttosetting > thead > tr > th:nth-child(1)"
+      ) as HTMLTableElement;
+    } else {
+      tableSelect = document.getElementById("exportosett") as HTMLTableElement;
+      tableHead = document.querySelector(
+        "#exportosett > thead > tr > th:nth-child(1)"
+      ) as HTMLTableElement;
+    }
+    if (tableHead) {
+      tableHead.style.display = "none";
+    }
+
+    const tableClone = tableSelect.cloneNode(true) as HTMLTableElement;
+
+    for (let i = 0; i < tableClone.rows.length; i++) {
+      const firstCol = tableClone.rows[i].cells[0];
+      if (firstCol) {
+        firstCol.remove();
+      }
+    }
+
+    // Convert the cloned table to Excel
+    TableToExcel.convert(tableClone, {
+      name: "NamedAccounts_" + currDate + ".xlsx",
+      sheet: {
+        name: "Sheet 1",
+      },
+    });
+  };
+
   const exportTableToExcel = (tableID: string, filename: string): void => {
     const search = document.querySelector(
       "#search-input-customer"
@@ -93,7 +168,20 @@ const NamedAccountsPage: React.FC<IProps> = (
           "CustomerID",
           search.value
         )
-      );
+      )
+        .then(() => {
+          generateExcel();
+        })
+        .then(() => {
+          dispatch(
+            CustomerActions.requestNamedAcc(
+              1,
+              pageSize,
+              "CustomerID",
+              search.value
+            )
+          );
+        });
     } else {
       dispatch(
         CustomerActions.requestNamedAcc(
@@ -102,51 +190,22 @@ const NamedAccountsPage: React.FC<IProps> = (
           "CustomerID",
           "ascending"
         )
-      );
-    }
-    if (isRequesting == false) {
-      setTimeout(() => {
-        let tableSelect: any;
-        let tableHead: any;
-
-        if (
-          window.location.pathname === "/data-quality/customer-setting-page"
-        ) {
-          tableSelect = document.getElementById(
-            "exporttosetting"
-          ) as HTMLTableElement;
-          tableHead = document.querySelector(
-            "#exporttosetting > thead > tr > th:nth-child(1)"
-          ) as HTMLTableElement;
-        } else {
-          tableSelect = document.getElementById(
-            "exportosett"
-          ) as HTMLTableElement;
-          tableHead = document.querySelector(
-            "#exportosett > thead > tr > th:nth-child(1)"
-          ) as HTMLTableElement;
-        }
-
-        tableHead.style.display = "none";
-        for (let i = 0; i < tableSelect.rows.length; i++) {
-          const firstCol = tableSelect.rows[i].cells[0];
-          firstCol.remove();
-        }
-        TableToExcel.convert(tableSelect, {
-          name: "NamedAccounts_" + currDate + ".xlsx",
-          sheet: {
-            name: "Sheet 1",
-          },
+      )
+        .then(() => {
+          generateExcel();
+        })
+        .then(() => {
+          dispatch(
+            CustomerActions.requestNamedAcc(
+              1,
+              pageSize,
+              "CustomerID",
+              "ascending"
+            )
+          );
         });
-      }, 3000);
-      setTimeout(() => {
-        window.location.href =
-          window.location.origin + window.location.pathname;
-      }, 4000);
     }
   };
-
-  const currDate: string = format(new Date(), "cccc LLLL d, yyyy");
 
   useEffect(() => {
     dispatch(
@@ -161,9 +220,24 @@ const NamedAccountsPage: React.FC<IProps> = (
     )! as HTMLInputElement;
 
     // if (window.location.pathname === "/data-quality/customer-setting-page") {
-    if (myAccount) {
+    if (filterData != undefined) {
+      dispatch(
+        CustomerSettingAct.requestSearchNamedAcc(
+          activePage,
+          pageSize,
+          "CustomerID",
+          null,
+          "ascending",
+          filterData.newsalesAssign,
+          filterData.pmo_customer,
+          filterData.holdshipment,
+          filterData.blacklist
+        )
+      );
+    } else if (myAccount) {
       const userId: any = localStorage.getItem("userLogin");
-      const salesID = JSON.parse(userId)?.employeeID || 830;
+      const salesID = JSON.parse(userId)?.employeeID;
+
       dispatch(
         CustomerSettingAct.requestSearchNamedAcc(
           data.activePage,
@@ -240,9 +314,8 @@ const NamedAccountsPage: React.FC<IProps> = (
                     fontSize: "0.8rem",
                     alignItems: "center",
                   }}
-                  // color="red"
                   icon="times circle"
-                  disabled={rowData.length === 0 || rowData.length > 5}
+                  disabled={rowData.length === 0}
                   size="mini"
                   content="Release Account"
                   onClick={onReleaseAccount}
@@ -256,31 +329,59 @@ const NamedAccountsPage: React.FC<IProps> = (
               <p></p>
             ) : (
               <p className="p-account">
-                {rowData.length} of 5 accounts has been pick.
+                {rowData.length} accounts has been pick.
               </p>
             )}
           </div>
 
           <div className="posision-container">
-            <div
-              className="myAccount-toggle"
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "center" }}>
-                <Checkbox
-                  style={{ margin: "0.5rem", transform: "scale(0.9)" }}
-                  toggle
-                  checked={myAccount}
-                  onChange={() => handleMyAccount()}
-                ></Checkbox>
+            {role === "Admin" ? (
+              <>
+                <div
+                  className="myAccount-toggle"
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    <Checkbox
+                      style={{ margin: "0.5rem", transform: "scale(0.9)" }}
+                      toggle
+                      checked={myAccount}
+                      onChange={() => handleMyApproval()}
+                    ></Checkbox>
+                  </div>
+                  <p style={{ fontSize: "0.8rem", margin: "0.5rem" }}>
+                    MY APPROVAL FILTER
+                  </p>
+                </div>
+              </>
+            ) : (
+              <div
+                className="myAccount-toggle"
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <Checkbox
+                    style={{ margin: "0.5rem", transform: "scale(0.9)" }}
+                    toggle
+                    checked={myAccount}
+                    onChange={() => handleMyAccount()}
+                  ></Checkbox>
+                </div>
+                <p style={{ fontSize: "0.8rem", margin: "0.5rem" }}>
+                  My Account
+                </p>
               </div>
-              <p style={{ fontSize: "0.8rem", margin: "0.5rem" }}>My Account</p>
-            </div>
+            )}
           </div>
 
           <div className="posision-container-right">
@@ -328,6 +429,8 @@ const NamedAccountsPage: React.FC<IProps> = (
           setOpenFilter={setOpenFilter}
           openFilter={openFilter}
           rowData={rowData}
+          getRowData={setRowData}
+          getFilterData={setFilterData}
         />
       )}
     </Fragment>

@@ -1,7 +1,9 @@
-import React from 'react';
-import { FieldRenderProps } from 'react-final-form';
-import { FormFieldProps, Form, Label, Select } from 'semantic-ui-react';
-interface IProps extends FieldRenderProps<string, HTMLElement>, FormFieldProps {}
+import React from "react";
+import { FieldRenderProps } from "react-final-form";
+import { FormFieldProps, Form, Label, Select } from "semantic-ui-react";
+interface IProps
+  extends FieldRenderProps<string, HTMLElement>,
+    FormFieldProps {}
 
 const DropdownClearInput: React.FC<IProps> = ({
   input,
@@ -16,12 +18,16 @@ const DropdownClearInput: React.FC<IProps> = ({
   mandatory = true,
 }) => {
   return (
-    <Form.Field className="LabelNameLabel" error={touched && !!error} width={width}>
+    <Form.Field
+      className="LabelNameLabel"
+      error={touched && !!error}
+      width={width}
+    >
       <div>
-        <label htmlFor={input.name} style={{ marginRight: '10px' }}>
+        <label htmlFor={input.name} style={{ marginRight: "10px" }}>
           {labelName}
-          <label hidden={mandatory} style={{ color: 'red' }}>
-            {' '}
+          <label hidden={mandatory} style={{ color: "red" }}>
+            {" "}
             *
           </label>
         </label>
@@ -32,7 +38,7 @@ const DropdownClearInput: React.FC<IProps> = ({
         clearable
         options={options}
         disabled={disabled}
-        style={{ minWidth: '10em' }}
+        style={{ minWidth: "10em" }}
         search
         selection
         onChange={(e, data) => {

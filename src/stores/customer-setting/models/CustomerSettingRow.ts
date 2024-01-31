@@ -13,12 +13,15 @@ export default class CustomerSettingRow extends BaseModel {
   customerAddress: string = "";
   lastProjectName: string = "";
   salesName: string = "";
+  myAccount: number = 0;
   relatedCustomer: string = "";
   invoiceCondition: string = "";
+  requestedBy: string = "";
   shareable: boolean = false;
   pmoCustomer: boolean = false;
   blacklist: boolean = false;
   named: boolean = false;
+  salesShareableID: number = 0;
   holdshipment: boolean = false;
   createdBy: string = "";
   createdDate?: Date = undefined;
@@ -37,9 +40,12 @@ export default class CustomerSettingRow extends BaseModel {
       salesID: ConversionTypeEnum.String,
       customerCategory: ConversionTypeEnum.String,
       customerName: ConversionTypeEnum.String,
+      myAccount: ConversionTypeEnum.Number,
       customerAddress: ConversionTypeEnum.String,
+      requestedBy: ConversionTypeEnum.String,
       lastProjectName: ConversionTypeEnum.String,
       salesName: ConversionTypeEnum.String,
+      salesShareableID: ConversionTypeEnum.Number,
       relatedCustomer: ConversionTypeEnum.String,
       invoiceCondition: ConversionTypeEnum.String,
       shareable: ConversionTypeEnum.Boolean,
