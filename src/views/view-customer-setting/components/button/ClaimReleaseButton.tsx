@@ -23,6 +23,7 @@ interface IProps {
 const ClaimReleaseButton: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => {   
     const dispatch: Dispatch = useDispatch();
     const { customer, accountStatus, isEmployeeOwnCustomer, isEmployeeRequestShareable, role } = props;
+    const userLogin: any = JSON.parse(localStorage.getItem("userLogin"));
     
     /** Claim Account */
     const onClaimAccount = async () => {
@@ -68,8 +69,13 @@ const ClaimReleaseButton: React.FC<IProps> = (props: React.PropsWithChildren<IPr
         }
 
         {/* request shareable account */}
-        {(accountStatus == "Named Account" && !isEmployeeOwnCustomer && !isEmployeeRequestShareable && role?.toUpperCase() == "SALES") &&
+        {(accountStatus == "Named Account" && !isEmployeeOwnCustomer && !isEmployeeRequestShareable && customer.shareableApprovalStatus.length == 0 && role?.toUpperCase() == "SALES") &&
             <Button color="yellow" size="small" type="button" onClick={() => onClaimAccount()}><Icon name="share"/>Request Shareable Account</Button>
+        }
+
+        {/* already had request */}
+        {(accountStatus == "Named Account" && !isEmployeeOwnCustomer && !isEmployeeRequestShareable && customer.shareableApprovalStatus.requestedBy != userLogin.fullName  && role?.toUpperCase() == "SALES") &&
+            <Button size="small" type="button" disabled><Icon name="wait"/>Already had pending request</Button>
         }
 
         {/* release shareable account */}
