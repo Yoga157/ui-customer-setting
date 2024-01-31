@@ -103,6 +103,7 @@ const FilterCustomer: React.FC<{
         null,
         "ascending",
         newsalesAssign,
+        null,
         pmo_customer,
         holdshipment,
         blacklist

@@ -37,12 +37,10 @@ const NamedAccountsPage: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
+  const { role } = props;
   const [pageSize, setPage] = useState(10);
   const activePage = useSelector(
     (state: IStore) => state.customerSetting.activePage
-  );
-  const currentUser: IUserResult = useSelector((state: IStore) =>
-    selectUserResult(state)
   );
   const [rowData, setRowData] = useState([]);
   const [filterData, setFilterData] = useState<FilterData | undefined>(
@@ -83,6 +81,37 @@ const NamedAccountsPage: React.FC<IProps> = (
       setMyAccount(false);
       dispatch(
         CustomerSettingAct.requestNamedAcc(1, 10, "CustomerID", "ascending")
+      );
+    }
+  };
+
+  const handleMyApproval = () => {
+    const userId: any = localStorage.getItem("userLogin");
+
+    if (myAccount == false) {
+      setMyAccount(true);
+      const salesID = JSON.parse(userId)?.employeeID;
+      dispatch(
+        CustomerActions.requestSearchNamedAcc(
+          activePage,
+          pageSize,
+          "CustomerID",
+          null,
+          "ascending",
+          null,
+          salesID
+        )
+      );
+    } else {
+      setMyAccount(false);
+
+      dispatch(
+        CustomerActions.requestNamedAcc(
+          activePage,
+          pageSize,
+          "CustomerID",
+          "ascending"
+        )
       );
     }
   };
@@ -304,25 +333,53 @@ const NamedAccountsPage: React.FC<IProps> = (
           </div>
 
           <div className="posision-container">
-            <div
-              className="myAccount-toggle"
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "center" }}>
-                <Checkbox
-                  style={{ margin: "0.5rem", transform: "scale(0.9)" }}
-                  toggle
-                  checked={myAccount}
-                  onChange={() => handleMyAccount()}
-                ></Checkbox>
+            {role === "Admin" ? (
+              <>
+                <div
+                  className="myAccount-toggle"
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    <Checkbox
+                      style={{ margin: "0.5rem", transform: "scale(0.9)" }}
+                      toggle
+                      checked={myAccount}
+                      onChange={() => handleMyApproval()}
+                    ></Checkbox>
+                  </div>
+                  <p style={{ fontSize: "0.8rem", margin: "0.5rem" }}>
+                    MY APPROVAL FILTER
+                  </p>
+                </div>
+              </>
+            ) : (
+              <div
+                className="myAccount-toggle"
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <Checkbox
+                    style={{ margin: "0.5rem", transform: "scale(0.9)" }}
+                    toggle
+                    checked={myAccount}
+                    onChange={() => handleMyAccount()}
+                  ></Checkbox>
+                </div>
+                <p style={{ fontSize: "0.8rem", margin: "0.5rem" }}>
+                  My Account
+                </p>
               </div>
-              <p style={{ fontSize: "0.8rem", margin: "0.5rem" }}>My Account</p>
-            </div>
+            )}
           </div>
 
           <div className="posision-container-right">

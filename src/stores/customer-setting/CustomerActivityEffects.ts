@@ -151,6 +151,7 @@ export const requestSearchNamedAcc = async (
   search: string | null,
   sorting?: string | null,
   salesID?: string | null,
+  myAccount?: number | null,
   pmo_customer?: boolean | null,
   holdshipment?: boolean | null,
   blacklist?: boolean | null
@@ -159,7 +160,7 @@ export const requestSearchNamedAcc = async (
     search || search != null ? `&search=${search}` : ``
   }${sorting || sorting != null ? `&sorting=${sorting}` : ``}${
     salesID || salesID != null ? `&salesID=${salesID}` : ``
-  }${
+  }${myAccount || myAccount != null ? `&myAccount=${myAccount}` : ``}${
     pmo_customer || pmo_customer != null ? `&pmoCustomer=${pmo_customer}` : ``
   }${
     holdshipment || holdshipment != null ? `&holdshipment=${holdshipment}` : ``

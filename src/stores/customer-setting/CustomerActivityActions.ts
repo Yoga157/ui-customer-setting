@@ -225,6 +225,7 @@ export const requestSearchNamedAcc = (
   search: string,
   sorting?: string,
   salesID?: string,
+  myAccount?: number,
   pmo_customer?: boolean,
   holdshipment?: boolean,
   blacklist?: boolean
@@ -240,6 +241,7 @@ export const requestSearchNamedAcc = (
       search,
       sorting,
       salesID,
+      myAccount,
       pmo_customer,
       holdshipment,
       blacklist
