@@ -115,7 +115,7 @@ const CustomerTableRow: React.FC<IProps> = (
                     />
 
                     {/* {console.log(userId.fullName)} */}
-                    {rowData.salesName != userId.fullName && (
+                    {rowData.salesName != userId.fullName  || rowData.status != "Pending" && (
                       <Dropdown.Item
                         text="Request Share Account"
                         icon="share"

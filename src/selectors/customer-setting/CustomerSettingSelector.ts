@@ -95,6 +95,7 @@ const _mappingObjectTableNameRow = (model: any): any => {
     requestedBy: model.requestedBy === null ? "" : model.requestedBy,
     pmoCustomer: model.pmoCustomer === null ? null : model.pmoCustomer,
     salesShareableID: model.salesShareableID,
+    status: model.status,
     blacklist: model.blacklist === null ? null : model.blacklist,
     holdshipment: model.holdshipment === null ? null : model.holdshipment,
     createdBy: model.createdBy === "" ? "" : model.createdBy,
