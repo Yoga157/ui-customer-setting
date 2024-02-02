@@ -6,6 +6,7 @@ import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLeve
 import ModalSizeEnum from "constants/ModalSizeEnum";
 import "./CustomerTableRowStyle.scss";
 import ClaimForm from "../../form/form-claim/FormClaim";
+import ReleaseForm from "../../form/form-release/FormRelease"
 import { useHistory } from "react-router-dom";
 
 interface IProps {
@@ -24,6 +25,7 @@ const CustomerTableRow: React.FC<IProps> = (
   const { role } = props;
   const { rowData, getRowData, data } = props;
   const [isChecked, setIsChecked] = useState(false);
+  const userLogin = JSON.parse(localStorage.getItem('userLogin'));
 
   const setRowData = (data) => {
     let checkData = props.data.find(
@@ -49,6 +51,16 @@ const CustomerTableRow: React.FC<IProps> = (
         ModalSizeEnum.Small
       )
     );
+  }, [dispatch, rowData]);
+
+  const onReleaseAccount = useCallback((): void => {
+    dispatch(
+      ModalFirstLevelActions.OPEN(
+        <ReleaseForm rowData={[rowData]} />,
+        ModalSizeEnum.Tiny
+      )
+    );
+    getRowData([]);
   }, [dispatch, rowData]);
 
   const onEdit = (id: number) => {
@@ -79,6 +91,7 @@ const CustomerTableRow: React.FC<IProps> = (
                       ? true
                       : false
                   }
+                  disabled={!rowData.salesName.includes(userLogin.fullName)}
                 ></input>
               </label>
             </div>
@@ -92,11 +105,19 @@ const CustomerTableRow: React.FC<IProps> = (
                       onClick={() => onEdit(rowData.customerID)}
                     />
 
+                    {rowData.salesName.includes(userLogin.fullName)  && (
+                    <Dropdown.Item
+                      text="Release Account"
+                      icon="times circle"
+                      onClick={onReleaseAccount}
+                    />)}
+
+                    {!rowData.salesName.includes(userLogin.fullName)  && (
                     <Dropdown.Item
                       text="Claim Account"
                       icon="circle check"
                       onClick={onClaimAccount}
-                    />
+                    />)}
 
                     {rowData.status !== "CANCEL" &&
                       rowData.CustomerID === "" && (

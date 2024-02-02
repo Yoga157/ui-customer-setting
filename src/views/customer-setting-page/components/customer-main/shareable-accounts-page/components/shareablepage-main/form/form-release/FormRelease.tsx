@@ -3,21 +3,20 @@ import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
+// import "../Modal.scss";
 import { Form as FinalForm } from "react-final-form";
 import { Form, Grid, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
-import CustomerSettingPostModel from "stores/customer-setting/models/CustomerSettingPostModel";
-import {} from "revalidate";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
-import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
+import newReleaseAccount from "stores/customer-setting/models/ReleaseAccounts";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 
 interface IProps {
   rowData: any;
 }
 
-const ClaimAccount: React.FC<IProps> = (
+const ReleaseAccount: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
@@ -35,18 +34,14 @@ const ClaimAccount: React.FC<IProps> = (
     const userId: any = localStorage.getItem("userLogin");
 
     for (let j = 0; j < rowData.length; j++) {
-      const NewClaimAccount = new CustomerSettingPostModel(e);
-      NewClaimAccount.customerSettingID = 0;
-      NewClaimAccount.customerID = rowData[j].customerID;
-      NewClaimAccount.salesID = JSON.parse(userId)?.employeeID;
-      NewClaimAccount.requestedBy = JSON.parse(userId)?.employeeID;
-      NewClaimAccount.requestedDate = new Date();
-      NewClaimAccount.createDate = new Date();
-      NewClaimAccount.createUserID = JSON.parse(userId)?.employeeID;
-
-      await dispatch(CustomerSettingAct.postClaimAccount(NewClaimAccount));
+      await dispatch(
+        CustomerSettingAct.putReleaseAccount(
+          (rowData.customerID = props.rowData[j].customerID),
+          (rowData.salesID = JSON.parse(userId)?.employeeID),
+          (rowData.modifyUserID = JSON.parse(userId)?.employeeID)
+        )
+      );
     }
-
     dispatch(ModalAction.CLOSE());
     dispatch(
       CustomerSettingAct.requestShareabledAcc(1, 10, "CustomerID", "ascending")
@@ -88,7 +83,7 @@ const ClaimAccount: React.FC<IProps> = (
                 }}
               >
                 <span style={{ padding: "10px" }}>
-                  Are you sure want to claim this account?
+                  Are you sure want to release this account?
                 </span>
               </Grid.Row>
               <Grid.Row>
@@ -99,7 +94,7 @@ const ClaimAccount: React.FC<IProps> = (
                         centered
                         width={1}
                         style={{ padding: "0px" }}
-                        key={data.customerID}
+                        key={data.customerGenID}
                       >
                         <Grid.Column style={{ marginBottom: "3rem" }}>
                           <p
@@ -125,7 +120,7 @@ const ClaimAccount: React.FC<IProps> = (
                   Cancel
                 </Button>
                 <Button type="submit" color="blue">
-                  Yes, Claim it
+                  Yes, Release
                 </Button>
               </div>
             </Form>
@@ -136,4 +131,4 @@ const ClaimAccount: React.FC<IProps> = (
   );
 };
 
-export default ClaimAccount;
+export default ReleaseAccount;

@@ -61,11 +61,11 @@ const App: React.FC<IProps> = (props: React.PropsWithChildren<IProps>) => (
                   path={RouteEnum.FunnelOpportunity}
                   component={FunnelOpportunity}
                 />{" "} */}
-                <Route
+                <PrivateRoute
                   path="/customer-setting/:id(\d+)"
                   component={ViewCustomerSetting}
                 />
-                <Route
+                <PrivateRoute
                   path={RouteEnum.CustomerSetting}
                   component={CustomerSettingPage}
                 />
