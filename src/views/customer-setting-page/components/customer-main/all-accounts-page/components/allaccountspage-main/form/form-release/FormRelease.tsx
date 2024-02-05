@@ -8,11 +8,12 @@ import { Form, Grid, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
-import newReleaseAccount from "stores/customer-setting/models/ReleaseAccounts";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 
 interface IProps {
   rowData: any;
+  filterData: any;
+  myAccount: boolean;
 }
 
 interface FilterData {
@@ -31,7 +32,7 @@ const ReleaseAccount: React.FC<IProps> = (
   const dispatch: Dispatch = useDispatch();
   const { rowData } = props;
   const [filterData, setFilterData] = useState<FilterData | undefined>(
-    undefined
+    props.filterData || undefined
   );
   const activePage = useSelector(
     (state: IStore) => state.customerSetting.activePage
@@ -58,30 +59,49 @@ const ReleaseAccount: React.FC<IProps> = (
       );
     }
     dispatch(ModalAction.CLOSE());
-    dispatch(
-      CustomerSettingAct.requestSearchAllAcc(
-        activePage,
-        10,
-        "CustomerID",
-        null,
-        "ascending",
-        filterData.newsalesAssign,
-        filterData.pmo_customer,
-        filterData.blacklist,
-        filterData.holdshipment,
-        filterData.nonameAccount,
-        filterData.namedAccount,
-        filterData.shareableAccount
-      )
-    );
-    dispatch(
-      CustomerSettingAct.requestAllAcc(
-        activePage,
-        10,
-        "CustomerID",
-        "ascending"
-      )
-    );
+
+    if(filterData != undefined) {
+      console.log(filterData)
+      dispatch(
+        CustomerSettingAct.requestSearchAllAcc(
+          activePage,
+          10,
+          "CustomerID",
+          null,
+          "ascending",
+          filterData.newsalesAssign,
+          filterData.pmo_customer,
+          filterData.blacklist,
+          filterData.holdshipment,
+          filterData.nonameAccount,
+          filterData.namedAccount,
+          filterData.shareableAccount
+        )
+      );
+    } else if(props.myAccount) {
+      const salesID = JSON.parse(userId)?.employeeID;
+      dispatch(
+        CustomerSettingAct.requestSearchAllAcc(
+          activePage,
+          10,
+          "CustomerID",
+          null,
+          "ascending",
+          salesID
+        )
+      );
+    }
+    else {
+      dispatch(
+        CustomerSettingAct.requestAllAcc(
+          activePage,
+          10,
+          "CustomerID",
+          "ascending"
+        )
+      );
+    }
+
   };
 
   return (

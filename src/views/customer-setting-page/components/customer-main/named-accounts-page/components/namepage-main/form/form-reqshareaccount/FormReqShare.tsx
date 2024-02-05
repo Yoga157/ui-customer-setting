@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,6 +14,15 @@ import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityAct
 
 interface IProps {
   rowData: any;
+  filterData: any;
+  myAccount: boolean;
+}
+
+interface FilterData {
+  pmo_customer: any;
+  newsalesAssign: any;
+  holdshipment: any;
+  blacklist: any;
 }
 
 const ReleaseAccount: React.FC<IProps> = (
@@ -21,6 +30,12 @@ const ReleaseAccount: React.FC<IProps> = (
 ) => {
   const dispatch: Dispatch = useDispatch();
   const { rowData } = props;
+  const [filterData, setFilterData] = useState<FilterData | undefined>(
+    props.filterData || undefined
+  );
+  const activePage = useSelector(
+    (state: IStore) => state.customerSetting.activePage
+  )
 
   const cancelClick = () => {
     dispatch(ModalAction.CLOSE());
@@ -45,9 +60,45 @@ const ReleaseAccount: React.FC<IProps> = (
       await dispatch(CustomerSettingAct.postRequestAccount(NewAssignSales));
     }
     dispatch(ModalAction.CLOSE());
-    dispatch(
-      CustomerSettingAct.requestNamedAcc(1, 10, "CustomerID", "ascending")
-    );
+    
+    if(filterData != undefined) {
+      console.log(filterData)
+      dispatch(
+        CustomerSettingAct.requestSearchAllAcc(
+          activePage,
+          10,
+          "CustomerID",
+          null,
+          "ascending",
+          filterData.newsalesAssign,
+          filterData.pmo_customer,
+          filterData.blacklist,
+          filterData.holdshipment,
+        )
+      );
+    } else if(props.myAccount) {
+      const salesID = JSON.parse(userId)?.employeeID;
+      dispatch(
+        CustomerSettingAct.requestSearchNamedAcc(
+          activePage,
+          10,
+          "CustomerID",
+          null,
+          "ascending",
+          salesID
+        )
+      );
+    }
+    else {
+      dispatch(
+        CustomerSettingAct.requestNamedAcc(
+          activePage,
+          10,
+          "CustomerID",
+          "ascending"
+        )
+      );
+    }
   };
 
   return (

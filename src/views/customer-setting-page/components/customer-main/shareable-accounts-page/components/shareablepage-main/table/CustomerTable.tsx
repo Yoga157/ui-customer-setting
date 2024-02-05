@@ -11,7 +11,8 @@ interface IProps {
   readonly tableData: any;
   readonly history: any;
   readonly role: any;
-
+  readonly myAccount: boolean;
+  readonly filterData: any;
   getRowData: (data: any) => void;
   data: any;
 }
@@ -186,6 +187,8 @@ const CustomerTable: React.FC<IProps> = (
             rowData={item}
             getRowData={props.getRowData}
             data={props.data}
+            myAccount={props.myAccount}
+            filterData={props.filterData}
           />
         ))
       )}

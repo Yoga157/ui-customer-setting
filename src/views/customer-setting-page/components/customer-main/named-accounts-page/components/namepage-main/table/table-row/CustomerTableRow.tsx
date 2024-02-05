@@ -16,6 +16,9 @@ interface IProps {
   readonly role: string;
   getRowData: (data: any) => void;
   data: any;
+  readonly myAccount: boolean;
+  readonly filterData: any;
+
 }
 
 const CustomerTableRow: React.FC<IProps> = (
@@ -48,7 +51,7 @@ const CustomerTableRow: React.FC<IProps> = (
   const onRequestAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <RequestForm rowData={[rowData]} />,
+        <RequestForm rowData={[rowData]} filterData={props.filterData} myAccount={props.myAccount}/>,
         ModalSizeEnum.Tiny
       )
     );
@@ -58,7 +61,7 @@ const CustomerTableRow: React.FC<IProps> = (
   const onReleaseAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ReleaseForm rowData={[rowData]} />,
+        <ReleaseForm rowData={[rowData]} filterData={props.filterData} myAccount={props.myAccount}/>,
         ModalSizeEnum.Tiny
       )
     );
