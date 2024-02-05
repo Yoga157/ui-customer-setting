@@ -83,7 +83,7 @@ const ModalUserStories: React.FC<IProps> = (props: React.PropsWithChildren<IProp
                         <div style={{ color: "#8992A1", backgroundColor: "#E1E1E1", padding: "0.5rem 0", fontStyle: "italic", fontSize: "10px", marginTop: "1rem" }}>
                             {modifiedStoryBy.map((data, index) => {
                                 return (
-                                    <p key={index}>Modified by {data?.salesName}</p>
+                                    <p key={index}>Modified by {data}</p>
                                 )
                             })}
                         </div>

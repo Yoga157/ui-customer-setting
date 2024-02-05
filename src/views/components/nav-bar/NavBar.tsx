@@ -38,6 +38,8 @@ export const NavBar: React.FC<IProps> = (props: React.PropsWithChildren<IProps>)
   };
 
   const onLogout = () => {
+    localStorage.removeItem('userLogin');
+    history.replace(RouteEnum.Home);
     /*if (localStoragFunnelFormEdit) {
       const isLeave = window.confirm('Are you sure want to discard changes?');
       if (isLeave) {

@@ -73,8 +73,13 @@ const ClaimReleaseButton: React.FC<IProps> = (props: React.PropsWithChildren<IPr
             <Button color="yellow" size="small" type="button" onClick={() => onClaimAccount()}><Icon name="share"/>Request Shareable Account</Button>
         }
 
+        {/* request shareable account but already get rejected */}
+        {(accountStatus == "Named Account" && !isEmployeeOwnCustomer && !isEmployeeRequestShareable && customer.shareableApprovalStatus?.requestedBy == userLogin.fullName && customer.shareableApprovalStatus?.status.toUpperCase() == "REJECTED" && role?.toUpperCase() == "SALES") &&
+            <Button color="yellow" size="small" type="button" onClick={() => onClaimAccount()}><Icon name="share"/>Request Shareable Account</Button>
+        }
+
         {/* already had request */}
-        {(accountStatus == "Named Account" && !isEmployeeOwnCustomer && !isEmployeeRequestShareable && customer.shareableApprovalStatus.requestedBy != userLogin.fullName  && role?.toUpperCase() == "SALES") &&
+        {(accountStatus == "Named Account" && !isEmployeeOwnCustomer && !isEmployeeRequestShareable && customer.shareableApprovalStatus.length != 0 && customer.shareableApprovalStatus?.requestedBy != userLogin.fullName  && role?.toUpperCase() == "SALES") &&
             <Button size="small" type="button" disabled><Icon name="wait"/>Already had pending request</Button>
         }
 

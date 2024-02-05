@@ -61,8 +61,8 @@ const _selectCustomerCategories = (categories: ResultActions): any => {
   if (Array.isArray(categories.resultObj)) {
     return categories.resultObj.map(
       (category: any): any => ({
-        text: category.customerCategory,
-        value: category.customerCategory
+        text: category,
+        value: category
       })
     );
   } else {

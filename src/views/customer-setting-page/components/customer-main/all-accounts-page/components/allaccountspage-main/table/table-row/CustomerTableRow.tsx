@@ -130,9 +130,21 @@ const CustomerTableRow: React.FC<IProps> = (
                       />
                     )}
 
-                    {rowData.salesName == userId.fullName && (
+                    {rowData.salesName.includes(userId.fullName) && (
                       <Dropdown.Item
                         text="Realease Account"
+                        icon="times circle"
+                        onClick={onReleaseAccount}
+                      />
+                    )}
+                  </>
+                )}
+
+              {rowData.shareable === true && role === "Sales" && (
+                  <>
+                    {rowData.salesName.includes(userId.fullName) && (
+                      <Dropdown.Item
+                        text="Release Account"
                         icon="times circle"
                         onClick={onReleaseAccount}
                       />
