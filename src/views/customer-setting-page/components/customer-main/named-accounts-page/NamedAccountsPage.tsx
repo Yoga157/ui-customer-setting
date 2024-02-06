@@ -209,6 +209,7 @@ const NamedAccountsPage: React.FC<IProps> = (
     dispatch(
       CustomerActions.requestNamedAcc(1, pageSize, "CustomerID", "ascending")
     );
+    dispatch(CustomerActions.setActivePage(1));
   }, [dispatch]);
 
   const handlePaginationChange = (e: any, data: any) => {

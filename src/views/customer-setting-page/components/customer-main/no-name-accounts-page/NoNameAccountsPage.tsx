@@ -60,6 +60,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
     dispatch(
       CustomerActions.requestNoNameAcc(1, pageSize, "CustomerID", "ascending")
     );
+    dispatch(CustomerActions.setActivePage(1));
   }, [dispatch]);
 
   const generateExcel = () => {

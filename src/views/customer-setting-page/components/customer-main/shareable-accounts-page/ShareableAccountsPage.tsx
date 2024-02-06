@@ -182,6 +182,7 @@ const ShareableAccountsPage: React.FC<IProps> = (
         "ascending"
       )
     );
+    dispatch(CustomerActions.setActivePage(1));
   }, [dispatch]);
 
   const handlePaginationChange = (e: any, data: any) => {
