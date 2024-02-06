@@ -85,7 +85,7 @@ const CustomerTableRow: React.FC<IProps> = (
 
   return (
     <Fragment>
-      <Table.Row key={rowData.customerID}>
+      <Table.Row key={rowData.CustomerID} style={{ backgroundColor: rowData.requestedBy === userId.fullName && rowData.status?.toUpperCase() === "REJECTED" ? "#ffe0d9" : rowData.status?.toUpperCase() === "PENDING" ? "#fffb9a" : "" }}>
         <Table.Cell width="4">
           <div
             style={{
@@ -124,7 +124,7 @@ const CustomerTableRow: React.FC<IProps> = (
 
                 {rowData.named === true && role === "Sales" && (
                   <>
-                    {rowData.salesName != userId.fullName && (
+                     {(rowData.salesName != userId.fullName && rowData.status != "Pending")  && (
                       <Dropdown.Item
                         text="Request Share Account"
                         icon="share"

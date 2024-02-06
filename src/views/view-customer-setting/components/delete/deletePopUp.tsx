@@ -1,16 +1,13 @@
-import React, { useEffect, Fragment, useState, useCallback } from "react";
+import React, { Fragment } from "react";
 import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
-import { Form as FinalForm, Field } from "react-final-form";
+import { Form as FinalForm } from "react-final-form";
 import { Form, Grid, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
-import { selectSalesSearchOptions } from "selectors/select-options/SalesAssignSelector";
-
-import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
-import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
+import "../modal/Modal.scss";
 
 interface IProps {
   deleteFunc: (data: any) => any;
@@ -34,53 +31,45 @@ const DeletePopUp: React.FC<IProps> = (
   );
 
   const deleteClick = async () => {
-    await dispatch(props.deleteFunc(props.id))
-    await dispatch(props.refreshFunc(props.customerSettingID))
+    await dispatch(props.deleteFunc(props.id));
+    await dispatch(props.refreshFunc(props.customerSettingID));
     await dispatch(ModalAction.CLOSE());
   };
 
   return (
     <Fragment>
-      {/* <LoadingIndicator isActive={isRequesting}> */}
-        <FinalForm
-          onSubmit={deleteClick}
-          render={({ handleSubmit }) => (
-            <Form onSubmit={handleSubmit}>
-              <Grid.Row>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginBottom: "1rem",
-                  }}
-                >
-                  <div className="ui segment" style={{ padding: "0px" }}>
-                    <img
-                      className="ui centered medium"
-                      src="/assets/info.png"
-                      sizes="small"
-                    />
-                  </div>
+      <FinalForm
+        onSubmit={deleteClick}
+        render={({ handleSubmit }) => (
+          <Form onSubmit={handleSubmit}>
+            <Grid.Row>
+              <div className="img-container">
+                <div className="ui segment" style={{ padding: "0px" }}>
+                  <img
+                    className="ui centered medium"
+                    src="/assets/info.png"
+                    sizes="small"
+                  />
                 </div>
-              </Grid.Row>
-              <Grid.Row centered style={{ textAlign: "center" }}>
-                <span style={{ padding: "10px" }}>
-                  Are you sure you want to DELETE this {props.content}?
-                </span>
-              </Grid.Row>
-              <Divider></Divider>
-              <div style={{ textAlign: "center" }}>
-                <Button type="button" onClick={cancelClick}>
-                  Cancel
-                </Button>
-                <Button className="MarBot10" type="submit" color="blue">
-                  Submit
-                </Button>
               </div>
-            </Form>
-          )}
-        />
+            </Grid.Row>
+            <Grid.Row centered className="text-align-center">
+              <span style={{ padding: "10px" }}>
+                Are you sure you want to DELETE this {props.content}?
+              </span>
+            </Grid.Row>
+            <Divider></Divider>
+            <div className="text-align-center">
+              <Button type="button" onClick={cancelClick}>
+                Cancel
+              </Button>
+              <Button className="MarBot10" type="submit" color="blue">
+                Submit
+              </Button>
+            </div>
+          </Form>
+        )}
+      />
       {/* </LoadingIndicator> */}
     </Fragment>
   );

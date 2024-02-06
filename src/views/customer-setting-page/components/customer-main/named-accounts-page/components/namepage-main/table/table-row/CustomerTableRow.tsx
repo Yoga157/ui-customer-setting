@@ -87,7 +87,7 @@ const CustomerTableRow: React.FC<IProps> = (
 
   return (
     <Fragment>
-      <Table.Row key={rowData.CustomerID} style={{ backgroundColor: (rowData.status?.toUpperCase() == "REJECTED" && rowData?.requestedBy == userId.fullName) && "#ffe0d9" }}>
+      <Table.Row key={rowData.CustomerID} style={{ backgroundColor: rowData?.requestedBy === userId.fullName && rowData.status?.toUpperCase() === "REJECTED" ? "#ffe0d9" : rowData.status?.toUpperCase() === "PENDING" ? "#fffb9a" : "" }}>
         <Table.Cell width="4">
           <div
             style={{
@@ -106,6 +106,7 @@ const CustomerTableRow: React.FC<IProps> = (
                       ? true
                       : false
                   }
+                  disabled={!rowData.salesName.includes(userId.fullName)}
                 ></input>
               </label>
             </div>
@@ -118,17 +119,16 @@ const CustomerTableRow: React.FC<IProps> = (
                       icon="edit outline"
                       onClick={() => onEdit(rowData.customerID)}
                     />
-
-                    {/* {console.log(userId.fullName)} */}
-                    {rowData.salesName != userId.fullName && (
+                    
+                     {(rowData.salesName != userId.fullName && rowData.status != "Pending")  && (
                       <Dropdown.Item
                         text="Request Share Account"
                         icon="share"
                         onClick={onRequestAccount}
                       />
-                    )}
+                    )} 
 
-                    {rowData.salesName == userId.fullName && (
+                    {rowData.salesName.includes(userId.fullName) && rowData.status != "Pending" && (
                       <Dropdown.Item
                         text="Realease Account"
                         icon="times circle"

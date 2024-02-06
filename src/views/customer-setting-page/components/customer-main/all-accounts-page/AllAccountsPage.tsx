@@ -211,7 +211,6 @@ const AllAccountsPage: React.FC<IProps> = (
     dispatch(
       CustomerActions.requestAllAcc(1, pageSize, "CustomerID", "ascending")
     );
-    dispatch(CustomerActions.setActivePage(1));
   }, [dispatch]);
 
   const handlePaginationChange = (e: any, data: any) => {
@@ -242,7 +241,8 @@ const AllAccountsPage: React.FC<IProps> = (
     } else if (myAccount) {
       const userId: any = localStorage.getItem("userLogin");
       const salesID = JSON.parse(userId)?.employeeID;
-      dispatch(
+      if (JSON.parse(userId).role == "Sales")
+      {dispatch(
         CustomerActions.requestSearchAllAcc(
           data.activePage,
           pageSize,
@@ -252,6 +252,18 @@ const AllAccountsPage: React.FC<IProps> = (
           salesID
         )
       );
+    } else {dispatch(
+      CustomerActions.requestSearchAllAcc(
+        data.activePage,
+        pageSize,
+        "CustomerID",
+        null,
+        "ascending",
+        null,
+        salesID
+      )
+    );
+  }   
     } else if (search.value.length > 0) {
       dispatch(
         CustomerActions.requestSearchAllAcc(

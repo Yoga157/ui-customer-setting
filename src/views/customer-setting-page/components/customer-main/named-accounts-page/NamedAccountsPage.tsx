@@ -47,6 +47,7 @@ const NamedAccountsPage: React.FC<IProps> = (
     undefined
   );
   const [myAccount, setMyAccount] = useState(false);
+  const [myApproval, setMyApproval] = useState(false);
   const currDate: string = format(new Date(), "cccc LLLL d, yyyy");
 
   const setNewRowData = (data) => {
@@ -237,7 +238,8 @@ const NamedAccountsPage: React.FC<IProps> = (
     } else if (myAccount) {
       const userId: any = localStorage.getItem("userLogin");
       const salesID = JSON.parse(userId)?.employeeID;
-      dispatch(
+      if (JSON.parse(userId).role == "Sales")
+      {dispatch(
         CustomerSettingAct.requestSearchNamedAcc(
           data.activePage,
           pageSize,
@@ -247,6 +249,18 @@ const NamedAccountsPage: React.FC<IProps> = (
           salesID
         )
       );
+    } else {dispatch(
+      CustomerSettingAct.requestSearchNamedAcc(
+        data.activePage,
+        pageSize,
+        "CustomerID",
+        null,
+        "ascending",
+        null,
+        salesID
+      )
+    );
+  }    
     } else if (search.value.length > 0) {
       dispatch(
         CustomerActions.requestSearchNamedAcc(
