@@ -3,10 +3,11 @@ import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
-// import "../Modal.scss";
 import { Form as FinalForm } from "react-final-form";
 import { Form, Grid, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
+import CustomerSettingPostModel from "stores/customer-setting/models/CustomerSettingPostModel";
+import {} from "revalidate";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
@@ -26,19 +27,18 @@ interface FilterData {
   blacklist: any;
   shareableAccount: any;
 }
-const ReleaseAccount: React.FC<IProps> = (
+
+const ClaimAccount: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
   const { rowData } = props;
-  const activePage = useSelector(
-    (state: IStore) => state.customerSetting.activePage
-  );
   const [filterData, setFilterData] = useState<FilterData | undefined>(
     props.filterData || undefined
   );
-  
-
+  const activePage = useSelector(
+    (state: IStore) => state.customerSetting.activePage
+  );
   const cancelClick = () => {
     dispatch(ModalAction.CLOSE());
   };
@@ -51,17 +51,21 @@ const ReleaseAccount: React.FC<IProps> = (
     const userId: any = localStorage.getItem("userLogin");
 
     for (let j = 0; j < rowData.length; j++) {
-      await dispatch(
-        CustomerSettingAct.putReleaseAccount(
-          (rowData.customerID = props.rowData[j].customerID),
-          (rowData.salesID = JSON.parse(userId)?.employeeID),
-          (rowData.modifyUserID = JSON.parse(userId)?.employeeID)
-        )
-      );
+      const NewClaimAccount = new CustomerSettingPostModel(e);
+      NewClaimAccount.customerSettingID = 0;
+      NewClaimAccount.customerID = rowData[j].customerID;
+      NewClaimAccount.salesID = JSON.parse(userId)?.employeeID;
+      NewClaimAccount.requestedBy = JSON.parse(userId)?.employeeID;
+      NewClaimAccount.requestedDate = new Date();
+      NewClaimAccount.createDate = new Date();
+      NewClaimAccount.createUserID = JSON.parse(userId)?.employeeID;
+
+      await dispatch(CustomerSettingAct.postClaimAccount(NewClaimAccount));
     }
+
     dispatch(ModalAction.CLOSE());
-    if(filterData != undefined) {
-      console.log(filterData)
+    if (filterData != undefined) {
+      console.log(filterData);
       dispatch(
         CustomerSettingAct.requestSearchAllAcc(
           activePage,
@@ -78,7 +82,7 @@ const ReleaseAccount: React.FC<IProps> = (
           filterData.shareableAccount
         )
       );
-    } else if(props.myAccount) {
+    } else if (props.myAccount) {
       const salesID = JSON.parse(userId)?.employeeID;
       dispatch(
         CustomerSettingAct.requestSearchShareabelAcc(
@@ -90,8 +94,7 @@ const ReleaseAccount: React.FC<IProps> = (
           salesID
         )
       );
-    }
-    else {
+    } else {
       dispatch(
         CustomerSettingAct.requestShareabledAcc(
           activePage,
@@ -101,9 +104,6 @@ const ReleaseAccount: React.FC<IProps> = (
         )
       );
     }
-    // dispatch(
-    //   CustomerSettingAct.requestShareabledAcc(1, 10, "CustomerID", "ascending")
-    // );
   };
 
   return (
@@ -141,7 +141,7 @@ const ReleaseAccount: React.FC<IProps> = (
                 }}
               >
                 <span style={{ padding: "10px" }}>
-                  Are you sure want to release this account?
+                  Are you sure want to claim this account?
                 </span>
               </Grid.Row>
               <Grid.Row>
@@ -152,7 +152,7 @@ const ReleaseAccount: React.FC<IProps> = (
                         centered
                         width={1}
                         style={{ padding: "0px" }}
-                        key={data.customerGenID}
+                        key={data.customerID}
                       >
                         <Grid.Column style={{ marginBottom: "3rem" }}>
                           <p
@@ -178,7 +178,7 @@ const ReleaseAccount: React.FC<IProps> = (
                   Cancel
                 </Button>
                 <Button type="submit" color="blue">
-                  Yes, Release
+                  Yes, Claim it
                 </Button>
               </div>
             </Form>
@@ -189,4 +189,4 @@ const ReleaseAccount: React.FC<IProps> = (
   );
 };
 
-export default ReleaseAccount;
+export default ClaimAccount;

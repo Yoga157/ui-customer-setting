@@ -1,13 +1,11 @@
-import React, { useEffect, Fragment, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
-import "../Modal.scss";
 import { Form as FinalForm } from "react-final-form";
 import { Form, Grid, Card, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
-import ReleaseAccount from "stores/customer-setting/models/ReleaseAccounts";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
@@ -15,8 +13,8 @@ import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityAct
 interface IProps {
   rowData: any;
   getRowData: (data: any) => void;
-  readonly myAccount: boolean;
-  readonly filterData: any;
+  filterData: any;
+  myAccount: boolean;
 }
 
 interface FilterData {
@@ -44,7 +42,7 @@ const RelaseAccountMod: React.FC<IProps> = (
   };
 
   const isRequesting: boolean = useSelector((state: IStore) =>
-    selectRequesting(state, [CustomerSettingAct.PUT_RELEASES_ACCOUNTS])
+    selectRequesting(state, [])
   );
 
   const onSubmitHandler = async (e) => {
@@ -59,10 +57,8 @@ const RelaseAccountMod: React.FC<IProps> = (
         )
       );
     }
-    props.getRowData([]);
     dispatch(ModalAction.CLOSE());
-    if(filterData != undefined) {
-      console.log(filterData)
+    if (filterData != undefined) {
       dispatch(
         CustomerSettingAct.requestSearchAllAcc(
           activePage,
@@ -73,10 +69,10 @@ const RelaseAccountMod: React.FC<IProps> = (
           filterData.newsalesAssign,
           filterData.pmo_customer,
           filterData.blacklist,
-          filterData.holdshipment,
+          filterData.holdshipment
         )
       );
-    } else if(props.myAccount) {
+    } else if (props.myAccount) {
       const salesID = JSON.parse(userId)?.employeeID;
       dispatch(
         CustomerSettingAct.requestSearchNamedAcc(
@@ -88,8 +84,7 @@ const RelaseAccountMod: React.FC<IProps> = (
           salesID
         )
       );
-    }
-    else {
+    } else {
       dispatch(
         CustomerSettingAct.requestNamedAcc(
           activePage,

@@ -1,13 +1,13 @@
-import React, { Fragment, useEffect, useState, useCallback } from "react";
+import React, { Fragment, useState, useCallback } from "react";
 import { Table, Dropdown, Icon } from "semantic-ui-react";
 import { Dispatch } from "redux";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLevelActions";
 import ModalSizeEnum from "constants/ModalSizeEnum";
 import "./CustomerTableRowStyle.scss";
-import RequestForm from "../../form/form-reqshareaccount/FormReqShare";
-import ReleaseForm from "../../form/form-release/FormRelease";
-import ApproveReq from "../../form/form-approverequest/FormApproveShareable";
+import RequestForm from "../../modal/modal-reqshareaccount/ModalReqShare";
+import ReleaseForm from "../../modal/modal-release/ModalRelease";
+import ApproveReq from "../../modal/modal-approverequest/FormApproveShareable";
 import { useHistory } from "react-router-dom";
 
 interface IProps {
@@ -18,7 +18,6 @@ interface IProps {
   data: any;
   readonly myAccount: boolean;
   readonly filterData: any;
-
 }
 
 const CustomerTableRow: React.FC<IProps> = (
@@ -51,7 +50,11 @@ const CustomerTableRow: React.FC<IProps> = (
   const onRequestAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <RequestForm rowData={[rowData]} filterData={props.filterData} myAccount={props.myAccount}/>,
+        <RequestForm
+          rowData={[rowData]}
+          filterData={props.filterData}
+          myAccount={props.myAccount}
+        />,
         ModalSizeEnum.Tiny
       )
     );
@@ -61,7 +64,11 @@ const CustomerTableRow: React.FC<IProps> = (
   const onReleaseAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ReleaseForm rowData={[rowData]} filterData={props.filterData} myAccount={props.myAccount}/>,
+        <ReleaseForm
+          rowData={[rowData]}
+          filterData={props.filterData}
+          myAccount={props.myAccount}
+        />,
         ModalSizeEnum.Tiny
       )
     );
@@ -87,7 +94,18 @@ const CustomerTableRow: React.FC<IProps> = (
 
   return (
     <Fragment>
-      <Table.Row key={rowData.CustomerID} style={{ backgroundColor: rowData?.requestedBy === userId.fullName && rowData.status?.toUpperCase() === "REJECTED" ? "#ffe0d9" : rowData.status?.toUpperCase() === "PENDING" ? "#fffb9a" : "" }}>
+      <Table.Row
+        key={rowData.CustomerID}
+        style={{
+          backgroundColor:
+            rowData?.requestedBy === userId.fullName &&
+            rowData.status?.toUpperCase() === "REJECTED"
+              ? "#ffe0d9"
+              : rowData.status?.toUpperCase() === "PENDING"
+              ? "#fffb9a"
+              : "",
+        }}
+      >
         <Table.Cell width="4">
           <div
             style={{
@@ -119,22 +137,24 @@ const CustomerTableRow: React.FC<IProps> = (
                       icon="edit outline"
                       onClick={() => onEdit(rowData.customerID)}
                     />
-                    
-                     {(rowData.salesName != userId.fullName && rowData.status != "Pending")  && (
-                      <Dropdown.Item
-                        text="Request Share Account"
-                        icon="share"
-                        onClick={onRequestAccount}
-                      />
-                    )} 
 
-                    {rowData.salesName.includes(userId.fullName) && rowData.status != "Pending" && (
-                      <Dropdown.Item
-                        text="Realease Account"
-                        icon="times circle"
-                        onClick={onReleaseAccount}
-                      />
-                    )}
+                    {rowData.salesName != userId.fullName &&
+                      rowData.status != "Pending" && (
+                        <Dropdown.Item
+                          text="Request Share Account"
+                          icon="share"
+                          onClick={onRequestAccount}
+                        />
+                      )}
+
+                    {rowData.salesName.includes(userId.fullName) &&
+                      rowData.status != "Pending" && (
+                        <Dropdown.Item
+                          text="Realease Account"
+                          icon="times circle"
+                          onClick={onReleaseAccount}
+                        />
+                      )}
 
                     {rowData.status !== "CANCEL" &&
                       rowData.CustomerID === "" && (
@@ -151,13 +171,13 @@ const CustomerTableRow: React.FC<IProps> = (
                       onClick={() => onEdit(rowData.customerID)}
                     />
 
-                    {rowData.status?.toUpperCase() == "PENDING" &&
+                    {rowData.status?.toUpperCase() == "PENDING" && (
                       <Dropdown.Item
                         text="Approve Shareable Request"
                         icon="circle check"
                         onClick={onApproveShareable}
                       />
-                    }
+                    )}
                   </>
                 )}
               </Dropdown.Menu>

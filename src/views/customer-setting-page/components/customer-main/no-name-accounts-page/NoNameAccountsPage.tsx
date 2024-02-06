@@ -14,7 +14,7 @@ import LoadingIndicator from "views/components/loading-indicator/LoadingIndicato
 import { Pagination, Tooltips, Button } from "views/components/UI";
 import TableToExcel from "@linways/table-to-excel";
 import ModalSizeEnum from "constants/ModalSizeEnum";
-import ClaimForm from "./components/nonamepage-main/form/form-claim/FormClaim";
+import ClaimForm from "./components/nonamepage-main/modal/modal-claim/FormClaim";
 import { selectCustomerSetting } from "selectors/customer-setting/CustomerSettingSelector";
 import FilterCustomer from "./components/nonamepage-main/filter/FilterCustomer";
 
@@ -50,7 +50,11 @@ const NoNameAccountsPage: React.FC<IProps> = (
   const onClaimAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ClaimForm rowData={rowData} getRowData={setRowData} filterData={filterData} />,
+        <ClaimForm
+          rowData={rowData}
+          getRowData={setRowData}
+          filterData={filterData}
+        />,
         ModalSizeEnum.Small
       )
     );
@@ -242,7 +246,9 @@ const NoNameAccountsPage: React.FC<IProps> = (
                   }}
                   color="yellow"
                   icon="check circle"
-                  disabled={rowData.length === 0 || role.toUpperCase() == "ADMIN"}
+                  disabled={
+                    rowData.length === 0 || role.toUpperCase() == "ADMIN"
+                  }
                   size="mini"
                   content="Claim Account"
                   onClick={onClaimAccount}

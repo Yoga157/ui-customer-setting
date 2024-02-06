@@ -16,7 +16,7 @@ import TableToExcel from "@linways/table-to-excel";
 import { selectShareableAccount } from "selectors/customer-setting/CustomerSettingSelector";
 import ModalSizeEnum from "constants/ModalSizeEnum";
 import FilterCustomer from "./components/shareablepage-main/filter/FilterCustomer";
-import ModReleaseForm from "./components/shareablepage-main/form/form-releasemodal/FormRealeseMod";
+import ModReleaseForm from "./components/shareablepage-main/form/moda-releases-edit/ModalRealesesEdit";
 
 interface IProps {
   history: any;
@@ -53,7 +53,12 @@ const ShareableAccountsPage: React.FC<IProps> = (
   const onReleaseAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ModReleaseForm rowData={rowData} getRowData={setRowData} filterData={filterData} myAccount={myAccount} />,
+        <ModReleaseForm
+          rowData={rowData}
+          getRowData={setRowData}
+          filterData={filterData}
+          myAccount={myAccount}
+        />,
         ModalSizeEnum.Small
       )
     );

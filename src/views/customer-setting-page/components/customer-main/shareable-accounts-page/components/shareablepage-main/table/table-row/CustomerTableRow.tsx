@@ -1,12 +1,12 @@
-import React, { Fragment, useEffect, useState, useCallback } from "react";
+import React, { Fragment, useState, useCallback } from "react";
 import { Table, Dropdown, Icon } from "semantic-ui-react";
 import { Dispatch } from "redux";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLevelActions";
 import ModalSizeEnum from "constants/ModalSizeEnum";
 import "./CustomerTableRowStyle.scss";
-import ClaimForm from "../../form/form-claim/FormClaim";
-import ReleaseForm from "../../form/form-release/FormRelease"
+import ClaimForm from "../../form/modal-claim/ModalClaim";
+import ReleaseForm from "../../form/modal-release/ModalRelease";
 import { useHistory } from "react-router-dom";
 
 interface IProps {
@@ -27,7 +27,7 @@ const CustomerTableRow: React.FC<IProps> = (
   const { role } = props;
   const { rowData, getRowData, data } = props;
   const [isChecked, setIsChecked] = useState(false);
-  const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+  const userLogin = JSON.parse(localStorage.getItem("userLogin"));
 
   const setRowData = (data) => {
     let checkData = props.data.find(
@@ -49,7 +49,11 @@ const CustomerTableRow: React.FC<IProps> = (
   const onClaimAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ClaimForm rowData={[rowData]} filterData={props.filterData} myAccount={props.myAccount} />,
+        <ClaimForm
+          rowData={[rowData]}
+          filterData={props.filterData}
+          myAccount={props.myAccount}
+        />,
         ModalSizeEnum.Small
       )
     );
@@ -58,7 +62,11 @@ const CustomerTableRow: React.FC<IProps> = (
   const onReleaseAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ReleaseForm rowData={[rowData]} filterData={props.filterData} myAccount={props.myAccount} />,
+        <ReleaseForm
+          rowData={[rowData]}
+          filterData={props.filterData}
+          myAccount={props.myAccount}
+        />,
         ModalSizeEnum.Tiny
       )
     );
@@ -107,19 +115,21 @@ const CustomerTableRow: React.FC<IProps> = (
                       onClick={() => onEdit(rowData.customerID)}
                     />
 
-                    {rowData.salesName.includes(userLogin.fullName)  && (
-                    <Dropdown.Item
-                      text="Release Account"
-                      icon="times circle"
-                      onClick={onReleaseAccount}
-                    />)}
+                    {rowData.salesName.includes(userLogin.fullName) && (
+                      <Dropdown.Item
+                        text="Release Account"
+                        icon="times circle"
+                        onClick={onReleaseAccount}
+                      />
+                    )}
 
-                    {!rowData.salesName.includes(userLogin.fullName)  && (
-                    <Dropdown.Item
-                      text="Claim Account"
-                      icon="circle check"
-                      onClick={onClaimAccount}
-                    />)}
+                    {!rowData.salesName.includes(userLogin.fullName) && (
+                      <Dropdown.Item
+                        text="Claim Account"
+                        icon="circle check"
+                        onClick={onClaimAccount}
+                      />
+                    )}
 
                     {rowData.status !== "CANCEL" &&
                       rowData.CustomerID === "" && (

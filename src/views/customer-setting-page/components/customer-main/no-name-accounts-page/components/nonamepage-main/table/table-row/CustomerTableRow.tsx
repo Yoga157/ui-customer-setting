@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import * as ModalFirstLevelActions from "stores/modal/first-level/ModalFirstLevelActions";
 import ModalSizeEnum from "constants/ModalSizeEnum";
 import "./CustomerTableRowStyle.scss";
-import ClaimFormEdit from "../../form/form-claim-edit/FormClaim";
+import ClaimFormEdit from "../../modal/modal-claim-edit/FormClaim";
 import { useHistory } from "react-router-dom";
 
 interface IProps {

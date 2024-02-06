@@ -15,7 +15,7 @@ import { selectUserResult } from "selectors/user/UserSelector";
 import IUserResult from "selectors/user/models/IUserResult";
 import TableToExcel from "@linways/table-to-excel";
 import ModalSizeEnum from "constants/ModalSizeEnum";
-import ModReleaseForm from "./components/namepage-main/form/form-releasemodal/FormRealeseMod";
+import ModReleaseForm from "./components/namepage-main/modal/modal-releasemodal/ModaRealeseEdit";
 import { format } from "date-fns";
 import { selectNameAccount } from "selectors/customer-setting/CustomerSettingSelector";
 import FilterCustomer from "./components/namepage-main/filter/FilterCustomer";
@@ -57,7 +57,12 @@ const NamedAccountsPage: React.FC<IProps> = (
   const onReleaseAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ModReleaseForm rowData={rowData} getRowData={setRowData} filterData={filterData} myAccount={myAccount} />,
+        <ModReleaseForm
+          rowData={rowData}
+          getRowData={setRowData}
+          filterData={filterData}
+          myAccount={myAccount}
+        />,
         ModalSizeEnum.Small
       )
     );
@@ -238,29 +243,30 @@ const NamedAccountsPage: React.FC<IProps> = (
     } else if (myAccount) {
       const userId: any = localStorage.getItem("userLogin");
       const salesID = JSON.parse(userId)?.employeeID;
-      if (JSON.parse(userId).role == "Sales")
-      {dispatch(
-        CustomerSettingAct.requestSearchNamedAcc(
-          data.activePage,
-          pageSize,
-          "CustomerID",
-          null,
-          "ascending",
-          salesID
-        )
-      );
-    } else {dispatch(
-      CustomerSettingAct.requestSearchNamedAcc(
-        data.activePage,
-        pageSize,
-        "CustomerID",
-        null,
-        "ascending",
-        null,
-        salesID
-      )
-    );
-  }    
+      if (JSON.parse(userId).role == "Sales") {
+        dispatch(
+          CustomerSettingAct.requestSearchNamedAcc(
+            data.activePage,
+            pageSize,
+            "CustomerID",
+            null,
+            "ascending",
+            salesID
+          )
+        );
+      } else {
+        dispatch(
+          CustomerSettingAct.requestSearchNamedAcc(
+            data.activePage,
+            pageSize,
+            "CustomerID",
+            null,
+            "ascending",
+            null,
+            salesID
+          )
+        );
+      }
     } else if (search.value.length > 0) {
       dispatch(
         CustomerActions.requestSearchNamedAcc(
@@ -328,7 +334,9 @@ const NamedAccountsPage: React.FC<IProps> = (
                     alignItems: "center",
                   }}
                   icon="times circle"
-                  disabled={rowData.length === 0 || role.toUpperCase() == "ADMIN"}
+                  disabled={
+                    rowData.length === 0 || role.toUpperCase() == "ADMIN"
+                  }
                   size="mini"
                   content="Release Account"
                   onClick={onReleaseAccount}
