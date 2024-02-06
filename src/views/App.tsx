@@ -19,9 +19,6 @@ import DashboardPage from "./dashboard-page/DashboardPage";
 const FunnelOpportunity = lazy(() =>
   import("./funnel-opportunity/FunnelOpportunity")
 );
-const CustomerSetting = lazy(() =>
-  import("./customer-setting/CustomerSetting")
-);
 
 const ViewCustomerSetting = lazy(() =>
   import("./view-customer-setting/ViewEditCustomerSettingPage")

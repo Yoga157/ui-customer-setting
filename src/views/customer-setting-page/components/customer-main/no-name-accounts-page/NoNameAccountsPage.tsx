@@ -50,7 +50,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
   const onClaimAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ClaimForm rowData={rowData} getRowData={setRowData} />,
+        <ClaimForm rowData={rowData} getRowData={setRowData} filterData={filterData} />,
         ModalSizeEnum.Small
       )
     );

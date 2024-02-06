@@ -15,6 +15,13 @@ import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityAct
 interface IProps {
   rowData: any;
   getRowData: (data: any) => void;
+  filterData: any;
+}
+
+interface FilterData {
+  pmo_customer: any;
+  holdshipment: any;
+  blacklist: any;
 }
 
 const ClaimAccount: React.FC<IProps> = (
@@ -22,6 +29,12 @@ const ClaimAccount: React.FC<IProps> = (
 ) => {
   const dispatch: Dispatch = useDispatch();
   const { rowData } = props;
+  const [filterData, setFilterData] = useState<FilterData | undefined>(
+    props.filterData || undefined
+  );
+  const activePage = useSelector(
+    (state: IStore) => state.customerSetting.activePage
+  );
 
   const cancelClick = () => {
     dispatch(ModalAction.CLOSE());
@@ -47,9 +60,30 @@ const ClaimAccount: React.FC<IProps> = (
     }
     props.getRowData([]);
     dispatch(ModalAction.CLOSE());
-    dispatch(
-      CustomerSettingAct.requestNoNameAcc(1, 10, "CustomerID", "ascending")
-    );
+    if(filterData != undefined) {
+      console.log(filterData)
+      dispatch(
+        CustomerSettingAct.requestSearchNoNameAcc(
+          activePage,
+          10,
+          "CustomerID",
+          null,
+          "ascending",
+          filterData.pmo_customer,
+          filterData.blacklist,
+          filterData.holdshipment
+        )
+      );
+    }  else {
+      dispatch(
+        CustomerSettingAct.requestNoNameAcc(
+          activePage,
+          10,
+          "CustomerID",
+          "ascending"
+        )
+      );
+    }
   };
 
   return (

@@ -53,7 +53,7 @@ const ShareableAccountsPage: React.FC<IProps> = (
   const onReleaseAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ModReleaseForm rowData={rowData} getRowData={setRowData} />,
+        <ModReleaseForm rowData={rowData} getRowData={setRowData} filterData={filterData} myAccount={myAccount} />,
         ModalSizeEnum.Small
       )
     );
@@ -357,6 +357,8 @@ const ShareableAccountsPage: React.FC<IProps> = (
                 tableData={tableData}
                 getRowData={setNewRowData}
                 data={rowData}
+                filterData={filterData}
+                myAccount={myAccount}
               />
             </div>
             <Pagination

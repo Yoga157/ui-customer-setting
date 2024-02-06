@@ -56,7 +56,7 @@ const NamedAccountsPage: React.FC<IProps> = (
   const onReleaseAccount = useCallback((): void => {
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ModReleaseForm rowData={rowData} getRowData={setRowData} />,
+        <ModReleaseForm rowData={rowData} getRowData={setRowData} filterData={filterData} myAccount={myAccount} />,
         ModalSizeEnum.Small
       )
     );
@@ -407,9 +407,11 @@ const NamedAccountsPage: React.FC<IProps> = (
               <CustomerTable
                 history={props.history}
                 role={props.role}
+                myAccount={myAccount}
                 tableData={tableData}
                 getRowData={setNewRowData}
                 data={rowData}
+                filterData={filterData}
               />
             </div>
             <Pagination

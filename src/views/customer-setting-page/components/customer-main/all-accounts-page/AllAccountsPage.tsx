@@ -384,6 +384,7 @@ const AllAccountsPage: React.FC<IProps> = (
                 myAccount={myAccount}
                 getRowData={setNewRowData}
                 data={rowData}
+                filterData={filterData}
               />
             </div>
             <Pagination

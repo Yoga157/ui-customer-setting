@@ -3,19 +3,16 @@ import { Table } from "semantic-ui-react";
 import styles from "./CustomerTable.module.scss";
 import "./CustomerTableStyle.scss";
 import CustomerTableRow from "./table-row/CustomerTableRow";
-import ICustomerTable from "selectors/customer-setting/models/ICustomerTable";
-import { selectUserResult } from "selectors/user/UserSelector";
-import IUserResult from "selectors/user/models/IUserResult";
-import IStore from "models/IStore";
-import { useSelector, useDispatch } from "react-redux";
+import {  useDispatch } from "react-redux";
 import * as CustomerActions from "stores/customer-setting/CustomerActivityActions";
 import { Dispatch } from "redux";
-import { selectFunnels } from "selectors/funnel/FunnelSelector";
 
 interface IProps {
   readonly tableData: any;
   readonly history: any;
   readonly role: any;
+  readonly myAccount: boolean;
+  readonly filterData: any;
   getRowData: (data: any) => void;
   data: any;
 }
@@ -177,9 +174,12 @@ const CustomerTable: React.FC<IProps> = (
       ) : (
         props.tableData.rows.map((item) => (
           <CustomerTableRow
+
             history={props.history}
             role={props.role}
             key={item.customerSettingID}
+            myAccount={props.myAccount}
+            filterData={props.filterData}
             rowData={item}
             getRowData={props.getRowData}
             data={props.data}

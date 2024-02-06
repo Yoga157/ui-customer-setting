@@ -15,6 +15,15 @@ import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityAct
 interface IProps {
   rowData: any;
   getRowData: (data: any) => void;
+  readonly myAccount: boolean;
+  readonly filterData: any;
+}
+
+interface FilterData {
+  pmo_customer: any;
+  newsalesAssign: any;
+  holdshipment: any;
+  blacklist: any;
 }
 
 const RelaseAccountMod: React.FC<IProps> = (
@@ -23,6 +32,12 @@ const RelaseAccountMod: React.FC<IProps> = (
   const dispatch: Dispatch = useDispatch();
   const [salesAssignArray, setSalesAssignArray] = useState([]);
   const { rowData } = props;
+  const [filterData, setFilterData] = useState<FilterData | undefined>(
+    props.filterData || undefined
+  );
+  const activePage = useSelector(
+    (state: IStore) => state.customerSetting.activePage
+  );
 
   const cancelClick = () => {
     dispatch(ModalAction.CLOSE());
@@ -46,9 +61,44 @@ const RelaseAccountMod: React.FC<IProps> = (
     }
     props.getRowData([]);
     dispatch(ModalAction.CLOSE());
-    dispatch(
-      CustomerSettingAct.requestNamedAcc(1, 10, "CustomerID", "ascending")
-    );
+    if(filterData != undefined) {
+      console.log(filterData)
+      dispatch(
+        CustomerSettingAct.requestSearchAllAcc(
+          activePage,
+          10,
+          "CustomerID",
+          null,
+          "ascending",
+          filterData.newsalesAssign,
+          filterData.pmo_customer,
+          filterData.blacklist,
+          filterData.holdshipment,
+        )
+      );
+    } else if(props.myAccount) {
+      const salesID = JSON.parse(userId)?.employeeID;
+      dispatch(
+        CustomerSettingAct.requestSearchNamedAcc(
+          activePage,
+          10,
+          "CustomerID",
+          null,
+          "ascending",
+          salesID
+        )
+      );
+    }
+    else {
+      dispatch(
+        CustomerSettingAct.requestNamedAcc(
+          activePage,
+          10,
+          "CustomerID",
+          "ascending"
+        )
+      );
+    }
   };
 
   const onHandlerSearch = () => {};
