@@ -60,8 +60,8 @@ const ReleaseAccount: React.FC<IProps> = (
     }
     dispatch(ModalAction.CLOSE());
 
-    if(filterData != undefined) {
-      console.log(filterData)
+    if (filterData != undefined) {
+      console.log(filterData);
       dispatch(
         CustomerSettingAct.requestSearchAllAcc(
           activePage,
@@ -78,7 +78,7 @@ const ReleaseAccount: React.FC<IProps> = (
           filterData.shareableAccount
         )
       );
-    } else if(props.myAccount) {
+    } else if (props.myAccount) {
       const salesID = JSON.parse(userId)?.employeeID;
       dispatch(
         CustomerSettingAct.requestSearchAllAcc(
@@ -90,8 +90,7 @@ const ReleaseAccount: React.FC<IProps> = (
           salesID
         )
       );
-    }
-    else {
+    } else {
       dispatch(
         CustomerSettingAct.requestAllAcc(
           activePage,
@@ -101,7 +100,6 @@ const ReleaseAccount: React.FC<IProps> = (
         )
       );
     }
-
   };
 
   return (
@@ -113,31 +111,18 @@ const ReleaseAccount: React.FC<IProps> = (
             <Form onSubmit={handleSubmit}>
               <Grid.Row>
                 {rowData.length == 1}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    margin: "1rem",
-                  }}
-                >
+                <div className="container-modal">
                   <div style={{ padding: "0px" }}>
                     <img
                       className="ui centered medium"
                       src="/assets/info.png"
                       sizes="small"
-                      style={{ width: "150px", height: "150px" }}
+                      style={{ width: "135px", height: "135px" }}
                     />
                   </div>
                 </div>
               </Grid.Row>
-              <Grid.Row
-                centered
-                style={{
-                  textAlign: "center",
-                  marginTop: "1.5rem",
-                }}
-              >
+              <Grid.Row centered className="text-center">
                 <span style={{ padding: "10px" }}>
                   Are you sure want to release this account?
                 </span>
@@ -152,17 +137,8 @@ const ReleaseAccount: React.FC<IProps> = (
                         style={{ padding: "0px" }}
                         key={data.customerGenID}
                       >
-                        <Grid.Column style={{ marginBottom: "3rem" }}>
-                          <p
-                            style={{
-                              textAlign: "center",
-                              fontWeight: "bold",
-                              fontSize: "1rem",
-                              marginTop: "0.5rem",
-                            }}
-                          >
-                            {data.customerName}
-                          </p>
+                        <Grid.Column style={{ marginBottom: "2rem" }}>
+                          <p className="p-customerName ">{data.customerName}</p>
                         </Grid.Column>
                       </Grid.Row>
                     </div>
@@ -171,7 +147,7 @@ const ReleaseAccount: React.FC<IProps> = (
               </Grid.Row>
 
               <Divider></Divider>
-              <div style={{ textAlign: "center", marginTop: "2rem" }}>
+              <div style={{ textAlign: "center" }}>
                 <Button type="button" onClick={cancelClick}>
                   Cancel
                 </Button>

@@ -1,15 +1,15 @@
-import React, { useEffect, Fragment, useState, useCallback } from "react";
-import { Button, SearchInput } from "views/components/UI";
+import React, { Fragment, useState } from "react";
+import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
-import { Form as FinalForm, Field } from "react-final-form";
-import { Form, Grid, Card, Divider, Icon } from "semantic-ui-react";
+import "../Modal.scss";
+import { Form as FinalForm } from "react-final-form";
+import { Form, Grid, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
 import SalesAssignPostModel from "stores/customer-sales/models/SalesAssignPostModel";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
-import * as SalesAssign from "stores/customer-sales/SalesAssignActivityActions";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 
 interface IProps {
@@ -60,31 +60,18 @@ const ReleaseAccount: React.FC<IProps> = (
             <Form onSubmit={handleSubmit}>
               <Grid.Row>
                 {rowData.length == 1}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    margin: "1rem",
-                  }}
-                >
+                <div className="container-modal">
                   <div style={{ padding: "0px" }}>
                     <img
                       className="ui centered medium"
                       src="/assets/info.png"
                       sizes="small"
-                      style={{ width: "150px", height: "150px" }}
+                      style={{ width: "135px", height: "135px" }}
                     />
                   </div>
                 </div>
               </Grid.Row>
-              <Grid.Row
-                centered
-                style={{
-                  textAlign: "center",
-                  marginTop: "1.5rem",
-                }}
-              >
+              <Grid.Row centered className="text-center">
                 <span style={{ padding: "10px" }}>
                   Are you sure want to request share this account?
                 </span>
@@ -99,17 +86,8 @@ const ReleaseAccount: React.FC<IProps> = (
                         style={{ padding: "0px" }}
                         key={data.customerID}
                       >
-                        <Grid.Column style={{ marginBottom: "3rem" }}>
-                          <p
-                            style={{
-                              textAlign: "center",
-                              fontWeight: "bold",
-                              fontSize: "1rem",
-                              marginTop: "0.5rem",
-                            }}
-                          >
-                            {data.customerName}
-                          </p>
+                        <Grid.Column style={{ marginBottom: "2rem" }}>
+                          <p className="p-customerName">{data.customerName}</p>
                         </Grid.Column>
                       </Grid.Row>
                     </div>
@@ -118,7 +96,7 @@ const ReleaseAccount: React.FC<IProps> = (
               </Grid.Row>
 
               <Divider></Divider>
-              <div style={{ textAlign: "center", marginTop: "2rem" }}>
+              <div style={{ textAlign: "center" }}>
                 <Button type="button" onClick={cancelClick}>
                   Cancel
                 </Button>
