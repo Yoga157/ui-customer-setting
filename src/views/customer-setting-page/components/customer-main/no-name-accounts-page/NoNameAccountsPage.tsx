@@ -14,7 +14,7 @@ import LoadingIndicator from "views/components/loading-indicator/LoadingIndicato
 import { Pagination, Tooltips, Button } from "views/components/UI";
 import TableToExcel from "@linways/table-to-excel";
 import ModalSizeEnum from "constants/ModalSizeEnum";
-import ClaimForm from "./components/nonamepage-main/modal/modal-claim/FormClaim";
+import ClaimForm from "./components/nonamepage-main/modal/modal-claim/ModalClaim";
 import { selectCustomerSetting } from "selectors/customer-setting/CustomerSettingSelector";
 import FilterCustomer from "./components/nonamepage-main/filter/FilterCustomer";
 
@@ -96,7 +96,6 @@ const NoNameAccountsPage: React.FC<IProps> = (
         firstCol.remove();
       }
     }
-
     TableToExcel.convert(tableClone, {
       name: "NoNameAccounts_" + currDate + ".xlsx",
       sheet: {
@@ -228,7 +227,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
         </div>
 
         <div className="fitur-container">
-          <div className=" center-fitur-container">
+          <div className="center-fitur-container">
             <h2 className="h2-container">Customer List</h2>
           </div>
           <div className="posision-container">
@@ -236,14 +235,7 @@ const NoNameAccountsPage: React.FC<IProps> = (
               content="Claim Account"
               trigger={
                 <Button
-                  style={{
-                    height: "fit-content",
-                    marginLeft: "1rem",
-                    color: "#656dd1",
-                    background: "white",
-                    fontSize: "0.8rem",
-                    alignItems: "center",
-                  }}
+                  className="btn-claim"
                   color="yellow"
                   icon="check circle"
                   disabled={

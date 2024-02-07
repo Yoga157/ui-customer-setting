@@ -61,20 +61,12 @@ const ClaimAccountEdit: React.FC<IProps> = (
             <Form onSubmit={handleSubmit}>
               <Grid.Row>
                 {rowData.length == 1}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    margin: "0.5rem",
-                  }}
-                >
+                <div className="modal-container-claim-edit">
                   <div style={{ padding: "0px" }}>
                     <img
-                      className="ui centered medium"
+                      className="img-info"
                       src="/assets/info.png"
                       sizes="small"
-                      style={{ width: "150px", height: "150px" }}
                     />
                   </div>
                 </div>
@@ -100,16 +92,7 @@ const ClaimAccountEdit: React.FC<IProps> = (
                         key={data.customerID}
                       >
                         <Grid.Column style={{ marginBottom: "3rem" }}>
-                          <p
-                            style={{
-                              textAlign: "center",
-                              fontWeight: "bold",
-                              fontSize: "1rem",
-                              margin: "0.5rem",
-                            }}
-                          >
-                            {data.customerName}
-                          </p>
+                          <p className="p-customer-name">{data.customerName}</p>
                         </Grid.Column>
                       </Grid.Row>
                     </div>

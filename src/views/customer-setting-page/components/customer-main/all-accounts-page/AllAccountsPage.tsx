@@ -241,29 +241,30 @@ const AllAccountsPage: React.FC<IProps> = (
     } else if (myAccount) {
       const userId: any = localStorage.getItem("userLogin");
       const salesID = JSON.parse(userId)?.employeeID;
-      if (JSON.parse(userId).role == "Sales")
-      {dispatch(
-        CustomerActions.requestSearchAllAcc(
-          data.activePage,
-          pageSize,
-          "CustomerID",
-          null,
-          "ascending",
-          salesID
-        )
-      );
-    } else {dispatch(
-      CustomerActions.requestSearchAllAcc(
-        data.activePage,
-        pageSize,
-        "CustomerID",
-        null,
-        "ascending",
-        null,
-        salesID
-      )
-    );
-  }   
+      if (JSON.parse(userId).role == "Sales") {
+        dispatch(
+          CustomerActions.requestSearchAllAcc(
+            data.activePage,
+            pageSize,
+            "CustomerID",
+            null,
+            "ascending",
+            salesID
+          )
+        );
+      } else {
+        dispatch(
+          CustomerActions.requestSearchAllAcc(
+            data.activePage,
+            pageSize,
+            "CustomerID",
+            null,
+            "ascending",
+            null,
+            salesID
+          )
+        );
+      }
     } else if (search.value.length > 0) {
       dispatch(
         CustomerActions.requestSearchAllAcc(
@@ -321,16 +322,8 @@ const AllAccountsPage: React.FC<IProps> = (
           <div className="posision-container">
             {role === "Admin" ? (
               <>
-                <div
-                  className="myAccount-toggle"
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <div style={{ display: "flex", justifyContent: "center" }}>
+                <div className="tgl-account">
+                  <div className="flex-center">
                     <Checkbox
                       style={{ margin: "0.5rem", transform: "scale(0.9)" }}
                       toggle
@@ -344,16 +337,8 @@ const AllAccountsPage: React.FC<IProps> = (
                 </div>
               </>
             ) : (
-              <div
-                className="myAccount-toggle"
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <div style={{ display: "flex", justifyContent: "center" }}>
+              <div className="tgl-account">
+                <div className="flex-center">
                   <Checkbox
                     style={{ margin: "0.5rem", transform: "scale(0.9)" }}
                     toggle

@@ -54,7 +54,7 @@ const CustomerTableRow: React.FC<IProps> = (
           filterData={props.filterData}
           myAccount={props.myAccount}
         />,
-        ModalSizeEnum.Small
+        ModalSizeEnum.Tiny
       )
     );
   }, [dispatch, rowData]);
@@ -84,15 +84,9 @@ const CustomerTableRow: React.FC<IProps> = (
     <Fragment>
       <Table.Row key={rowData.customerID}>
         <Table.Cell width="4">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              textAlign: "center",
-            }}
-          >
+          <div className="check-container">
             <div>
-              <label style={{ margin: "0.8rem", verticalAlign: "middle" }}>
+              <label className="check-label">
                 <input
                   type="checkbox"
                   onClick={() => setRowData(rowData)}
@@ -150,111 +144,32 @@ const CustomerTableRow: React.FC<IProps> = (
           </div>
         </Table.Cell>
         <Table.Cell>
-          <div
-            style={{
-              backgroundColor: "#28d4a5",
-              color: "white",
-              borderRadius: "1rem",
-              width: "10rem",
-              margin: "auto",
-              height: "2rem",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <p style={{ fontSize: "1rem", textAlign: "center" }}>
-              {" "}
-              Shareable Account{" "}
-            </p>{" "}
+          <div className="shareable-label-background">
+            <p className="shareable-label-text"> Shareable Account </p>{" "}
           </div>
         </Table.Cell>
         <Table.Cell textAlign="center">{rowData.customerID}</Table.Cell>
         <Table.Cell>{rowData.customerCategory}</Table.Cell>
         <Table.Cell>
-          <div
-            style={{
-              color: "white",
-              borderRadius: "1rem",
-              maxWidth: "20rem",
-              width: "15rem",
-              margin: "auto",
-              display: "flex",
-              // justifyContent: "center",
-              // textAlign: "center",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "#46494c",
-              }}
-            >
-              {" "}
-              {rowData.customerName}
-            </p>{" "}
+          <div className="rowdata-customerName">
+            <p className="p-customername"> {rowData.customerName}</p>{" "}
           </div>
         </Table.Cell>
         <Table.Cell>
           {" "}
-          <div
-            style={{
-              borderRadius: "1rem",
-              width: "40rem",
-              margin: "auto",
-              display: "flex",
-            }}
-          >
+          <div className="rowdata-customerAddres">
             <p style={{ fontSize: "1rem" }}> {rowData.customerAddress}</p>{" "}
           </div>
         </Table.Cell>
         <Table.Cell>
-          <div
-            style={{
-              color: "white",
-              borderRadius: "1rem",
-              maxWidth: "20rem",
-              width: "15rem",
-              margin: "auto",
-              height: "auto",
-              justifyContent: "center",
-              textAlign: "center",
-              display: "flex",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "#46494c",
-              }}
-            >
-              {" "}
-              {rowData.lastProjectName}
-            </p>{" "}
+          <div className="rowdata-lastprojectname">
+            <p className="p-lastprojectname"> {rowData.lastProjectName}</p>{" "}
           </div>
         </Table.Cell>
         <Table.Cell>
           {" "}
-          <div
-            style={{
-              color: "white",
-              borderRadius: "1rem",
-              maxWidth: "15rem",
-              width: "10rem",
-              margin: "auto",
-              height: "auto",
-              display: "flex",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "#46494c",
-              }}
-            >
-              {" "}
-              {rowData.salesName}
-            </p>
+          <div className="rowdata-salesname">
+            <p className="p-salesname"> {rowData.salesName}</p>
           </div>
         </Table.Cell>
         <Table.Cell textAlign="center">
@@ -270,52 +185,18 @@ const CustomerTableRow: React.FC<IProps> = (
         </Table.Cell>
         <Table.Cell>
           {" "}
-          <div
-            style={{
-              color: "white",
-              borderRadius: "1rem",
-              maxWidth: "20rem",
-              width: "15rem",
-              margin: "auto",
-              height: "auto",
-              display: "flex",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "#46494c",
-              }}
-            >
-              {" "}
-              {rowData.relatedCustomer}
-            </p>{" "}
+          <div className="rowdata-relatedcustomer">
+            <p className="p-relatedcustomer"> {rowData.relatedCustomer}</p>{" "}
           </div>
         </Table.Cell>
         <Table.Cell textAlign="center" verticalAlign="middle">
           {rowData.blacklist === true ? (
-            <div
-              style={{
-                backgroundColor: "#fb7757",
-                color: "white",
-                borderRadius: "1rem",
-                width: "80%",
-                margin: "auto",
-              }}
-            >
+            <div className="rowdata-blacklist-yes">
               <Icon name="address book" size="small" />
               <span>Yes</span>
             </div>
           ) : (
-            <div
-              style={{
-                backgroundColor: "#27d4a5",
-                color: "white",
-                borderRadius: "1rem",
-                width: "80%",
-                margin: "auto",
-              }}
-            >
+            <div className="rowdata-blacklist-no">
               <Icon name="address book" size="small" />
               <span>No</span>
             </div>
@@ -323,129 +204,37 @@ const CustomerTableRow: React.FC<IProps> = (
         </Table.Cell>
         <Table.Cell textAlign="center">
           {rowData.holdshipment === true ? (
-            <div
-              style={{
-                backgroundColor: "#f6a52c",
-                color: "white",
-                borderRadius: "1rem",
-                width: "55%",
-                margin: "auto",
-              }}
-            >
+            <div className="rowdata-holdshipment-yes">
               <Icon name="truck" size="small" />
               <span>Yes</span>
             </div>
           ) : (
-            <div
-              style={{
-                backgroundColor: "#656dd1",
-                color: "white",
-                borderRadius: "1rem",
-                width: "55%",
-                margin: "auto",
-              }}
-            >
+            <div className="rowdata-holdshipment-no">
               <Icon name="truck" size="small" />
               <span>No</span>
             </div>
           )}
         </Table.Cell>
         <Table.Cell textAlign="center">
-          <div
-            style={{
-              color: "white",
-              borderRadius: "1rem",
-              maxWidth: "15rem",
-              width: "10rem",
-              margin: "auto",
-              display: "flex",
-              justifyContent: "center",
-              textAlign: "center",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "#46494c",
-              }}
-            >
-              {" "}
-              {rowData.createdBy}
-            </p>{" "}
+          <div className="rowdata-created">
+            <p className="p-createBy "> {rowData.createdBy}</p>{" "}
           </div>
         </Table.Cell>
         <Table.Cell>
           {" "}
-          <div
-            style={{
-              color: "white",
-              borderRadius: "1rem",
-              maxWidth: "15rem",
-              width: "10rem",
-              margin: "auto",
-              display: "flex",
-              justifyContent: "center",
-              textAlign: "center",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "#46494c",
-              }}
-            >
-              {" "}
-              {rowData.createdDate}
-            </p>{" "}
+          <div className="rowdata-created">
+            <p className="p-createBy"> {rowData.createdDate}</p>{" "}
           </div>
         </Table.Cell>
         <Table.Cell>
           {" "}
-          <div
-            style={{
-              color: "white",
-              borderRadius: "1rem",
-              maxWidth: "15rem",
-              width: "10rem",
-              margin: "auto",
-              display: "flex",
-              justifyContent: "center",
-              textAlign: "center",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "#46494c",
-              }}
-            >
-              {" "}
-              {rowData.modifiedBy}
-            </p>{" "}
+          <div className="rowdata-created">
+            <p className="p-createB"> {rowData.modifiedBy}</p>{" "}
           </div>{" "}
         </Table.Cell>
         <Table.Cell>
-          <div
-            style={{
-              color: "white",
-              borderRadius: "1rem",
-              maxWidth: "15rem",
-              width: "10rem",
-              margin: "auto",
-              display: "flex",
-              justifyContent: "center",
-              textAlign: "center",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "#46494c",
-              }}
-            >
-              {" "}
-              {rowData.modifiedDate}
-            </p>{" "}
+          <div className="rowdata-created">
+            <p className="p-createBy"> {rowData.modifiedDate}</p>{" "}
           </div>
         </Table.Cell>
       </Table.Row>

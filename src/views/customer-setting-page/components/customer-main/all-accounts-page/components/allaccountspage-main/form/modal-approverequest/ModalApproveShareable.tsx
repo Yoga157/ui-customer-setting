@@ -1,15 +1,15 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
+import "../Modal.scss";
 import { Form as FinalForm } from "react-final-form";
 import { Form, Grid, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
-import ApproveShareableAccounts from "stores/customer-setting/models/ApproveShareableccounts";
 
 interface IProps {
   rowData: any;

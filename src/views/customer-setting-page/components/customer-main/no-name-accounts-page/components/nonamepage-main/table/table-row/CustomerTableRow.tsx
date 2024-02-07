@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useCallback, useEffect } from "react";
+import React, { Fragment, useState, useCallback } from "react";
 import { Table, Dropdown, Icon } from "semantic-ui-react";
 import { Dispatch } from "redux";
 import { useDispatch } from "react-redux";
@@ -39,7 +39,6 @@ const CustomerTableRow: React.FC<IProps> = (
     } else {
       getRowData([...props.data, data]);
     }
-    // setIsChecked((prevChecked) => !prevChecked);
   };
 
   const onClaimAccount = useCallback((): void => {
@@ -64,14 +63,7 @@ const CustomerTableRow: React.FC<IProps> = (
       {rowData && data && (
         <Table.Row key={rowData.CustomerID}>
           <Table.Cell width="1">
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                textAlign: "center",
-                // verticalAlign: "middle",
-              }}
-            >
+            <div className="container-center">
               <div>
                 <label style={{ margin: "0.8rem", verticalAlign: "middle" }}>
                   <input
@@ -120,19 +112,7 @@ const CustomerTableRow: React.FC<IProps> = (
             </div>
           </Table.Cell>
           <Table.Cell textAlign="center">
-            <div
-              style={{
-                backgroundColor: "#949aa1",
-                color: "white",
-                borderRadius: "1rem",
-                width: "10rem",
-                margin: "auto",
-                height: "2rem",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+            <div className="status-noNameAccount">
               <p style={{ fontSize: "1rem", textAlign: "center" }}>
                 {" "}
                 No Name Accounts{" "}
@@ -141,54 +121,24 @@ const CustomerTableRow: React.FC<IProps> = (
           </Table.Cell>
           <Table.Cell textAlign="center">{rowData.customerID}</Table.Cell>
           <Table.Cell>
-            <div
-              style={{
-                borderRadius: "1rem",
-                width: "15rem",
-                margin: "auto",
-                display: "flex",
-              }}
-            >
+            <div className="row-customerName">
               <p style={{ fontSize: "1rem" }}> {rowData.customerName}</p>{" "}
             </div>
           </Table.Cell>
           <Table.Cell>
             {" "}
-            <div
-              style={{
-                borderRadius: "1rem",
-                width: "40rem",
-                margin: "auto",
-                display: "flex",
-              }}
-            >
+            <div className="row-customerAddres">
               <p style={{ fontSize: "1rem" }}> {rowData.customerAddress}</p>{" "}
             </div>
           </Table.Cell>
           <Table.Cell textAlign="center">
             {rowData.blacklist === true ? (
-              <div
-                style={{
-                  backgroundColor: "#fb7757",
-                  color: "white",
-                  borderRadius: "1rem",
-                  width: "70%",
-                  margin: "auto",
-                }}
-              >
+              <div className="row-blacklist-yes">
                 <Icon name="address book" size="small" />
                 <span>Yes</span>
               </div>
             ) : (
-              <div
-                style={{
-                  backgroundColor: "#27d4a5",
-                  color: "white",
-                  borderRadius: "1rem",
-                  width: "70%",
-                  margin: "auto",
-                }}
-              >
+              <div className="row-blacklist-no">
                 <Icon name="address book" size="small" />
                 <span>No</span>
               </div>
@@ -196,46 +146,19 @@ const CustomerTableRow: React.FC<IProps> = (
           </Table.Cell>
           <Table.Cell textAlign="center">
             {rowData.holdshipment === true ? (
-              <div
-                style={{
-                  backgroundColor: "#f6a52c",
-                  color: "white",
-                  borderRadius: "1rem",
-                  width: "50%",
-                  margin: "auto",
-                }}
-              >
+              <div className="row-holdshipment-yes">
                 <Icon name="truck" size="small" />
                 <span>Yes</span>
               </div>
             ) : (
-              <div
-                style={{
-                  backgroundColor: "#656dd1",
-                  color: "white",
-                  borderRadius: "1rem",
-                  width: "50%",
-                  margin: "auto",
-                }}
-              >
+              <div className="row-holdshipment-no">
                 <Icon name="truck" size="small" />
                 <span>No</span>
               </div>
             )}
           </Table.Cell>
           <Table.Cell textAlign="center">
-            <div
-              style={{
-                color: "white",
-                borderRadius: "1rem",
-                maxWidth: "15rem",
-                width: "10rem",
-                margin: "auto",
-                display: "flex",
-                justifyContent: "center",
-                textAlign: "center",
-              }}
-            >
+            <div className="row-created">
               <p
                 style={{
                   fontSize: "1rem",
@@ -249,18 +172,7 @@ const CustomerTableRow: React.FC<IProps> = (
           </Table.Cell>
           <Table.Cell>
             {" "}
-            <div
-              style={{
-                color: "white",
-                borderRadius: "1rem",
-                maxWidth: "15rem",
-                width: "10rem",
-                margin: "auto",
-                display: "flex",
-                justifyContent: "center",
-                textAlign: "center",
-              }}
-            >
+            <div className="row-created">
               <p
                 style={{
                   fontSize: "1rem",
@@ -274,18 +186,7 @@ const CustomerTableRow: React.FC<IProps> = (
           </Table.Cell>
           <Table.Cell>
             {" "}
-            <div
-              style={{
-                color: "white",
-                borderRadius: "1rem",
-                maxWidth: "15rem",
-                width: "10rem",
-                margin: "auto",
-                display: "flex",
-                justifyContent: "center",
-                textAlign: "center",
-              }}
-            >
+            <div className="row-created">
               <p
                 style={{
                   fontSize: "1rem",
@@ -298,18 +199,7 @@ const CustomerTableRow: React.FC<IProps> = (
             </div>{" "}
           </Table.Cell>
           <Table.Cell>
-            <div
-              style={{
-                color: "white",
-                borderRadius: "1rem",
-                maxWidth: "15rem",
-                width: "10rem",
-                margin: "auto",
-                display: "flex",
-                justifyContent: "center",
-                textAlign: "center",
-              }}
-            >
+            <div className="row-created">
               <p
                 style={{
                   fontSize: "1rem",

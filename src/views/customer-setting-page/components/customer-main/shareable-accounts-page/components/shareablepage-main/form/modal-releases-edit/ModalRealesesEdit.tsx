@@ -1,33 +1,35 @@
 import React, { Fragment, useState } from "react";
 import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
+import "../Modal.scss";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
 import { Form as FinalForm } from "react-final-form";
 import { Form, Grid, Card, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
-import "../Modal.scss";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
-import CustomerSettingPostModel from "stores/customer-setting/models/CustomerSettingPostModel";
 import * as CustomerSettingAct from "stores/customer-setting/CustomerActivityActions";
 
 interface IProps {
   rowData: any;
   getRowData: (data: any) => void;
   filterData: any;
+  myAccount: boolean;
 }
 
 interface FilterData {
   pmo_customer: any;
+  newsalesAssign: any;
   holdshipment: any;
   blacklist: any;
 }
 
-const ClaimAccount: React.FC<IProps> = (
+const RelaseAccountMod: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
+  const [salesAssignArray, setSalesAssignArray] = useState([]);
   const { rowData } = props;
   const [filterData, setFilterData] = useState<FilterData | undefined>(
     props.filterData || undefined
@@ -41,42 +43,51 @@ const ClaimAccount: React.FC<IProps> = (
   };
 
   const isRequesting: boolean = useSelector((state: IStore) =>
-    selectRequesting(state, [CustomerSettingAct.POST_CLAIM_ACCOUNT])
+    selectRequesting(state, [])
   );
+
   const onSubmitHandler = async (e) => {
     const userId: any = localStorage.getItem("userLogin");
 
     for (let j = 0; j < rowData.length; j++) {
-      const NewClaimAccount = new CustomerSettingPostModel(e);
-      NewClaimAccount.customerSettingID = 0;
-      NewClaimAccount.customerID = rowData[j].customerID;
-      NewClaimAccount.salesID = JSON.parse(userId)?.employeeID;
-      NewClaimAccount.requestedBy = JSON.parse(userId)?.employeeID;
-      NewClaimAccount.requestedDate = new Date();
-      NewClaimAccount.createDate = new Date();
-      NewClaimAccount.createUserID = JSON.parse(userId)?.employeeID;
-
-      await dispatch(CustomerSettingAct.postClaimAccount(NewClaimAccount));
+      await dispatch(
+        CustomerSettingAct.putReleaseAccount(
+          (rowData.customerID = props.rowData[j].customerID),
+          (rowData.salesID = JSON.parse(userId)?.employeeID),
+          (rowData.modifyUserID = JSON.parse(userId)?.employeeID)
+        )
+      );
     }
-    props.getRowData([]);
     dispatch(ModalAction.CLOSE());
-    if(filterData != undefined) {
-      console.log(filterData)
+    if (filterData != undefined) {
       dispatch(
-        CustomerSettingAct.requestSearchNoNameAcc(
+        CustomerSettingAct.requestSearchAllAcc(
           activePage,
           10,
           "CustomerID",
           null,
           "ascending",
+          filterData.newsalesAssign,
           filterData.pmo_customer,
           filterData.blacklist,
           filterData.holdshipment
         )
       );
-    }  else {
+    } else if (props.myAccount) {
+      const salesID = JSON.parse(userId)?.employeeID;
       dispatch(
-        CustomerSettingAct.requestNoNameAcc(
+        CustomerSettingAct.requestSearchNamedAcc(
+          activePage,
+          10,
+          "CustomerID",
+          null,
+          "ascending",
+          salesID
+        )
+      );
+    } else {
+      dispatch(
+        CustomerSettingAct.requestNamedAcc(
           activePage,
           10,
           "CustomerID",
@@ -86,39 +97,23 @@ const ClaimAccount: React.FC<IProps> = (
     }
   };
 
+  const onHandlerSearch = () => {};
+
   return (
     <Fragment>
       <Card.Header>
-        <h4>Claim Accounts</h4>
+        <h4>Release Accounts</h4>
       </Card.Header>
       <Divider></Divider>
       <LoadingIndicator isActive={isRequesting}>
         <FinalForm
-          onSubmit={onSubmitHandler}
+          onSubmit={() => onHandlerSearch()}
           render={({ handleSubmit }) => (
             <Form onSubmit={handleSubmit}>
               <div>
-                <div
-                  style={{
-                    backgroundColor: "#FFFB9A",
-                    textAlign: "center",
-                    borderRadius: "5rem",
-                    height: "3.5rem",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <p
-                    style={{
-                      textAlign: "center",
-                      fontFamily: "Arial, sans-serif",
-                      fontSize: "1rem",
-                      lineHeight: "1.3",
-                    }}
-                  >
-                    Please pay more attention to customer accounts that you
-                    choose ?
+                <div className="release-container">
+                  <p className="release-text">
+                    Are you sure want to release all this accounts ?
                   </p>
                 </div>
                 <Divider></Divider>
@@ -128,7 +123,7 @@ const ClaimAccount: React.FC<IProps> = (
                       <Grid.Row
                         width={1}
                         className="padding-0"
-                        key={data.customerID}
+                        key={data.customerGenID}
                       >
                         <Grid.Column>
                           <h2 style={{ color: "#55637a" }}>
@@ -142,33 +137,26 @@ const ClaimAccount: React.FC<IProps> = (
                   );
                 })}
               </div>
-              <div style={{ textAlign: "center" }}>
-                <Button
-                  type="button"
-                  onClick={cancelClick}
-                  style={{
-                    marginRight: "10px",
-                    padding: "12px 20px",
-                    fontSize: "15px",
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  className="MarBot10"
-                  type="submit"
-                  color="blue"
-                  style={{ padding: "12px 20px", fontSize: "15px" }}
-                >
-                  Submit
-                </Button>
-              </div>
             </Form>
           )}
         />
+
+        <div className="release-button-container">
+          <Button type="button" onClick={cancelClick} className="cancel-button">
+            Cancel
+          </Button>
+          <Button
+            className="MarBot10 submit-button"
+            type="submit"
+            color="blue"
+            onClick={onSubmitHandler}
+          >
+            Submit
+          </Button>
+        </div>
       </LoadingIndicator>
     </Fragment>
   );
 };
 
-export default ClaimAccount;
+export default RelaseAccountMod;

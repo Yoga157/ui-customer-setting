@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
+import "./Filter.scss";
 import IStore from "models/IStore";
 import { Divider, Grid, Form } from "semantic-ui-react";
 import { Button, DropdownClearInput } from "views/components/UI";
@@ -161,28 +162,12 @@ const FilterCustomer: React.FC<{
   }, []);
 
   return (
-    <div
-      style={{
-        top: "0",
-        right: "0",
-        position: "fixed",
-        zIndex: 999,
-      }}
-    >
+    <div className="container-filter-position">
       <FinalForm
         onSubmit={() => onSubmitHandler()}
         render={({ handleSubmit }) => (
           <Form onSubmit={handleSubmit}>
-            <div
-              style={{
-                borderRadius: "2rem 0 0 0",
-                width: "25rem",
-                height: "100vh",
-                backgroundColor: "#ffffff",
-                padding: "25px",
-                position: "relative",
-              }}
-            >
+            <div className="container-filter-relative">
               <LoadingIndicator isActive={isRequesting}>
                 <div ref={titleFilterRef}>
                   <Grid columns="equal" widht={8}>
@@ -211,26 +196,9 @@ const FilterCustomer: React.FC<{
                   <Grid.Row>
                     <p>PMO Customer</p>
                     <Grid.Row>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          width: "fit-content",
-                          marginTop: "1rem",
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <label
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
+                      <div className="checkbox-filter">
+                        <div className="flex-center">
+                          <label className="flex-center">
                             <input
                               name="pmo_customer"
                               type="checkbox"
@@ -249,18 +217,8 @@ const FilterCustomer: React.FC<{
                           </label>
                         </div>
                         <div style={{ margin: "0 1rem" }}></div>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <label
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
+                        <div className="flex-center">
+                          <label className="flex-center">
                             <input
                               type="checkbox"
                               style={{
@@ -318,26 +276,9 @@ const FilterCustomer: React.FC<{
                   <Grid.Row>
                     <p>Holdshipment Customer</p>
                     <Grid.Row>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          width: "fit-content",
-                          marginTop: "1rem",
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <label
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
+                      <div className="checkbox-filter">
+                        <div className="flex-center">
+                          <label className="flex-center">
                             <input
                               name="holdshipment"
                               value="yes"
@@ -357,18 +298,8 @@ const FilterCustomer: React.FC<{
                           </label>
                         </div>
                         <div style={{ margin: "0 1rem" }}></div>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <label
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
+                        <div className="flex-center">
+                          <label className="flex-center">
                             <input
                               type="checkbox"
                               style={{
@@ -391,26 +322,9 @@ const FilterCustomer: React.FC<{
                   <Grid.Row>
                     <p>Blacklist Customer</p>
                     <Grid.Row>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          width: "fit-content",
-                          marginTop: "1rem",
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <label
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
+                      <div className="checkbox-filter">
+                        <div className="flex-center">
+                          <label className="flex-center">
                             <input
                               type="checkbox"
                               name="blacklist"
@@ -428,18 +342,8 @@ const FilterCustomer: React.FC<{
                           </label>
                         </div>
                         <div style={{ margin: "0 1rem" }}></div>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <label
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
+                        <div className="flex-center">
+                          <label className="flex-center">
                             <input
                               type="checkbox"
                               style={{
@@ -459,20 +363,7 @@ const FilterCustomer: React.FC<{
                   </Grid.Row>
                 </div>
 
-                <div
-                  ref={buttonFilterRef}
-                  style={{
-                    position: "absolute",
-                    bottom: 0,
-                    textAlign: "center",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "column",
-                    width: "calc(100% - 50px)",
-                    paddingBottom: "1rem",
-                  }}
-                >
+                <div ref={buttonFilterRef} className="position-btn">
                   <Divider style={{ width: "100%" }}></Divider>
 
                   <Grid.Row>

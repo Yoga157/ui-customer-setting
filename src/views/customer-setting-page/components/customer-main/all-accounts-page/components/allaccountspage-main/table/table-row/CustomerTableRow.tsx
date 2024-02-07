@@ -12,7 +12,7 @@ import ClaimForm from "../../form/form-claim/FormClaim";
 import { useHistory } from "react-router-dom";
 import RequestForm from "../../form/form-reqshareaccount/FormReqShare";
 import ApproveReq from "../../form/form-release/FormRelease";
-import ShareableReq from "../../form/form-approverequest/FormApproveShareable";
+import ShareableReq from "../../form/modal-approverequest/ModalApproveShareable";
 
 interface IProps {
   readonly rowData: any;
@@ -57,10 +57,14 @@ const CustomerTableRow: React.FC<IProps> = (
   }, [dispatch, rowData]);
 
   const onReleaseAccount = useCallback((): void => {
-    console.log(rowData)
+    console.log(rowData);
     dispatch(
       ModalFirstLevelActions.OPEN(
-        <ApproveReq rowData={[rowData]} filterData={props.filterData} myAccount={props.myAccount} />,
+        <ApproveReq
+          rowData={[rowData]}
+          filterData={props.filterData}
+          myAccount={props.myAccount}
+        />,
         ModalSizeEnum.Tiny
       )
     );
@@ -85,7 +89,18 @@ const CustomerTableRow: React.FC<IProps> = (
 
   return (
     <Fragment>
-      <Table.Row key={rowData.CustomerID} style={{ backgroundColor: rowData.requestedBy === userId.fullName && rowData.status?.toUpperCase() === "REJECTED" ? "#ffe0d9" : rowData.status?.toUpperCase() === "PENDING" ? "#fffb9a" : "" }}>
+      <Table.Row
+        key={rowData.CustomerID}
+        style={{
+          backgroundColor:
+            rowData.requestedBy === userId.fullName &&
+            rowData.status?.toUpperCase() === "REJECTED"
+              ? "#ffe0d9"
+              : rowData.status?.toUpperCase() === "PENDING"
+              ? "#fffb9a"
+              : "",
+        }}
+      >
         <Table.Cell width="4">
           <div
             style={{
@@ -124,13 +139,14 @@ const CustomerTableRow: React.FC<IProps> = (
 
                 {rowData.named === true && role === "Sales" && (
                   <>
-                     {(rowData.salesName != userId.fullName && rowData.status != "Pending")  && (
-                      <Dropdown.Item
-                        text="Request Share Account"
-                        icon="share"
-                        onClick={onRequestAccount}
-                      />
-                    )}
+                    {rowData.salesName != userId.fullName &&
+                      rowData.status != "Pending" && (
+                        <Dropdown.Item
+                          text="Request Share Account"
+                          icon="share"
+                          onClick={onRequestAccount}
+                        />
+                      )}
 
                     {rowData.salesName.includes(userId.fullName) && (
                       <Dropdown.Item
@@ -142,7 +158,7 @@ const CustomerTableRow: React.FC<IProps> = (
                   </>
                 )}
 
-              {rowData.shareable === true && role === "Sales" && (
+                {rowData.shareable === true && role === "Sales" && (
                   <>
                     {rowData.salesName.includes(userId.fullName) && (
                       <Dropdown.Item

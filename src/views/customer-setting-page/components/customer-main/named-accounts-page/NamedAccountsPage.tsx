@@ -11,8 +11,6 @@ import * as CustomerActions from "stores/customer-setting/CustomerActivityAction
 import { selectRequesting } from "selectors/requesting/RequestingSelector";
 import LoadingIndicator from "views/components/loading-indicator/LoadingIndicator";
 import { Pagination, Tooltips, Button } from "views/components/UI";
-import { selectUserResult } from "selectors/user/UserSelector";
-import IUserResult from "selectors/user/models/IUserResult";
 import TableToExcel from "@linways/table-to-excel";
 import ModalSizeEnum from "constants/ModalSizeEnum";
 import ModReleaseForm from "./components/namepage-main/modal/modal-releasemodal/ModaRealeseEdit";
@@ -325,14 +323,7 @@ const NamedAccountsPage: React.FC<IProps> = (
               content="Release Account"
               trigger={
                 <Button
-                  style={{
-                    height: "fit-content",
-                    marginLeft: "1rem",
-                    color: "white",
-                    background: "#f97452",
-                    fontSize: "0.8rem",
-                    alignItems: "center",
-                  }}
+                  className="btn-release"
                   icon="times circle"
                   disabled={
                     rowData.length === 0 || role.toUpperCase() == "ADMIN"
@@ -358,15 +349,7 @@ const NamedAccountsPage: React.FC<IProps> = (
           <div className="posision-container">
             {role === "Admin" ? (
               <>
-                <div
-                  className="myAccount-toggle"
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
+                <div className="tgl-my">
                   <div style={{ display: "flex", justifyContent: "center" }}>
                     <Checkbox
                       style={{ margin: "0.5rem", transform: "scale(0.9)" }}
@@ -381,15 +364,7 @@ const NamedAccountsPage: React.FC<IProps> = (
                 </div>
               </>
             ) : (
-              <div
-                className="myAccount-toggle"
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
+              <div className="tgl-my">
                 <div style={{ display: "flex", justifyContent: "center" }}>
                   <Checkbox
                     style={{ margin: "0.5rem", transform: "scale(0.9)" }}

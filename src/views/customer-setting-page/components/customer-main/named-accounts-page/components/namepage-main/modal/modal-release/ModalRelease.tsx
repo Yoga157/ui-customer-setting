@@ -1,4 +1,4 @@
-import React, { Fragment,useState } from "react";
+import React, { Fragment, useState } from "react";
 import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
@@ -57,8 +57,8 @@ const ReleaseAccount: React.FC<IProps> = (
       );
     }
     dispatch(ModalAction.CLOSE());
-    if(filterData != undefined) {
-      console.log(filterData)
+    if (filterData != undefined) {
+      console.log(filterData);
       dispatch(
         CustomerSettingAct.requestSearchAllAcc(
           activePage,
@@ -69,10 +69,10 @@ const ReleaseAccount: React.FC<IProps> = (
           filterData.newsalesAssign,
           filterData.pmo_customer,
           filterData.blacklist,
-          filterData.holdshipment,
+          filterData.holdshipment
         )
       );
-    } else if(props.myAccount) {
+    } else if (props.myAccount) {
       const salesID = JSON.parse(userId)?.employeeID;
       dispatch(
         CustomerSettingAct.requestSearchNamedAcc(
@@ -84,8 +84,7 @@ const ReleaseAccount: React.FC<IProps> = (
           salesID
         )
       );
-    }
-    else {
+    } else {
       dispatch(
         CustomerSettingAct.requestNamedAcc(
           activePage,
@@ -106,20 +105,13 @@ const ReleaseAccount: React.FC<IProps> = (
             <Form onSubmit={handleSubmit}>
               <Grid.Row>
                 {rowData.length == 1}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    margin: "1rem",
-                  }}
-                >
+                <div className="modal-release">
                   <div style={{ padding: "0px" }}>
                     <img
                       className="ui centered medium"
                       src="/assets/info.png"
                       sizes="small"
-                      style={{ width: "150px", height: "150px" }}
+                      style={{ width: "135px", height: "135px" }}
                     />
                   </div>
                 </div>
@@ -128,7 +120,6 @@ const ReleaseAccount: React.FC<IProps> = (
                 centered
                 style={{
                   textAlign: "center",
-                  marginTop: "1.5rem",
                 }}
               >
                 <span style={{ padding: "10px" }}>
@@ -146,16 +137,7 @@ const ReleaseAccount: React.FC<IProps> = (
                         key={data.customerGenID}
                       >
                         <Grid.Column style={{ marginBottom: "3rem" }}>
-                          <p
-                            style={{
-                              textAlign: "center",
-                              fontWeight: "bold",
-                              fontSize: "1rem",
-                              marginTop: "0.5rem",
-                            }}
-                          >
-                            {data.customerName}
-                          </p>
+                          <p className="p-customerName">{data.customerName}</p>
                         </Grid.Column>
                       </Grid.Row>
                     </div>
@@ -164,7 +146,7 @@ const ReleaseAccount: React.FC<IProps> = (
               </Grid.Row>
 
               <Divider></Divider>
-              <div style={{ textAlign: "center", marginTop: "2rem" }}>
+              <div style={{ textAlign: "center" }}>
                 <Button type="button" onClick={cancelClick}>
                   Cancel
                 </Button>

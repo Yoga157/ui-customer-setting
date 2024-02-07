@@ -16,7 +16,7 @@ import TableToExcel from "@linways/table-to-excel";
 import { selectShareableAccount } from "selectors/customer-setting/CustomerSettingSelector";
 import ModalSizeEnum from "constants/ModalSizeEnum";
 import FilterCustomer from "./components/shareablepage-main/filter/FilterCustomer";
-import ModReleaseForm from "./components/shareablepage-main/form/moda-releases-edit/ModalRealesesEdit";
+import ModReleaseForm from "./components/shareablepage-main/form/modal-releases-edit/ModalRealesesEdit";
 
 interface IProps {
   history: any;
@@ -285,14 +285,7 @@ const ShareableAccountsPage: React.FC<IProps> = (
               content="Shareable Accounts"
               trigger={
                 <Button
-                  style={{
-                    height: "fit-content",
-                    marginLeft: "1rem",
-                    color: "white",
-                    background: "#f97452",
-                    fontSize: "0.8rem",
-                    alignItems: "center",
-                  }}
+                  className="btn-release"
                   icon="times circle"
                   disabled={rowData.length === 0}
                   size="mini"
@@ -314,16 +307,8 @@ const ShareableAccountsPage: React.FC<IProps> = (
           </div>
 
           <div className="posision-container">
-            <div
-              className="myAccount-toggle"
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "center" }}>
+            <div className="myAccount-toggle" style={{}}>
+              <div className="flex-center">
                 <Checkbox
                   style={{ margin: "0.5rem", transform: "scale(0.9)" }}
                   toggle

@@ -55,13 +55,7 @@ const ApproveShareableReq: React.FC<IProps> = (
             <Form onSubmit={handleSubmit}>
               <Grid.Row>
                 {rowData.length == 1}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
+                <div className="flex-center">
                   <div style={{ padding: "0px" }}>
                     <img
                       className="ui centered medium"
@@ -89,17 +83,7 @@ const ApproveShareableReq: React.FC<IProps> = (
                     key={data.customerID}
                     style={{ marginTop: "1rem" }}
                   >
-                    <p
-                      style={{
-                        textAlign: "center",
-                        fontWeight: "bold",
-                        fontSize: "1rem",
-                        marginTop: "1rem",
-                        padding: "0.5rem",
-                      }}
-                    >
-                      {data.customerName}
-                    </p>
+                    <p className="p-customerName">{data.customerName}</p>
                   </Grid.Column>
                 ))}
               </Grid.Row>

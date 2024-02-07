@@ -35,7 +35,7 @@ const ReleaseAccount: React.FC<IProps> = (
   );
   const activePage = useSelector(
     (state: IStore) => state.customerSetting.activePage
-  )
+  );
 
   const cancelClick = () => {
     dispatch(ModalAction.CLOSE());
@@ -60,9 +60,9 @@ const ReleaseAccount: React.FC<IProps> = (
       await dispatch(CustomerSettingAct.postRequestAccount(NewAssignSales));
     }
     dispatch(ModalAction.CLOSE());
-    
-    if(filterData != undefined) {
-      console.log(filterData)
+
+    if (filterData != undefined) {
+      console.log(filterData);
       dispatch(
         CustomerSettingAct.requestSearchAllAcc(
           activePage,
@@ -73,10 +73,10 @@ const ReleaseAccount: React.FC<IProps> = (
           filterData.newsalesAssign,
           filterData.pmo_customer,
           filterData.blacklist,
-          filterData.holdshipment,
+          filterData.holdshipment
         )
       );
-    } else if(props.myAccount) {
+    } else if (props.myAccount) {
       const salesID = JSON.parse(userId)?.employeeID;
       dispatch(
         CustomerSettingAct.requestSearchNamedAcc(
@@ -88,8 +88,7 @@ const ReleaseAccount: React.FC<IProps> = (
           salesID
         )
       );
-    }
-    else {
+    } else {
       dispatch(
         CustomerSettingAct.requestNamedAcc(
           activePage,
@@ -110,20 +109,13 @@ const ReleaseAccount: React.FC<IProps> = (
             <Form onSubmit={handleSubmit}>
               <Grid.Row>
                 {rowData.length == 1}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    margin: "1rem",
-                  }}
-                >
+                <div className="flex-center-1rem">
                   <div style={{ padding: "0px" }}>
                     <img
                       className="ui centered medium"
                       src="/assets/info.png"
                       sizes="small"
-                      style={{ width: "150px", height: "150px" }}
+                      style={{ width: "135px", height: "135px" }}
                     />
                   </div>
                 </div>
@@ -149,17 +141,8 @@ const ReleaseAccount: React.FC<IProps> = (
                         style={{ padding: "0px" }}
                         key={data.customerID}
                       >
-                        <Grid.Column style={{ marginBottom: "3rem" }}>
-                          <p
-                            style={{
-                              textAlign: "center",
-                              fontWeight: "bold",
-                              fontSize: "1rem",
-                              marginTop: "0.5rem",
-                            }}
-                          >
-                            {data.customerName}
-                          </p>
+                        <Grid.Column>
+                          <p className="p-customerName">{data.customerName}</p>
                         </Grid.Column>
                       </Grid.Row>
                     </div>

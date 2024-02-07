@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from "react";
 import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
+import "../Modal.scss";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
 import { Form as FinalForm } from "react-final-form";
@@ -115,31 +116,18 @@ const ClaimAccount: React.FC<IProps> = (
             <Form onSubmit={handleSubmit}>
               <Grid.Row>
                 {rowData.length == 1}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    margin: "1rem",
-                  }}
-                >
+                <div className="container-flex">
                   <div style={{ padding: "0px" }}>
                     <img
                       className="ui centered medium"
                       src="/assets/info.png"
                       sizes="small"
-                      style={{ width: "150px", height: "150px" }}
+                      style={{ width: "135px", height: "135px" }}
                     />
                   </div>
                 </div>
               </Grid.Row>
-              <Grid.Row
-                centered
-                style={{
-                  textAlign: "center",
-                  marginTop: "1.5rem",
-                }}
-              >
+              <Grid.Row centered className="text-center">
                 <span style={{ padding: "10px" }}>
                   Are you sure want to claim this account?
                 </span>
@@ -154,17 +142,8 @@ const ClaimAccount: React.FC<IProps> = (
                         style={{ padding: "0px" }}
                         key={data.customerID}
                       >
-                        <Grid.Column style={{ marginBottom: "3rem" }}>
-                          <p
-                            style={{
-                              textAlign: "center",
-                              fontWeight: "bold",
-                              fontSize: "1rem",
-                              marginTop: "0.5rem",
-                            }}
-                          >
-                            {data.customerName}
-                          </p>
+                        <Grid.Column style={{ marginBottom: "2rem" }}>
+                          <p className="p-customerName">{data.customerName}</p>
                         </Grid.Column>
                       </Grid.Row>
                     </div>
@@ -173,7 +152,7 @@ const ClaimAccount: React.FC<IProps> = (
               </Grid.Row>
 
               <Divider></Divider>
-              <div style={{ textAlign: "center", marginTop: "2rem" }}>
+              <div style={{ textAlign: "center" }}>
                 <Button type="button" onClick={cancelClick}>
                   Cancel
                 </Button>

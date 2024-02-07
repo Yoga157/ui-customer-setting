@@ -3,7 +3,7 @@ import { Button } from "views/components/UI";
 import { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import IStore from "models/IStore";
-// import "../Modal.scss";
+import "../Modal.scss";
 import { Form as FinalForm } from "react-final-form";
 import { Form, Grid, Divider } from "semantic-ui-react";
 import * as ModalAction from "stores/modal/first-level/ModalFirstLevelActions";
@@ -99,9 +99,6 @@ const ReleaseAccount: React.FC<IProps> = (
         )
       );
     }
-    // dispatch(
-    //   CustomerSettingAct.requestShareabledAcc(1, 10, "CustomerID", "ascending")
-    // );
   };
 
   return (
@@ -113,31 +110,18 @@ const ReleaseAccount: React.FC<IProps> = (
             <Form onSubmit={handleSubmit}>
               <Grid.Row>
                 {rowData.length == 1}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    margin: "1rem",
-                  }}
-                >
+                <div className="container-flex">
                   <div style={{ padding: "0px" }}>
                     <img
                       className="ui centered medium"
                       src="/assets/info.png"
                       sizes="small"
-                      style={{ width: "150px", height: "150px" }}
+                      style={{ width: "135px", height: "135px" }}
                     />
                   </div>
                 </div>
               </Grid.Row>
-              <Grid.Row
-                centered
-                style={{
-                  textAlign: "center",
-                  marginTop: "1.5rem",
-                }}
-              >
+              <Grid.Row centered className="text-center">
                 <span style={{ padding: "10px" }}>
                   Are you sure want to release this account?
                 </span>
@@ -153,16 +137,7 @@ const ReleaseAccount: React.FC<IProps> = (
                         key={data.customerGenID}
                       >
                         <Grid.Column style={{ marginBottom: "3rem" }}>
-                          <p
-                            style={{
-                              textAlign: "center",
-                              fontWeight: "bold",
-                              fontSize: "1rem",
-                              marginTop: "0.5rem",
-                            }}
-                          >
-                            {data.customerName}
-                          </p>
+                          <p className="p-customerName">{data.customerName}</p>
                         </Grid.Column>
                       </Grid.Row>
                     </div>

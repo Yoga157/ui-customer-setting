@@ -30,7 +30,6 @@ const RelaseAccountMod: React.FC<IProps> = (
   props: React.PropsWithChildren<IProps>
 ) => {
   const dispatch: Dispatch = useDispatch();
-  const [salesAssignArray, setSalesAssignArray] = useState([]);
   const { rowData } = props;
   const [filterData, setFilterData] = useState<FilterData | undefined>(
     props.filterData || undefined
@@ -114,26 +113,8 @@ const RelaseAccountMod: React.FC<IProps> = (
           render={({ handleSubmit }) => (
             <Form onSubmit={handleSubmit}>
               <div>
-                <div
-                  style={{
-                    backgroundColor: "#f97452",
-                    textAlign: "center",
-                    borderRadius: "5rem",
-                    height: "3.5rem",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <p
-                    style={{
-                      textAlign: "center",
-                      fontFamily: "Arial, sans-serif",
-                      fontSize: "1rem",
-                      lineHeight: "1.5",
-                      color: "#ffff",
-                    }}
-                  >
+                <div className="modal-release-edit">
+                  <p className="p-text-release">
                     Are you sure want to release all this accounts ?
                   </p>
                 </div>
@@ -162,24 +143,15 @@ const RelaseAccountMod: React.FC<IProps> = (
           )}
         />
 
-        <div style={{ textAlign: "center", marginBottom: "20px" }}>
-          <Button
-            type="button"
-            onClick={cancelClick}
-            style={{
-              marginRight: "10px",
-              padding: "12px 20px",
-              fontSize: "15px",
-            }}
-          >
+        <div style={{ textAlign: "center" }}>
+          <Button type="button" onClick={cancelClick} className="btn-cancel ">
             Cancel
           </Button>
           <Button
-            className="MarBot10"
+            className="MarBot10 btn-submit"
             type="submit"
             color="blue"
             onClick={onSubmitHandler}
-            style={{ padding: "12px 20px", fontSize: "15px" }}
           >
             Submit
           </Button>

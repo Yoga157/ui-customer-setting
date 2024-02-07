@@ -1,16 +1,11 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Table } from "semantic-ui-react";
 import styles from "./CustomerTable.module.scss";
 import "./CustomerTableStyle.scss";
 import CustomerTableRow from "./table-row/CustomerTableRow";
-import ICustomerTable from "selectors/customer-setting/models/ICustomerTable";
-import { selectUserResult } from "selectors/user/UserSelector";
-import IUserResult from "selectors/user/models/IUserResult";
-import IStore from "models/IStore";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import * as CustomerActions from "stores/customer-setting/CustomerActivityActions";
 import { Dispatch } from "redux";
-import { selectFunnels } from "selectors/funnel/FunnelSelector";
 
 interface IProps {
   readonly tableData: any;
