@@ -102,13 +102,7 @@ const CustomerTableRow: React.FC<IProps> = (
         }}
       >
         <Table.Cell width="4">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              textAlign: "center",
-            }}
-          >
+          <div className="table-container">
             <Dropdown pointing="left" icon="ellipsis vertical">
               <Dropdown.Menu>
                 <Dropdown.Item
@@ -129,11 +123,13 @@ const CustomerTableRow: React.FC<IProps> = (
 
                 {rowData.named === true && role === "Admin" && (
                   <>
-                    <Dropdown.Item
-                      text="Approve Shareable Request"
-                      icon="circle check"
-                      onClick={onApproveShareable}
-                    />
+                    {rowData.status != "Rejected" && (
+                      <Dropdown.Item
+                        text="Approve Shareable Request"
+                        icon="circle check"
+                        onClick={onApproveShareable}
+                      />
+                    )}
                   </>
                 )}
 
@@ -179,147 +175,45 @@ const CustomerTableRow: React.FC<IProps> = (
         </Table.Cell>
         <Table.Cell>
           {rowData.named === false && rowData.shareable === false && (
-            <div
-              style={{
-                backgroundColor: "#949aa1",
-                color: "white",
-                borderRadius: "1rem",
-                width: "10rem",
-                margin: "auto",
-                height: "2rem",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <p style={{ fontSize: "1rem", textAlign: "center" }}>
-                No Name Accounts
-              </p>
+            <div className="no-name-label">
+              <p className="label-text">No Name Accounts</p>
             </div>
           )}
 
           {rowData.named === true && (
-            <div
-              style={{
-                backgroundColor: "#656dd1",
-                color: "white",
-                borderRadius: "1rem",
-                width: "10rem",
-                margin: "auto",
-                height: "2rem",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <p style={{ fontSize: "1rem", textAlign: "center" }}>
-                Named Accounts
-              </p>
+            <div className="named-label">
+              <p className="label-text">Named Accounts</p>
             </div>
           )}
 
           {rowData.shareable === true && rowData.named === false && (
-            <div
-              style={{
-                backgroundColor: "#28d4a5",
-                color: "white",
-                borderRadius: "1rem",
-                width: "10rem",
-                margin: "auto",
-                height: "2rem",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <p style={{ fontSize: "1rem", textAlign: "center" }}>
-                Shareable Accounts
-              </p>
+            <div className="shareable-label">
+              <p className="label-text">Shareable Accounts</p>
             </div>
           )}
         </Table.Cell>
         <Table.Cell textAlign="center">{rowData.customerID}</Table.Cell>
         <Table.Cell>{rowData.customerCategory}</Table.Cell>
         <Table.Cell>
-          <div
-            style={{
-              color: "white",
-              borderRadius: "1rem",
-              maxWidth: "20rem",
-              width: "15rem",
-              margin: "auto",
-              display: "flex",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "#46494c",
-              }}
-            >
-              {" "}
-              {rowData.customerName}
-            </p>{" "}
+          <div className="name-container">
+            <p className="head-text"> {rowData.customerName}</p>{" "}
           </div>
         </Table.Cell>
         <Table.Cell>
           {" "}
-          <div
-            style={{
-              borderRadius: "1rem",
-              width: "40rem",
-              margin: "auto",
-              display: "flex",
-            }}
-          >
+          <div className="address-container">
             <p style={{ fontSize: "1rem" }}> {rowData.customerAddress}</p>{" "}
           </div>
         </Table.Cell>
         <Table.Cell>
-          <div
-            style={{
-              color: "white",
-              borderRadius: "1rem",
-              maxWidth: "25rem",
-              width: "20rem",
-              margin: "auto",
-              display: "flex",
-              justifyContent: "center",
-              textAlign: "center",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "#46494c",
-              }}
-            >
-              {" "}
-              {rowData.lastProjectName}
-            </p>{" "}
+          <div className="project-container">
+            <p className="head-text"> {rowData.lastProjectName}</p>{" "}
           </div>
         </Table.Cell>
         <Table.Cell>
           {" "}
-          <div
-            style={{
-              color: "white",
-              borderRadius: "1rem",
-              maxWidth: "15rem",
-              width: "10rem",
-              margin: "auto",
-              display: "flex",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "#46494c",
-              }}
-            >
-              {" "}
-              {rowData.salesName}{" "}
-            </p>{" "}
+          <div className="sales-container">
+            <p className="head-text"> {rowData.salesName} </p>{" "}
           </div>
         </Table.Cell>
         <Table.Cell textAlign="center">
@@ -335,51 +229,18 @@ const CustomerTableRow: React.FC<IProps> = (
         </Table.Cell>
         <Table.Cell>
           {" "}
-          <div
-            style={{
-              color: "white",
-              borderRadius: "1rem",
-              maxWidth: "20rem",
-              width: "15rem",
-              margin: "auto",
-              display: "flex",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "#46494c",
-              }}
-            >
-              {" "}
-              {rowData.relatedCustomer}
-            </p>{" "}
+          <div className="related-customer-container">
+            <p className="head-text"> {rowData.relatedCustomer}</p>{" "}
           </div>
         </Table.Cell>
         <Table.Cell textAlign="center" verticalAlign="middle">
           {rowData.blacklist === true ? (
-            <div
-              style={{
-                backgroundColor: "#fb7757",
-                color: "white",
-                borderRadius: "1rem",
-                width: "80%",
-                margin: "auto",
-              }}
-            >
+            <div className="blacklist-yes">
               <Icon name="address book" size="small" />
               <span>Yes</span>
             </div>
           ) : (
-            <div
-              style={{
-                backgroundColor: "#27d4a5",
-                color: "white",
-                borderRadius: "1rem",
-                width: "80%",
-                margin: "auto",
-              }}
-            >
+            <div className="blacklist-no">
               <Icon name="address book" size="small" />
               <span>No</span>
             </div>
@@ -387,129 +248,37 @@ const CustomerTableRow: React.FC<IProps> = (
         </Table.Cell>
         <Table.Cell textAlign="center">
           {rowData.holdshipment === true ? (
-            <div
-              style={{
-                backgroundColor: "#f6a52c",
-                color: "white",
-                borderRadius: "1rem",
-                width: "55%",
-                margin: "auto",
-              }}
-            >
+            <div className="holdshipment-yes">
               <Icon name="truck" size="small" />
               <span>Yes</span>
             </div>
           ) : (
-            <div
-              style={{
-                backgroundColor: "#656dd1",
-                color: "white",
-                borderRadius: "1rem",
-                width: "55%",
-                margin: "auto",
-              }}
-            >
+            <div className="holdshipment-no">
               <Icon name="truck" size="small" />
               <span>No</span>
             </div>
           )}
         </Table.Cell>
         <Table.Cell textAlign="center">
-          <div
-            style={{
-              color: "white",
-              borderRadius: "1rem",
-              maxWidth: "15rem",
-              width: "10rem",
-              margin: "auto",
-              display: "flex",
-              justifyContent: "center",
-              textAlign: "center",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "#46494c",
-              }}
-            >
-              {" "}
-              {rowData.createdBy}
-            </p>{" "}
+          <div className="created-container">
+            <p className="head-text"> {rowData.createdBy}</p>{" "}
           </div>
         </Table.Cell>
         <Table.Cell>
           {" "}
-          <div
-            style={{
-              color: "white",
-              borderRadius: "1rem",
-              maxWidth: "15rem",
-              width: "10rem",
-              margin: "auto",
-              display: "flex",
-              justifyContent: "center",
-              textAlign: "center",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "#46494c",
-              }}
-            >
-              {" "}
-              {rowData.createdDate}
-            </p>{" "}
+          <div className="created-container">
+            <p className="head-text"> {rowData.createdDate}</p>{" "}
           </div>
         </Table.Cell>
         <Table.Cell>
           {" "}
-          <div
-            style={{
-              color: "white",
-              borderRadius: "1rem",
-              maxWidth: "15rem",
-              width: "10rem",
-              margin: "auto",
-              display: "flex",
-              justifyContent: "center",
-              textAlign: "center",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "#46494c",
-              }}
-            >
-              {" "}
-              {rowData.modifiedBy}
-            </p>{" "}
+          <div className="created-container">
+            <p className="head-text"> {rowData.modifiedBy}</p>{" "}
           </div>{" "}
         </Table.Cell>
         <Table.Cell>
-          <div
-            style={{
-              color: "white",
-              borderRadius: "1rem",
-              maxWidth: "15rem",
-              width: "10rem",
-              margin: "auto",
-              display: "flex",
-              justifyContent: "center",
-              textAlign: "center",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "1rem",
-                color: "#46494c",
-              }}
-            >
-              {" "}
-              {rowData.modifiedDate}
-            </p>{" "}
+          <div className="created-container">
+            <p className="head-text"> {rowData.modifiedDate}</p>{" "}
           </div>
         </Table.Cell>
       </Table.Row>
