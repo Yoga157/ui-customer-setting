@@ -102,7 +102,7 @@ const CustomerTableRow: React.FC<IProps> = (
         }}
       >
         <Table.Cell width="4">
-          <div className="table-container">
+          <div className="table-row-container">
             <Dropdown pointing="left" icon="ellipsis vertical">
               <Dropdown.Menu>
                 <Dropdown.Item
